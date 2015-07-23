@@ -189,6 +189,10 @@ public class GameLogic {
         if(state == GameState.CHARACTER_SELECT)
             return;
 
+        if(state == GameState.GAME_OVER){
+            return;
+        }
+
         float gameX = FRUSTUM_WIDTH * x;
         float gameY = FRUSTUM_HEIGHT * y;
 
@@ -208,7 +212,15 @@ public class GameLogic {
             addProjectile(p);
     }
 
+    public boolean receiveInputGameOver(float x, float y){
+        return false;
+    }
+
     public boolean receivePauseEvent(float x, float y){
+
+        if(state == GameState.GAME_OVER)
+            return receiveInputGameOver(x,y);
+
         float buttonX = FRUSTUM_WIDTH/2;
         float buttonYes = FRUSTUM_HEIGHT/2 + 40;
         float buttonNo = FRUSTUM_HEIGHT/2 - 40;
