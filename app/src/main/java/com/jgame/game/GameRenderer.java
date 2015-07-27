@@ -159,7 +159,9 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, gameOverId);
         gl10.glLoadIdentity();
         Drawer bannerDrawer = new Drawer(gl10, 1, true, false);
-        bannerDrawer.addJavaVertex(new Square(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2,35,100).getTextureCoords(TextureData.USE_WHOLE_IMAGE));
+        bannerDrawer.addJavaVertex(new Square(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2,
+                35 * logic.endGameDuration.pctCharged(),100 * logic.endGameDuration.pctCharged())
+                .getTextureCoords(TextureData.USE_WHOLE_IMAGE));
         bannerDrawer.draw();
 
     }

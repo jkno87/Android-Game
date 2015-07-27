@@ -15,6 +15,7 @@ import com.jgame.characters.MainCharacter;
 import com.jgame.elements.Projectile;
 import com.jgame.util.Square;
 import com.jgame.util.TextureData;
+import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
 public class GameLogic {
@@ -75,18 +76,15 @@ public class GameLogic {
     public boolean shipDamaged;
     public final SelectButton continueButton;
     public final SelectButton quitButton;
+    public final TimeCounter endGameDuration;
 
     public GameLogic(SoundManager soundManager){
         this.soundManager = soundManager;
         bufferProjectiles = new ArrayList<Projectile>();
         projectiles = new ArrayList<Projectile>();
         mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new DistanceAttack());
-        //mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new DistanceAttack());
-        //spawners = GameLevels.TEST_LEVEL.getSpawners();
         enemies = new ArrayList<Enemy>();
-        //currentWave = spawners[spawnerIndex];
         state = GameState.CHARACTER_SELECT;
-        //characterHp = CHARACTER_HP;
         decorations = new ArrayList<Decoration>();
         bufferEnemies = new ArrayList<Enemy>();
         specialButton1 = new Vector2(FRUSTUM_WIDTH - 75, FRUSTUM_HEIGHT - 20);
@@ -94,6 +92,7 @@ public class GameLogic {
         characterButtons = createSelectButtons();
         continueButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 + 40, 60, 20));
         quitButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 - 40, 60, 20));
+        endGameDuration = new TimeCounter(1.2f);
     }
 
     private SelectButton[] createSelectButtons(){
@@ -219,12 +218,8 @@ public class GameLogic {
             addProjectile(p);
     }
 
-    public boolean receiveInputGameOver(float x, float y){
-        return false;
-    }
-
-    public void updateGameOver(){
-
+    public void updateGameOver(float interval){
+        endGameDuration.accum(interval);
     }
 
     public void updatePaused(){
@@ -254,6 +249,11 @@ public class GameLogic {
 
 
     public void updateGame(float interval){
+        if(state == GameState.GAME_OVER || state == GameState.STAGE_CLEARED){
+            updateGameOver(interval);
+            return;
+        }
+
         if(state != GameState.PLAYING)
             return;
 
