@@ -91,7 +91,7 @@ public class GameRenderer implements Renderer {
         }
 
 
-        if(logic.paused){
+        if(logic.state == GameState.PAUSED){
             gl10.glLoadIdentity();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
             Drawer pauseInfo = new Drawer(gl10, 4, false, true);

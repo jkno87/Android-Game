@@ -24,13 +24,17 @@ public class GameLogic {
     }
 
     public enum GameState {
-        GAME_OVER, PLAYING, STAGE_CLEARED, CHARACTER_SELECT
+        GAME_OVER, PLAYING, STAGE_CLEARED, CHARACTER_SELECT, PAUSED
     }
 
     public static class SelectButton {
         public boolean selected;
         public Square size;
         public TextureData textureData;
+
+        public SelectButton(Square size){
+            this.size = size;
+        }
 
         public SelectButton(Square size, TextureData textureData){
            this.size = size;
@@ -69,7 +73,8 @@ public class GameLogic {
     public final SelectButton[] characterButtons;
     public final Square confirmButton;
     public boolean shipDamaged;
-    public boolean paused;
+    public final SelectButton continueButton;
+    public final SelectButton quitButton;
 
     public GameLogic(SoundManager soundManager){
         this.soundManager = soundManager;
@@ -84,9 +89,11 @@ public class GameLogic {
         decorations = new ArrayList<Decoration>();
         bufferEnemies = new ArrayList<Enemy>();
         specialButton1 = new Vector2(FRUSTUM_WIDTH - 75, FRUSTUM_HEIGHT - 20);
-        //characters = new Square[] { new Square(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2, 150, 150)};
         confirmButton = new Square(FRUSTUM_WIDTH - 50, 20, 35, 15);
         characterButtons = createSelectButtons();
+        continueButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 + 40, 60, 20));
+        quitButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 - 40, 60, 20));
+
     }
 
     private SelectButton[] createSelectButtons(){
@@ -131,10 +138,6 @@ public class GameLogic {
 
     public boolean withinYBounds(float y, float size){
         return y - size >= 0 && y + size <= FRUSTUM_HEIGHT;
-    }
-
-    public void pause(){
-        this.paused = true;
     }
 
     public void inputDown(float x, float y){
@@ -216,36 +219,16 @@ public class GameLogic {
         return false;
     }
 
-    public boolean receivePauseEvent(float x, float y){
-
-        if(state == GameState.GAME_OVER)
-            return receiveInputGameOver(x,y);
-
-        float buttonX = FRUSTUM_WIDTH/2;
-        float buttonYes = FRUSTUM_HEIGHT/2 + 40;
-        float buttonNo = FRUSTUM_HEIGHT/2 - 40;
-
-        float wX = x * FRUSTUM_WIDTH;
-        float wY = y * FRUSTUM_HEIGHT;
-
-        if(wX > buttonX - 60 && wX < buttonX + 60){
-            if(wY < buttonYes + 20 && wY > buttonYes - 20)
-                paused = false;
-
-            if(wY < buttonNo + 20 && wY > buttonNo - 20)
-                return true;
-        }
-
-        return false;
-    }
-
-
     public void updateGameOver(){
 
     }
 
     public void updatePaused(){
 
+    }
+
+    public void  pause(){
+        state = GameState.PAUSED;
     }
 
     private void updateSpawner(){
@@ -267,7 +250,7 @@ public class GameLogic {
 
 
     public void updateGame(float interval){
-        if(paused)
+        if(state != GameState.PLAYING)
             return;
 
         addEnemies(interval);

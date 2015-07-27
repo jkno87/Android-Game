@@ -23,7 +23,7 @@ public class GameSurfaceView extends GLSurfaceView {
 
         synchronized(this){
 
-            if(gameLogic.paused || gameLogic.state == GameLogic.GameState.GAME_OVER)
+            if(gameLogic.state != GameLogic.GameState.PLAYING)
                 return false;
 
             float x = (event.getX() / (float) getWidth());

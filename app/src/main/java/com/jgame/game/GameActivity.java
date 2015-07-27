@@ -42,16 +42,27 @@ public class GameActivity extends Activity {
         gameSurfaceView.onPause();
     }
 
+    /**
+     * Maneja el input de up cuando el juego se encuentra en el estado de PAUSED.
+     * @param x coord X del evento
+     * @param y coord Y del evento
+     */
+    private void handleUpPaused(float x, float y){
+        if(gameLogic.continueButton.size.within(x, y))
+            gameLogic.state = GameLogic.GameState.PLAYING;
+        if(gameLogic.quitButton.size.within(x,y))
+            super.onBackPressed();
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent e){
-        float x = (e.getX() / (float) gameSurfaceView.getWidth());
-        float y = (((float) gameSurfaceView.getHeight() - e.getY()) / (float) gameSurfaceView.getHeight());
+        float x = (e.getX() / (float) gameSurfaceView.getWidth()) * gameLogic.FRUSTUM_WIDTH;
+        float y = (((float) gameSurfaceView.getHeight() - e.getY()) / (float) gameSurfaceView.getHeight()) * gameLogic.FRUSTUM_HEIGHT;
 
         switch (e.getAction()) {
             case MotionEvent.ACTION_UP:
-                if(gameLogic.receivePauseEvent(x,y))
-                    super.onBackPressed();
-                break;
+                if(gameLogic.state == GameLogic.GameState.PAUSED)
+                    handleUpPaused(x, y);
 
         }
 
