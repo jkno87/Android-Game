@@ -59,7 +59,7 @@ public class GameLogic {
     private final ArrayList<Projectile> projectiles;
     private boolean specialSelected;
     public final ArrayList<Decoration> decorations;
-    private final EnemySpawner[] spawners;
+    private EnemySpawner[] spawners;
     private final List<Enemy> bufferEnemies;
     public final List<Enemy> enemies;
     private EnemySpawner currentWave;
@@ -81,11 +81,12 @@ public class GameLogic {
         bufferProjectiles = new ArrayList<Projectile>();
         projectiles = new ArrayList<Projectile>();
         mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new DistanceAttack());
-        spawners = GameLevels.TEST_LEVEL.getSpawners();
+        //mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new DistanceAttack());
+        //spawners = GameLevels.TEST_LEVEL.getSpawners();
         enemies = new ArrayList<Enemy>();
-        currentWave = spawners[spawnerIndex];
+        //currentWave = spawners[spawnerIndex];
         state = GameState.CHARACTER_SELECT;
-        characterHp = CHARACTER_HP;
+        //characterHp = CHARACTER_HP;
         decorations = new ArrayList<Decoration>();
         bufferEnemies = new ArrayList<Enemy>();
         specialButton1 = new Vector2(FRUSTUM_WIDTH - 75, FRUSTUM_HEIGHT - 20);
@@ -93,7 +94,6 @@ public class GameLogic {
         characterButtons = createSelectButtons();
         continueButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 + 40, 60, 20));
         quitButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 - 40, 60, 20));
-
     }
 
     private SelectButton[] createSelectButtons(){
@@ -105,10 +105,13 @@ public class GameLogic {
     private void start(){
         spawnerIndex = 0;
         enemies.clear();
+        bufferEnemies.clear();
         projectiles.clear();
         bufferProjectiles.clear();
+        spawners = GameLevels.TEST_LEVEL.getSpawners();
         currentWave = spawners[spawnerIndex];
         state = GameState.PLAYING;
+        mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new DistanceAttack());
         characterHp = CHARACTER_HP;
     }
 
@@ -158,7 +161,8 @@ public class GameLogic {
                 if(selected)
                     mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new RangedAttack());
 
-                state = GameState.PLAYING;
+                //state = GameState.PLAYING;
+                start();
             }
 
             return;
