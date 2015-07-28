@@ -77,6 +77,7 @@ public class GameLogic {
     public final SelectButton continueButton;
     public final SelectButton quitButton;
     public final TimeCounter endGameDuration;
+    private GameState stashedState;
 
     public GameLogic(SoundManager soundManager){
         this.soundManager = soundManager;
@@ -160,19 +161,16 @@ public class GameLogic {
                 if(selected)
                     mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new RangedAttack());
 
-                //state = GameState.PLAYING;
                 start();
             }
 
             return;
         }
 
-
         if(specialButton1.dist(gameX, gameY) <= SPECIAL_BUTTON_SIZE + TOUCH_ADJUSTMENT) {
             specialSelected = true;
             return;
         }
-
 
         synchronized(characterLock){
             mainCharacter.receiveInputDown(gameX, gameY);
@@ -208,7 +206,6 @@ public class GameLogic {
             return;
         }
 
-
         Projectile p = null;
 
         synchronized(characterLock){
@@ -227,13 +224,23 @@ public class GameLogic {
     }
 
     public void  pause(){
+        stashedState = state;
         state = GameState.PAUSED;
+    }
+
+    public void unpause(){
+        state = stashedState;
+        stashedState = null;
     }
 
     private void updateSpawner(){
         spawnerIndex++;
         if(spawnerIndex < spawners.length)
             currentWave = spawners[spawnerIndex];
+    }
+
+    private boolean gameFinished(){
+        return spawnerIndex > spawners.length;
     }
 
     private void addEnemies(float interval){
@@ -271,6 +278,10 @@ public class GameLogic {
 
         enemies.addAll(bufferEnemies);
         bufferEnemies.clear();
+        if(enemies.isEmpty() && gameFinished()){
+            state = GameState.GAME_OVER;
+        }
+
 
         synchronized (proyectilesLock) {
             for (int i = 0; i < projectiles.size(); i++) {

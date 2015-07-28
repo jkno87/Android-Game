@@ -6,8 +6,8 @@ public class Square {
     public static float TO_RADIANS = (1 / 180.0f) * (float) Math.PI;
 
     public Vector2 position;
-    private float lenX;
-    private float lenY;
+    public final float lenX;
+    public final float lenY;
     public float angle;
 
     public Square(float x, float y, float lenX, float lenY){

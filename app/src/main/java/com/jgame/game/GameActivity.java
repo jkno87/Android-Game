@@ -2,6 +2,7 @@ package com.jgame.game;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,9 +50,26 @@ public class GameActivity extends Activity {
      */
     private void handleUpPaused(float x, float y){
         if(gameLogic.continueButton.size.within(x, y))
-            gameLogic.state = GameLogic.GameState.PLAYING;
-        if(gameLogic.quitButton.size.within(x,y))
-            super.onBackPressed();
+            gameLogic.unpause();
+        if(gameLogic.quitButton.size.within(x,y)) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("EXIT", true);
+            startActivity(intent);
+        }
+    }
+
+
+    /**
+     * Maneja los inputs cuando se encuentra el juego en game over
+     * @param x coord X del evento
+     * @param y coord Y del evento
+     */
+    private void handleGameOver(float x, float y){
+        if(gameLogic.continueButton.size.within(x, y))
+            startActivity(new Intent(this, GameActivity.class));
+        if(gameLogic.quitButton.size.within(x, y))
+            startActivity(new Intent(this, MainActivity.class));
     }
 
     @Override
@@ -63,6 +81,9 @@ public class GameActivity extends Activity {
             case MotionEvent.ACTION_UP:
                 if(gameLogic.state == GameLogic.GameState.PAUSED)
                     handleUpPaused(x, y);
+
+                if(gameLogic.state == GameLogic.GameState.GAME_OVER && gameLogic.endGameDuration.completed())
+                    handleGameOver(x, y);
 
         }
 

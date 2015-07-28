@@ -267,9 +267,7 @@ public class GameLevels {
                             ),
                             new EnemySpawner(
                                     new SpawnElement[]{
-                                            new SpawnElement(createGenerator(20f), EnemyFactory.LEVEL_ONE_BOSS, 2, 1),
-                                            new SpawnElement(createGenerator(10f), EnemyFactory.HOMING, 5f, 15),
-                                            new SpawnElement(createGenerator(5f), EnemyFactory.HOMING, 5f, 15)
+                                            new SpawnElement(createGenerator(20f), EnemyFactory.LEVEL_ONE_BOSS, 2, 1)
                                     }
                             )
                     };

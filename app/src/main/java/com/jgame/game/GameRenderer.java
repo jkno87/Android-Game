@@ -90,7 +90,6 @@ public class GameRenderer implements Renderer {
             drawGame();
         }
 
-
         if(logic.state == GameState.PAUSED){
             gl10.glLoadIdentity();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
@@ -164,6 +163,19 @@ public class GameRenderer implements Renderer {
                 .getTextureCoords(TextureData.USE_WHOLE_IMAGE));
         bannerDrawer.draw();
 
+        if(logic.endGameDuration.completed()) {
+            gl10.glLoadIdentity();
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+            Drawer gameOverMenu = new Drawer(gl10, 3, false, true);
+            gameOverMenu.addJavaVertex(Square.getSimpleCoords(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2,
+                    80, 80, new float[]{0.95f, 0.98f, 0.85f, 1}));
+            gameOverMenu.addJavaVertex(logic.continueButton.size.getSimpleCoords(
+                    new float[]{0, 1, 0, 1}));
+            gameOverMenu.addJavaVertex(logic.quitButton.size.getSimpleCoords(
+                    new float[]{1, 0, 0, 1}));
+            gameOverMenu.draw();
+        }
+
     }
 
     private void drawStageCleared() {
@@ -233,8 +245,6 @@ public class GameRenderer implements Renderer {
         float[] characterColor = logic.mainCharacter.state == MainCharacter.CharacterState.NORMAL ?
                 new float[]{1,1,1,1} : new float[]{0,0,1,1};
 
-        //float[] characterColor = new float[]{1,1 - logic.mainCharacter.pctStunned() ,
-        //        1 - logic.mainCharacter.pctStunned() ,1};
         Drawer characterDrawer = new Drawer(gl10, 1, true, true);
         characterDrawer.addJavaVertex(new Square(logic.mainCharacter.position.x, logic.mainCharacter.position.y,
                 logic.CHARACTER_SIZE, logic.CHARACTER_SIZE, logic.mainCharacter.angle)
