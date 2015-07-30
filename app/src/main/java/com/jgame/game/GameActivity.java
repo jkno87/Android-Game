@@ -21,11 +21,10 @@ public class GameActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        soundManager = new SoundManager(this);
-        gameLogic = new GameLogic(soundManager);
-        gameSurfaceView = new GameSurfaceView(this, gameLogic);
+        soundManager = GameResources.soundManager;
+        gameLogic = GameResources.gameLogic;
+        gameSurfaceView = new GameSurfaceView(this, gameLogic, GameResources.gameRenderer);
         setContentView(gameSurfaceView);
-
     }
 
     @Override
@@ -52,10 +51,7 @@ public class GameActivity extends Activity {
         if(gameLogic.continueButton.size.within(x, y))
             gameLogic.unpause();
         if(gameLogic.quitButton.size.within(x,y)) {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("EXIT", true);
-            startActivity(intent);
+            finish();
         }
     }
 

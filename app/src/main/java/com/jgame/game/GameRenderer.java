@@ -17,6 +17,8 @@ import com.jgame.game.GameLogic.GameState;
 import com.jgame.util.Square;
 import com.jgame.util.TimeCounter;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
@@ -47,11 +49,14 @@ public class GameRenderer implements Renderer {
     int specialButtonId;
     int mothershipId;
 
-    public GameRenderer(GameLogic logic, GLSurfaceView surfaceView) {
+    public GameRenderer(GameLogic logic, Resources res) {
         this.logic = logic;
-        this.surfaceView = surfaceView;
         updateCounter = new TimeCounter(FRAME_INTERVAL);
         lastUpdate = System.nanoTime();
+    }
+
+    public void setSurfaceView(GLSurfaceView surfaceView){
+        this.surfaceView = surfaceView;
     }
 
     private int loadTexture(int resource) {
@@ -345,6 +350,7 @@ public class GameRenderer implements Renderer {
     public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
         gl10 = arg0;
         gl10.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
         proyectileId = loadTexture(R.raw.proyectil);
         enemyId = loadTexture(R.raw.enemigos);
         mainCharId = loadTexture(R.raw.personaje);
@@ -354,6 +360,5 @@ public class GameRenderer implements Renderer {
         digitsId = loadTexture(R.raw.digits);
         specialButtonId = loadTexture(R.raw.special1);
         mothershipId = loadTexture(R.raw.mothership);
-
     }
 }

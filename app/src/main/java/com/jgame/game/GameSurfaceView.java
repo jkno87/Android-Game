@@ -8,14 +8,13 @@ import android.view.MotionEvent;
 
 public class GameSurfaceView extends GLSurfaceView {
 
-    GameRenderer gameRenderer;
     GameLogic gameLogic;
 
-    public GameSurfaceView(Context context, GameLogic gameLogic){
+    public GameSurfaceView(Context context, GameLogic gameLogic, GameRenderer gameRenderer){
         super(context);
         this.gameLogic = gameLogic;
-        gameRenderer = new GameRenderer(gameLogic, this);
         setRenderer(gameRenderer);
+        gameRenderer.setSurfaceView(this);
     }
 
     @Override

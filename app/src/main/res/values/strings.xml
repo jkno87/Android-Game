@@ -7,5 +7,7 @@
     <string name="level_1">Level 1</string>
     <string name="level_select">Level Select</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_game">GameAct</string>
+    <string name="title_activity_load">LoadActivity</string>
 
 </resources>

@@ -65,7 +65,6 @@ public class GameLogic {
     public final List<Enemy> enemies;
     private EnemySpawner currentWave;
     private int spawnerIndex;
-    private SoundManager soundManager;
     public MainCharacter mainCharacter;
     public GameState state;
     public int characterHp;
@@ -79,8 +78,7 @@ public class GameLogic {
     public final TimeCounter endGameDuration;
     private GameState stashedState;
 
-    public GameLogic(SoundManager soundManager){
-        this.soundManager = soundManager;
+    public GameLogic(){
         bufferProjectiles = new ArrayList<Projectile>();
         projectiles = new ArrayList<Projectile>();
         mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new DistanceAttack());
@@ -293,9 +291,6 @@ public class GameLogic {
                 } else {
                     p.detectCollision(enemies);
 
-                    if (p.enemiesKilled > 0) {
-                        soundManager.testSonido();
-                    }
                     if (!p.vivo()) {
                         projectiles.remove(i);
                     }
