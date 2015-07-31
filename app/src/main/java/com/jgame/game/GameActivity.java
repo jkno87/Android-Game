@@ -51,6 +51,10 @@ public class GameActivity extends Activity {
         if(gameLogic.continueButton.size.within(x, y))
             gameLogic.unpause();
         if(gameLogic.quitButton.size.within(x,y)) {
+            Intent intent = new Intent(this, LoadActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("EXIT", true);
+            startActivity(intent);
             finish();
         }
     }
@@ -63,7 +67,7 @@ public class GameActivity extends Activity {
      */
     private void handleGameOver(float x, float y){
         if(gameLogic.continueButton.size.within(x, y))
-            startActivity(new Intent(this, GameActivity.class));
+            gameLogic.start();
         if(gameLogic.quitButton.size.within(x, y))
             startActivity(new Intent(this, MainActivity.class));
     }

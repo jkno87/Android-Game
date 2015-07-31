@@ -19,13 +19,13 @@ public class LoadActivity extends Activity {
 
         if(getIntent().getBooleanExtra("EXIT", false)){
             finish();
+        } else {
+
+            GameResources.gameLogic = new GameLogic();
+            GameResources.soundManager = new SoundManager(this);
+            GameResources.gameRenderer = new GameRenderer(GameResources.gameLogic, this.getResources());
+
+            startActivity(new Intent(this, GameActivity.class));
         }
-
-        GameResources.gameLogic = new GameLogic();
-        GameResources.soundManager = new SoundManager(this);
-        GameResources.gameRenderer = new GameRenderer(GameResources.gameLogic, this.getResources());
-
-        startActivity(new Intent(this, GameActivity.class));
-
     }
 }

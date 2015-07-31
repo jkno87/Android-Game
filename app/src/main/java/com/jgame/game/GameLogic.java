@@ -100,7 +100,7 @@ public class GameLogic {
         };
     }
 
-    private void start(){
+    public void start(){
         spawnerIndex = 0;
         enemies.clear();
         bufferEnemies.clear();
