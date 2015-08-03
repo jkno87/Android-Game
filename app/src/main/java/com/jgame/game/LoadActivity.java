@@ -23,7 +23,7 @@ public class LoadActivity extends Activity {
 
             GameResources.gameLogic = new GameLogic();
             GameResources.soundManager = new SoundManager(this);
-            GameResources.gameRenderer = new GameRenderer(GameResources.gameLogic, this.getResources());
+            GameResources.gameRenderer = new GameRenderer(GameResources.gameLogic);
 
             startActivity(new Intent(this, GameActivity.class));
         }

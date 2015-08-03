@@ -47,6 +47,19 @@ public class GameLogic {
         }
     }
 
+    public static class PinButton {
+        public boolean selected;
+        public Square size;
+        public Vector2 currentPosition;
+
+        public PinButton(Square info){
+            this.size = info;
+            currentPosition = new Vector2(info.position);
+        }
+
+    }
+
+
     private final int CHARACTER_HP = 5;
     public final float CHARACTER_SIZE = 30f;
     public final int CHARACTER_STAMINA = 5;
@@ -70,13 +83,13 @@ public class GameLogic {
     public int characterHp;
     public int totalPoints;
     public Vector2 specialButton1;
-    public final SelectButton[] characterButtons;
     public final Square confirmButton;
     public boolean shipDamaged;
     public final SelectButton continueButton;
     public final SelectButton quitButton;
     public final TimeCounter endGameDuration;
     private GameState stashedState;
+    public final PinButton [] availableCharacters;
 
     public GameLogic(){
         bufferProjectiles = new ArrayList<Projectile>();
@@ -88,18 +101,12 @@ public class GameLogic {
         bufferEnemies = new ArrayList<Enemy>();
         specialButton1 = new Vector2(FRUSTUM_WIDTH - 75, FRUSTUM_HEIGHT - 20);
         confirmButton = new Square(FRUSTUM_WIDTH - 50, 20, 35, 15);
-        characterButtons = createSelectButtons();
         continueButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 + 40, 60, 20));
         quitButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 - 40, 60, 20));
         endGameDuration = new TimeCounter(1.2f);
+        availableCharacters = new PinButton[]{ new PinButton(new Square(40, 40, 20, 20))};
     }
-
-    private SelectButton[] createSelectButtons(){
-        return new SelectButton[]{
-            new SelectButton(new Square(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2, 150, 150), TextureData.USE_WHOLE_IMAGE)
-        };
-    }
-
+    
     public void start(){
         spawnerIndex = 0;
         enemies.clear();
@@ -111,6 +118,7 @@ public class GameLogic {
         state = GameState.PLAYING;
         mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new DistanceAttack());
         characterHp = CHARACTER_HP;
+        totalPoints = 0;
     }
 
     public void addProjectile(Projectile p){
@@ -147,14 +155,8 @@ public class GameLogic {
 
         if(state == GameState.CHARACTER_SELECT) {
 
-            for(SelectButton s : characterButtons)
-                if(s.size.within(gameX, gameY))
-                    s.toggleSelect();
-
             if(confirmButton.within(gameX, gameY)) {
                 boolean selected = false;
-                for(SelectButton s : characterButtons)
-                    selected = s.selected;
 
                 if(selected)
                     mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new RangedAttack());

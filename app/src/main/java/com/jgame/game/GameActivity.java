@@ -68,8 +68,10 @@ public class GameActivity extends Activity {
     private void handleGameOver(float x, float y){
         if(gameLogic.continueButton.size.within(x, y))
             gameLogic.start();
-        if(gameLogic.quitButton.size.within(x, y))
-            startActivity(new Intent(this, MainActivity.class));
+        if(gameLogic.quitButton.size.within(x, y)) {
+            gameLogic.start();
+            gameLogic.state = GameLogic.GameState.CHARACTER_SELECT;
+        }
     }
 
     @Override

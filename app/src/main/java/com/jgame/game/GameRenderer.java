@@ -49,7 +49,7 @@ public class GameRenderer implements Renderer {
     int specialButtonId;
     int mothershipId;
 
-    public GameRenderer(GameLogic logic, Resources res) {
+    public GameRenderer(GameLogic logic) {
         this.logic = logic;
         updateCounter = new TimeCounter(FRAME_INTERVAL);
         lastUpdate = System.nanoTime();
@@ -130,12 +130,9 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, mainCharId);
         gl10.glLoadIdentity();
 
-        Drawer characterDrawer = new Drawer(gl10, logic.characterButtons.length, true, true);
-        for(GameLogic.SelectButton s : logic.characterButtons) {
-            characterDrawer.addJavaVertex(s.size.getTextureColorCoords(
-                    TextureData.USE_WHOLE_IMAGE,
-                    s.selected ? new float[]{0.5f, 0.5f, 0.5f, 1} : new float[]{1,1,1,1}));
-        }
+        Drawer characterDrawer = new Drawer(gl10, logic.availableCharacters.length, true, true);
+        for(GameLogic.PinButton p : logic.availableCharacters)
+            characterDrawer.addJavaVertex(p.size.getTextureCoords(TextureData.USE_WHOLE_IMAGE));
         characterDrawer.draw();
 
         gl10.glLoadIdentity();
