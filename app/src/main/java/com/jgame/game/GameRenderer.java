@@ -130,7 +130,7 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, mainCharId);
         gl10.glLoadIdentity();
 
-        Drawer characterDrawer = new Drawer(gl10, logic.availableCharacters.length, true, true);
+        Drawer characterDrawer = new Drawer(gl10, logic.availableCharacters.length, true, false);
         for(GameLogic.PinButton p : logic.availableCharacters)
             characterDrawer.addJavaVertex(p.size.getTextureCoords(TextureData.USE_WHOLE_IMAGE));
         characterDrawer.draw();

@@ -48,7 +48,6 @@ public class GameLogic {
     }
 
     public static class PinButton {
-        public boolean selected;
         public Square size;
         public Vector2 currentPosition;
 
@@ -56,10 +55,9 @@ public class GameLogic {
             this.size = info;
             currentPosition = new Vector2(info.position);
         }
-
     }
 
-
+    private final int CHARACTER_NONE = -1;
     private final int CHARACTER_HP = 5;
     public final float CHARACTER_SIZE = 30f;
     public final int CHARACTER_STAMINA = 5;
@@ -90,6 +88,7 @@ public class GameLogic {
     public final TimeCounter endGameDuration;
     private GameState stashedState;
     public final PinButton [] availableCharacters;
+    private int characterSelected;
 
     public GameLogic(){
         bufferProjectiles = new ArrayList<Projectile>();
@@ -105,6 +104,7 @@ public class GameLogic {
         quitButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 - 40, 60, 20));
         endGameDuration = new TimeCounter(1.2f);
         availableCharacters = new PinButton[]{ new PinButton(new Square(40, 40, 20, 20))};
+        characterSelected = CHARACTER_NONE;
     }
     
     public void start(){
@@ -155,6 +155,13 @@ public class GameLogic {
 
         if(state == GameState.CHARACTER_SELECT) {
 
+            for(int i = 0; i < availableCharacters.length; i++){
+                PinButton character = availableCharacters[i];
+                if(character.size.within(x,y) &&
+                        (characterSelected == CHARACTER_NONE || characterSelected == i))
+                    characterSelected = i;
+            }
+
             if(confirmButton.within(gameX, gameY)) {
                 boolean selected = false;
 
@@ -178,8 +185,9 @@ public class GameLogic {
     }
 
     public void drag(float x, float y){
-        if(state == GameState.CHARACTER_SELECT)
-            return;
+        if(state == GameState.CHARACTER_SELECT && characterSelected != CHARACTER_NONE) {
+            availableCharacters[characterSelected].size.position.set(FRUSTUM_WIDTH * x, FRUSTUM_HEIGHT * y);
+        }
 
         float gameX = FRUSTUM_WIDTH * x;
         float gameY = FRUSTUM_HEIGHT * y;
@@ -190,8 +198,10 @@ public class GameLogic {
     }
 
     public void release(float x, float y){
-        if(state == GameState.CHARACTER_SELECT)
+        if(state == GameState.CHARACTER_SELECT) {
+            characterSelected = CHARACTER_NONE;
             return;
+        }
 
         if(state == GameState.GAME_OVER){
             return;
