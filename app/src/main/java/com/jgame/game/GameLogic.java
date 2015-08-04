@@ -49,12 +49,17 @@ public class GameLogic {
 
     public static class PinButton {
         public Square size;
-        public Vector2 currentPosition;
+        private final Vector2 originalPosition;
 
         public PinButton(Square info){
             this.size = info;
-            currentPosition = new Vector2(info.position);
+            originalPosition = new Vector2(info.position);
         }
+
+        public void resetPosition(){
+            size.position.set(originalPosition);
+        }
+
     }
 
     private final int CHARACTER_NONE = -1;
@@ -103,7 +108,7 @@ public class GameLogic {
         continueButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 + 40, 60, 20));
         quitButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 - 40, 60, 20));
         endGameDuration = new TimeCounter(1.2f);
-        availableCharacters = new PinButton[]{ new PinButton(new Square(40, 40, 20, 20))};
+        availableCharacters = new PinButton[]{ new PinButton(new Square(70, 70, 50, 50))};
         characterSelected = CHARACTER_NONE;
     }
     
@@ -157,7 +162,7 @@ public class GameLogic {
 
             for(int i = 0; i < availableCharacters.length; i++){
                 PinButton character = availableCharacters[i];
-                if(character.size.within(x,y) &&
+                if(character.size.within(gameX, gameY) &&
                         (characterSelected == CHARACTER_NONE || characterSelected == i))
                     characterSelected = i;
             }
@@ -187,6 +192,7 @@ public class GameLogic {
     public void drag(float x, float y){
         if(state == GameState.CHARACTER_SELECT && characterSelected != CHARACTER_NONE) {
             availableCharacters[characterSelected].size.position.set(FRUSTUM_WIDTH * x, FRUSTUM_HEIGHT * y);
+            return;
         }
 
         float gameX = FRUSTUM_WIDTH * x;
@@ -198,7 +204,9 @@ public class GameLogic {
     }
 
     public void release(float x, float y){
-        if(state == GameState.CHARACTER_SELECT) {
+
+        if(state == GameState.CHARACTER_SELECT && characterSelected != CHARACTER_NONE) {
+            availableCharacters[characterSelected].resetPosition();
             characterSelected = CHARACTER_NONE;
             return;
         }
