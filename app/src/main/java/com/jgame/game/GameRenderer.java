@@ -48,6 +48,7 @@ public class GameRenderer implements Renderer {
     int digitsId;
     int specialButtonId;
     int mothershipId;
+    int personaje2Id;
 
     public GameRenderer(GameLogic logic) {
         this.logic = logic;
@@ -127,7 +128,7 @@ public class GameRenderer implements Renderer {
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
         gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, mainCharId);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personaje2Id);
         gl10.glLoadIdentity();
 
         Drawer characterDrawer = new Drawer(gl10, logic.availableCharacters.length, true, false);
@@ -357,5 +358,6 @@ public class GameRenderer implements Renderer {
         digitsId = loadTexture(R.raw.digits);
         specialButtonId = loadTexture(R.raw.special1);
         mothershipId = loadTexture(R.raw.mothership);
+        personaje2Id = loadTexture(R.raw.personaje2);
     }
 }
