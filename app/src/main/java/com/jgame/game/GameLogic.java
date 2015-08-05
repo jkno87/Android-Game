@@ -47,6 +47,23 @@ public class GameLogic {
         }
     }
 
+
+    public static class PinTarget {
+        private final Vector2 position;
+        private final float radius;
+
+        public PinTarget (float x, float y, float radius){
+            position = new Vector2(x, y);
+            this.radius = radius;
+        }
+
+        public boolean within(float x, float y){
+            return position.dist(x, y) <= radius;
+        }
+
+
+    }
+
     public static class PinButton {
         public Square size;
         private final Vector2 originalPosition;
