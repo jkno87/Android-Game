@@ -51,6 +51,7 @@ public class GameLogic {
     public static class PinTarget {
         private final Vector2 position;
         private final float radius;
+        private boolean filled;
 
         public PinTarget (float x, float y, float radius){
             position = new Vector2(x, y);
@@ -61,6 +62,9 @@ public class GameLogic {
             return position.dist(x, y) <= radius;
         }
 
+        public void fill(){
+            filled = true;
+        }
 
     }
 
@@ -110,6 +114,7 @@ public class GameLogic {
     public final TimeCounter endGameDuration;
     private GameState stashedState;
     public final PinButton [] availableCharacters;
+    public final PinTarget [] availableShips;
     private int characterSelected;
 
     public GameLogic(){
@@ -126,6 +131,7 @@ public class GameLogic {
         quitButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 - 40, 60, 20));
         endGameDuration = new TimeCounter(1.2f);
         availableCharacters = new PinButton[]{ new PinButton(new Square(70, 70, 50, 50))};
+        availableShips = new PinTarget[]{new PinTarget(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2, 30)};
         characterSelected = CHARACTER_NONE;
     }
     
@@ -223,6 +229,13 @@ public class GameLogic {
     public void release(float x, float y){
 
         if(state == GameState.CHARACTER_SELECT && characterSelected != CHARACTER_NONE) {
+            PinButton b = availableCharacters[characterSelected];
+            for(PinTarget pinTarget : availableShips)
+                if(pinTarget.within(b.size.position.x, b.size.position.y)){
+                    pinTarget.fill();
+                    return;
+                }
+
             availableCharacters[characterSelected].resetPosition();
             characterSelected = CHARACTER_NONE;
             return;

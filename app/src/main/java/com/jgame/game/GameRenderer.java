@@ -128,6 +128,16 @@ public class GameRenderer implements Renderer {
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
         gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, shipId);
+        gl10.glLoadIdentity();
+        Drawer shipDrawer = new Drawer(gl10, 1, true, true);
+        shipDrawer.addJavaVertex(new Square(FRUSTUM_WIDTH /2, FRUSTUM_HEIGHT / 2,
+                100, 100, 0)
+                .getTextureColorCoords(TextureData.USE_WHOLE_IMAGE, new float[]{1,1,1,1}));
+
+        shipDrawer.draw();
+
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personaje2Id);
         gl10.glLoadIdentity();
 
