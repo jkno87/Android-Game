@@ -6,6 +6,7 @@ import java.util.List;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import com.jgame.definitions.GameIds;
 import com.jgame.elements.Decoration;
 import com.jgame.elements.GameElement;
 import com.jgame.characters.MainCharacter;
@@ -32,6 +33,7 @@ public class GameRenderer implements Renderer {
     private final float FRUSTUM_WIDTH = 320f;
     private final float FRAME_INTERVAL = 0.015384615f;
     private final float NANO_SCALE = 1000000000.0f;//1000000000.0f;
+    private final float [][] CHARACTER_SELECT_TEXTURES = new float[2][8];
     public static float[][] TEXTURE_DIGITS = TextureData.createTextureArray(0.0625f, 10);
 
     private GameLogic logic;
@@ -55,7 +57,14 @@ public class GameRenderer implements Renderer {
         this.logic = logic;
         updateCounter = new TimeCounter(FRAME_INTERVAL);
         lastUpdate = System.nanoTime();
+        initializeTextureData();
     }
+
+    private void initializeTextureData(){
+        CHARACTER_SELECT_TEXTURES[GameIds.CHARACTER_ONE_ID] = new float[]{0,0.5f,1,0.5f,1,0,0,0};
+        CHARACTER_SELECT_TEXTURES[GameIds.CHARACTER_TWO_ID] = new float[]{0,1,1,1,1,0.5f,0,0.5f};
+    }
+
 
     public void setSurfaceView(GLSurfaceView surfaceView){
         this.surfaceView = surfaceView;
@@ -143,15 +152,17 @@ public class GameRenderer implements Renderer {
         gl10.glLoadIdentity();
 
         Drawer characterDrawer = new Drawer(gl10, logic.availableCharacters.length, true, false);
-        for(GameLogic.PinButton p : logic.availableCharacters)
-            characterDrawer.addJavaVertex(p.size.getTextureCoords(new float[]{0,0.5f,1,0.5f,1,0,0,0}));
+        for(int i = 0; i < logic.availableCharacters.length; i++)
+            characterDrawer.addJavaVertex(logic.availableCharacters[i].size.getTextureCoords(CHARACTER_SELECT_TEXTURES[i]));
         characterDrawer.draw();
 
-        gl10.glLoadIdentity();
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-        Drawer buttonDrawer = new Drawer(gl10, 1, false, true);
-        buttonDrawer.addJavaVertex(logic.confirmButton.getSimpleCoords(new float[]{0.75f, 0.98f, 0.7f, 1}));
-        buttonDrawer.draw();
+        if(logic.shipsFilled()) {
+            gl10.glLoadIdentity();
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+            Drawer buttonDrawer = new Drawer(gl10, 1, false, true);
+            buttonDrawer.addJavaVertex(logic.confirmButton.getSimpleCoords(new float[]{0.75f, 0.98f, 0.7f, 1}));
+            buttonDrawer.draw();
+        }
 
     }
 

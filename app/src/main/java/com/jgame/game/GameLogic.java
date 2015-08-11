@@ -51,7 +51,7 @@ public class GameLogic {
     public static class PinTarget {
         private final Vector2 position;
         private final float radius;
-        private boolean filled;
+        private int idRegistered = -1;
 
         public PinTarget (float x, float y, float radius){
             position = new Vector2(x, y);
@@ -62,8 +62,16 @@ public class GameLogic {
             return position.dist(x, y) <= radius;
         }
 
-        public void fill(){
-            filled = true;
+        public void fill(int id){
+            idRegistered = id;
+        }
+
+        public void release(){
+            idRegistered = -1;
+        }
+
+        public boolean filled(){
+            return idRegistered != -1;
         }
 
     }
@@ -126,11 +134,12 @@ public class GameLogic {
         decorations = new ArrayList<Decoration>();
         bufferEnemies = new ArrayList<Enemy>();
         specialButton1 = new Vector2(FRUSTUM_WIDTH - 75, FRUSTUM_HEIGHT - 20);
-        confirmButton = new Square(FRUSTUM_WIDTH - 50, 20, 35, 15);
+        confirmButton = new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT - 75, 35, 15);
         continueButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 + 40, 60, 20));
         quitButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 - 40, 60, 20));
         endGameDuration = new TimeCounter(1.2f);
-        availableCharacters = new PinButton[]{ new PinButton(new Square(70, 70, 50, 50))};
+        availableCharacters = new PinButton[]{ new PinButton(new Square(70, 70, 50, 50)),
+                new PinButton(new Square(FRUSTUM_WIDTH - 70, 70, 50, 50))};
         availableShips = new PinTarget[]{new PinTarget(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2, 30)};
         characterSelected = CHARACTER_NONE;
     }
@@ -144,10 +153,22 @@ public class GameLogic {
         spawners = GameLevels.TEST_LEVEL.getSpawners();
         currentWave = spawners[spawnerIndex];
         state = GameState.PLAYING;
-        mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new DistanceAttack());
         characterHp = CHARACTER_HP;
         totalPoints = 0;
     }
+
+    /**
+     * Checa que los targets que representan las naves se encuentren todos seleccionados.
+     * @return Boolean con el estado de las naves en seleccion de nivel
+     */
+    public boolean shipsFilled(){
+        for(PinTarget pin : availableShips)
+            if(!pin.filled())
+                return false;
+
+        return true;
+    }
+
 
     public void addProjectile(Projectile p){
 
@@ -190,11 +211,13 @@ public class GameLogic {
                     characterSelected = i;
             }
 
-            if(confirmButton.within(gameX, gameY)) {
-                boolean selected = false;
+            if(confirmButton.within(gameX, gameY) && shipsFilled()){
 
-                if(selected)
+                if(availableShips[0].idRegistered == 0)
+                    mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new DistanceAttack());
+                else
                     mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new RangedAttack());
+
 
                 start();
             }
@@ -230,11 +253,16 @@ public class GameLogic {
 
         if(state == GameState.CHARACTER_SELECT && characterSelected != CHARACTER_NONE) {
             PinButton b = availableCharacters[characterSelected];
-            for(PinTarget pinTarget : availableShips)
-                if(pinTarget.within(b.size.position.x, b.size.position.y)){
-                    pinTarget.fill();
+            for(PinTarget pinTarget : availableShips) {
+                if (pinTarget.within(b.size.position.x, b.size.position.y) && !pinTarget.filled()) {
+                    pinTarget.fill(characterSelected);
+                    characterSelected = CHARACTER_NONE;
                     return;
                 }
+
+                if(pinTarget.idRegistered == characterSelected)
+                    pinTarget.release();
+            }
 
             availableCharacters[characterSelected].resetPosition();
             characterSelected = CHARACTER_NONE;
