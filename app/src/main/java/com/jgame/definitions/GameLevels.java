@@ -5,6 +5,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import com.jgame.characters.Attack;
 import com.jgame.elements.BossEnemy;
 import com.jgame.elements.Enemy;
 import com.jgame.elements.EnemyAccelerator;
@@ -50,6 +52,23 @@ public class GameLevels {
     public static final float HOMING_SIZE = 10f;
     public static final float[] HOMING_COLOR = new float[]{1,0,0.35f,1};
     public static final Enemy.StunInfo HOMING_STUN = new Enemy.StunInfo(1.5f, 5);
+    public static final int ID_FENCE = 0;
+
+
+    public static final CharacterInformation CHARACTER_INFO_FENCE =
+            new CharacterInformation(30f, 5, 5, ID_FENCE, new float[]{}){
+
+                @Override
+                public Attack getPrimaryAttack() {
+                    return null;
+                }
+
+                @Override
+                public Attack getSecondaryAttack() {
+                    return null;
+                }
+            };
+
 
     public enum EnemyFactory {
         SIMPLE {

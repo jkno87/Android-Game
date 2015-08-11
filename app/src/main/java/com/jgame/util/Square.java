@@ -64,27 +64,6 @@ public class Square {
     }
 
     public float[] getTextureCoords(TextureData tData){
-        /*float cos = FloatMath.cos(angle * TO_RADIANS);
-        float sin = FloatMath.sin(angle * TO_RADIANS);
-
-        float oX = lenX;
-        float oY = lenY;
-
-        float x1 = position.x + (-oX * cos + oY * sin);
-        float y1 = position.y + (-oX * sin - oY * cos);
-        float x2 = position.x + (oX * cos + oY * sin);
-        float y2 = position.y + (oX * sin - oY * cos);
-        float x3 = position.x + (oX * cos - oY * sin);
-        float y3 = position.y + (oX * sin + oY * cos);
-        float x4 = position.x + (-oX * cos - oY * sin);
-        float y4 = position.y + (-oX * sin + oY * cos);
-
-        float[] tIndex = tData.getTextCoords();
-
-        return new float[] { x1, y1, tIndex[0], tIndex[1],
-                x2, y2, tIndex[2], tIndex[3],
-                x3, y3, tIndex[4], tIndex[5],
-                x4, y4, tIndex[6], tIndex[7]};*/
         return getTextureCoords(tData.getTextCoords());
     }
 
