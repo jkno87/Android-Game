@@ -49,6 +49,7 @@ public class GameRenderer implements Renderer {
     int specialButtonId;
     int mothershipId;
     int personaje2Id;
+    int personajesId;
 
     public GameRenderer(GameLogic logic) {
         this.logic = logic;
@@ -138,12 +139,12 @@ public class GameRenderer implements Renderer {
         shipDrawer.draw();
 
         gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personaje2Id);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
         gl10.glLoadIdentity();
 
         Drawer characterDrawer = new Drawer(gl10, logic.availableCharacters.length, true, false);
         for(GameLogic.PinButton p : logic.availableCharacters)
-            characterDrawer.addJavaVertex(p.size.getTextureCoords(TextureData.USE_WHOLE_IMAGE));
+            characterDrawer.addJavaVertex(p.size.getTextureCoords(new float[]{0,0.5f,1,0.5f,1,0,0,0}));
         characterDrawer.draw();
 
         gl10.glLoadIdentity();
@@ -369,5 +370,6 @@ public class GameRenderer implements Renderer {
         specialButtonId = loadTexture(R.raw.special1);
         mothershipId = loadTexture(R.raw.mothership);
         personaje2Id = loadTexture(R.raw.personaje2);
+        personajesId = loadTexture(R.raw.personajes);
     }
 }
