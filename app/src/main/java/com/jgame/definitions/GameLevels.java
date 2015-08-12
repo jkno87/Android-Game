@@ -24,6 +24,8 @@ import com.jgame.util.Vector2;
 
 public class GameLevels {
 
+    public static final float FRUSTUM_HEIGHT = 480f;
+    public static final float FRUSTUM_WIDTH = 320f;
     public static final int FAST_SIMPLE_HP = 1;
     public static final int FAST_SIMPLE_POINTS = 1;
     public static final int FAST_SIMPLE_DAMAGE = 1;
@@ -53,10 +55,25 @@ public class GameLevels {
     public static final float[] HOMING_COLOR = new float[]{1,0,0.35f,1};
     public static final Enemy.StunInfo HOMING_STUN = new Enemy.StunInfo(1.5f, 5);
     public static final int ID_FENCE = 0;
+    public static final int ID_LION = 1;
 
 
     public static final CharacterInformation CHARACTER_INFO_FENCE =
-            new CharacterInformation(30f, 5, 5, ID_FENCE, new float[]{}){
+            new CharacterInformation(30f, 5, 5, ID_FENCE, new float[]{0,0.5f,1,0.5f,1,0,0,0}){
+
+                @Override
+                public Attack getPrimaryAttack() {
+                    return null;
+                }
+
+                @Override
+                public Attack getSecondaryAttack() {
+                    return null;
+                }
+            };
+
+    public static final CharacterInformation CHARACTER_INFO_LION =
+            new CharacterInformation(30f, 5, 5, ID_LION, new float[]{0,1,1,1,1,0.5f,0,0.5f}){
 
                 @Override
                 public Attack getPrimaryAttack() {

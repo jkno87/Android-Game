@@ -8,13 +8,18 @@ import android.view.MotionEvent;
 
 public class GameSurfaceView extends GLSurfaceView {
 
-    GameLogic gameLogic;
+    private GameActivity gameActivity;
 
-    public GameSurfaceView(Context context, GameLogic gameLogic, GameRenderer gameRenderer){
+    public GameSurfaceView(GameActivity context){
         super(context);
-        this.gameLogic = gameLogic;
+        this.gameActivity = context;
+        GameRenderer gameRenderer = new GameRenderer();
         setRenderer(gameRenderer);
         gameRenderer.setSurfaceView(this);
+    }
+
+    public GameFlow getGameFlow(){
+        return gameActivity.getGameFlow();
     }
 
     @Override
@@ -22,22 +27,19 @@ public class GameSurfaceView extends GLSurfaceView {
 
         synchronized(this){
 
-            if(gameLogic.state != GameLogic.GameState.PLAYING && gameLogic.state != GameLogic.GameState.CHARACTER_SELECT)
-                return false;
-
             float x = (event.getX() / (float) getWidth());
             float y = (((float) getHeight() - event.getY()) / (float) getHeight());
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    gameLogic.inputDown(x, y);
+                    getGameFlow().handleDown(x, y);
                     break;
 
                 case MotionEvent.ACTION_MOVE:
-                    gameLogic.drag(x, y);
+                    getGameFlow().handleDrag(x, y);
                     break;
                 case MotionEvent.ACTION_UP:
-                    gameLogic.release(x, y);
+                    getGameFlow().handleUp(x, y);
                     break;
 
             }

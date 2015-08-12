@@ -5,7 +5,9 @@ package com.jgame.game;
  */
 public abstract class GameFlow {
 
-    public abstract void handleInput(float x, float y);
+    public abstract void handleDrag(float x, float y);
+    public abstract void handleDown(float x, float y);
+    public abstract void handleUp(float x, float y);
     public abstract void update(float interval);
     public abstract void pause();
     public abstract void unpause();

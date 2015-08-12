@@ -5,7 +5,5 @@ package com.jgame.game;
  */
 public class GameResources {
 
-    public static GameRenderer gameRenderer;
     public static SoundManager soundManager;
-    public static GameLogic gameLogic;
 }

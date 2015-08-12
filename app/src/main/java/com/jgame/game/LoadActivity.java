@@ -21,10 +21,7 @@ public class LoadActivity extends Activity {
             finish();
         } else {
 
-            GameResources.gameLogic = new GameLogic();
             GameResources.soundManager = new SoundManager(this);
-            GameResources.gameRenderer = new GameRenderer(GameResources.gameLogic);
-
             startActivity(new Intent(this, GameActivity.class));
         }
     }

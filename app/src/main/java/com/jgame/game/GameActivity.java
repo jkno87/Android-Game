@@ -15,16 +15,32 @@ import android.view.MotionEvent;
 public class GameActivity extends Activity {
 
     private GLSurfaceView gameSurfaceView;
-    GameLogic gameLogic;
-    SoundManager soundManager;
+    private SoundManager soundManager;
+    private GameFlow gameFlow;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         soundManager = GameResources.soundManager;
-        gameLogic = GameResources.gameLogic;
-        gameSurfaceView = new GameSurfaceView(this, gameLogic, GameResources.gameRenderer);
+        gameFlow = new CharacterSelectFlow(this);
+        gameSurfaceView = new GameSurfaceView(this);
         setContentView(gameSurfaceView);
+    }
+
+    /**
+     * Regresa el GameFlow actual de la actividad.
+     * @return
+     */
+    public GameFlow getGameFlow(){
+        return gameFlow;
+    }
+
+    /**
+     * Asigna un nuevo GameFlow a la actividad
+     * @param gameFlow
+     */
+    public void setGameFlow(GameFlow gameFlow){
+        this.gameFlow = gameFlow;
     }
 
     @Override
@@ -41,62 +57,4 @@ public class GameActivity extends Activity {
         soundManager.terminar();
         gameSurfaceView.onPause();
     }
-
-    /**
-     * Maneja el input de up cuando el juego se encuentra en el estado de PAUSED.
-     * @param x coord X del evento
-     * @param y coord Y del evento
-     */
-    private void handleUpPaused(float x, float y){
-        if(gameLogic.continueButton.size.within(x, y))
-            gameLogic.unpause();
-        if(gameLogic.quitButton.size.within(x,y)) {
-            Intent intent = new Intent(this, LoadActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("EXIT", true);
-            startActivity(intent);
-            finish();
-        }
-    }
-
-
-    /**
-     * Maneja los inputs cuando se encuentra el juego en game over
-     * @param x coord X del evento
-     * @param y coord Y del evento
-     */
-    private void handleGameOver(float x, float y){
-        if(gameLogic.continueButton.size.within(x, y))
-            gameLogic.start();
-        if(gameLogic.quitButton.size.within(x, y)) {
-            gameLogic.start();
-            gameLogic.state = GameLogic.GameState.CHARACTER_SELECT;
-        }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent e){
-        float x = (e.getX() / (float) gameSurfaceView.getWidth()) * gameLogic.FRUSTUM_WIDTH;
-        float y = (((float) gameSurfaceView.getHeight() - e.getY()) / (float) gameSurfaceView.getHeight()) * gameLogic.FRUSTUM_HEIGHT;
-
-        switch (e.getAction()) {
-            case MotionEvent.ACTION_UP:
-                if(gameLogic.state == GameLogic.GameState.PAUSED)
-                    handleUpPaused(x, y);
-
-                if(gameLogic.state == GameLogic.GameState.GAME_OVER && gameLogic.endGameDuration.completed())
-                    handleGameOver(x, y);
-
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean onKeyDown(int keycode, KeyEvent event){
-        gameLogic.pause();
-        return true;
-    }
-
-
 }

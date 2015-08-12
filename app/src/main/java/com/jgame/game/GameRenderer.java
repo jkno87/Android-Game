@@ -25,6 +25,7 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
 
 public class GameRenderer implements Renderer {
 
@@ -33,11 +34,10 @@ public class GameRenderer implements Renderer {
     private final float FRUSTUM_WIDTH = 320f;
     private final float FRAME_INTERVAL = 0.015384615f;
     private final float NANO_SCALE = 1000000000.0f;//1000000000.0f;
-    private final float [][] CHARACTER_SELECT_TEXTURES = new float[2][8];
     public static float[][] TEXTURE_DIGITS = TextureData.createTextureArray(0.0625f, 10);
 
     private GameLogic logic;
-    private GLSurfaceView surfaceView;
+    private GameSurfaceView surfaceView;
     private long lastUpdate;
     private final TimeCounter updateCounter;
     private GL10 gl10;
@@ -53,20 +53,12 @@ public class GameRenderer implements Renderer {
     int personaje2Id;
     int personajesId;
 
-    public GameRenderer(GameLogic logic) {
-        this.logic = logic;
+    public GameRenderer(){
         updateCounter = new TimeCounter(FRAME_INTERVAL);
         lastUpdate = System.nanoTime();
-        initializeTextureData();
     }
 
-    private void initializeTextureData(){
-        CHARACTER_SELECT_TEXTURES[GameIds.CHARACTER_ONE_ID] = new float[]{0,0.5f,1,0.5f,1,0,0,0};
-        CHARACTER_SELECT_TEXTURES[GameIds.CHARACTER_TWO_ID] = new float[]{0,1,1,1,1,0.5f,0,0.5f};
-    }
-
-
-    public void setSurfaceView(GLSurfaceView surfaceView){
+    public void setSurfaceView(GameSurfaceView surfaceView){
         this.surfaceView = surfaceView;
     }
 
@@ -88,44 +80,62 @@ public class GameRenderer implements Renderer {
         long newTime = System.nanoTime();
         float interval = (newTime - lastUpdate) / NANO_SCALE;
         lastUpdate = newTime;
-
         updateCounter.accum(interval);
+        GameFlow flow = surfaceView.getGameFlow();
 
         if(updateCounter.completed()) {
             updateCounter.reset();
-            logic.updateGame(interval);
+            flow.update(interval);
         }
 
-        if (logic.state == GameState.GAME_OVER) {
-            drawGameOver();
-        } else if (logic.state == GameState.STAGE_CLEARED) {
-            drawStageCleared();
-        } else if (logic.state == GameState.CHARACTER_SELECT) {
-            drawCharacterSelect();
-        } else {
-            drawGame();
-        }
-
-        if(logic.state == GameState.PAUSED){
-            gl10.glLoadIdentity();
-            gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-            Drawer pauseInfo = new Drawer(gl10, 4, false, true);
-            pauseInfo.addJavaVertex(Square.getSimpleCoords(0, 0, FRUSTUM_WIDTH, FRUSTUM_HEIGHT,
-                    new float[]{0f, 0f, 0f, 0.55f}));
-            pauseInfo.addJavaVertex(Square.getSimpleCoords(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2, 80, 80,
-                    new float[]{0.95f, 0.98f, 0.85f, 1}));
-            pauseInfo.addJavaVertex(Square.getSimpleCoords(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 + 40, 60, 20,
-                    new float[]{0, 1, 0, 1}));
-            pauseInfo.addJavaVertex(Square.getSimpleCoords(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 - 40, 60, 20,
-                    new float[]{1, 0, 0, 1}));
-
-            pauseInfo.draw();
-        }
+        if(flow instanceof CharacterSelectFlow)
+            drawCharacterSelect(flow);
+        else if (flow instanceof MainGameFlow)
+            drawMainGameFlow(flow);
 
     }
 
+    private void drawMainGameFlow(GameFlow flow){
+        MainGameFlow gameFlow = (MainGameFlow) flow;
+        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
+        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-    private void drawCharacterSelect(){
+        gl10.glMatrixMode(GL10.GL_PROJECTION);
+        gl10.glLoadIdentity();
+        gl10.glOrthof(0, FRUSTUM_WIDTH, 0, FRUSTUM_HEIGHT, 1, -1);
+
+        gl10.glMatrixMode(GL10.GL_MODELVIEW);
+        gl10.glEnable(GL10.GL_BLEND);
+        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
+        gl10.glLoadIdentity();
+        Drawer mothershipDrawer = new Drawer(gl10, 1, true, false);
+        mothershipDrawer.addJavaVertex(new Square(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2, 50, 50)
+                .getTextureCoords(gameFlow.characterInfo.textureInfo));
+        mothershipDrawer.draw();
+
+        gl10.glLoadIdentity();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+        Drawer bannerDrawer = new Drawer(gl10, 5 + 1, false, true);
+        bannerDrawer.addJavaVertex(Square.getSimpleCoords(0, FRUSTUM_HEIGHT - 20, FRUSTUM_WIDTH, 20,
+                new float[]{0.75f, 0.98f, 0.7f, 1}));
+
+        int i = 0;
+        float currX = 10;
+        float barY = FRUSTUM_HEIGHT - 20;
+        while (i < 5) {
+            bannerDrawer.addJavaVertex(Square.getSimpleCoords(currX, barY, 5, 5, new float[]{1,0,0,1}));
+            currX += 15;
+            i++;
+        }
+
+        bannerDrawer.draw();
+    }
+
+    private void drawCharacterSelect(GameFlow flow){
+        CharacterSelectFlow cFlow = (CharacterSelectFlow) flow;
         gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
@@ -151,16 +161,16 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
         gl10.glLoadIdentity();
 
-        Drawer characterDrawer = new Drawer(gl10, logic.availableCharacters.length, true, false);
-        for(int i = 0; i < logic.availableCharacters.length; i++)
-            characterDrawer.addJavaVertex(logic.availableCharacters[i].size.getTextureCoords(CHARACTER_SELECT_TEXTURES[i]));
+        Drawer characterDrawer = new Drawer(gl10, cFlow.availableCharacters.length, true, false);
+        for(int i = 0; i < cFlow.availableCharacters.length; i++)
+            characterDrawer.addJavaVertex(cFlow.availableCharacters[i].size.getTextureCoords(cFlow.availableCharacters[i].characterInfo.textureInfo));
         characterDrawer.draw();
 
-        if(logic.shipsFilled()) {
+        if(cFlow.shipsFilled()) {
             gl10.glLoadIdentity();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
             Drawer buttonDrawer = new Drawer(gl10, 1, false, true);
-            buttonDrawer.addJavaVertex(logic.confirmButton.getSimpleCoords(new float[]{0.75f, 0.98f, 0.7f, 1}));
+            buttonDrawer.addJavaVertex(cFlow.confirmButton.getSimpleCoords(new float[]{0.75f, 0.98f, 0.7f, 1}));
             buttonDrawer.draw();
         }
 
