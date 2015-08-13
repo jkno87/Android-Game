@@ -104,7 +104,7 @@ public class CharacterSelectFlow extends GameFlow {
                 return;
             }
 
-            if(pinTarget.characterSelected.id == b.characterInfo.id)
+            if(pinTarget.filled() && pinTarget.characterSelected.id == b.characterInfo.id)
                 pinTarget.release();
         }
 
