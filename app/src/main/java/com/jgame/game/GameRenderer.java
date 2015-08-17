@@ -52,6 +52,7 @@ public class GameRenderer implements Renderer {
     int mothershipId;
     int personaje2Id;
     int personajesId;
+    int alfabetoId;
 
     public GameRenderer(){
         updateCounter = new TimeCounter(FRAME_INTERVAL);
@@ -165,6 +166,14 @@ public class GameRenderer implements Renderer {
         for(int i = 0; i < cFlow.availableCharacters.length; i++)
             characterDrawer.addJavaVertex(cFlow.availableCharacters[i].size.getTextureCoords(cFlow.availableCharacters[i].characterInfo.textureInfo));
         characterDrawer.draw();
+
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
+        gl10.glLoadIdentity();
+
+        Drawer textDrawer = new Drawer(gl10, 1, true, false);
+        textDrawer.addJavaVertex(new Square(FRUSTUM_WIDTH / 2, (FRUSTUM_HEIGHT / 2) + 100, 10, 10).getTextureCoords(GameIds.ALPHABET_TEXTURES.getTextureCoordinates(0, 0)));
+        textDrawer.draw();
 
         if(cFlow.shipsFilled()) {
             gl10.glLoadIdentity();
@@ -382,6 +391,7 @@ public class GameRenderer implements Renderer {
         gl10.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         proyectileId = loadTexture(R.raw.proyectil);
+        alfabetoId = loadTexture(R.raw.alfabeto);
         enemyId = loadTexture(R.raw.enemigos);
         mainCharId = loadTexture(R.raw.personaje);
         shipId = loadTexture(R.raw.nave);

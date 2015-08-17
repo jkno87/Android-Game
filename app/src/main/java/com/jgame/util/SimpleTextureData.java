@@ -1,5 +1,7 @@
 package com.jgame.util;
 
+import android.util.Log;
+
 /**
  * Created by ej-jose on 13/08/15.
  */
@@ -24,7 +26,7 @@ public class SimpleTextureData {
         float x1 = x / horizontalFrames;
         float y1 = y / verticalFrames;
         float x2 = (x + 1) / horizontalFrames;
-        float y2 = (y + 2) / verticalFrames;
+        float y2 = (y + 1) / verticalFrames;
 
         return new float[]{x1, y2, x2, y2, x2, y1, x1, y1};
     }
