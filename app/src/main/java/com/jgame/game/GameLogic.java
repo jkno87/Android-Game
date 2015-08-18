@@ -76,7 +76,6 @@ public class GameLogic {
     public final SelectButton quitButton;
     public final TimeCounter endGameDuration;
     private GameState stashedState;
-    public GameText continueLabel;
 
 
     public GameLogic(){
@@ -90,7 +89,6 @@ public class GameLogic {
         continueButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 + 40, 60, 20));
         quitButton = new SelectButton(new Square(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 - 40, 60, 20));
         endGameDuration = new TimeCounter(1.2f);
-        continueLabel = new GameText("continue",FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2 + 40, 10);
     }
     
     public void start(){

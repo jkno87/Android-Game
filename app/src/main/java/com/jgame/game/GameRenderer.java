@@ -168,23 +168,25 @@ public class GameRenderer implements Renderer {
             characterDrawer.addJavaVertex(cFlow.availableCharacters[i].size.getTextureCoords(cFlow.availableCharacters[i].characterInfo.textureInfo));
         characterDrawer.draw();
 
-        gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
-        gl10.glLoadIdentity();
-
-        float[][] glText = logic.continueLabel.getLettersTexture();
-
-        Drawer textDrawer = new Drawer(gl10, 1, true, false);
-        for(int i = 0; i < glText.length; i++)
-            textDrawer.addJavaVertex(glText[i]);
-        textDrawer.draw();
-
         if(cFlow.shipsFilled()) {
-            gl10.glLoadIdentity();
+            /*gl10.glLoadIdentity();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
             Drawer buttonDrawer = new Drawer(gl10, 1, false, true);
-            buttonDrawer.addJavaVertex(cFlow.confirmButton.getSimpleCoords(new float[]{0.75f, 0.98f, 0.7f, 1}));
-            buttonDrawer.draw();
+            buttonDrawer.addJavaVertex(cFlow.confirmButton.getSimpleCoords(new float[]{0.75f, 0.55f, 0.7f, 1}));
+            buttonDrawer.draw();*/
+
+            gl10.glEnable(GL10.GL_TEXTURE_2D);
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
+            gl10.glLoadIdentity();
+
+            float[][] glText = cFlow.continueLabel.getLettersTexture();
+
+            Drawer textDrawer = new Drawer(gl10, glText.length, true, false);
+            for(int i = 0; i < glText.length; i++)
+                textDrawer.addJavaVertex(glText[i]);
+
+            textDrawer.draw();
+
         }
 
     }

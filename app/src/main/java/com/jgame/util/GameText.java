@@ -1,5 +1,7 @@
 package com.jgame.util;
 
+import android.util.Log;
+
 /**
  * Created by ej-jose on 17/08/15.
  */
@@ -29,9 +31,9 @@ public class GameText {
         int asciiCharacter = (int) letter - 97;
 
         if(asciiCharacter < LETTERS_COLUMN)
-            return LETTERS_DATA.getTextureCoordinates(0, asciiCharacter);
+            return LETTERS_DATA.getTextureCoordinates(asciiCharacter, 0);
         else
-            return LETTERS_DATA.getTextureCoordinates(1, asciiCharacter - 97);
+            return LETTERS_DATA.getTextureCoordinates(asciiCharacter - LETTERS_COLUMN, 1);
     }
 
     /**

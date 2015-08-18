@@ -7,6 +7,7 @@ import com.jgame.characters.MainCharacter;
 import com.jgame.characters.RangedAttack;
 import com.jgame.definitions.CharacterInformation;
 import com.jgame.definitions.GameLevels;
+import com.jgame.util.GameText;
 import com.jgame.util.Square;
 import com.jgame.util.Vector2;
 
@@ -68,6 +69,7 @@ public class CharacterSelectFlow extends GameFlow {
     private int characterSelected;
     public final Square confirmButton;
     private GameActivity gameActivity;
+    public GameText continueLabel;
 
     public CharacterSelectFlow(GameActivity gameActivity){
         availableShips = new PinTarget[]{new PinTarget(frustumWidth/2, frustumHeight/2, 30)};
@@ -76,6 +78,7 @@ public class CharacterSelectFlow extends GameFlow {
         characterSelected = CHARACTER_NONE;
         confirmButton = new Square(frustumWidth/2, frustumHeight - 75, 35, 15);
         this.gameActivity = gameActivity;
+        continueLabel = new GameText("start", frustumWidth/2, frustumHeight - 75, 10);
     }
 
     /**
