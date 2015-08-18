@@ -12,6 +12,7 @@ import com.jgame.elements.GameElement;
 import com.jgame.characters.MainCharacter;
 import com.jgame.elements.Projectile;
 import com.jgame.util.Drawer;
+import com.jgame.util.GameText;
 import com.jgame.util.TextureData;
 import com.jgame.elements.Enemy;
 import com.jgame.game.GameLogic.GameState;
@@ -171,8 +172,11 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
         gl10.glLoadIdentity();
 
+        float[][] glText = logic.continueLabel.getLettersTexture();
+
         Drawer textDrawer = new Drawer(gl10, 1, true, false);
-        textDrawer.addJavaVertex(new Square(FRUSTUM_WIDTH / 2, (FRUSTUM_HEIGHT / 2) + 100, 10, 10).getTextureCoords(GameIds.ALPHABET_TEXTURES.getTextureCoordinates(0, 0)));
+        for(int i = 0; i < glText.length; i++)
+            textDrawer.addJavaVertex(glText[i]);
         textDrawer.draw();
 
         if(cFlow.shipsFilled()) {
