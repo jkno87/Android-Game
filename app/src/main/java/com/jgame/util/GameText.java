@@ -43,11 +43,12 @@ public class GameText {
     public float[][] getLettersTexture(){
         float[][] textures = new float[texto.length][];
         float currentX = x - size * (texto.length / 2);
+        float offset = texto.length * 0.2f;
 
         for(int i = 0; i < texto.length; i++){
             Square s = new Square(currentX, y, size, size);
             textures[i] = s.getTextureCoords(getTextureData(texto[i]));
-            currentX += size;
+            currentX += size + offset;
         }
 
         return textures;

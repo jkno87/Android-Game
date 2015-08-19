@@ -2,7 +2,7 @@ package com.jgame.util;
 
 import android.util.FloatMath;
 
-public class Square {
+public class Square extends GeometricElement {
     public static float TO_RADIANS = (1 / 180.0f) * (float) Math.PI;
 
     public Vector2 position;
@@ -24,7 +24,8 @@ public class Square {
         this.angle = angle;
     }
 
-    public boolean within(float x, float y){
+    @Override
+    public boolean contains(float x, float y){
         return x <= position.x + lenX && x >= position.x - lenX
                 && y <= position.y + lenY && y >= position.y - lenY;
     }

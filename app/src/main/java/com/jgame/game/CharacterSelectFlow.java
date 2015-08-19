@@ -123,12 +123,12 @@ public class CharacterSelectFlow extends GameFlow {
 
         for(int i = 0; i < availableCharacters.length; i++){
             PinButton character = availableCharacters[i];
-            if(character.size.within(gameX, gameY) &&
+            if(character.size.contains(gameX, gameY) &&
                     (characterSelected == CHARACTER_NONE || characterSelected == i))
                 characterSelected = i;
         }
 
-        if(confirmButton.within(gameX, gameY) && shipsFilled()){
+        if(confirmButton.contains(gameX, gameY) && shipsFilled()){
             gameActivity.setGameFlow(new MainGameFlow(availableShips[0].characterSelected));
         }
 

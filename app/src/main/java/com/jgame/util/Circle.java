@@ -3,7 +3,7 @@ package com.jgame.util;
 /**
  * Created by ej-jose on 11/08/15.
  */
-public class Circle {
+public class Circle extends GeometricElement {
 
     public final float radius;
     public final Vector2 position;
@@ -19,6 +19,7 @@ public class Circle {
      * @param y coordenada y
      * @return boolean determinando si el punto esta dentro del circulo
      */
+    @Override
     public boolean contains(float x, float y){
         return position.dist(x, y) <= radius;
     }
