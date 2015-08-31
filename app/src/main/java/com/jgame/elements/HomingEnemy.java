@@ -29,7 +29,7 @@ public class HomingEnemy extends Enemy {
     @Override
     public void update(GameLogic gameInstance, float timeDifference) {
         if(refreshCounter.completed()) {
-            Vector2 newDirection = new Vector2(gameInstance.mainCharacter.position)
+            Vector2 newDirection = new Vector2(gameInstance.mainCharacter.getPosition())
                     .sub(position).nor().mul(speed);
             this.direction = newDirection;
             refreshCounter.reset();

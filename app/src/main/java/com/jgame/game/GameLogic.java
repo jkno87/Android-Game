@@ -81,7 +81,7 @@ public class GameLogic {
     public GameLogic(){
         bufferProjectiles = new ArrayList<Projectile>();
         projectiles = new ArrayList<Projectile>();
-        mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new DistanceAttack());
+        //mainCharacter = new MainCharacter(new Vector2(FRUSTUM_WIDTH / 2, 50), CHARACTER_SIZE, CHARACTER_STAMINA, new DistanceAttack());
         enemies = new ArrayList<Enemy>();
         decorations = new ArrayList<Decoration>();
         bufferEnemies = new ArrayList<Enemy>();

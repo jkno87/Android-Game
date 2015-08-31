@@ -17,6 +17,13 @@ public class Square extends GeometricElement {
         angle = 0;
     }
 
+    public Square(Vector2 position, float lenX, float lenY, float angle){
+        this.position = position;
+        this.lenX = lenX;
+        this.lenY = lenY;
+        this.angle = angle;
+    }
+
     public Square(float x, float y, float lenX, float lenY, float angle){
         position = new Vector2(x, y);
         this.lenX = lenX;

@@ -20,89 +20,42 @@ import java.util.List;
  */
 public class MainCharacter implements GameElement, EnemyModifier {
 
-    //public static final float[] STUNNED_COLOR = new float[]{0,1,1,0.75f};
-    //public static final float[] NORMAL_COLOR = new float[]{1,1,1,1};
-
-
-
     public enum CharacterState {
         NORMAL, STUNNED, SPECIAL
     }
 
-    private final float STUN_RELEASE = 0.25f;
-    /*private final float PROYECTILE_SPEED = 5f;
-    private final float PROYECTILE_SIZE = 2.5f;
-    private final int SPECIAL_PROJECTILES = 3;
-    private final int SPECIAL_PROJECTILE_LIFE = 1;
-    private final float SPECIAL_PROJECTILE_SIZE = 15f;
-    private final float SPECIAL_LIFETIME = 1f;
-    private final float STUN_RELEASE = 0.25f;
-    private final float PROJECTILE_LIFE = 0.45f;
-    private final float SPECIAL_BURST_TIME = 3.5f;*/
-
-    private final Vector2 startPosition;
-    public Vector2 position;
-    private Vector2 stunDirection;
-    //private TimeCounter specialAttackCounter;
-    private TimeCounter stunCounter;
-    private TimeCounter stunRelease;
     private boolean dragging;
-    private float size;
-    public float angle;
-    public float stun;
     public CharacterState state;
-    public int remainingSpecials;
     public final int stamina;
-    //public Vector2 specialDirection;
     private final Attack mainAttack;
+    private MovementController movementController;
 
-    public MainCharacter(Vector2 position, float size, int stamina, Attack mainAttack){
-        this.startPosition = position;
-        this.position = new Vector2(position);
-        this.size = size;
-        //specialAttackCounter = new TimeCounter(specialCharge);
-        //specialAttackCounter = new TimeCounter(SPECIAL_BURST_TIME);
+    public MainCharacter(MovementController movementController, int stamina, Attack mainAttack){
         this.stamina = stamina;
         state = CharacterState.NORMAL;
         this.mainAttack = mainAttack;
-        //remainingSpecials = SPECIAL_PROJECTILES;
-        stunRelease = new TimeCounter(STUN_RELEASE);
-    }
-
-    private void stunCharacter(Vector2 stunPosition, StunInfo stunInfo){
-        stunCounter = new TimeCounter(stunInfo.time);
-        state = CharacterState.STUNNED;
-        stun += 1;
-        dragging = false;
-        stunDirection = new Vector2(position).sub(stunPosition).nor().mul(stunInfo.force);
+        this.movementController = movementController;
     }
 
     private void recoverCharacter(){
         state = CharacterState.NORMAL;
     }
 
-    public float pctStunned(){
-        return stun / stamina;
-    }
-
     public void receiveInputDown(float sourceX, float sourceY){
         if(state == CharacterState.STUNNED)
             return;
 
-        boolean withinCharacterRadius = position.dist(sourceX, sourceY) <= size;
-        //charging = !withinCharacterRadius;
+        boolean withinCharacterRadius = movementController.containsPoint(sourceX, sourceY);
         dragging = withinCharacterRadius;
-        angle = new Vector2(sourceX, sourceY).sub(position).angle();
+        movementController.angle = movementController.difference(new Vector2(sourceX, sourceY)).angle();
 
     }
 
     public void receiveInputDrag(float sourceX, float sourceY){
-
-        angle = new Vector2(sourceX, sourceY).sub(position).angle();
+        movementController.angle = movementController.difference(new Vector2(sourceX, sourceY)).angle();
 
         if(dragging){
-            position.x = sourceX;
-            position.y = sourceY;
+            movementController.move(sourceX, sourceY);
         }
     }
 
@@ -120,13 +73,13 @@ public class MainCharacter implements GameElement, EnemyModifier {
             if(state == CharacterState.SPECIAL)
                 created = mainAttack.createSpecialAttack(sourceX, sourceY);
             else
-                created = mainAttack.createAttack(sourceX, sourceY, position);
+                created = mainAttack.createAttack(sourceX, sourceY, movementController.position);
                 //created = new StaticProjectile(new Vector2(sourceX, sourceY),
                 //    SPECIAL_PROJECTILE_SIZE, SPECIAL_LIFETIME, SPECIAL_PROJECTILE_LIFE);
                 /*created = new SimpleProjectile(new Vector2(position), new Vector2(sourceX, sourceY)
                         .sub(position).nor(), PROYECTILE_SPEED, PROYECTILE_SIZE);*/
 
-            angle = new Vector2(sourceX, sourceY).sub(position).angle();
+            movementController.angle = movementController.difference(new Vector2(sourceX, sourceY)).angle();
         }
 
         dragging = false;
@@ -144,48 +97,18 @@ public class MainCharacter implements GameElement, EnemyModifier {
             return;
 
         for(int i = 0; i < enemies.size(); i++)
-            if(position.dist(enemies.get(i).position) < enemies.get(i).size + size) {
+            if(movementController.collision(enemies.get(i))){
                 Enemy e = enemies.get(i);
                 e.hp--;
-                stunCharacter(e.position, e.stunInfo);
+                movementController.stun(e.stunInfo);
             }
     }
 
     @Override
     public void update(GameLogic gameInstance, float timeDifference) {
-        if(state == CharacterState.STUNNED){
-            stunCounter.accum(timeDifference);
-            if(stunCounter.completed())
-                recoverCharacter();
+        movementController.update(timeDifference);
 
-            if(!gameInstance.withinXBounds(position.x, size))
-                stunDirection.x *= -1;
-
-            if(!gameInstance.withinYBounds(position.y, size))
-                stunDirection.y *= -1;
-
-            position.add(stunDirection);
-
-            return;
-        }
-
-        if(stun > 0) {
-
-            if(stun >= stamina) {
-                position.set(startPosition);
-                stun = 0;
-                stunRelease.reset();
-                return;
-            }
-
-            stunRelease.accum(timeDifference);
-            if (stunRelease.completed()) {
-                stun -= 1;
-                stunRelease.reset();
-            }
-        }
-
-        Projectile p = mainAttack.createTimedAttack(timeDifference, position);
+        Projectile p = mainAttack.createTimedAttack(timeDifference, movementController.position);
         if(p != null)
             gameInstance.addProjectile(p);
 
@@ -211,5 +134,21 @@ public class MainCharacter implements GameElement, EnemyModifier {
     @Override
     public boolean vivo() {
         return false;
+    }
+
+    /**
+     * Regresa un vector con la posicion del maincharacter
+     * @return Vector2 con la posicion actual del personaje
+     */
+    public Vector2 getPosition(){
+        return new Vector2(movementController.position);
+    }
+
+    /**
+     * Regresa el angulo del personaje principal
+     * @return float con el angulo de direccion
+     */
+    public float getAngle(){
+        return movementController.angle;
     }
 }

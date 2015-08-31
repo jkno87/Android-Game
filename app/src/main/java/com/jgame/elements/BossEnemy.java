@@ -88,9 +88,8 @@ public class BossEnemy extends Enemy {
                     warningSent = false;
                     secondaryAttack.changeInterval(SECONDARY_ATTACK_INTERVAL);
                 } else {
-                    gameInstance.addDecoration(new Decoration(gameInstance.mainCharacter.position, WARNING_SIZE, WARNING_DECORATION_TIME));
-                    freezeProjectileLocation.x = gameInstance.mainCharacter.position.x;
-                    freezeProjectileLocation.y = gameInstance.mainCharacter.position.y;
+                    gameInstance.addDecoration(new Decoration(gameInstance.mainCharacter.getPosition(), WARNING_SIZE, WARNING_DECORATION_TIME));
+                    freezeProjectileLocation.set(gameInstance.mainCharacter.getPosition());
                     warningSent = true;
                     secondaryAttack.changeInterval(WARNING_DECORATION_TIME);
                 }

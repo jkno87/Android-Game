@@ -296,13 +296,13 @@ public class GameRenderer implements Renderer {
                 new float[]{1,1,1,1} : new float[]{0,0,1,1};
 
         Drawer characterDrawer = new Drawer(gl10, 1, true, true);
-        characterDrawer.addJavaVertex(new Square(logic.mainCharacter.position.x, logic.mainCharacter.position.y,
-                logic.CHARACTER_SIZE, logic.CHARACTER_SIZE, logic.mainCharacter.angle)
+        characterDrawer.addJavaVertex(new Square(logic.mainCharacter.getPosition(),
+                logic.CHARACTER_SIZE, logic.CHARACTER_SIZE, logic.mainCharacter.getAngle())
                 .getTextureColorCoords(TextureData.USE_WHOLE_IMAGE, characterColor));
         characterDrawer.draw();
         characterDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, mainCharId);
-        characterDrawer.addJavaVertex(new Square(logic.mainCharacter.position.x, logic.mainCharacter.position.y,
+        characterDrawer.addJavaVertex(new Square(logic.mainCharacter.getPosition(),
                 logic.CHARACTER_SIZE, logic.CHARACTER_SIZE, 0)
                 .getTextureColorCoords(TextureData.USE_WHOLE_IMAGE, characterColor));
         characterDrawer.draw();
