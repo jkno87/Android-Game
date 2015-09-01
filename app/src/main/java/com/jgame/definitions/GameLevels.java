@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.jgame.characters.Attack;
+import com.jgame.characters.MovementController;
 import com.jgame.elements.BossEnemy;
 import com.jgame.elements.Enemy;
 import com.jgame.elements.EnemyAccelerator;
@@ -20,6 +21,7 @@ import com.jgame.elements.EnemySpawner.SpawnElement;
 import com.jgame.game.GameLogic;
 import com.jgame.game.GameLogic.Level;
 import com.jgame.util.AnimationData;
+import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
 public class GameLevels {
@@ -58,8 +60,61 @@ public class GameLevels {
     public static final int ID_LION = 1;
 
 
+    public static final MovementController CIRCLE_CONTROLLER = new MovementController(new Vector2(), 0) {
+        private boolean stunned;
+        private TimeCounter stunCounter;
+        private Vector2 stunDirection;
+        private float size = 10;
+
+        @Override
+        public boolean stunned() {
+            return stunned;
+        }
+
+        @Override
+        public void stun(Vector2 stunPosition, Enemy.StunInfo stunInfo) {
+            stunCounter = new TimeCounter(stunInfo.time);
+            stunDirection = new Vector2(position).sub(stunPosition).nor().mul(stunInfo.force);
+            stunned = true;
+        }
+
+        @Override
+        public boolean collision(Enemy enemy) {
+            return position.dist(enemy.position) < enemy.size + size;
+        }
+
+        @Override
+        public boolean containsPoint(float x, float y) {
+            return position.dist(x, y) <= size;
+        }
+
+        @Override
+        public void move(float x, float y) {
+            position.set(x, y);
+        }
+
+        @Override
+        public void update(GameLogic gameInstance, float timeDifference) {
+            if(stunned){
+                stunCounter.accum(timeDifference);
+                if(stunCounter.completed())
+                    stunned = false;
+
+                if(!gameInstance.withinXBounds(position.x, size))
+                    stunDirection.x *= -1;
+
+                if(!gameInstance.withinYBounds(position.y, size))
+                    stunDirection.y *= -1;
+
+                position.add(stunDirection);
+
+                return;
+            }
+        }
+    };
+
     public static final CharacterInformation CHARACTER_INFO_FENCE =
-            new CharacterInformation(30f, 5, 5, ID_FENCE, new float[]{0,0.5f,1,0.5f,1,0,0,0}){
+            new CharacterInformation(30f, 5, 5, ID_FENCE, new float[]{0,0.5f,1,0.5f,1,0,0,0}, CIRCLE_CONTROLLER){
 
                 @Override
                 public Attack getPrimaryAttack() {
@@ -73,7 +128,7 @@ public class GameLevels {
             };
 
     public static final CharacterInformation CHARACTER_INFO_LION =
-            new CharacterInformation(30f, 5, 5, ID_LION, new float[]{0,1,1,1,1,0.5f,0,0.5f}){
+            new CharacterInformation(30f, 5, 5, ID_LION, new float[]{0,1,1,1,1,0.5f,0,0.5f}, CIRCLE_CONTROLLER){
 
                 @Override
                 public Attack getPrimaryAttack() {

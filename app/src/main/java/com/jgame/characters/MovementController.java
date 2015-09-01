@@ -1,6 +1,7 @@
 package com.jgame.characters;
 
 import com.jgame.elements.Enemy;
+import com.jgame.game.GameLogic;
 import com.jgame.util.Circle;
 import com.jgame.util.Vector2;
 
@@ -13,12 +14,16 @@ public abstract class MovementController {
 
     public Vector2 position;
     public float angle;
+
+    public MovementController(Vector2 position, float angle){
+        this.position = position;
+        this.angle = angle;
+    }
+
     public abstract boolean stunned();
-    public abstract void stun(Enemy.StunInfo stunInfo);
+    public abstract void stun(Vector2 stunPosition, Enemy.StunInfo stunInfo);
     public abstract boolean collision(Enemy enemy);
-    public abstract boolean containsPoint(Vector2 position);
     public abstract boolean containsPoint(float x, float y);
-    public abstract Vector2 difference(Vector2 other);
     public abstract void move(float x, float y);
-    public abstract void update(float timeDifference);
+    public abstract void update(GameLogic gameInstance, float timeDifference);
 }
