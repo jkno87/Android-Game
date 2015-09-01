@@ -21,6 +21,7 @@ public abstract class MovementController {
     }
 
     public abstract boolean stunned();
+    public abstract void updateDirection(float x, float y);
     public abstract void stun(Vector2 stunPosition, Enemy.StunInfo stunInfo);
     public abstract boolean collision(Enemy enemy);
     public abstract boolean containsPoint(float x, float y);

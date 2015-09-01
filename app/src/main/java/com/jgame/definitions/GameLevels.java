@@ -64,7 +64,7 @@ public class GameLevels {
         private boolean stunned;
         private TimeCounter stunCounter;
         private Vector2 stunDirection;
-        private float size = 10;
+        private float size = 50;
 
         @Override
         public boolean stunned() {
@@ -91,6 +91,11 @@ public class GameLevels {
         @Override
         public void move(float x, float y) {
             position.set(x, y);
+        }
+
+        @Override
+        public void updateDirection(float x, float y){
+            angle = new Vector2(x,y).sub(position).angle();
         }
 
         @Override

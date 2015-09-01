@@ -47,12 +47,12 @@ public class MainCharacter implements GameElement, EnemyModifier {
 
         boolean withinCharacterRadius = movementController.containsPoint(sourceX, sourceY);
         dragging = withinCharacterRadius;
-        movementController.angle = movementController.difference(new Vector2(sourceX, sourceY)).angle();
+        movementController.updateDirection(sourceX, sourceY);
 
     }
 
     public void receiveInputDrag(float sourceX, float sourceY){
-        movementController.angle = movementController.difference(new Vector2(sourceX, sourceY)).angle();
+        movementController.updateDirection(sourceX, sourceY);
 
         if(dragging){
             movementController.move(sourceX, sourceY);
@@ -79,7 +79,7 @@ public class MainCharacter implements GameElement, EnemyModifier {
                 /*created = new SimpleProjectile(new Vector2(position), new Vector2(sourceX, sourceY)
                         .sub(position).nor(), PROYECTILE_SPEED, PROYECTILE_SIZE);*/
 
-            movementController.angle = movementController.difference(new Vector2(sourceX, sourceY)).angle();
+            movementController.updateDirection(sourceX, sourceY);
         }
 
         dragging = false;
@@ -100,13 +100,13 @@ public class MainCharacter implements GameElement, EnemyModifier {
             if(movementController.collision(enemies.get(i))){
                 Enemy e = enemies.get(i);
                 e.hp--;
-                movementController.stun(e.stunInfo);
+                movementController.stun(e.position, e.stunInfo);
             }
     }
 
     @Override
     public void update(GameLogic gameInstance, float timeDifference) {
-        movementController.update(timeDifference);
+        movementController.update(gameInstance, timeDifference);
 
         Projectile p = mainAttack.createTimedAttack(timeDifference, movementController.position);
         if(p != null)

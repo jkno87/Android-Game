@@ -114,7 +114,7 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
         gl10.glLoadIdentity();
         Drawer mothershipDrawer = new Drawer(gl10, 1, true, false);
-        mothershipDrawer.addJavaVertex(new Square(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2, 50, 50)
+        mothershipDrawer.addJavaVertex(new Square(gameFlow.mainCharacter.getPosition(), 50, 50, 0)
                 .getTextureCoords(gameFlow.characterInfo.textureInfo));
         mothershipDrawer.draw();
 
