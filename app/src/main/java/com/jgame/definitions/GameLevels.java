@@ -9,6 +9,7 @@ import java.util.Random;
 import com.jgame.characters.Attack;
 import com.jgame.characters.MovementController;
 import com.jgame.elements.BossEnemy;
+import com.jgame.elements.ElementCreator;
 import com.jgame.elements.Enemy;
 import com.jgame.elements.EnemyAccelerator;
 import com.jgame.elements.EnemyParticle;
@@ -307,6 +308,12 @@ public class GameLevels {
         };
     }
 
+    public static final ElementCreator.ElementWave SIMPLE_WAVE =
+            new ElementCreator.ElementWave(){
+
+            };
+
+    public static final ElementCreator TEST_CREATOR = new ElementCreator(new ElementCreator.ElementWave[]{});
 
     public static final Level TEST_LEVEL =
             new Level(){
