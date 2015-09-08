@@ -28,6 +28,10 @@ public class Decoration implements GameElement {
         angle = 0;
     }
 
+    public Vector2 getPosition(){
+        return new Vector2();
+    }
+
     @Override
     public void update(GameLogic gameInstance, float timeDifference) {
         this.size *= 0.98;
@@ -42,5 +46,9 @@ public class Decoration implements GameElement {
 
     public Square getDrawSquare(){
         return new Square(x, y, size, size, angle);
+    }
+
+    public float getPctAlive(){
+        return 0;
     }
 }

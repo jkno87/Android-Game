@@ -129,7 +129,7 @@ public class CharacterSelectFlow extends GameFlow {
         }
 
         if(confirmButton.contains(gameX, gameY) && shipsFilled()){
-            gameActivity.setGameFlow(new MainGameFlow(availableShips[0].characterSelected));
+            gameActivity.setGameFlow(new MainGameFlow(availableShips[0].characterSelected, GameLevels.TEST_CREATOR));
         }
 
         return;

@@ -38,6 +38,10 @@ public class Square extends GeometricElement {
     }
 
 
+    public static float[] getSimpleCoords(Vector2 position, float sizeX, float sizeY, float[] colors){
+        return getSimpleCoords(position.x, position.y, sizeX, sizeY, colors);
+    }
+
     public static float[] getSimpleCoords(float x, float y, float sizeX, float sizeY, float[] colors){
         return new float[]{x - sizeX, y - sizeY, colors[0], colors[1], colors[2], colors[3],
                            x + sizeX, y - sizeY, colors[0], colors[1], colors[2], colors[3],

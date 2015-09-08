@@ -35,6 +35,14 @@ public class ElementCreator {
     }
 
     /**
+     * Función que inicializa los miembros de ElementCreator
+     */
+    public void start(){
+        for(ElementWave e : waves)
+            e.initialize();
+    }
+
+    /**
      * Produce GameElements en el intervalo de tiempo transcurrido. Es el conjunto que contiene todos los elementos producidos
      * individualmente por las ElementWaves.
      * @param interval intervalo de tiempo transcurrido

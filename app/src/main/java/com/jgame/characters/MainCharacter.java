@@ -151,4 +151,8 @@ public class MainCharacter implements GameElement, EnemyModifier {
     public float getAngle(){
         return movementController.angle;
     }
+
+    public float getPctAlive(){
+        return 0;
+    }
 }

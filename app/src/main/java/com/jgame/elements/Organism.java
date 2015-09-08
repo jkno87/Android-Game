@@ -9,8 +9,8 @@ import com.jgame.util.Vector2;
  */
 public class Organism implements GameElement {
 
-    private TimeCounter lifeTimer;
-    public Vector2 position;
+    public TimeCounter lifeTimer;
+    private Vector2 position;
 
     public Organism (float timeToLive, Vector2 position){
         lifeTimer = new TimeCounter(timeToLive);
@@ -23,5 +23,13 @@ public class Organism implements GameElement {
 
     public boolean vivo(){
         return !lifeTimer.completed();
+    }
+
+    public Vector2 getPosition(){
+        return position;
+    }
+
+    public float getPctAlive(){
+        return 1.0f - lifeTimer.pctCharged();
     }
 }

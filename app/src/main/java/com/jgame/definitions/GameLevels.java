@@ -15,7 +15,9 @@ import com.jgame.elements.EnemyAccelerator;
 import com.jgame.elements.EnemyParticle;
 import com.jgame.elements.EnemySpawner;
 import com.jgame.elements.EnemySpawner.PositionGenerator;
+import com.jgame.elements.GameElement;
 import com.jgame.elements.HomingEnemy;
+import com.jgame.elements.Organism;
 import com.jgame.elements.SimpleEnemy;
 import com.jgame.elements.SimpleEnemy.SnakeBody;
 import com.jgame.elements.EnemySpawner.SpawnElement;
@@ -310,10 +312,39 @@ public class GameLevels {
 
     public static final ElementCreator.ElementWave SIMPLE_WAVE =
             new ElementCreator.ElementWave(){
+                private TimeCounter spawnTimer;
+                private Random random;
+                private final static float AVG_LIFESPAN = 3;
 
+                public void initialize(){
+                    //remainingElements = 10;
+                    spawnTimer = new TimeCounter(1.25f);
+                    random = new Random();
+                }
+
+                private Vector2 generatePosition(){
+                    return new Vector2(random.nextFloat() * GameLogic.FRUSTUM_WIDTH,
+                            random.nextFloat() * GameLogic.FRUSTUM_HEIGHT);
+                }
+
+                @Override
+                public List<GameElement> generate(float interval){
+                    spawnTimer.accum(interval);
+                    List<GameElement> elements = new ArrayList<GameElement>();
+
+                    if(!spawnTimer.completed())
+                        return elements;
+
+                    for(int i = 0; i < random.nextInt(4) + 1; i++)
+                        elements.add(new Organism(AVG_LIFESPAN + ((random.nextFloat() - 0.5f) * AVG_LIFESPAN), generatePosition()));
+
+                    spawnTimer.reset();
+
+                    return elements;
+                }
             };
 
-    public static final ElementCreator TEST_CREATOR = new ElementCreator(new ElementCreator.ElementWave[]{});
+    public static final ElementCreator TEST_CREATOR = new ElementCreator(new ElementCreator.ElementWave[]{SIMPLE_WAVE});
 
     public static final Level TEST_LEVEL =
             new Level(){

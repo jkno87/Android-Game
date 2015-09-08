@@ -34,7 +34,7 @@ public class GameRenderer implements Renderer {
     private final float FRUSTUM_HEIGHT = 480f;
     private final float FRUSTUM_WIDTH = 320f;
     private final float FRAME_INTERVAL = 0.015384615f;
-    private final float NANO_SCALE = 1000000000.0f;//1000000000.0f;
+    private final float NANO_SCALE = 1000000000.0f;
     public static float[][] TEXTURE_DIGITS = TextureData.createTextureArray(0.0625f, 10);
 
     private GameLogic logic;
@@ -118,22 +118,18 @@ public class GameRenderer implements Renderer {
                 .getTextureCoords(gameFlow.characterInfo.textureInfo));
         mothershipDrawer.draw();
 
-        gl10.glLoadIdentity();
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-        Drawer bannerDrawer = new Drawer(gl10, 5 + 1, false, true);
-        bannerDrawer.addJavaVertex(Square.getSimpleCoords(0, FRUSTUM_HEIGHT - 20, FRUSTUM_WIDTH, 20,
-                new float[]{0.75f, 0.98f, 0.7f, 1}));
 
-        int i = 0;
-        float currX = 10;
-        float barY = FRUSTUM_HEIGHT - 20;
-        while (i < 5) {
-            bannerDrawer.addJavaVertex(Square.getSimpleCoords(currX, barY, 5, 5, new float[]{1,0,0,1}));
-            currX += 15;
-            i++;
+        if(!gameFlow.levelElements.isEmpty()) {
+            gl10.glLoadIdentity();
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+            Drawer bannerDrawer = new Drawer(gl10, gameFlow.levelElements.size(), false, true);
+            for(GameElement e : gameFlow.levelElements) {
+                bannerDrawer.addJavaVertex(Square.getSimpleCoords(e.getPosition(), 5, 5,
+                        new float[]{1, 0, 0, e.getPctAlive()}));
+            }
+
+            bannerDrawer.draw();
         }
-
-        bannerDrawer.draw();
     }
 
     private void drawCharacterSelect(GameFlow flow){

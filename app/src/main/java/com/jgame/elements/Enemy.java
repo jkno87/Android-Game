@@ -71,4 +71,8 @@ public class Enemy implements GameElement {
         return points;
     }
 
+    public float getPctAlive(){
+        return 0;
+    }
+
 }

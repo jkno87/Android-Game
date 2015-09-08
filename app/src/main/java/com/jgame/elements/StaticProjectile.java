@@ -44,4 +44,12 @@ public class StaticProjectile extends Projectile {
                 hp--;
             }
     }
+
+    public Vector2 getPosition(){
+        return new Vector2();
+    }
+
+    public float getPctAlive(){
+        return 0;
+    }
 }

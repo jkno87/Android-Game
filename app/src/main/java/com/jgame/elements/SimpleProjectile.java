@@ -39,8 +39,16 @@ public class SimpleProjectile extends Projectile {
             enemiesKilled += e.getPoints();
     }
 
+    public Vector2 getPosition(){
+        return new Vector2();
+    }
+
     @Override
     public boolean vivo(){
         return vivo;
+    }
+
+    public float getPctAlive(){
+        return 0;
     }
 }

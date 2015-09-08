@@ -7,6 +7,7 @@ import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -26,6 +27,7 @@ public class MainGameFlow extends GameFlow {
         this.elementCreator = elementCreator;
         mainCharacter = new MainCharacter(characterInfo.movementController, 5, new DistanceAttack());
         levelElements = new ArrayList<GameElement>();
+        elementCreator.start();
     }
 
     @Override
@@ -54,6 +56,13 @@ public class MainGameFlow extends GameFlow {
     @Override
     public void update(float interval){
         levelElements.addAll(elementCreator.createElements(interval));
+        Iterator<GameElement> itElements = levelElements.iterator();
+        while(itElements.hasNext()){
+            GameElement e = itElements.next();
+            e.update(null, interval);
+            if(!e.vivo())
+                itElements.remove();
+        }
     }
 
     @Override
