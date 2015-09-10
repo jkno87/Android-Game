@@ -17,6 +17,7 @@ import com.jgame.elements.EnemySpawner;
 import com.jgame.elements.EnemySpawner.PositionGenerator;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.HomingEnemy;
+import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Organism;
 import com.jgame.elements.SimpleEnemy;
 import com.jgame.elements.SimpleEnemy.SnakeBody;
@@ -314,17 +315,19 @@ public class GameLevels {
             new ElementCreator.ElementWave(){
                 private TimeCounter spawnTimer;
                 private Random random;
-                private final static float AVG_LIFESPAN = 3;
+                private final static float AVG_LIFESPAN = 6;
+                private final static float AVG_DISTANCE = 150;
+                private final static float AVG_X = 100;
+                private final static float AVG_Y = 100;
 
                 public void initialize(){
-                    //remainingElements = 10;
-                    spawnTimer = new TimeCounter(1.25f);
+                    spawnTimer = new TimeCounter(3f);
                     random = new Random();
                 }
 
-                private Vector2 generatePosition(){
-                    return new Vector2(random.nextFloat() * GameLogic.FRUSTUM_WIDTH,
-                            random.nextFloat() * GameLogic.FRUSTUM_HEIGHT);
+                private Vector2 generatePosition(float avgX, float avgY){
+                    return new Vector2(((random.nextFloat() - 0.5f) * AVG_DISTANCE) + avgX,
+                            ((random.nextFloat() - 0.5f) * AVG_DISTANCE) + avgY);
                 }
 
                 @Override
@@ -335,8 +338,12 @@ public class GameLevels {
                     if(!spawnTimer.completed())
                         return elements;
 
-                    for(int i = 0; i < random.nextInt(4) + 1; i++)
-                        elements.add(new Organism(AVG_LIFESPAN + ((random.nextFloat() - 0.5f) * AVG_LIFESPAN), generatePosition()));
+                    for(int i = 0; i < random.nextInt(10) + 3; i++)
+                        elements.add(new Organism(AVG_LIFESPAN + ((random.nextFloat() - 0.5f) * AVG_LIFESPAN), generatePosition(AVG_X, AVG_Y)));
+
+                    for(int i = 0; i < random.nextInt(5) + 1; i++)
+                        elements.add(new MovingOrganism(10 + ((random.nextFloat() - 0.5f) * 10),
+                                generatePosition(250,250)));
 
                     spawnTimer.reset();
 
