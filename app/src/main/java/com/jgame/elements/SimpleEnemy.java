@@ -37,7 +37,7 @@ public class SimpleEnemy extends Enemy {
         }
 
         public void update(GameLogic gameInstance, float timeDifference){
-            super.update(gameInstance, timeDifference);
+            super.updateDeprecated(gameInstance, timeDifference);
             if(parent != null && parent.positionChanged) {
                 directTowardsParent();
                 positionChanged = true;
@@ -89,12 +89,17 @@ public class SimpleEnemy extends Enemy {
     }
 
     @Override
-    public void update(GameLogic gameInstance, float timeDiff){
-        super.update(gameInstance, timeDiff);
+    public void updateDeprecated(GameLogic gameInstance, float timeDiff){
+        super.updateDeprecated(gameInstance, timeDiff);
         position.add(direction);
         for(EnemyParticle e : subordinates){
             e.updateParent(position);
         }
+    }
+
+    @Override
+    public void update(List<GameElement> others, float timeDifference){
+
     }
 
     public void addSubordinate(EnemyParticle sub){

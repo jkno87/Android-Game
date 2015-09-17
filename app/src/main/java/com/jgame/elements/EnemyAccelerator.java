@@ -23,7 +23,7 @@ public class EnemyAccelerator extends Enemy {
     }
 
     @Override
-    public void update(GameLogic gameInstance, float timeDiff) {
+    public void updateDeprecated(GameLogic gameInstance, float timeDiff) {
         //animationFrame.accum(timeDiff);
         int i = 0;
         while(i < gameInstance.enemies.size()){

@@ -13,6 +13,11 @@ public class Circle extends GeometricElement {
         this.position = new Vector2(x, y);
     }
 
+    public Circle(Vector2 position, float radius){
+        this.position = position;
+        this.radius = radius;
+    }
+
     /**
      * Determina si el punto x,y se encuentra dentro del circulo
      * @param x coordenada x
@@ -22,6 +27,15 @@ public class Circle extends GeometricElement {
     @Override
     public boolean contains(float x, float y){
         return position.dist(x, y) <= radius;
+    }
+
+    /**
+     * Determina si el vector apunta dentro del círculo
+     * @param position
+     * @return boolean
+     */
+    public boolean contains(Vector2 position){
+        return contains(position.x, position.y);
     }
 
 }

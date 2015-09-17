@@ -232,7 +232,7 @@ public class GameLogic {
         addEnemies(interval);
 
         synchronized(characterLock){
-            mainCharacter.update(this, interval);
+            mainCharacter.updateDeprecated(this, interval);
             mainCharacter.detectCollision(enemies);
         }
 
@@ -251,7 +251,7 @@ public class GameLogic {
         synchronized (proyectilesLock) {
             for (int i = 0; i < projectiles.size(); i++) {
                 Projectile p = projectiles.get(i);
-                p.update(this, interval);
+                p.updateDeprecated(this, interval);
                 if (p.position.x + p.size < 0 || p.position.x - p.size > FRUSTUM_WIDTH ||
                         p.position.y + p.size < 0 || p.position.y - p.size > FRUSTUM_HEIGHT) {
                     projectiles.remove(i);
@@ -274,7 +274,7 @@ public class GameLogic {
                 continue;
             }
 
-            e.update(this, interval);
+            e.updateDeprecated(this, interval);
 
             if(e.position.y + e.size < 0){
                 enemies.remove(i);
@@ -287,7 +287,7 @@ public class GameLogic {
 
         for(int i = 0; i < decorations.size(); i++){
             Decoration d = decorations.get(i);
-            d.update(this, interval);
+            d.updateDeprecated(this, interval);
             if(!d.vivo())
                 decorations.remove(i);
         }

@@ -54,9 +54,14 @@ public class Enemy implements GameElement {
         hitFrames = HIT_FRAMES;
     }
 
-    public void update(GameLogic gameInstance, float timeDifference){
+    public void updateDeprecated(GameLogic gameInstance, float timeDifference){
         if(hitFrames > 0)
             hitFrames--;
+    }
+
+    @Override
+    public void update(List<GameElement> others, float timeDifference){
+
     }
 
     public boolean vivo(){

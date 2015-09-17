@@ -59,7 +59,7 @@ public class MainGameFlow extends GameFlow {
         Iterator<GameElement> itElements = levelElements.iterator();
         while(itElements.hasNext()){
             GameElement e = itElements.next();
-            e.update(null, interval);
+            e.update(levelElements, interval);
             if(!e.vivo())
                 itElements.remove();
         }

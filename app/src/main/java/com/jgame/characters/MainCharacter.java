@@ -105,7 +105,7 @@ public class MainCharacter implements GameElement, EnemyModifier {
     }
 
     @Override
-    public void update(GameLogic gameInstance, float timeDifference) {
+    public void updateDeprecated(GameLogic gameInstance, float timeDifference) {
         movementController.update(gameInstance, timeDifference);
 
         Projectile p = mainAttack.createTimedAttack(timeDifference, movementController.position);
@@ -128,6 +128,11 @@ public class MainCharacter implements GameElement, EnemyModifier {
             NORMAL_COLOR[1] -= specialAttackCounter.pctCharged();
             NORMAL_COLOR[2] -= specialAttackCounter.pctCharged();
         }*/
+
+    }
+
+    @Override
+    public void update(List<GameElement> others, float timeDifference){
 
     }
 

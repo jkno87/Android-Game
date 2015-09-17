@@ -25,7 +25,12 @@ public class StaticProjectile extends Projectile {
     }
 
     @Override
-    public void update(GameLogic gameInstance, float timeDifference) {
+    public void update(List<GameElement> others, float timeDifference){
+
+    }
+
+    @Override
+    public void updateDeprecated(GameLogic gameInstance, float timeDifference) {
         timeToLive.accum(timeDifference);
     }
 

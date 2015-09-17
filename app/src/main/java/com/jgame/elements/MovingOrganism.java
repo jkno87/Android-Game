@@ -1,9 +1,11 @@
 package com.jgame.elements;
 
 import com.jgame.game.GameLogic;
+import com.jgame.util.Circle;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -17,14 +19,16 @@ public class MovingOrganism implements GameElement {
     private Vector2 direction;
     private Vector2 position;
     private Random random;
+    private final Circle sight;
 
-    public MovingOrganism (float timeToLive, Vector2 position){
+    public MovingOrganism (float timeToLive, Vector2 position, float sightDistance){
         this.timeToLive = new TimeCounter(timeToLive);
         this.position = position;
         this.direction = new Vector2();
         random = new Random();
         movesLeft = DEFAULT_MOVES;
         setDirection();
+        this.sight = new Circle(position, sightDistance);
     }
 
     private void setDirection(){
@@ -32,14 +36,28 @@ public class MovingOrganism implements GameElement {
     }
 
     @Override
-    public void update(GameLogic gameInstance, float timeDifference) {
+    public void update(List<GameElement> others, float timeDifference){
         if(movesLeft <= 0){
             movesLeft = DEFAULT_MOVES;
             setDirection();
         }
+
+        for(GameElement e : others) {
+            Vector2 otherPosition = e.getPosition();
+            if (!(e instanceof MovingOrganism) && sight.contains(otherPosition.x, otherPosition.y)) {
+                direction.set(new Vector2(otherPosition).sub(position).nor());
+                break;
+            }
+        }
+
         position.add(direction);
         movesLeft--;
         timeToLive.accum(timeDifference);
+    }
+
+    @Override
+    public void updateDeprecated(GameLogic gameInstance, float timeDifference) {
+
     }
 
     @Override

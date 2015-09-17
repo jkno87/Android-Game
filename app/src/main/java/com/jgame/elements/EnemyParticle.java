@@ -19,8 +19,8 @@ public class EnemyParticle extends Enemy {
         this.parent = parent;
     }
 
-    public void update(GameLogic gameInstance, float timeDifference){
-        super.update(gameInstance, timeDifference);
+    public void updateDeprecated(GameLogic gameInstance, float timeDifference){
+        super.updateDeprecated(gameInstance, timeDifference);
     }
 
     public void updateParent(Vector2 parentPosition){

@@ -248,8 +248,8 @@ public class GameLevels {
                 l.add(new SimpleEnemy(ACC_HP, METEOR_DAMAGE, position, COMET_SIZE, new Vector2(speed), METEOR_POINTS){
                     private Vector2 gravity = new Vector2(0, -0.05f);
                     @Override
-                    public void update(GameLogic gameInstance, float timeDiff){
-                        super.update(gameInstance, timeDiff);
+                    public void updateDeprecated(GameLogic gameInstance, float timeDiff){
+                        super.updateDeprecated(gameInstance, timeDiff);
                         position.add(direction);
                         direction.add(gravity);
                     }
@@ -343,7 +343,7 @@ public class GameLevels {
 
                     for(int i = 0; i < random.nextInt(5) + 1; i++)
                         elements.add(new MovingOrganism(10 + ((random.nextFloat() - 0.5f) * 10),
-                                generatePosition(250,250)));
+                                generatePosition(250,250), 65f));
 
                     spawnTimer.reset();
 

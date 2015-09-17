@@ -5,6 +5,8 @@ import com.jgame.util.Square;
 import com.jgame.util.TextureData;
 import com.jgame.util.Vector2;
 
+import java.util.List;
+
 /**
  * Created by jose on 24/02/15.
  */
@@ -33,7 +35,12 @@ public class Decoration implements GameElement {
     }
 
     @Override
-    public void update(GameLogic gameInstance, float timeDifference) {
+    public void update(List<GameElement> others, float timeDifference){
+
+    }
+
+    @Override
+    public void updateDeprecated(GameLogic gameInstance, float timeDifference) {
         this.size *= 0.98;
         timeAlive -= timeDifference;
         angle += 0.6f;

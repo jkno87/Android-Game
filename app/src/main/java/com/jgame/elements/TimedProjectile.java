@@ -16,8 +16,8 @@ public class TimedProjectile extends SimpleProjectile {
     }
 
     @Override
-    public void update(GameLogic gameInstance, float timeDiff){
-        super.update(gameInstance, timeDiff);
+    public void updateDeprecated(GameLogic gameInstance, float timeDiff){
+        super.updateDeprecated(gameInstance, timeDiff);
         activeFrames -= timeDiff;
     }
 

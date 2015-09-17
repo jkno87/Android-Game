@@ -53,8 +53,8 @@ public class BossEnemy extends Enemy {
     }
 
     @Override
-    public void update(GameLogic gameInstance, float timeDifference) {
-        super.update(gameInstance, timeDifference);
+    public void updateDeprecated(GameLogic gameInstance, float timeDifference) {
+        super.updateDeprecated(gameInstance, timeDifference);
 
         if(lastHP > hp) {
             pulse.changeInterval(PULSE_INTERVAL * (hp / maxHp));

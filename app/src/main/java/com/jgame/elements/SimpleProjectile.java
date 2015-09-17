@@ -19,7 +19,12 @@ public class SimpleProjectile extends Projectile {
     }
 
     @Override
-    public void update(GameLogic gameInstance, float timeDiff){
+    public void update(List<GameElement> others, float timeDifference){
+
+    }
+
+    @Override
+    public void updateDeprecated(GameLogic gameInstance, float timeDiff){
         position.add(direction);
     }
 

@@ -4,6 +4,8 @@ import com.jgame.game.GameLogic;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
+import java.util.List;
+
 /**
  * Created by jose on 3/09/15.
  */
@@ -17,7 +19,12 @@ public class Organism implements GameElement {
         this.position = new Vector2(position);
     }
 
-    public void update(GameLogic gameInstance, float timeDifference){
+    @Override
+    public void updateDeprecated(GameLogic gameInstance, float timeDifference){
+    }
+
+    @Override
+    public void update(List<GameElement> others, float timeDifference){
         lifeTimer.accum(timeDifference);
     }
 

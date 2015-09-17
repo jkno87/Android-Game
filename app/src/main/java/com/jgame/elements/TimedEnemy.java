@@ -17,7 +17,7 @@ public class TimedEnemy extends SimpleEnemy {
     }
 
     @Override
-    public void update(GameLogic gameInstance, float timeDiff){
+    public void updateDeprecated(GameLogic gameInstance, float timeDiff){
         lifeCounter.accum(timeDiff);
     }
 
