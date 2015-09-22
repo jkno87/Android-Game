@@ -92,6 +92,11 @@ public class MainCharacter implements GameElement, EnemyModifier {
     }
 
     @Override
+    public void interact(GameElement e){
+
+    }
+
+    @Override
     public void detectCollision(List<Enemy> enemies){
         if(state == CharacterState.STUNNED)
             return;

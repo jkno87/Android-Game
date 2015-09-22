@@ -14,6 +14,7 @@ public interface GameElement {
     public boolean vivo();
     public Vector2 getPosition();
     public float getPctAlive();
+    public void interact(GameElement other);
 
     public void update(List<GameElement> otherElements, float timeDifference);
 

@@ -28,6 +28,11 @@ public class Organism implements GameElement {
         lifeTimer.accum(timeDifference);
     }
 
+    @Override
+    public void interact(GameElement e){
+
+    }
+
     public boolean vivo(){
         return !lifeTimer.completed();
     }

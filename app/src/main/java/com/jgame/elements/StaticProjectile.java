@@ -50,6 +50,11 @@ public class StaticProjectile extends Projectile {
             }
     }
 
+    @Override
+    public void interact(GameElement e){
+
+    }
+
     public Vector2 getPosition(){
         return new Vector2();
     }

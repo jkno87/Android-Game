@@ -20,8 +20,9 @@ public class MovingOrganism implements GameElement {
     private Vector2 position;
     private Random random;
     private final Circle sight;
+    private final Circle interaction;
 
-    public MovingOrganism (float timeToLive, Vector2 position, float sightDistance){
+    public MovingOrganism (float timeToLive, Vector2 position, float sightDistance, float interactionDistance){
         this.timeToLive = new TimeCounter(timeToLive);
         this.position = position;
         this.direction = new Vector2();
@@ -29,6 +30,7 @@ public class MovingOrganism implements GameElement {
         movesLeft = DEFAULT_MOVES;
         setDirection();
         this.sight = new Circle(position, sightDistance);
+        this.interaction = new Circle(position, interactionDistance);
     }
 
     private void setDirection(){
@@ -44,7 +46,17 @@ public class MovingOrganism implements GameElement {
 
         for(GameElement e : others) {
             Vector2 otherPosition = e.getPosition();
-            if (!(e instanceof MovingOrganism) && sight.contains(otherPosition.x, otherPosition.y)) {
+
+            if(e instanceof MovingOrganism)
+                continue;
+
+            if(interaction.contains(otherPosition.x, otherPosition.y)){
+                interact(e);
+                break;
+            }
+
+
+            if (sight.contains(otherPosition.x, otherPosition.y)) {
                 direction.set(new Vector2(otherPosition).sub(position).nor());
                 break;
             }
@@ -55,9 +67,19 @@ public class MovingOrganism implements GameElement {
         timeToLive.accum(timeDifference);
     }
 
+
+
     @Override
     public void updateDeprecated(GameLogic gameInstance, float timeDifference) {
 
+    }
+
+    @Override
+    public void interact(GameElement other){
+        if(other instanceof Organism){
+            Organism o = (Organism) other;
+            timeToLive.accum(-0.2f);
+        }
     }
 
     @Override

@@ -44,6 +44,11 @@ public class SimpleProjectile extends Projectile {
             enemiesKilled += e.getPoints();
     }
 
+    @Override
+    public void interact(GameElement e){
+
+    }
+
     public Vector2 getPosition(){
         return new Vector2();
     }

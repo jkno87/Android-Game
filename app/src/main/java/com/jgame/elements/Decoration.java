@@ -47,6 +47,11 @@ public class Decoration implements GameElement {
     }
 
     @Override
+    public void interact(GameElement e){
+
+    }
+
+    @Override
     public boolean vivo() {
         return timeAlive > 0;
     }

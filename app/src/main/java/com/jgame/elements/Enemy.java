@@ -64,6 +64,11 @@ public class Enemy implements GameElement {
 
     }
 
+    @Override
+    public void interact(GameElement e){
+
+    }
+
     public boolean vivo(){
         return hp > 0;
     }

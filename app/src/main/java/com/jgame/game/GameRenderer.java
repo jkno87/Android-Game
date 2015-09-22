@@ -10,6 +10,7 @@ import com.jgame.definitions.GameIds;
 import com.jgame.elements.Decoration;
 import com.jgame.elements.GameElement;
 import com.jgame.characters.MainCharacter;
+import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Projectile;
 import com.jgame.util.Drawer;
 import com.jgame.util.GameText;
@@ -125,6 +126,7 @@ public class GameRenderer implements Renderer {
             Drawer bannerDrawer = new Drawer(gl10, gameFlow.levelElements.size(), false, true);
             for(GameElement e : gameFlow.levelElements) {
                 bannerDrawer.addJavaVertex(Square.getSimpleCoords(e.getPosition(), 5, 5,
+                        e instanceof MovingOrganism ? new float[]{0,1,0, e.getPctAlive()} :
                         new float[]{1, 0, 0, e.getPctAlive()}));
             }
 
