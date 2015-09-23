@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 
 /**
  * Created by jose on 27/01/15.
@@ -25,6 +26,7 @@ public class GameActivity extends Activity {
         gameFlow = new CharacterSelectFlow(this);
         gameSurfaceView = new GameSurfaceView(this);
         setContentView(gameSurfaceView);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     /**

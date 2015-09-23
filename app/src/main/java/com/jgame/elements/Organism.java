@@ -33,6 +33,10 @@ public class Organism implements GameElement {
 
     }
 
+    public void decreaseLife(float time){
+        lifeTimer.accum(time);
+    }
+
     public boolean vivo(){
         return !lifeTimer.completed();
     }

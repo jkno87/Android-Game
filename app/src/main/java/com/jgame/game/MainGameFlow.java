@@ -5,6 +5,8 @@ import com.jgame.characters.MainCharacter;
 import com.jgame.definitions.CharacterInformation;
 import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
+import com.jgame.elements.Organism;
+import com.jgame.util.Vector2;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,24 +19,20 @@ public class MainGameFlow extends GameFlow {
 
     public final static float FRUSTUM_HEIGHT = 480f;
     public final static float FRUSTUM_WIDTH = 320f;
+    public final static float BAIT_TIME = 0.5f;
     public final CharacterInformation characterInfo;
-    public final MainCharacter mainCharacter;
     public final ElementCreator elementCreator;
     public final List<GameElement> levelElements;
 
     public MainGameFlow(CharacterInformation characterInfo, ElementCreator elementCreator){
         this.characterInfo = characterInfo;
         this.elementCreator = elementCreator;
-        mainCharacter = new MainCharacter(characterInfo.movementController, 5, new DistanceAttack());
         levelElements = new ArrayList<GameElement>();
         elementCreator.start();
     }
 
     @Override
     public void handleDrag(float x, float y){
-        float gameX = FRUSTUM_WIDTH * x;
-        float gameY = FRUSTUM_HEIGHT * y;
-        mainCharacter.receiveInputDrag(gameX, gameY);
     }
 
     @Override
@@ -42,15 +40,11 @@ public class MainGameFlow extends GameFlow {
         float gameX = FRUSTUM_WIDTH * x;
         float gameY = FRUSTUM_HEIGHT * y;
 
-        mainCharacter.receiveInputUp(gameX, gameY);
+        levelElements.add(new Organism(BAIT_TIME, new Vector2(gameX, gameY)));
     }
 
     @Override
     public void handleDown(float x, float y){
-        float gameX = FRUSTUM_WIDTH * x;
-        float gameY = FRUSTUM_HEIGHT * y;
-
-        mainCharacter.receiveInputDown(gameX, gameY);
     }
 
     @Override

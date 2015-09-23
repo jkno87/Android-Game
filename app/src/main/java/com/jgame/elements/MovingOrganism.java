@@ -21,6 +21,8 @@ public class MovingOrganism implements GameElement {
     private Random random;
     private final Circle sight;
     private final Circle interaction;
+    private float modifier;
+    private int foodConsumed;
 
     public MovingOrganism (float timeToLive, Vector2 position, float sightDistance, float interactionDistance){
         this.timeToLive = new TimeCounter(timeToLive);
@@ -31,6 +33,7 @@ public class MovingOrganism implements GameElement {
         setDirection();
         this.sight = new Circle(position, sightDistance);
         this.interaction = new Circle(position, interactionDistance);
+        modifier = 1.0f;
     }
 
     private void setDirection(){
@@ -42,6 +45,7 @@ public class MovingOrganism implements GameElement {
         if(movesLeft <= 0){
             movesLeft = DEFAULT_MOVES;
             setDirection();
+            direction.mul(modifier);
         }
 
         for(GameElement e : others) {
@@ -78,7 +82,10 @@ public class MovingOrganism implements GameElement {
     public void interact(GameElement other){
         if(other instanceof Organism){
             Organism o = (Organism) other;
-            timeToLive.accum(-0.2f);
+            timeToLive.accum(-0.03f);
+            foodConsumed++;
+            o.decreaseLife(0.03f);
+            modifier = (float)Math.log(foodConsumed * -1.0);
         }
     }
 
