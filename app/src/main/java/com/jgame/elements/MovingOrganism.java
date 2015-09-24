@@ -13,7 +13,12 @@ import java.util.Random;
  */
 public class MovingOrganism implements GameElement {
 
+    public enum State {
+        NORMAL, EVOLVED
+    };
+
     public static final int DEFAULT_MOVES = 10;
+    public State currentState;
     private final TimeCounter timeToLive;
     private int movesLeft;
     private Vector2 direction;
@@ -23,8 +28,9 @@ public class MovingOrganism implements GameElement {
     private final Circle interaction;
     private float modifier;
     private int foodConsumed;
+    private float size;
 
-    public MovingOrganism (float timeToLive, Vector2 position, float sightDistance, float interactionDistance){
+    public MovingOrganism (float timeToLive, Vector2 position, float sightDistance, float interactionDistance, float initialSize){
         this.timeToLive = new TimeCounter(timeToLive);
         this.position = position;
         this.direction = new Vector2();
@@ -34,6 +40,8 @@ public class MovingOrganism implements GameElement {
         this.sight = new Circle(position, sightDistance);
         this.interaction = new Circle(position, interactionDistance);
         modifier = 1.0f;
+        currentState = State.NORMAL;
+        size = initialSize;
     }
 
     private void setDirection(){
@@ -72,6 +80,10 @@ public class MovingOrganism implements GameElement {
     }
 
 
+    @Override
+    public float getSize(){
+        return size;
+    }
 
     @Override
     public void updateDeprecated(GameLogic gameInstance, float timeDifference) {
@@ -86,6 +98,10 @@ public class MovingOrganism implements GameElement {
             foodConsumed++;
             o.decreaseLife(0.03f);
             modifier = (float)Math.log(foodConsumed * -1.0);
+            if(foodConsumed > 10) {
+                currentState = State.EVOLVED;
+                size *= 1.3f;
+            }
         }
     }
 

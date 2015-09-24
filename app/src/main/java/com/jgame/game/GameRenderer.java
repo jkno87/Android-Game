@@ -11,6 +11,7 @@ import com.jgame.elements.Decoration;
 import com.jgame.elements.GameElement;
 import com.jgame.characters.MainCharacter;
 import com.jgame.elements.MovingOrganism;
+import com.jgame.elements.Organism;
 import com.jgame.elements.Projectile;
 import com.jgame.util.Drawer;
 import com.jgame.util.GameText;
@@ -98,6 +99,22 @@ public class GameRenderer implements Renderer {
 
     }
 
+    private float[] getOrganismColor(GameElement e){
+        if(e instanceof Organism)
+            return new float[]{1, 0, 0, e.getPctAlive()};
+        else if(e instanceof  MovingOrganism){
+            MovingOrganism m = (MovingOrganism) e;
+            if(m.currentState == MovingOrganism.State.EVOLVED)
+                return new float[]{0,1,0, e.getPctAlive()};
+            else
+                return new float[]{0,0,1, e.getPctAlive()};
+        }
+
+        else
+            return new float[]{0,0,0,0};
+    }
+
+
     private void drawMainGameFlow(GameFlow flow){
         MainGameFlow gameFlow = (MainGameFlow) flow;
         gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
@@ -120,9 +137,8 @@ public class GameRenderer implements Renderer {
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
             Drawer bannerDrawer = new Drawer(gl10, gameFlow.levelElements.size(), false, true);
             for(GameElement e : gameFlow.levelElements) {
-                bannerDrawer.addJavaVertex(Square.getSimpleCoords(e.getPosition(), 5, 5,
-                        e instanceof MovingOrganism ? new float[]{0,1,0, e.getPctAlive()} :
-                        new float[]{1, 0, 0, e.getPctAlive()}));
+                bannerDrawer.addJavaVertex(Square.getSimpleCoords(e.getPosition(), e.getSize(), e.getSize(),
+                        getOrganismColor(e)));
             }
 
             bannerDrawer.draw();

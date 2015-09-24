@@ -339,11 +339,12 @@ public class GameLevels {
                         return elements;
 
                     for(int i = 0; i < random.nextInt(10) + 3; i++)
-                        elements.add(new Organism(AVG_LIFESPAN + ((random.nextFloat() - 0.5f) * AVG_LIFESPAN), generatePosition(AVG_X, AVG_Y)));
+                        elements.add(new Organism(AVG_LIFESPAN + ((random.nextFloat() - 0.5f) * AVG_LIFESPAN), generatePosition(AVG_X, AVG_Y)
+                        , 8.0f));
 
                     for(int i = 0; i < random.nextInt(5) + 1; i++)
                         elements.add(new MovingOrganism(10 + ((random.nextFloat() - 0.5f) * 10),
-                                generatePosition(250,250), 35f, 5f));
+                                generatePosition(250,250), 35f, 5f, 5f));
 
                     spawnTimer.reset();
 

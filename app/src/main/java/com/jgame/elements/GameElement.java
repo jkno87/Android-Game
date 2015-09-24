@@ -15,6 +15,7 @@ public interface GameElement {
     public Vector2 getPosition();
     public float getPctAlive();
     public void interact(GameElement other);
+    public float getSize();
 
     public void update(List<GameElement> otherElements, float timeDifference);
 
