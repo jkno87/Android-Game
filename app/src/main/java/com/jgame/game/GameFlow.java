@@ -10,5 +10,5 @@ public abstract class GameFlow {
     public abstract void handleUp(float x, float y);
     public abstract void update(float interval);
     public abstract void pause();
-    public abstract void unpause();
+    public abstract void resume();
 }

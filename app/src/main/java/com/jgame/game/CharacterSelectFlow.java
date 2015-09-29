@@ -1,10 +1,5 @@
 package com.jgame.game;
 
-import android.util.Log;
-
-import com.jgame.characters.DistanceAttack;
-import com.jgame.characters.MainCharacter;
-import com.jgame.characters.RangedAttack;
 import com.jgame.definitions.CharacterInformation;
 import com.jgame.definitions.GameLevels;
 import com.jgame.util.GameText;
@@ -129,7 +124,8 @@ public class CharacterSelectFlow extends GameFlow {
         }
 
         if(confirmButton.contains(gameX, gameY) && shipsFilled()){
-            gameActivity.setGameFlow(new MainGameFlow(availableShips[0].characterSelected, GameLevels.TEST_CREATOR));
+            float sampleTime = 60;//TODO: Esto solo se hace para que se entienda el codigo. Quitar tan pronto como se definan los niveles del juego final.
+            gameActivity.setGameFlow(new MainGameFlow(availableShips[0].characterSelected, GameLevels.TEST_CREATOR, sampleTime));
         }
 
         return;

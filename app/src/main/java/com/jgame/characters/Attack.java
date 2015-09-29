@@ -10,5 +10,4 @@ import com.jgame.util.Vector2;
 public abstract class Attack {
     public abstract Projectile createAttack(float sourceX, float sourceY, Vector2 characterPosition);
     public abstract Projectile createSpecialAttack(float sourceX, float sourceY);
-    public abstract Projectile createTimedAttack(float timeDifference, Vector2 characterPosition);
 }

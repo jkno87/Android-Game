@@ -51,6 +51,7 @@ public class GameActivity extends Activity {
         soundManager.iniciar();
         new Thread(soundManager).start();
         gameSurfaceView.onResume();
+        gameFlow.resume();
     }
 
     @Override
@@ -58,5 +59,6 @@ public class GameActivity extends Activity {
         super.onPause();
         soundManager.terminar();
         gameSurfaceView.onPause();
+        gameFlow.pause();
     }
 }

@@ -1,6 +1,5 @@
 package com.jgame.elements;
 
-import com.jgame.game.GameLogic;
 import com.jgame.util.Square;
 import com.jgame.util.TextureData;
 import com.jgame.util.Vector2;
@@ -35,15 +34,13 @@ public class Decoration implements GameElement {
     }
 
     @Override
-    public void update(List<GameElement> others, float timeDifference){
-
+    public float getSize(){
+        return 0.0f;
     }
 
     @Override
-    public void updateDeprecated(GameLogic gameInstance, float timeDifference) {
-        this.size *= 0.98;
-        timeAlive -= timeDifference;
-        angle += 0.6f;
+    public void update(List<GameElement> others, float timeDifference){
+
     }
 
     @Override

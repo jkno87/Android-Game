@@ -1,7 +1,5 @@
 package com.jgame.game;
 
-import com.jgame.characters.DistanceAttack;
-import com.jgame.characters.MainCharacter;
 import com.jgame.definitions.CharacterInformation;
 import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
@@ -18,6 +16,10 @@ import java.util.List;
  */
 public class MainGameFlow extends GameFlow {
 
+    public enum GameState {
+        PLAYING, FINISHED
+    }
+
     private final TimeCounter GAME_OVER_UPDATE_INTERVAL = new TimeCounter(0.02f);
     public final static float FRUSTUM_HEIGHT = 480f;
     public final static float FRUSTUM_WIDTH = 320f;
@@ -25,11 +27,16 @@ public class MainGameFlow extends GameFlow {
     public final CharacterInformation characterInfo;
     public final ElementCreator elementCreator;
     public final List<GameElement> levelElements;
+    public final float timeLimit;
+    public float timeElapsed;
+    public GameState currentState;
 
-    public MainGameFlow(CharacterInformation characterInfo, ElementCreator elementCreator){
+    public MainGameFlow(CharacterInformation characterInfo, ElementCreator elementCreator, float timeLimit){
         this.characterInfo = characterInfo;
         this.elementCreator = elementCreator;
+        this.timeLimit = timeLimit;
         levelElements = new ArrayList<GameElement>();
+        currentState = GameState.PLAYING;
         elementCreator.start();
     }
 
@@ -39,6 +46,9 @@ public class MainGameFlow extends GameFlow {
 
     @Override
     public void handleUp(float x, float y){
+        if(currentState != GameState.PLAYING)
+            return;
+
         float gameX = FRUSTUM_WIDTH * x;
         float gameY = FRUSTUM_HEIGHT * y;
 
@@ -51,13 +61,19 @@ public class MainGameFlow extends GameFlow {
 
     @Override
     public void update(float interval){
-        levelElements.addAll(elementCreator.createElements(interval));
-        Iterator<GameElement> itElements = levelElements.iterator();
-        while(itElements.hasNext()){
-            GameElement e = itElements.next();
-            e.update(levelElements, interval);
-            if(!e.vivo())
-                itElements.remove();
+        if(currentState == GameState.PLAYING) {
+            timeElapsed += interval;
+            levelElements.addAll(elementCreator.createElements(interval));
+            Iterator<GameElement> itElements = levelElements.iterator();
+            while (itElements.hasNext()) {
+                GameElement e = itElements.next();
+                e.update(levelElements, interval);
+                if (!e.vivo())
+                    itElements.remove();
+            }
+
+            if(timeElapsed > timeLimit)
+                currentState = GameState.FINISHED;
         }
     }
 
@@ -89,7 +105,7 @@ public class MainGameFlow extends GameFlow {
     }
 
     @Override
-    public void unpause(){
+    public void resume(){
 
     }
 

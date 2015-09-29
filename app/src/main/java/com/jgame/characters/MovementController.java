@@ -1,8 +1,9 @@
 package com.jgame.characters;
 
 import com.jgame.elements.Enemy;
-import com.jgame.game.GameLogic;
-import com.jgame.util.Circle;
+import com.jgame.elements.GameElement;
+import com.jgame.elements.StunInfo;
+import com.jgame.game.GameFlow;
 import com.jgame.util.Vector2;
 
 /**
@@ -22,9 +23,9 @@ public abstract class MovementController {
 
     public abstract boolean stunned();
     public abstract void updateDirection(float x, float y);
-    public abstract void stun(Vector2 stunPosition, Enemy.StunInfo stunInfo);
-    public abstract boolean collision(Enemy enemy);
+    public abstract void stun(Vector2 stunPosition, StunInfo stunInfo);
+    public abstract boolean collision(GameElement e);
     public abstract boolean containsPoint(float x, float y);
     public abstract void move(float x, float y);
-    public abstract void update(GameLogic gameInstance, float timeDifference);
+    public abstract void update(GameFlow gameFlow, float timeDifference);
 }

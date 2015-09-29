@@ -1,6 +1,5 @@
 package com.jgame.elements;
 
-import com.jgame.game.GameLogic;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
@@ -19,10 +18,6 @@ public class Organism implements GameElement {
         lifeTimer = new TimeCounter(timeToLive);
         this.position = new Vector2(position);
         this.size = size;
-    }
-
-    @Override
-    public void updateDeprecated(GameLogic gameInstance, float timeDifference){
     }
 
     @Override

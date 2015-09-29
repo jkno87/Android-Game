@@ -1,6 +1,5 @@
 package com.jgame.elements;
 
-import com.jgame.game.GameLogic;
 import com.jgame.util.Vector2;
 
 import java.util.List;
@@ -10,13 +9,11 @@ public interface GameElement {
     public static final float[] HIT_COLOR = new float[]{1,0,0,1};
 
 
-    public void updateDeprecated(GameLogic gameInstance, float timeDifference);
     public boolean vivo();
     public Vector2 getPosition();
     public float getPctAlive();
     public void interact(GameElement other);
     public float getSize();
-
     public void update(List<GameElement> otherElements, float timeDifference);
 
 }

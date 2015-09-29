@@ -1,11 +1,8 @@
 package com.jgame.elements;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.jgame.game.GameLogic;
 import com.jgame.util.AnimationData;
-import com.jgame.util.TextureData;
 import com.jgame.util.Vector2;
 
 public class Enemy implements GameElement {
@@ -52,11 +49,6 @@ public class Enemy implements GameElement {
 
     public void hit(){
         hitFrames = HIT_FRAMES;
-    }
-
-    public void updateDeprecated(GameLogic gameInstance, float timeDifference){
-        if(hitFrames > 0)
-            hitFrames--;
     }
 
     @Override

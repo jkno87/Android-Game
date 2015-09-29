@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by jose on 29/01/15.
  */
-public abstract class Projectile implements GameElement, EnemyModifier {
+public abstract class Projectile implements GameElement {
     public Vector2 position;
     public float size;
     public int enemiesKilled;
