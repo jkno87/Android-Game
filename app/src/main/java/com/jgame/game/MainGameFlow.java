@@ -6,6 +6,7 @@ import com.jgame.definitions.CharacterInformation;
 import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.Organism;
+import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 public class MainGameFlow extends GameFlow {
 
+    private final TimeCounter GAME_OVER_UPDATE_INTERVAL = new TimeCounter(0.02f);
     public final static float FRUSTUM_HEIGHT = 480f;
     public final static float FRUSTUM_WIDTH = 320f;
     public final static float BAIT_TIME = 0.5f;
@@ -57,6 +59,28 @@ public class MainGameFlow extends GameFlow {
             if(!e.vivo())
                 itElements.remove();
         }
+    }
+
+
+    /**
+     * Funcion que se llamara cuando el juego se encuentre en el estado game over.
+     * Reduce el tiempo mostrado en pantalla para simular que se estan contando los segundos que restaron cuando termina el juego.
+     * @param interval diferencia de tiempo que ha transcurrido desde el ultimo update.
+     */
+    private void updateTerminado(float interval){
+        GAME_OVER_UPDATE_INTERVAL.accum(interval);
+        if(!GAME_OVER_UPDATE_INTERVAL.completed())
+            return;
+
+        //TODO: Variables que deben agregarse a la clase para que se muestren al usuario. Ahorita solo estan como variables locales
+        float timeShown = 0;
+        float speciesSaved = 0;
+        float timeBonus = 0;
+        float speciesPoints = 0;
+
+        timeShown--;
+        speciesSaved--;
+        GAME_OVER_UPDATE_INTERVAL.reset();
     }
 
     @Override

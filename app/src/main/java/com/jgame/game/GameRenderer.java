@@ -79,6 +79,40 @@ public class GameRenderer implements Renderer {
         return textureIds[0];
     }
 
+    /**
+     * Se dibuja en pantalla el numero proporcionado a la funcion
+     * @param x coordenada x en la que se inicia el dibujo
+     * @param y cooordenada y en la que se dibuja el numero
+     * @param number numero que se dibujara en pantalla
+     */
+    private void drawDigits(float x, float y, int number){
+        //TODO: no utilizar ese tama;o arbitrario de los numeros
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
+        gl10.glLoadIdentity();
+        ArrayList <float[]> textures = new ArrayList<float[]>();
+
+        while(true){
+            int nVal = number / 10;
+            int rem = number % 10;
+            number = nVal;
+            textures.add(TEXTURE_DIGITS[rem]);
+            if(number == 0)
+                break;
+        }
+
+        Drawer digitsDrawer = new Drawer(gl10, textures.size(), true, true);
+        float currentX = x;
+
+        for(int i = textures.size() - 1; i >= 0; i--) {
+            digitsDrawer.addJavaVertex(new Square(currentX, y, 10, 10)
+                    .getTextureColorCoords(textures.get(i), GameElement.DEFAULT_COLOR));
+            currentX += 22;
+        }
+
+        digitsDrawer.draw();
+    }
+
     @Override
     public void onDrawFrame(GL10 arg0) {
         long newTime = System.nanoTime();

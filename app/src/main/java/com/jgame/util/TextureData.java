@@ -44,6 +44,14 @@ public abstract class TextureData {
 
     };
 
+    /**
+     * Genera un arreglo que contiene diferentes coordenadas dentro de un atlas de textura.
+     * Solo funciona con el caso de tener un atlas totalmente horizontal.
+     * @param xDifference Diferencia entre cada pedazo de textura horizontalmente.
+     * @param pieces Numero de elementos en los que se dividira la textura.
+     * @return Arreglo con las diferentes coordenadas del atlas de la textura.
+     * @todo Esta redaccion esta horrorosa y tampoco me gusta la solucion para generar las coordenadas
+     */
     public static float[][] createTextureArray(float xDifference, int pieces){
         float[][] textureArray = new float[pieces][8];
         float currX = 0;
