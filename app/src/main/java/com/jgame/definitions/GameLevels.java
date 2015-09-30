@@ -3,10 +3,9 @@ package com.jgame.definitions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import com.jgame.characters.Attack;
+
 import com.jgame.characters.MovementController;
 import com.jgame.elements.ElementCreator;
-import com.jgame.elements.Enemy;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Organism;
@@ -71,30 +70,10 @@ public class GameLevels {
 
     public static final CharacterInformation CHARACTER_INFO_FENCE =
             new CharacterInformation(30f, 5, 5, ID_FENCE, new float[]{0,0.5f,1,0.5f,1,0,0,0}, CIRCLE_CONTROLLER){
-
-                @Override
-                public Attack getPrimaryAttack() {
-                    return null;
-                }
-
-                @Override
-                public Attack getSecondaryAttack() {
-                    return null;
-                }
             };
 
     public static final CharacterInformation CHARACTER_INFO_LION =
             new CharacterInformation(30f, 5, 5, ID_LION, new float[]{0,1,1,1,1,0.5f,0,0.5f}, CIRCLE_CONTROLLER){
-
-                @Override
-                public Attack getPrimaryAttack() {
-                    return null;
-                }
-
-                @Override
-                public Attack getSecondaryAttack() {
-                    return null;
-                }
             };
 
 

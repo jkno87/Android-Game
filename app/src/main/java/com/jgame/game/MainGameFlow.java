@@ -20,6 +20,8 @@ public class MainGameFlow extends GameFlow {
         PLAYING, FINISHED
     }
 
+    private final int POINTS_PER_SECOND = 10;
+    private final float FOOD_SIZE = 10;
     private final TimeCounter GAME_OVER_UPDATE_INTERVAL = new TimeCounter(0.02f);
     public final static float FRUSTUM_HEIGHT = 480f;
     public final static float FRUSTUM_WIDTH = 320f;
@@ -30,6 +32,7 @@ public class MainGameFlow extends GameFlow {
     public final float timeLimit;
     public float timeElapsed;
     public GameState currentState;
+    public int timePoints;
 
     public MainGameFlow(CharacterInformation characterInfo, ElementCreator elementCreator, float timeLimit){
         this.characterInfo = characterInfo;
@@ -52,7 +55,7 @@ public class MainGameFlow extends GameFlow {
         float gameX = FRUSTUM_WIDTH * x;
         float gameY = FRUSTUM_HEIGHT * y;
 
-        levelElements.add(new Organism(BAIT_TIME, new Vector2(gameX, gameY)));
+        levelElements.add(new Organism(BAIT_TIME, new Vector2(gameX, gameY), FOOD_SIZE));
     }
 
     @Override
@@ -74,6 +77,8 @@ public class MainGameFlow extends GameFlow {
 
             if(timeElapsed > timeLimit)
                 currentState = GameState.FINISHED;
+        } else if (currentState == GameState.FINISHED){
+            updateFinishedGame(interval);
         }
     }
 
@@ -83,20 +88,26 @@ public class MainGameFlow extends GameFlow {
      * Reduce el tiempo mostrado en pantalla para simular que se estan contando los segundos que restaron cuando termina el juego.
      * @param interval diferencia de tiempo que ha transcurrido desde el ultimo update.
      */
-    private void updateTerminado(float interval){
+    private void updateFinishedGame(float interval){
         GAME_OVER_UPDATE_INTERVAL.accum(interval);
         if(!GAME_OVER_UPDATE_INTERVAL.completed())
             return;
 
         //TODO: Variables que deben agregarse a la clase para que se muestren al usuario. Ahorita solo estan como variables locales
-        float timeShown = 0;
         float speciesSaved = 0;
-        float timeBonus = 0;
         float speciesPoints = 0;
 
-        timeShown--;
-        speciesSaved--;
+        if(timeElapsed < timeLimit) {
+            timeElapsed++;
+            speciesSaved--;
+            timePoints += POINTS_PER_SECOND;
+        }
+
         GAME_OVER_UPDATE_INTERVAL.reset();
+    }
+
+    public int getTimeRemaining(){
+        return (int) (timeLimit - timeElapsed);
     }
 
     @Override

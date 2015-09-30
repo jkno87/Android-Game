@@ -148,7 +148,7 @@ public class CharacterSelectFlow extends GameFlow {
     }
 
     @Override
-    public void unpause() {
+    public void resume() {
 
     }
 }

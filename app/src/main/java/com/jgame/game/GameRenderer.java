@@ -6,17 +6,11 @@ import java.util.List;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.jgame.definitions.GameIds;
-import com.jgame.elements.Decoration;
 import com.jgame.elements.GameElement;
-import com.jgame.characters.MainCharacter;
 import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Organism;
-import com.jgame.elements.Projectile;
 import com.jgame.util.Drawer;
-import com.jgame.util.GameText;
 import com.jgame.util.TextureData;
-import com.jgame.elements.Enemy;
 import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.Square;
 import com.jgame.util.TimeCounter;
@@ -24,7 +18,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
 
 public class GameRenderer implements Renderer {
 
@@ -182,7 +175,18 @@ public class GameRenderer implements Renderer {
     }
 
     private void drawGameFinished(MainGameFlow gameFlow){
+        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
+        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
+        gl10.glMatrixMode(GL10.GL_PROJECTION);
+        gl10.glLoadIdentity();
+        gl10.glOrthof(0, FRUSTUM_WIDTH, 0, FRUSTUM_HEIGHT, 1, -1);
+
+        gl10.glMatrixMode(GL10.GL_MODELVIEW);
+        gl10.glEnable(GL10.GL_BLEND);
+        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+        drawDigits(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2, gameFlow.getTimeRemaining());
     }
 
     private void drawCharacterSelect(GameFlow flow){

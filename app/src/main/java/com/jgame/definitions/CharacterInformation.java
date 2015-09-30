@@ -1,6 +1,5 @@
 package com.jgame.definitions;
 
-import com.jgame.characters.Attack;
 import com.jgame.characters.MovementController;
 
 /**
@@ -22,8 +21,4 @@ public abstract class CharacterInformation {
         this.textureInfo = textureInfo;
         this.movementController = movementController;
     }
-
-    public abstract Attack getPrimaryAttack();
-    public abstract Attack getSecondaryAttack();
-
 }

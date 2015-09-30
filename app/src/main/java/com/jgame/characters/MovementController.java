@@ -1,6 +1,5 @@
 package com.jgame.characters;
 
-import com.jgame.elements.Enemy;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.StunInfo;
 import com.jgame.game.GameFlow;

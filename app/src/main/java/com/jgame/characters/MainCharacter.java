@@ -1,8 +1,6 @@
 package com.jgame.characters;
 
-import com.jgame.elements.Enemy;
 import com.jgame.elements.GameElement;
-import com.jgame.elements.Projectile;
 import com.jgame.util.Vector2;
 
 import java.util.List;
@@ -19,13 +17,11 @@ public class MainCharacter implements GameElement {
     private boolean dragging;
     public CharacterState state;
     public final int stamina;
-    private final Attack mainAttack;
     private MovementController movementController;
 
-    public MainCharacter(MovementController movementController, int stamina, Attack mainAttack){
+    public MainCharacter(MovementController movementController, int stamina){
         this.stamina = stamina;
         state = CharacterState.NORMAL;
-        this.mainAttack = mainAttack;
         this.movementController = movementController;
     }
 
@@ -56,27 +52,6 @@ public class MainCharacter implements GameElement {
             this.state = CharacterState.SPECIAL;
         else if(state == CharacterState.SPECIAL)
             this.state = CharacterState.NORMAL;
-    }
-
-    public Projectile receiveInputUp(float sourceX, float sourceY){
-        Projectile created = null;
-
-        if(!dragging && state != CharacterState.STUNNED) {
-            if(state == CharacterState.SPECIAL)
-                created = mainAttack.createSpecialAttack(sourceX, sourceY);
-            else
-                created = mainAttack.createAttack(sourceX, sourceY, movementController.position);
-
-            movementController.updateDirection(sourceX, sourceY);
-        }
-
-        dragging = false;
-        //charging = false;
-        //specialAttackCounter.reset();
-
-
-
-        return created;
     }
 
     @Override
