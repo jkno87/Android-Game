@@ -3,7 +3,6 @@ package com.jgame.elements;
 import com.jgame.util.Circle;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
-
 import java.util.List;
 import java.util.Random;
 
@@ -16,6 +15,10 @@ public class MovingOrganism implements GameElement {
         NORMAL, EVOLVED
     };
 
+    public static final float FOOD_LIFE_MODIFIER = 0.3f;
+    public static final float FOOD_SIZE_MODIFIER = 1.3f;
+    public static final float FOOD_SPEED_MODIFIER = 0.85f;
+    public static final int FOOD_TO_EVOLVE = 10;
     public static final int DEFAULT_MOVES = 10;
     public State currentState;
     private final TimeCounter timeToLive;
@@ -88,13 +91,13 @@ public class MovingOrganism implements GameElement {
     public void interact(GameElement other){
         if(other instanceof Organism){
             Organism o = (Organism) other;
-            timeToLive.accum(-0.03f);
+            timeToLive.accum(-FOOD_LIFE_MODIFIER);
             foodConsumed++;
-            o.decreaseLife(0.03f);
-            modifier = (float)Math.log(foodConsumed * -1.0);
-            if(foodConsumed > 10) {
+            o.decreaseLife(FOOD_LIFE_MODIFIER);
+            modifier *= FOOD_SPEED_MODIFIER;
+            if(foodConsumed > FOOD_TO_EVOLVE) {
                 currentState = State.EVOLVED;
-                size *= 1.3f;
+                size *= FOOD_SIZE_MODIFIER;
             }
         }
     }
