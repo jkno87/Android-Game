@@ -12,12 +12,12 @@ import java.util.Random;
 public class MovingOrganism implements GameElement {
 
     public enum State {
-        NORMAL, EVOLVED
+        NORMAL, GROWING ,EVOLVED
     };
 
     public static final float FOOD_LIFE_MODIFIER = 0.3f;
-    public static final float FOOD_SIZE_MODIFIER = 1.3f;
-    public static final float FOOD_SPEED_MODIFIER = 0.85f;
+    //public static final float FOOD_SIZE_MODIFIER = 1.3f;
+    public static final float FOOD_SPEED_MODIFIER = 0.98f;
     public static final int FOOD_TO_EVOLVE = 10;
     public static final int DEFAULT_MOVES = 10;
     public State currentState;
@@ -47,11 +47,24 @@ public class MovingOrganism implements GameElement {
     }
 
     private void setDirection(){
-        direction.set(random.nextInt(3) - 1, random.nextInt(3) - 1);
+        direction.set(random.nextInt(3) - 1, random.nextInt(3) - 1).nor();
     }
 
     @Override
     public void update(List<GameElement> others, float timeDifference){
+
+        if(currentState == State.GROWING){
+            movesLeft--;
+            size *= 1.15f;
+
+            if(movesLeft <= 0) {
+                currentState = State.EVOLVED;
+                size *= 0.75f;
+            }
+
+            return;
+        }
+
         if(movesLeft <= 0){
             movesLeft = DEFAULT_MOVES;
             setDirection();
@@ -71,7 +84,7 @@ public class MovingOrganism implements GameElement {
 
 
             if (sight.contains(otherPosition.x, otherPosition.y)) {
-                direction.set(new Vector2(otherPosition).sub(position).nor());
+                direction.set(new Vector2(otherPosition).sub(position).nor()).mul(modifier);
                 break;
             }
         }
@@ -95,9 +108,9 @@ public class MovingOrganism implements GameElement {
             foodConsumed++;
             o.decreaseLife(FOOD_LIFE_MODIFIER);
             modifier *= FOOD_SPEED_MODIFIER;
-            if(foodConsumed > FOOD_TO_EVOLVE) {
-                currentState = State.EVOLVED;
-                size *= FOOD_SIZE_MODIFIER;
+            if(currentState == State.NORMAL && foodConsumed > FOOD_TO_EVOLVE) {
+                currentState = State.GROWING;
+                movesLeft = DEFAULT_MOVES;
             }
         }
     }

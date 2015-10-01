@@ -4,6 +4,7 @@ import com.jgame.definitions.CharacterInformation;
 import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.Organism;
+import com.jgame.util.Circle;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
@@ -29,18 +30,22 @@ public class MainGameFlow extends GameFlow {
     public final CharacterInformation characterInfo;
     public final ElementCreator elementCreator;
     public final List<GameElement> levelElements;
+    public final List<GameElement> capturedElements;
     public final float timeLimit;
     public float timeElapsed;
     public GameState currentState;
     public int timePoints;
+    private final Circle characterShip;
 
     public MainGameFlow(CharacterInformation characterInfo, ElementCreator elementCreator, float timeLimit){
         this.characterInfo = characterInfo;
         this.elementCreator = elementCreator;
         this.timeLimit = timeLimit;
         levelElements = new ArrayList<GameElement>();
+        capturedElements = new ArrayList<GameElement>();
         currentState = GameState.PLAYING;
         elementCreator.start();
+        characterShip = new Circle(50, FRUSTUM_HEIGHT - 50, 25);
     }
 
     @Override
@@ -71,7 +76,11 @@ public class MainGameFlow extends GameFlow {
             while (itElements.hasNext()) {
                 GameElement e = itElements.next();
                 e.update(levelElements, interval);
-                if (!e.vivo())
+
+                if(characterShip.contains(e.getPosition())){
+                    capturedElements.add(e);
+                    itElements.remove();
+                } else if (!e.vivo())
                     itElements.remove();
             }
 

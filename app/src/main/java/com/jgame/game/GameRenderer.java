@@ -161,6 +161,11 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
         gl10.glLoadIdentity();
 
+        Drawer characterDrawer = new Drawer(gl10, 1, true, true);
+        characterDrawer.addJavaVertex(new Square(50, FRUSTUM_HEIGHT - 50, 25, 25)
+                .getTextureColorCoords(TextureData.USE_WHOLE_IMAGE, new float[]{1,1,1,1}));
+        characterDrawer.draw();
+
         if(!gameFlow.levelElements.isEmpty()) {
             gl10.glLoadIdentity();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
