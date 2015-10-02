@@ -30,6 +30,15 @@ public class Circle extends GeometricElement {
     }
 
     /**
+     * Determina si el círculo toca a otro círculo
+     * @param c Circle que se pretende comprarar
+     * @return boolean que determina si el objeto toca a otro Circle
+     */
+    public boolean containsCircle(Circle c){
+        return position.dist(c.position) <= radius + c.radius;
+    }
+
+    /**
      * Determina si el vector apunta dentro del círculo
      * @param position
      * @return boolean

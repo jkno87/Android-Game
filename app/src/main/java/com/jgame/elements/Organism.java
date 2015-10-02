@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.util.Circle;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
@@ -11,13 +12,11 @@ import java.util.List;
 public class Organism implements GameElement {
 
     public TimeCounter lifeTimer;
-    private Vector2 position;
-    private float size;
+    public Circle interactionBox;
 
     public Organism (float timeToLive, Vector2 position, float size){
         lifeTimer = new TimeCounter(timeToLive);
-        this.position = new Vector2(position);
-        this.size = size;
+        interactionBox = new Circle(position, size);
     }
 
     @Override
@@ -32,7 +31,7 @@ public class Organism implements GameElement {
 
     @Override
     public float getSize(){
-        return size;
+        return interactionBox.radius;
     }
 
     public void decreaseLife(float time){
@@ -44,7 +43,7 @@ public class Organism implements GameElement {
     }
 
     public Vector2 getPosition(){
-        return position;
+        return interactionBox.position;
     }
 
     public float getPctAlive(){

@@ -16,7 +16,6 @@ public class MovingOrganism implements GameElement {
     };
 
     public static final float FOOD_LIFE_MODIFIER = 0.3f;
-    //public static final float FOOD_SIZE_MODIFIER = 1.3f;
     public static final float FOOD_SPEED_MODIFIER = 0.98f;
     public static final int FOOD_TO_EVOLVE = 10;
     public static final int DEFAULT_MOVES = 10;
@@ -72,19 +71,20 @@ public class MovingOrganism implements GameElement {
         }
 
         for(GameElement e : others) {
-            Vector2 otherPosition = e.getPosition();
-
             if(e instanceof MovingOrganism)
                 continue;
 
-            if(interaction.contains(otherPosition.x, otherPosition.y)){
+            //TODO: Aqui se hace un cast porque en este momento solo existe otro tipo de organismo en el juego
+            Organism o = (Organism) e;
+
+            if(interaction.containsCircle(o.interactionBox)){
                 interact(e);
                 break;
             }
 
 
-            if (sight.contains(otherPosition.x, otherPosition.y)) {
-                direction.set(new Vector2(otherPosition).sub(position).nor()).mul(modifier);
+            if (sight.containsCircle(o.interactionBox)) {
+                direction.set(new Vector2(o.interactionBox.position).sub(position).nor()).mul(modifier);
                 break;
             }
         }
