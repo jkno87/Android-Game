@@ -60,7 +60,10 @@ public class MainGameFlow extends GameFlow {
         float gameX = FRUSTUM_WIDTH * x;
         float gameY = FRUSTUM_HEIGHT * y;
 
-        levelElements.add(new Organism(BAIT_TIME, new Vector2(gameX, gameY), FOOD_SIZE));
+        //Se obtiene el lock del objeto levelElements
+        synchronized (levelElements) {
+            levelElements.add(new Organism(BAIT_TIME, new Vector2(gameX, gameY), FOOD_SIZE));
+        }
     }
 
     @Override
@@ -71,20 +74,22 @@ public class MainGameFlow extends GameFlow {
     public void update(float interval){
         if(currentState == GameState.PLAYING) {
             timeElapsed += interval;
-            levelElements.addAll(elementCreator.createElements(interval));
-            Iterator<GameElement> itElements = levelElements.iterator();
-            while (itElements.hasNext()) {
-                GameElement e = itElements.next();
-                e.update(levelElements, interval);
+            synchronized (levelElements) {
+                levelElements.addAll(elementCreator.createElements(interval));
+                Iterator<GameElement> itElements = levelElements.iterator();
+                while (itElements.hasNext()) {
+                    GameElement e = itElements.next();
+                    e.update(levelElements, interval);
 
-                if(characterShip.contains(e.getPosition())){
-                    capturedElements.add(e);
-                    itElements.remove();
-                } else if (!e.vivo())
-                    itElements.remove();
+                    if (characterShip.contains(e.getPosition())) {
+                        capturedElements.add(e);
+                        itElements.remove();
+                    } else if (!e.vivo())
+                        itElements.remove();
+                }
             }
 
-            if(timeElapsed > timeLimit)
+            if(timeElapsed >= timeLimit)
                 currentState = GameState.FINISHED;
         } else if (currentState == GameState.FINISHED){
             updateFinishedGame(interval);

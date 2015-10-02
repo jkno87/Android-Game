@@ -13,13 +13,9 @@ public class GameSurfaceView extends GLSurfaceView {
     public GameSurfaceView(GameActivity context){
         super(context);
         this.gameActivity = context;
-        GameRenderer gameRenderer = new GameRenderer();
+        GameRenderer gameRenderer = new GameRenderer(gameActivity);
         setRenderer(gameRenderer);
         gameRenderer.setSurfaceView(this);
-    }
-
-    public GameFlow getGameFlow(){
-        return gameActivity.getGameFlow();
     }
 
     @Override
@@ -32,14 +28,14 @@ public class GameSurfaceView extends GLSurfaceView {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    getGameFlow().handleDown(x, y);
+                    gameActivity.getGameFlow().handleDown(x, y);
                     break;
 
                 case MotionEvent.ACTION_MOVE:
-                    getGameFlow().handleDrag(x, y);
+                    gameActivity.getGameFlow().handleDrag(x, y);
                     break;
                 case MotionEvent.ACTION_UP:
-                    getGameFlow().handleUp(x, y);
+                    gameActivity.getGameFlow().handleUp(x, y);
                     break;
 
             }

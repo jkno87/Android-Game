@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.definitions.GameIds;
 import com.jgame.util.Circle;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
@@ -113,6 +114,14 @@ public class MovingOrganism implements GameElement {
                 movesLeft = DEFAULT_MOVES;
             }
         }
+    }
+
+    @Override
+    public int getId(){
+        if(currentState == State.EVOLVED)
+            return GameIds.EVOLVED_ORGANISM_ID;
+        else
+            return GameIds.MOVING_ORGANISM_ID;
     }
 
     @Override

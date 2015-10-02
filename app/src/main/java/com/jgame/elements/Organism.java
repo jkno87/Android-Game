@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.definitions.GameIds;
 import com.jgame.util.Circle;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
@@ -27,6 +28,11 @@ public class Organism implements GameElement {
     @Override
     public void interact(GameElement e){
 
+    }
+
+    @Override
+    public int getId(){
+        return GameIds.FOOD_ORGANISM_ID;
     }
 
     @Override

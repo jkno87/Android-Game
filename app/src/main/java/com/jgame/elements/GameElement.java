@@ -10,6 +10,7 @@ public interface GameElement {
 
 
     public boolean vivo();
+    public int getId();
     public Vector2 getPosition();
     public float getPctAlive();
     public void interact(GameElement other);

@@ -34,6 +34,7 @@ public class GameRenderer implements Renderer {
     private GameSurfaceView surfaceView;
     private long lastUpdate;
     private final TimeCounter updateCounter;
+    private GameActivity gameActivity;
     private GL10 gl10;
     int proyectileId;
     int enemyId;
@@ -48,9 +49,10 @@ public class GameRenderer implements Renderer {
     int personajesId;
     int alfabetoId;
 
-    public GameRenderer(){
+    public GameRenderer(GameActivity gameActivity){
         updateCounter = new TimeCounter(FRAME_INTERVAL);
         lastUpdate = System.nanoTime();
+        this.gameActivity = gameActivity;
     }
 
     public void setSurfaceView(GameSurfaceView surfaceView){
@@ -110,17 +112,17 @@ public class GameRenderer implements Renderer {
         float interval = (newTime - lastUpdate) / NANO_SCALE;
         lastUpdate = newTime;
         updateCounter.accum(interval);
-        GameFlow flow = surfaceView.getGameFlow();
+        GameFlow gameFlow = gameActivity.getGameFlow();
 
         if(updateCounter.completed()) {
             updateCounter.reset();
-            flow.update(interval);
+            gameFlow.update(interval);
         }
 
-        if(flow instanceof CharacterSelectFlow)
-            drawCharacterSelect(flow);
-        else if (flow instanceof MainGameFlow)
-            drawMainGameFlow(flow);
+        if(gameFlow instanceof CharacterSelectFlow)
+            drawCharacterSelect(gameFlow);
+        else if (gameFlow instanceof MainGameFlow)
+            drawMainGameFlow(gameFlow);
 
 
     }
@@ -170,15 +172,17 @@ public class GameRenderer implements Renderer {
                 .getTextureColorCoords(TextureData.USE_WHOLE_IMAGE, new float[]{1, 1, 1, 1}));
         characterDrawer.draw();
 
-        if(!gameFlow.levelElements.isEmpty()) {
-            gl10.glLoadIdentity();
-            gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-            Drawer bannerDrawer = new Drawer(gl10, gameFlow.levelElements.size(), false, true);
-            for(GameElement e : gameFlow.levelElements) {
-                bannerDrawer.addJavaVertex(Square.getSimpleCoords(e.getPosition(), e.getSize(), e.getSize(),
-                        getOrganismColor(e)));
+        synchronized (gameFlow.levelElements) {
+            if (!gameFlow.levelElements.isEmpty()) {
+                gl10.glLoadIdentity();
+                gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+                Drawer bannerDrawer = new Drawer(gl10, gameFlow.levelElements.size(), false, true);
+                for (GameElement e : gameFlow.levelElements) {
+                    bannerDrawer.addJavaVertex(Square.getSimpleCoords(e.getPosition(), e.getSize(), e.getSize(),
+                            getOrganismColor(e)));
+                }
+                bannerDrawer.draw();
             }
-            bannerDrawer.draw();
         }
 
         gl10.glLoadIdentity();
