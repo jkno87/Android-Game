@@ -14,6 +14,8 @@ import com.jgame.util.TextureData;
 import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.Square;
 import com.jgame.util.TimeCounter;
+import com.jgame.util.Vector2;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLUtils;
@@ -26,6 +28,8 @@ public class GameRenderer implements Renderer {
     private final float FRUSTUM_WIDTH = 320f;
     private final float FRAME_INTERVAL = 0.015384615f;
     private final float NANO_SCALE = 1000000000.0f;
+    private final Vector2 INFO_START_COORDS = new Vector2(30, FRUSTUM_HEIGHT - 20);
+    private final Vector2 INFO_POINTS_COORDS = new Vector2(FRUSTUM_WIDTH - 30, FRUSTUM_HEIGHT - 20);
     public static float[][] TEXTURE_DIGITS = TextureData.createTextureArray(0.0625f, 10);
     private GameSurfaceView surfaceView;
     private long lastUpdate;
@@ -163,7 +167,7 @@ public class GameRenderer implements Renderer {
 
         Drawer characterDrawer = new Drawer(gl10, 1, true, true);
         characterDrawer.addJavaVertex(new Square(50, FRUSTUM_HEIGHT - 50, 25, 25)
-                .getTextureColorCoords(TextureData.USE_WHOLE_IMAGE, new float[]{1,1,1,1}));
+                .getTextureColorCoords(TextureData.USE_WHOLE_IMAGE, new float[]{1, 1, 1, 1}));
         characterDrawer.draw();
 
         if(!gameFlow.levelElements.isEmpty()) {
@@ -174,9 +178,17 @@ public class GameRenderer implements Renderer {
                 bannerDrawer.addJavaVertex(Square.getSimpleCoords(e.getPosition(), e.getSize(), e.getSize(),
                         getOrganismColor(e)));
             }
-
             bannerDrawer.draw();
         }
+
+        gl10.glLoadIdentity();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+        Drawer infoDrawer = new Drawer(gl10, 1, false, true);
+        infoDrawer.addJavaVertex(Square.getSimpleCoords(FRUSTUM_HEIGHT / 2, FRUSTUM_HEIGHT - 20, FRUSTUM_HEIGHT / 2, 20, new float[]{0, 0.75f, 0.5f, 1}));
+        
+        drawDigits(INFO_START_COORDS.x, INFO_START_COORDS.y, gameFlow.getTimeRemaining());
+        drawDigits(INFO_POINTS_COORDS.x, INFO_START_COORDS.y, gameFlow.capturedElements.size());
+
     }
 
     private void drawGameFinished(MainGameFlow gameFlow){
@@ -247,35 +259,6 @@ public class GameRenderer implements Renderer {
 
         }
 
-    }
-
-    private void drawStageCleared() {
-        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
-        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-        gl10.glMatrixMode(GL10.GL_PROJECTION);
-        gl10.glLoadIdentity();
-        gl10.glOrthof(0, FRUSTUM_WIDTH, 0, FRUSTUM_HEIGHT, 1, -1);
-
-        gl10.glMatrixMode(GL10.GL_MODELVIEW);
-        gl10.glEnable(GL10.GL_BLEND);
-        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        gl10.glEnable(GL10.GL_TEXTURE_2D);
-    }
-
-    private List<Integer> getScoreTextures(int score){
-        ArrayList<Integer> textureData = new ArrayList<Integer>();
-
-        while(true){
-            int x = score / 10;
-            int rem = score % 10;
-            score = x;
-            textureData.add(rem);
-            if(score == 0)
-                break;
-        }
-
-        return textureData;
     }
 
     @Override
