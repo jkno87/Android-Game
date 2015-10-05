@@ -189,7 +189,7 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
         Drawer infoDrawer = new Drawer(gl10, 1, false, true);
         infoDrawer.addJavaVertex(Square.getSimpleCoords(FRUSTUM_HEIGHT / 2, FRUSTUM_HEIGHT - 20, FRUSTUM_HEIGHT / 2, 20, new float[]{0, 0.75f, 0.5f, 1}));
-        
+
         drawDigits(INFO_START_COORDS.x, INFO_START_COORDS.y, gameFlow.getTimeRemaining());
         drawDigits(INFO_POINTS_COORDS.x, INFO_START_COORDS.y, gameFlow.capturedElements.size());
 
