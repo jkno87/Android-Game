@@ -2,6 +2,7 @@ package com.jgame.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -9,7 +10,9 @@ import javax.microedition.khronos.opengles.GL10;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Organism;
+import com.jgame.elements.Trap;
 import com.jgame.util.Drawer;
+import com.jgame.util.GameButton;
 import com.jgame.util.TextureData;
 import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.Square;
@@ -123,6 +126,8 @@ public class GameRenderer implements Renderer {
             drawCharacterSelect(gameFlow);
         else if (gameFlow instanceof MainGameFlow)
             drawMainGameFlow(gameFlow);
+        else if (gameFlow instanceof LevelSelectFlow)
+            drawLevelSelect((LevelSelectFlow) gameFlow);
 
 
     }
@@ -136,8 +141,8 @@ public class GameRenderer implements Renderer {
                 return new float[]{0,1,0, e.getPctAlive()};
             else
                 return new float[]{0,0,1, e.getPctAlive()};
-        }
-
+        } else if(e instanceof Trap)
+            return new float[]{1,0,1,1};
         else
             return new float[]{0,0,0,0};
     }
@@ -193,6 +198,14 @@ public class GameRenderer implements Renderer {
         drawDigits(INFO_START_COORDS.x, INFO_START_COORDS.y, gameFlow.getTimeRemaining());
         drawDigits(INFO_POINTS_COORDS.x, INFO_START_COORDS.y, gameFlow.capturedElements.size());
 
+        gl10.glLoadIdentity();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, specialButtonId);
+        Drawer buttonDrawer = new Drawer(gl10, 1, true, true);
+        buttonDrawer.addJavaVertex(new Square(gameFlow.inputElement.position, gameFlow.inputElement.radius, gameFlow.inputElement.radius, 0)
+                .getTextureColorCoords(TextureData.USE_WHOLE_IMAGE,
+                        gameFlow.currentBait == MainGameFlow.Bait.REGULAR ? new float[]{1,1,1,1} : new float[]{0.8f,1, 0.8f, 1}));
+        buttonDrawer.draw();
+
     }
 
     private void drawGameFinished(MainGameFlow gameFlow){
@@ -208,6 +221,34 @@ public class GameRenderer implements Renderer {
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
         drawDigits(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2, gameFlow.getTimeRemaining());
+    }
+
+    private void drawLevelSelect(LevelSelectFlow flow){
+        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
+        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+        gl10.glMatrixMode(GL10.GL_PROJECTION);
+        gl10.glLoadIdentity();
+        gl10.glOrthof(0, FRUSTUM_WIDTH, 0, FRUSTUM_HEIGHT, 1, -1);
+
+        gl10.glMatrixMode(GL10.GL_MODELVIEW);
+        gl10.glEnable(GL10.GL_BLEND);
+        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
+        gl10.glLoadIdentity();
+
+        for(GameButton gb : flow.levels){
+            float[][] glText = gb.label.getLettersTexture();
+            Drawer textDrawer = new Drawer(gl10, glText.length, true, false);
+            for(int i = 0; i < glText.length; i++)
+                textDrawer.addJavaVertex(glText[i]);
+
+            textDrawer.draw();
+        }
+
+
     }
 
     private void drawCharacterSelect(GameFlow flow){

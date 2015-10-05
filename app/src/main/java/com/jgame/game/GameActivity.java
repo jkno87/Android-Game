@@ -23,7 +23,7 @@ public class GameActivity extends Activity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         soundManager = GameResources.soundManager;
-        gameFlow = new CharacterSelectFlow(this);
+        gameFlow = new LevelSelectFlow(this);
         gameSurfaceView = new GameSurfaceView(this);
         setContentView(gameSurfaceView);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

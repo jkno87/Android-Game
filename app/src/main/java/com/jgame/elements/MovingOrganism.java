@@ -72,7 +72,7 @@ public class MovingOrganism implements GameElement {
         }
 
         for(GameElement e : others) {
-            if(e instanceof MovingOrganism)
+            if(e instanceof MovingOrganism || e instanceof Trap)
                 continue;
 
             //TODO: Aqui se hace un cast porque en este momento solo existe otro tipo de organismo en el juego

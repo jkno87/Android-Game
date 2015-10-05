@@ -74,6 +74,11 @@ public class MainCharacter implements GameElement {
         return false;
     }
 
+    @Override
+    public int getId(){
+        return 0;
+    }
+
     /**
      * Regresa un vector con la posicion del maincharacter
      * @return Vector2 con la posicion actual del personaje

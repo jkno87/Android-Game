@@ -53,6 +53,11 @@ public class Decoration implements GameElement {
         return timeAlive > 0;
     }
 
+    @Override
+    public int getId(){
+        return 0;
+    }
+
     public Square getDrawSquare(){
         return new Square(x, y, size, size, angle);
     }

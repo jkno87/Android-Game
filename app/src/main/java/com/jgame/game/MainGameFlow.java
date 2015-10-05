@@ -4,6 +4,7 @@ import com.jgame.definitions.CharacterInformation;
 import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.Organism;
+import com.jgame.elements.Trap;
 import com.jgame.util.Circle;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
@@ -21,13 +22,18 @@ public class MainGameFlow extends GameFlow {
         PLAYING, FINISHED
     }
 
+    public enum Bait {
+        REGULAR, OVERSIZED
+    }
+
     private final int POINTS_PER_SECOND = 10;
     private final float FOOD_SIZE = 10;
+    private final float OVERSIZED_TIME = 2.0f;
+    private final float SPECIAL_SIZE = 10;
     private final TimeCounter GAME_OVER_UPDATE_INTERVAL = new TimeCounter(0.02f);
     public final static float FRUSTUM_HEIGHT = 480f;
     public final static float FRUSTUM_WIDTH = 320f;
     public final static float BAIT_TIME = 0.5f;
-    public final CharacterInformation characterInfo;
     public final ElementCreator elementCreator;
     public final List<GameElement> levelElements;
     public final List<GameElement> capturedElements;
@@ -36,9 +42,10 @@ public class MainGameFlow extends GameFlow {
     public GameState currentState;
     public int timePoints;
     private final Circle characterShip;
+    public final Circle inputElement;
+    public Bait currentBait;
 
-    public MainGameFlow(CharacterInformation characterInfo, ElementCreator elementCreator, float timeLimit){
-        this.characterInfo = characterInfo;
+    public MainGameFlow(ElementCreator elementCreator, float timeLimit){
         this.elementCreator = elementCreator;
         this.timeLimit = timeLimit;
         levelElements = new ArrayList<GameElement>();
@@ -46,6 +53,15 @@ public class MainGameFlow extends GameFlow {
         currentState = GameState.PLAYING;
         elementCreator.start();
         characterShip = new Circle(50, FRUSTUM_HEIGHT - 50, 25);
+        inputElement = new Circle(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 50, 25);
+        currentBait = Bait.REGULAR;
+    }
+
+    private void toggleBait(){
+        if(currentBait == Bait.REGULAR)
+            currentBait = Bait.OVERSIZED;
+        else
+            currentBait = Bait.REGULAR;
     }
 
     @Override
@@ -60,9 +76,17 @@ public class MainGameFlow extends GameFlow {
         float gameX = FRUSTUM_WIDTH * x;
         float gameY = FRUSTUM_HEIGHT * y;
 
+        if(inputElement.contains(gameX, gameY)){
+            toggleBait();
+            return;
+        }
+
         //Se obtiene el lock del objeto levelElements
         synchronized (levelElements) {
-            levelElements.add(new Organism(BAIT_TIME, new Vector2(gameX, gameY), FOOD_SIZE));
+            if(currentBait == Bait.REGULAR)
+                levelElements.add(new Organism(BAIT_TIME, new Vector2(gameX, gameY), FOOD_SIZE));
+            else
+                levelElements.add(new Trap(new Vector2(gameX, gameY), SPECIAL_SIZE));
         }
     }
 

@@ -5,7 +5,7 @@ package com.jgame.util;
  */
 public class Circle extends GeometricElement {
 
-    public final float radius;
+    public float radius;
     public final Vector2 position;
 
     public Circle(float x, float y, float radius){
