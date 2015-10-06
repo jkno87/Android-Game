@@ -3,7 +3,7 @@ package com.jgame.definitions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
+import com.jgame.game.LevelInformation.LevelInfoCreator;
 import com.jgame.characters.MovementController;
 import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
@@ -11,6 +11,7 @@ import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Organism;
 import com.jgame.elements.StunInfo;
 import com.jgame.game.GameFlow;
+import com.jgame.game.LevelInformation;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
@@ -104,6 +105,10 @@ public class GameLevels {
             }
         };
     }*/
+
+
+    public static final LevelInfoCreator TUTORIAL_CREATOR =
+            new LevelInfoCreator().addObjective(GameIds.EVOLVED_ORGANISM_ID, 2);
 
     public static final ElementCreator.ElementWave SIMPLE_WAVE =
             new ElementCreator.ElementWave(){

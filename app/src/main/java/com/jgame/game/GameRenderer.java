@@ -192,15 +192,28 @@ public class GameRenderer implements Renderer {
 
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-        Drawer infoDrawer = new Drawer(gl10, gameFlow.currentBait == MainGameFlow.BaitSelected.NONE ? 3 : 4, false, true);
+        MainGameFlow.BaitSelected lastUpdatedBait = null;
+
+        synchronized (gameFlow.currentBait) {
+            lastUpdatedBait = gameFlow.currentBait;
+        }
+
+        Drawer infoDrawer = new Drawer(gl10, lastUpdatedBait == MainGameFlow.BaitSelected.NONE ? 3 : 4, false, true);
         infoDrawer.addJavaVertex(Square.getSimpleCoords(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 40, FRUSTUM_WIDTH / 2, 40, new float[]{0, 0.75f, 0.5f, 1}));
         infoDrawer.addJavaVertex(Square.getSimpleCoords(gameFlow.inputBasic.position, gameFlow.inputBasic.radius, gameFlow.inputBasic.radius, new float[]{1, 0, 0, 1}));
         infoDrawer.addJavaVertex(Square.getSimpleCoords(gameFlow.inputSecondary.position, gameFlow.inputSecondary.radius, gameFlow.inputSecondary.radius, new float[]{1, 0, 1, 1}));
         if(gameFlow.currentBait != MainGameFlow.BaitSelected.NONE)
             infoDrawer.addJavaVertex(gameFlow.dragElement
-                    .getSimpleCoords(gameFlow.currentBait == MainGameFlow.BaitSelected.PRIMARY ? new float[]{1,0,0,1} : new float[]{1,0,1,1}));
+                    .getSimpleCoords(lastUpdatedBait == MainGameFlow.BaitSelected.PRIMARY ? new float[]{1,0,0,1} : new float[]{1,0,1,1}));
 
         infoDrawer.draw();
+
+        gl10.glLoadIdentity();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+        infoDrawer = new Drawer(gl10, gameFlow.levelObjectives.size(), false, true);
+        infoDrawer.addJavaVertex(Square.getSimpleCoords(INFO_POINTS_COORDS.x, INFO_START_COORDS.y, 10, 10, new float[]{0,1,0,1}));
+        infoDrawer.draw();
+
 
         drawDigits(INFO_START_COORDS.x, INFO_START_COORDS.y, gameFlow.getTimeRemaining());
         drawDigits(INFO_POINTS_COORDS.x, INFO_START_COORDS.y, gameFlow.capturedElements.size());

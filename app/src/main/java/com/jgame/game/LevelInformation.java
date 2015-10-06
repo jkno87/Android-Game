@@ -1,7 +1,9 @@
 package com.jgame.game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Esta clase incluye la informacion requerida por el nivel actual. Ej. los organismos requeridos para completar el nivel.
@@ -13,6 +15,21 @@ public class LevelInformation {
 
     private LevelInformation(HashMap<Integer, Integer> requiredObjects){
         this.requiredObjects = new HashMap<>(requiredObjects);
+    }
+
+    /**
+     * Genera una lista de LevelObjective que contiene los elementos del juego requeridos para terminar el nivel
+     * @return List de LevelObjective con los requierimientos para pasar el nivel.
+     */
+    public List<LevelObjective> getObjectives(){
+        Iterator<Integer> hashIterator = requiredObjects.keySet().iterator();
+        ArrayList<LevelObjective> objectives = new ArrayList<>();
+        while(hashIterator.hasNext()){
+            int key = hashIterator.next();
+            objectives.add(new LevelObjective(key, requiredObjects.get(key)));
+        }
+
+        return objectives;
     }
 
     /**
@@ -28,6 +45,17 @@ public class LevelInformation {
 
         throw new UnsupportedOperationException("Implementar metodos");
     }
+
+    public static class LevelObjective {
+        public final int id;
+        public int count;
+
+        public LevelObjective (int id, int count){
+            this.id = id;
+            this.count = count;
+        }
+    }
+
 
     public static class LevelInfoCreator {
 

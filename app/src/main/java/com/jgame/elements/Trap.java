@@ -3,6 +3,7 @@ package com.jgame.elements;
 import com.jgame.util.Circle;
 import com.jgame.util.Vector2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,16 +17,19 @@ public class Trap implements GameElement {
 
     private static float TIME_TO_EXPLODE = 3;
     private static float EXPLOSION_TIME = 0.15f;
+    private static final float EXPLOSION_GROWTH_RATE = 1.12f;
     private float timeToExplode;
     private float remExplosionTime;
     private Circle locationInfo;
     private State currentState;
+    public List<GameElement> capturedElements;
 
     public Trap(Vector2 position, float size){
         locationInfo = new Circle(position, size);
         timeToExplode = TIME_TO_EXPLODE;
         remExplosionTime = EXPLOSION_TIME;
         currentState = State.COUNTING;
+        capturedElements = new ArrayList<>();
     }
 
     @Override
@@ -50,7 +54,11 @@ public class Trap implements GameElement {
 
     @Override
     public void interact(GameElement other) {
-
+        if(other instanceof MovingOrganism) {
+            MovingOrganism mOther = (MovingOrganism) other;
+            if(locationInfo.containsCircle(mOther.interaction))
+                capturedElements.add(mOther);
+        }
     }
 
     @Override
@@ -66,7 +74,9 @@ public class Trap implements GameElement {
                 currentState = State.EXPLODING;
         } else {
             remExplosionTime -= timeDifference;
-            locationInfo.radius *= 1.12f;
+            locationInfo.radius *= EXPLOSION_GROWTH_RATE;
+            for(GameElement e : otherElements)
+                interact(e);
         }
     }
 }

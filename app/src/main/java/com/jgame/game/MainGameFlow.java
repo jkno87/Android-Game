@@ -1,7 +1,7 @@
 package com.jgame.game;
 
-import com.jgame.definitions.CharacterInformation;
 import com.jgame.definitions.GameLevels;
+import com.jgame.game.LevelInformation.LevelObjective;
 import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.Organism;
@@ -9,11 +9,10 @@ import com.jgame.elements.Trap;
 import com.jgame.util.Circle;
 import com.jgame.util.Square;
 import com.jgame.util.TimeCounter;
-import com.jgame.util.Vector2;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by ej-jose on 12/08/15.
@@ -39,6 +38,7 @@ public class MainGameFlow extends GameFlow {
     public final ElementCreator elementCreator;
     public final List<GameElement> levelElements;
     public final List<GameElement> capturedElements;
+    public final List<LevelObjective> levelObjectives;
     public final float timeLimit;
     public float timeElapsed;
     public GameState currentState;
@@ -48,7 +48,7 @@ public class MainGameFlow extends GameFlow {
     public BaitSelected currentBait;
     public Square dragElement;
 
-    public MainGameFlow(ElementCreator elementCreator, float timeLimit){
+    public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit){
         this.elementCreator = elementCreator;
         this.timeLimit = timeLimit;
         levelElements = new ArrayList<GameElement>();
@@ -58,6 +58,14 @@ public class MainGameFlow extends GameFlow {
         inputBasic = new Circle(FRUSTUM_WIDTH / 2 - 30, FRUSTUM_HEIGHT - 50, 25);
         inputSecondary = new Circle(FRUSTUM_WIDTH / 2 + 30, FRUSTUM_HEIGHT - 50, 25);
         currentBait = BaitSelected.NONE;
+        levelObjectives = levelInfo.getObjectives();
+    }
+
+    private void updateObjectives(GameElement e){
+        for(LevelObjective o : levelObjectives){
+            if(o.id == e.getId() && o.count > 0)
+                o.count--;
+        }
     }
 
     @Override
@@ -107,16 +115,25 @@ public class MainGameFlow extends GameFlow {
     public void update(float interval){
         if(currentState == GameState.PLAYING) {
             timeElapsed += interval;
+            List<GameElement> captured = new ArrayList<>();
             synchronized (levelElements) {
                 levelElements.addAll(elementCreator.createElements(interval));
                 Iterator<GameElement> itElements = levelElements.iterator();
                 while (itElements.hasNext()) {
                     GameElement e = itElements.next();
                     e.update(levelElements, interval);
+                    if(e instanceof Trap)
+                        captured.addAll(((Trap) e).capturedElements);
                     if (!e.vivo())
                         itElements.remove();
                 }
+                for(GameElement e : captured)
+                    levelElements.remove(e);
             }
+
+            //Esto se vuelve hacer para hacer calculos que no dependen de levelElements y soltar el lock
+            for(GameElement e : captured)
+                updateObjectives(e);
 
             if(timeElapsed >= timeLimit)
                 currentState = GameState.FINISHED;

@@ -27,7 +27,7 @@ public class MovingOrganism implements GameElement {
     private Vector2 position;
     private Random random;
     private final Circle sight;
-    private final Circle interaction;
+    public final Circle interaction;
     private float modifier;
     private int foodConsumed;
     private float size;
