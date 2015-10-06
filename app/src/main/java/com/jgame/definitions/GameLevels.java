@@ -18,6 +18,7 @@ public class GameLevels {
 
     public static final float FRUSTUM_HEIGHT = 480f;
     public static final float FRUSTUM_WIDTH = 320f;
+    public static final float MAX_PLAYING_HEIGHT = FRUSTUM_HEIGHT - 80f;
     public static final int ID_FENCE = 0;
     public static final int ID_LION = 1;
 

@@ -192,20 +192,18 @@ public class GameRenderer implements Renderer {
 
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-        Drawer infoDrawer = new Drawer(gl10, 1, false, true);
-        infoDrawer.addJavaVertex(Square.getSimpleCoords(FRUSTUM_HEIGHT / 2, FRUSTUM_HEIGHT - 20, FRUSTUM_HEIGHT / 2, 20, new float[]{0, 0.75f, 0.5f, 1}));
+        Drawer infoDrawer = new Drawer(gl10, gameFlow.currentBait == MainGameFlow.BaitSelected.NONE ? 3 : 4, false, true);
+        infoDrawer.addJavaVertex(Square.getSimpleCoords(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 40, FRUSTUM_WIDTH / 2, 40, new float[]{0, 0.75f, 0.5f, 1}));
+        infoDrawer.addJavaVertex(Square.getSimpleCoords(gameFlow.inputBasic.position, gameFlow.inputBasic.radius, gameFlow.inputBasic.radius, new float[]{1, 0, 0, 1}));
+        infoDrawer.addJavaVertex(Square.getSimpleCoords(gameFlow.inputSecondary.position, gameFlow.inputSecondary.radius, gameFlow.inputSecondary.radius, new float[]{1, 0, 1, 1}));
+        if(gameFlow.currentBait != MainGameFlow.BaitSelected.NONE)
+            infoDrawer.addJavaVertex(gameFlow.dragElement
+                    .getSimpleCoords(gameFlow.currentBait == MainGameFlow.BaitSelected.PRIMARY ? new float[]{1,0,0,1} : new float[]{1,0,1,1}));
+
+        infoDrawer.draw();
 
         drawDigits(INFO_START_COORDS.x, INFO_START_COORDS.y, gameFlow.getTimeRemaining());
         drawDigits(INFO_POINTS_COORDS.x, INFO_START_COORDS.y, gameFlow.capturedElements.size());
-
-        gl10.glLoadIdentity();
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, specialButtonId);
-        Drawer buttonDrawer = new Drawer(gl10, 1, true, true);
-        buttonDrawer.addJavaVertex(new Square(gameFlow.inputElement.position, gameFlow.inputElement.radius, gameFlow.inputElement.radius, 0)
-                .getTextureColorCoords(TextureData.USE_WHOLE_IMAGE,
-                        gameFlow.currentBait == MainGameFlow.Bait.REGULAR ? new float[]{1,1,1,1} : new float[]{0.8f,1, 0.8f, 1}));
-        buttonDrawer.draw();
-
     }
 
     private void drawGameFinished(MainGameFlow gameFlow){

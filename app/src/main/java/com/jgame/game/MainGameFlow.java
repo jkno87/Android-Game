@@ -1,11 +1,13 @@
 package com.jgame.game;
 
 import com.jgame.definitions.CharacterInformation;
+import com.jgame.definitions.GameLevels;
 import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.Organism;
 import com.jgame.elements.Trap;
 import com.jgame.util.Circle;
+import com.jgame.util.Square;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
@@ -22,8 +24,8 @@ public class MainGameFlow extends GameFlow {
         PLAYING, FINISHED
     }
 
-    public enum Bait {
-        REGULAR, OVERSIZED
+    public enum BaitSelected {
+        NONE, PRIMARY, SECONDARY
     }
 
     private final int POINTS_PER_SECOND = 10;
@@ -41,9 +43,10 @@ public class MainGameFlow extends GameFlow {
     public float timeElapsed;
     public GameState currentState;
     public int timePoints;
-    private final Circle characterShip;
-    public final Circle inputElement;
-    public Bait currentBait;
+    public final Circle inputBasic;
+    public final Circle inputSecondary;
+    public BaitSelected currentBait;
+    public Square dragElement;
 
     public MainGameFlow(ElementCreator elementCreator, float timeLimit){
         this.elementCreator = elementCreator;
@@ -52,20 +55,15 @@ public class MainGameFlow extends GameFlow {
         capturedElements = new ArrayList<GameElement>();
         currentState = GameState.PLAYING;
         elementCreator.start();
-        characterShip = new Circle(50, FRUSTUM_HEIGHT - 50, 25);
-        inputElement = new Circle(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 50, 25);
-        currentBait = Bait.REGULAR;
-    }
-
-    private void toggleBait(){
-        if(currentBait == Bait.REGULAR)
-            currentBait = Bait.OVERSIZED;
-        else
-            currentBait = Bait.REGULAR;
+        inputBasic = new Circle(FRUSTUM_WIDTH / 2 - 30, FRUSTUM_HEIGHT - 50, 25);
+        inputSecondary = new Circle(FRUSTUM_WIDTH / 2 + 30, FRUSTUM_HEIGHT - 50, 25);
+        currentBait = BaitSelected.NONE;
     }
 
     @Override
     public void handleDrag(float x, float y){
+        if(currentBait != BaitSelected.NONE)
+            dragElement.position.set(FRUSTUM_WIDTH * x, FRUSTUM_HEIGHT * y);
     }
 
     @Override
@@ -76,22 +74,33 @@ public class MainGameFlow extends GameFlow {
         float gameX = FRUSTUM_WIDTH * x;
         float gameY = FRUSTUM_HEIGHT * y;
 
-        if(inputElement.contains(gameX, gameY)){
-            toggleBait();
-            return;
+        //Se obtiene el lock del objeto levelElements
+        if(currentBait != BaitSelected.NONE && dragElement.position.y < GameLevels.MAX_PLAYING_HEIGHT) {
+            synchronized (levelElements) {
+                if (currentBait == BaitSelected.PRIMARY)
+                    levelElements.add(new Organism(BAIT_TIME, dragElement.position, FOOD_SIZE));
+                else
+                    levelElements.add(new Trap(dragElement.position, SPECIAL_SIZE));
+            }
+            dragElement = null;
         }
 
-        //Se obtiene el lock del objeto levelElements
-        synchronized (levelElements) {
-            if(currentBait == Bait.REGULAR)
-                levelElements.add(new Organism(BAIT_TIME, new Vector2(gameX, gameY), FOOD_SIZE));
-            else
-                levelElements.add(new Trap(new Vector2(gameX, gameY), SPECIAL_SIZE));
-        }
+        currentBait = BaitSelected.NONE;
     }
 
     @Override
     public void handleDown(float x, float y){
+        float gameX = FRUSTUM_WIDTH * x;
+        float gameY = FRUSTUM_HEIGHT * y;
+
+        if(inputBasic.contains(gameX, gameY)) {
+            currentBait = BaitSelected.PRIMARY;
+            dragElement = new Square(gameX, gameY, inputBasic.radius, inputBasic.radius, 0);
+        } else if (inputSecondary.contains(gameX, gameY)) {
+            currentBait = BaitSelected.SECONDARY;
+            dragElement = new Square(gameX, gameY, inputSecondary.radius, inputSecondary.radius, 0);
+        }
+
     }
 
     @Override
@@ -104,11 +113,7 @@ public class MainGameFlow extends GameFlow {
                 while (itElements.hasNext()) {
                     GameElement e = itElements.next();
                     e.update(levelElements, interval);
-
-                    if (characterShip.contains(e.getPosition())) {
-                        capturedElements.add(e);
-                        itElements.remove();
-                    } else if (!e.vivo())
+                    if (!e.vivo())
                         itElements.remove();
                 }
             }
