@@ -37,7 +37,6 @@ public class MainGameFlow extends GameFlow {
     public final static float BAIT_TIME = 0.5f;
     public final ElementCreator elementCreator;
     public final List<GameElement> levelElements;
-    public final List<GameElement> capturedElements;
     public final List<LevelObjective> levelObjectives;
     public final float timeLimit;
     public float timeElapsed;
@@ -47,12 +46,12 @@ public class MainGameFlow extends GameFlow {
     public final Circle inputSecondary;
     public BaitSelected currentBait;
     public Square dragElement;
+    public boolean stageCleared;
 
     public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit){
         this.elementCreator = elementCreator;
         this.timeLimit = timeLimit;
         levelElements = new ArrayList<GameElement>();
-        capturedElements = new ArrayList<GameElement>();
         currentState = GameState.PLAYING;
         elementCreator.start();
         inputBasic = new Circle(FRUSTUM_WIDTH / 2 - 30, FRUSTUM_HEIGHT - 50, 25);
@@ -62,10 +61,18 @@ public class MainGameFlow extends GameFlow {
     }
 
     private void updateObjectives(GameElement e){
+        int remainingObjectives = 0;
         for(LevelObjective o : levelObjectives){
             if(o.id == e.getId() && o.count > 0)
                 o.count--;
+            remainingObjectives += o.count;
         }
+
+        if(remainingObjectives == 0) {
+            stageCleared = true;
+            currentState = GameState.FINISHED;
+        }
+
     }
 
     @Override

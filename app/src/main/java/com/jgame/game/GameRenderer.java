@@ -13,6 +13,7 @@ import com.jgame.elements.Organism;
 import com.jgame.elements.Trap;
 import com.jgame.util.Drawer;
 import com.jgame.util.GameButton;
+import com.jgame.util.GameText;
 import com.jgame.util.TextureData;
 import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.Square;
@@ -31,8 +32,13 @@ public class GameRenderer implements Renderer {
     private final float FRUSTUM_WIDTH = 320f;
     private final float FRAME_INTERVAL = 0.015384615f;
     private final float NANO_SCALE = 1000000000.0f;
-    private final Vector2 INFO_START_COORDS = new Vector2(30, FRUSTUM_HEIGHT - 20);
-    private final Vector2 INFO_POINTS_COORDS = new Vector2(FRUSTUM_WIDTH - 30, FRUSTUM_HEIGHT - 20);
+    private final float OBJECTIVES_X_DRAW = FRUSTUM_WIDTH - 65;
+    private final float OBJECTIVES_AMOUNT_X = FRUSTUM_WIDTH - 35;
+    private final float OBJECTIVES_Y_DRAW = FRUSTUM_HEIGHT - 15;
+    private final float OBJECTIVES_SIZE = 10f;
+    private final float ENDGAME_LABELS_X = FRUSTUM_WIDTH / 2 - 35;
+    private final float ENDGAME_NUMBERS_X = FRUSTUM_WIDTH / 2 + 20;
+    private final Vector2 TIMER_POSITION = new Vector2(15, FRUSTUM_HEIGHT - 15);
     public static float[][] TEXTURE_DIGITS = TextureData.createTextureArray(0.0625f, 10);
     private GameSurfaceView surfaceView;
     private long lastUpdate;
@@ -207,16 +213,21 @@ public class GameRenderer implements Renderer {
                     .getSimpleCoords(lastUpdatedBait == MainGameFlow.BaitSelected.PRIMARY ? new float[]{1,0,0,1} : new float[]{1,0,1,1}));
 
         infoDrawer.draw();
+        float objCurrentY = OBJECTIVES_Y_DRAW;
+        int objectivesNum = gameFlow.levelObjectives.size();
+        infoDrawer = new Drawer(gl10, objectivesNum, false, true);
+        for(LevelInformation.LevelObjective o : gameFlow.levelObjectives) {
+            infoDrawer.addJavaVertex(Square.getSimpleCoords(OBJECTIVES_X_DRAW, objCurrentY,
+                    OBJECTIVES_SIZE, OBJECTIVES_SIZE, new float[]{0, 1, 0, 1}));
+            drawDigits(OBJECTIVES_AMOUNT_X, objCurrentY, o.count);
+            objCurrentY += OBJECTIVES_SIZE;
+        }
 
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-        infoDrawer = new Drawer(gl10, gameFlow.levelObjectives.size(), false, true);
-        infoDrawer.addJavaVertex(Square.getSimpleCoords(INFO_POINTS_COORDS.x, INFO_START_COORDS.y, 10, 10, new float[]{0,1,0,1}));
         infoDrawer.draw();
 
-
-        drawDigits(INFO_START_COORDS.x, INFO_START_COORDS.y, gameFlow.getTimeRemaining());
-        drawDigits(INFO_POINTS_COORDS.x, INFO_START_COORDS.y, gameFlow.capturedElements.size());
+        drawDigits(TIMER_POSITION.x, TIMER_POSITION.y, gameFlow.getTimeRemaining());
     }
 
     private void drawGameFinished(MainGameFlow gameFlow){
@@ -231,7 +242,49 @@ public class GameRenderer implements Renderer {
         gl10.glEnable(GL10.GL_BLEND);
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
-        drawDigits(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2, gameFlow.getTimeRemaining());
+        float currentY = FRUSTUM_HEIGHT - 50;
+        GameText endgameLabels = new GameText("time", ENDGAME_LABELS_X, currentY, 10);
+        drawDigits(ENDGAME_NUMBERS_X, currentY, gameFlow.getTimeRemaining());
+
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
+        gl10.glLoadIdentity();
+
+        float [][] glText = endgameLabels.getLettersTexture();
+
+        Drawer textDrawer = new Drawer(gl10, glText.length, true, false);
+        for(int i = 0; i < glText.length; i++)
+            textDrawer.addJavaVertex(glText[i]);
+
+        textDrawer.draw();
+
+        currentY -= 40;
+        textDrawer = new Drawer(gl10, gameFlow.levelObjectives.size(), false, true);
+
+        for(LevelInformation.LevelObjective o : gameFlow.levelObjectives) {
+            textDrawer.addJavaVertex(Square.getSimpleCoords(ENDGAME_LABELS_X, currentY,
+                    OBJECTIVES_SIZE * 2, OBJECTIVES_SIZE * 2, new float[]{0, 1, 0, 1}));
+            drawDigits(ENDGAME_NUMBERS_X, currentY, o.count);
+            currentY -= 40;
+        }
+
+        gl10.glLoadIdentity();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+        textDrawer.draw();
+
+        currentY -= 40;
+
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
+        gl10.glLoadIdentity();
+
+        glText = new GameText(gameFlow.stageCleared ? "win" : "lose", ENDGAME_LABELS_X, currentY, 15).getLettersTexture();
+        textDrawer = new Drawer(gl10, glText.length, true, false);
+        for(int i = 0; i < glText.length; i++)
+            textDrawer.addJavaVertex(glText[i]);
+
+        textDrawer.draw();
+
     }
 
     private void drawLevelSelect(LevelSelectFlow flow){
