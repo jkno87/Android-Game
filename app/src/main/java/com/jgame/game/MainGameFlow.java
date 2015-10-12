@@ -7,6 +7,7 @@ import com.jgame.elements.GameElement;
 import com.jgame.elements.Organism;
 import com.jgame.elements.Trap;
 import com.jgame.util.Circle;
+import com.jgame.util.GameButton;
 import com.jgame.util.Square;
 import com.jgame.util.TimeCounter;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import java.util.logging.Level;
 public class MainGameFlow extends GameFlow {
 
     public enum GameState {
-        PLAYING, FINISHED
+        PLAYING, FINISHED, PAUSED
     }
 
     public enum BaitSelected {
@@ -47,8 +48,14 @@ public class MainGameFlow extends GameFlow {
     public BaitSelected currentBait;
     public Square dragElement;
     public boolean stageCleared;
+    public final GameButton retryButton;
+    public final GameButton quitButton;
+    private final GameActivity gameActivity;
+    private final LevelInformation levelInfo;
 
-    public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit){
+    public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit, GameActivity gameActivity){
+        this.levelInfo = levelInfo;
+        this.gameActivity = gameActivity;
         this.elementCreator = elementCreator;
         this.timeLimit = timeLimit;
         levelElements = new ArrayList<GameElement>();
@@ -58,8 +65,16 @@ public class MainGameFlow extends GameFlow {
         inputSecondary = new Circle(FRUSTUM_WIDTH / 2 + 30, FRUSTUM_HEIGHT - 50, 25);
         currentBait = BaitSelected.NONE;
         levelObjectives = levelInfo.getObjectives();
+        retryButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 100, 60, 25), "retry");
+        quitButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 50, 60, 25), "return");
     }
 
+
+    /**
+     * Se encarga de actualizar la lista de objetivos. Recive un GameElement e y si se encuentra en la lista
+     * de objetivos, actualiza el numero de elementos restantes
+     * @param e
+     */
     private void updateObjectives(GameElement e){
         int remainingObjectives = 0;
         for(LevelObjective o : levelObjectives){
@@ -77,15 +92,35 @@ public class MainGameFlow extends GameFlow {
 
     @Override
     public void handleDrag(float x, float y){
-        if(currentBait != BaitSelected.NONE)
-            dragElement.position.set(FRUSTUM_WIDTH * x, FRUSTUM_HEIGHT * y);
+        if(currentBait != BaitSelected.NONE) {
+            synchronized (dragElement) {
+                dragElement.position.set(FRUSTUM_WIDTH * x, FRUSTUM_HEIGHT * y);
+            }
+        }
     }
 
     @Override
     public void handleUp(float x, float y){
-        if(currentState != GameState.PLAYING)
-            return;
+        if(currentState == GameState.PLAYING)
+            handleUpPlaying(x, y);
+        else if(currentState == GameState.FINISHED){
+            float gameX = FRUSTUM_WIDTH * x;
+            float gameY = FRUSTUM_HEIGHT * y;
 
+            if(retryButton.bounds.contains(gameX, gameY)){
+                gameActivity.setGameFlow(new MainGameFlow(levelInfo, elementCreator, timeLimit, gameActivity));
+            } else if(quitButton.bounds.contains(gameX, gameY))
+                gameActivity.setGameFlow(new LevelSelectFlow(gameActivity));
+
+        }
+    }
+
+    /**
+     * Se encarga de manejar los inputs up cuando el juego se encuentra en el estado playing
+     * @param x
+     * @param y
+     */
+    public void handleUpPlaying(float x, float y){
         float gameX = FRUSTUM_WIDTH * x;
         float gameY = FRUSTUM_HEIGHT * y;
 
@@ -97,7 +132,10 @@ public class MainGameFlow extends GameFlow {
                 else
                     levelElements.add(new Trap(dragElement.position, SPECIAL_SIZE));
             }
-            dragElement = null;
+
+            synchronized (dragElement) {
+                dragElement = null;
+            }
         }
 
         currentBait = BaitSelected.NONE;
@@ -179,12 +217,12 @@ public class MainGameFlow extends GameFlow {
 
     @Override
     public void pause(){
-
+        currentState = GameState.PAUSED;
     }
 
     @Override
     public void resume(){
-
+        currentState = GameState.PLAYING;
     }
 
 }

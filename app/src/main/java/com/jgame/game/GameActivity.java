@@ -10,6 +10,10 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
+import com.jgame.definitions.GameLevels;
+import com.jgame.util.GameButton;
+import com.jgame.util.Square;
+
 /**
  * Created by jose on 27/01/15.
  */
@@ -18,6 +22,9 @@ public class GameActivity extends Activity {
     private GLSurfaceView gameSurfaceView;
     private SoundManager soundManager;
     private GameFlow gameFlow;
+    private Boolean paused;
+    public final GameButton continueButton = new GameButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT - 50, 150, 40), "continue");
+    public final GameButton quitButton = new GameButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT - 100, 150, 40), "quit");
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -45,6 +52,51 @@ public class GameActivity extends Activity {
         this.gameFlow = gameFlow;
     }
 
+    /**
+     * Regresa un boolean con el estado de pausa.
+     * @return boolean con el estado de pause
+     */
+    public boolean isPaused(){
+        synchronized (paused){
+            return paused;
+        }
+    }
+
+    /**
+     * Cambia el estado de pausa.
+     */
+    public void togglePause(){
+        synchronized (paused){
+            paused = !paused;
+        }
+    }
+
+    /**
+     * Regresa a la actividad de LoadActivity y le manda la senal de terminar la aplicacion
+     */
+    private void quitGame(){
+        Intent intent = new Intent(this, LoadActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("EXIT", true);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e){
+        if(!isPaused())
+            return false;
+
+        float x = (e.getX() / (float) gameSurfaceView.getWidth()) * GameLevels.FRUSTUM_WIDTH;
+        float y = (((float) gameSurfaceView.getHeight() - e.getY()) / (float) gameSurfaceView.getHeight()) * GameLevels.FRUSTUM_HEIGHT;
+
+        if(continueButton.bounds.contains(x, y))
+            togglePause();
+        else if(quitButton.bounds.contains(x, y))
+            quitGame();
+
+        return true;
+    }
+
     @Override
     public void onResume(){
         super.onResume();
@@ -61,4 +113,16 @@ public class GameActivity extends Activity {
         gameSurfaceView.onPause();
         gameFlow.pause();
     }
+
+    @Override
+    public boolean onKeyDown(int keycode, KeyEvent event){
+        if(KeyEvent.KEYCODE_BACK == keycode){
+            gameFlow.pause();
+            togglePause();
+            return true;
+        }
+
+        return false;
+    }
+
 }

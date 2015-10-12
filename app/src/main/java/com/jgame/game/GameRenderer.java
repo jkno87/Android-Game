@@ -117,15 +117,19 @@ public class GameRenderer implements Renderer {
 
     @Override
     public void onDrawFrame(GL10 arg0) {
-        long newTime = System.nanoTime();
-        float interval = (newTime - lastUpdate) / NANO_SCALE;
-        lastUpdate = newTime;
-        updateCounter.accum(interval);
         GameFlow gameFlow = gameActivity.getGameFlow();
+        boolean isPaused = gameActivity.isPaused(); //Se copia el valor para soltar el lock
 
-        if(updateCounter.completed()) {
-            updateCounter.reset();
-            gameFlow.update(interval);
+        if(!isPaused) {
+            long newTime = System.nanoTime();
+            float interval = (newTime - lastUpdate) / NANO_SCALE;
+            lastUpdate = newTime;
+            updateCounter.accum(interval);
+
+            if (updateCounter.completed()) {
+                updateCounter.reset();
+                gameFlow.update(interval);
+            }
         }
 
         if(gameFlow instanceof CharacterSelectFlow)
@@ -135,6 +139,8 @@ public class GameRenderer implements Renderer {
         else if (gameFlow instanceof LevelSelectFlow)
             drawLevelSelect((LevelSelectFlow) gameFlow);
 
+        if(isPaused)
+            drawPauseMenu();
 
     }
 
@@ -161,6 +167,32 @@ public class GameRenderer implements Renderer {
             drawGameFinished(gameFlow);
     }
 
+
+    private void drawPauseMenu(){
+        gl10.glLoadIdentity();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+        Drawer bannerDrawer = new Drawer(gl10, 1, false, true);
+        bannerDrawer.addJavaVertex(Square.getSimpleCoords(0, 0, FRUSTUM_WIDTH, FRUSTUM_HEIGHT, new float[]{0, 0, 0, 0.5f}));
+        bannerDrawer.draw();
+
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
+        gl10.glLoadIdentity();
+
+        float [][] textContinue = gameActivity.continueButton.label.getLettersTexture();
+        float [][] textQuit = gameActivity.quitButton.label.getLettersTexture();
+        Drawer textDrawer = new Drawer(gl10, textContinue.length + textQuit.length, true, false);
+        for(int i = 0; i < textContinue.length; i++)
+            textDrawer.addJavaVertex(textContinue[i]);
+
+        for(int i = 0; i < textQuit.length; i++)
+            textDrawer.addJavaVertex(textQuit[i]);
+
+        textDrawer.draw();
+
+
+
+    }
 
     private void drawPlayingGame(MainGameFlow gameFlow){
         gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
