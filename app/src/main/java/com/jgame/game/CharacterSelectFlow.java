@@ -123,11 +123,6 @@ public class CharacterSelectFlow extends GameFlow {
                 characterSelected = i;
         }
 
-        if(confirmButton.contains(gameX, gameY) && shipsFilled()){
-            float sampleTime = 60;//TODO: Esto solo se hace para que se entienda el codigo. Quitar tan pronto como se definan los niveles del juego final.
-            gameActivity.setGameFlow(new MainGameFlow(GameLevels.TUTORIAL_CREATOR.create(),GameLevels.TEST_CREATOR, sampleTime));
-        }
-
         return;
     }
 

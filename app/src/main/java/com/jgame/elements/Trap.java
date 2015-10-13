@@ -1,5 +1,8 @@
 package com.jgame.elements;
 
+import android.util.Log;
+
+import com.jgame.definitions.GameIds;
 import com.jgame.util.Circle;
 import com.jgame.util.Vector2;
 
@@ -17,7 +20,7 @@ public class Trap implements GameElement {
 
     private static float TIME_TO_EXPLODE = 3;
     private static float EXPLOSION_TIME = 0.15f;
-    private static final float EXPLOSION_GROWTH_RATE = 1.12f;
+    private static final float EXPLOSION_GROWTH_RATE = 1.15f;
     private float timeToExplode;
     private float remExplosionTime;
     private Circle locationInfo;
@@ -39,7 +42,7 @@ public class Trap implements GameElement {
 
     @Override
     public int getId() {
-        return 0;
+        return GameIds.TRAP_ID;
     }
 
     @Override

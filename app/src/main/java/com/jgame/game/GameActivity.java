@@ -23,8 +23,8 @@ public class GameActivity extends Activity {
     private SoundManager soundManager;
     private GameFlow gameFlow;
     private Boolean paused;
-    public final GameButton continueButton = new GameButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT - 50, 150, 40), "continue");
-    public final GameButton quitButton = new GameButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT - 100, 150, 40), "quit");
+    public final GameButton continueButton = new GameButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT - 250, 150, 40), "continue");
+    public final GameButton quitButton = new GameButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT - 300, 150, 40), "quit");
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -34,6 +34,7 @@ public class GameActivity extends Activity {
         gameSurfaceView = new GameSurfaceView(this);
         setContentView(gameSurfaceView);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        paused = false;
     }
 
     /**

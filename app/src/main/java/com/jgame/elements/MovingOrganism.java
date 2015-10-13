@@ -1,6 +1,7 @@
 package com.jgame.elements;
 
 import com.jgame.definitions.GameIds;
+import com.jgame.definitions.GameLevels;
 import com.jgame.util.Circle;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
@@ -91,6 +92,12 @@ public class MovingOrganism implements GameElement {
         }
 
         position.add(direction);
+
+        if(position.x <= 0 || position.x >= GameLevels.FRUSTUM_WIDTH)
+            direction.x *= -1;
+        if(position.y <= 0 || position.y >= GameLevels.MAX_PLAYING_HEIGHT)
+            direction.y *= -1;
+
         movesLeft--;
         timeToLive.accum(timeDifference);
     }

@@ -1,5 +1,7 @@
 package com.jgame.game;
 
+import android.util.Log;
+
 import com.jgame.definitions.GameLevels;
 import com.jgame.game.LevelInformation.LevelObjective;
 import com.jgame.elements.ElementCreator;
@@ -10,6 +12,8 @@ import com.jgame.util.Circle;
 import com.jgame.util.GameButton;
 import com.jgame.util.Square;
 import com.jgame.util.TimeCounter;
+import com.jgame.util.Vector2;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +25,7 @@ import java.util.logging.Level;
 public class MainGameFlow extends GameFlow {
 
     public enum GameState {
-        PLAYING, FINISHED, PAUSED
+        PLAYING, FINISHED
     }
 
     public enum BaitSelected {
@@ -29,13 +33,12 @@ public class MainGameFlow extends GameFlow {
     }
 
     private final int POINTS_PER_SECOND = 10;
-    private final float FOOD_SIZE = 10;
-    private final float OVERSIZED_TIME = 2.0f;
+    private final float FOOD_SIZE = 5;
     private final float SPECIAL_SIZE = 10;
     private final TimeCounter GAME_OVER_UPDATE_INTERVAL = new TimeCounter(0.02f);
     public final static float FRUSTUM_HEIGHT = 480f;
     public final static float FRUSTUM_WIDTH = 320f;
-    public final static float BAIT_TIME = 0.5f;
+    public final static float BAIT_TIME = 3f;
     public final ElementCreator elementCreator;
     public final List<GameElement> levelElements;
     public final List<LevelObjective> levelObjectives;
@@ -67,6 +70,7 @@ public class MainGameFlow extends GameFlow {
         levelObjectives = levelInfo.getObjectives();
         retryButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 100, 60, 25), "retry");
         quitButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 50, 60, 25), "return");
+        dragElement = new Square(0,0,0,0);
     }
 
 
@@ -132,13 +136,11 @@ public class MainGameFlow extends GameFlow {
                 else
                     levelElements.add(new Trap(dragElement.position, SPECIAL_SIZE));
             }
-
-            synchronized (dragElement) {
-                dragElement = null;
-            }
         }
 
-        currentBait = BaitSelected.NONE;
+        synchronized (currentBait) {
+            currentBait = BaitSelected.NONE;
+        }
     }
 
     @Override
@@ -164,14 +166,19 @@ public class MainGameFlow extends GameFlow {
             synchronized (levelElements) {
                 levelElements.addAll(elementCreator.createElements(interval));
                 Iterator<GameElement> itElements = levelElements.iterator();
+
                 while (itElements.hasNext()) {
                     GameElement e = itElements.next();
                     e.update(levelElements, interval);
-                    if(e instanceof Trap)
-                        captured.addAll(((Trap) e).capturedElements);
+                    if(e instanceof Trap) {
+                        Trap t = (Trap) e;
+                        captured.addAll(t.capturedElements);
+                        t.capturedElements.clear();
+                    }
                     if (!e.vivo())
                         itElements.remove();
                 }
+
                 for(GameElement e : captured)
                     levelElements.remove(e);
             }
@@ -217,7 +224,6 @@ public class MainGameFlow extends GameFlow {
 
     @Override
     public void pause(){
-        currentState = GameState.PAUSED;
     }
 
     @Override
