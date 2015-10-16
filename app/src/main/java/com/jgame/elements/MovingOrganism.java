@@ -17,8 +17,8 @@ public class MovingOrganism implements GameElement {
         NORMAL, GROWING ,EVOLVED
     };
 
-    public static final float FOOD_LIFE_MODIFIER = 0.3f;
-    public static final float FOOD_SPEED_MODIFIER = 0.98f;
+    public static final float POINTS_SCALE = 0.1f;
+    public static final float POINTS_SPEED = 0.05f;
     public static final int FOOD_TO_EVOLVE = 10;
     public static final int DEFAULT_MOVES = 10;
     public State currentState;
@@ -29,7 +29,7 @@ public class MovingOrganism implements GameElement {
     private Random random;
     private final Circle sight;
     public final Circle interaction;
-    private float modifier;
+    private float speedModifier;
     private int foodConsumed;
     private float size;
 
@@ -42,7 +42,7 @@ public class MovingOrganism implements GameElement {
         setDirection();
         this.sight = new Circle(position, sightDistance);
         this.interaction = new Circle(position, interactionDistance);
-        modifier = 1.0f;
+        speedModifier = 1.0f;
         currentState = State.NORMAL;
         size = initialSize;
     }
@@ -69,7 +69,7 @@ public class MovingOrganism implements GameElement {
         if(movesLeft <= 0){
             movesLeft = DEFAULT_MOVES;
             setDirection();
-            direction.mul(modifier);
+            direction.mul(speedModifier);
         }
 
         for(GameElement e : others) {
@@ -86,7 +86,7 @@ public class MovingOrganism implements GameElement {
 
 
             if (sight.containsCircle(o.interactionBox)) {
-                direction.set(new Vector2(o.interactionBox.position).sub(position).nor()).mul(modifier);
+                direction.set(new Vector2(o.interactionBox.position).sub(position).nor()).mul(speedModifier);
                 break;
             }
         }
@@ -108,14 +108,24 @@ public class MovingOrganism implements GameElement {
         return size;
     }
 
+    /**
+     * Modifica al organismo recibiendo un numero de foodPoints
+     * @param foodPoints que se agregaran a la instancia de organismo
+     */
+    private void consumeFood(int foodPoints){
+        if(foodPoints == 0)
+            return;
+        timeToLive.accum(- foodPoints * POINTS_SCALE);
+        speedModifier *= foodPoints * POINTS_SPEED;
+        foodConsumed += foodPoints;
+    }
+
     @Override
     public void interact(GameElement other){
         if(other instanceof Organism){
             Organism o = (Organism) other;
-            timeToLive.accum(-FOOD_LIFE_MODIFIER);
-            foodConsumed++;
-            o.decreaseLife(FOOD_LIFE_MODIFIER);
-            modifier *= FOOD_SPEED_MODIFIER;
+            consumeFood(o.takeFood());
+
             if(currentState == State.NORMAL && foodConsumed > FOOD_TO_EVOLVE) {
                 currentState = State.GROWING;
                 movesLeft = DEFAULT_MOVES;

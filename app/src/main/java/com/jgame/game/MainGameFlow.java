@@ -75,7 +75,7 @@ public class MainGameFlow extends GameFlow {
 
 
     /**
-     * Se encarga de actualizar la lista de objetivos. Recive un GameElement e y si se encuentra en la lista
+     * Se encarga de actualizar la lista de objetivos. Recibe un GameElement e y si se encuentra en la lista
      * de objetivos, actualiza el numero de elementos restantes
      * @param e
      */
