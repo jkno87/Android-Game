@@ -132,9 +132,7 @@ public class GameRenderer implements Renderer {
             }
         }
 
-        if(gameFlow instanceof CharacterSelectFlow)
-            drawCharacterSelect(gameFlow);
-        else if (gameFlow instanceof MainGameFlow)
+        if (gameFlow instanceof MainGameFlow)
             drawMainGameFlow(gameFlow);
         else if (gameFlow instanceof LevelSelectFlow)
             drawLevelSelect((LevelSelectFlow) gameFlow);
@@ -344,61 +342,6 @@ public class GameRenderer implements Renderer {
             textDrawer.draw();
         }
 
-
-    }
-
-    private void drawCharacterSelect(GameFlow flow){
-        CharacterSelectFlow cFlow = (CharacterSelectFlow) flow;
-        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
-        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-        gl10.glMatrixMode(GL10.GL_PROJECTION);
-        gl10.glLoadIdentity();
-        gl10.glOrthof(0, FRUSTUM_WIDTH, 0, FRUSTUM_HEIGHT, 1, -1);
-
-        gl10.glMatrixMode(GL10.GL_MODELVIEW);
-        gl10.glEnable(GL10.GL_BLEND);
-        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-
-        gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, shipId);
-        gl10.glLoadIdentity();
-        Drawer shipDrawer = new Drawer(gl10, 1, true, true);
-        shipDrawer.addJavaVertex(new Square(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2,
-                100, 100, 0)
-                .getTextureColorCoords(TextureData.USE_WHOLE_IMAGE, new float[]{1, 1, 1, 1}));
-
-        shipDrawer.draw();
-
-        gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
-        gl10.glLoadIdentity();
-
-        Drawer characterDrawer = new Drawer(gl10, cFlow.availableCharacters.length, true, false);
-        for(int i = 0; i < cFlow.availableCharacters.length; i++)
-            characterDrawer.addJavaVertex(cFlow.availableCharacters[i].size.getTextureCoords(cFlow.availableCharacters[i].characterInfo.textureInfo));
-        characterDrawer.draw();
-
-        if(cFlow.shipsFilled()) {
-            /*gl10.glLoadIdentity();
-            gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-            Drawer buttonDrawer = new Drawer(gl10, 1, false, true);
-            buttonDrawer.addJavaVertex(cFlow.confirmButton.getSimpleCoords(new float[]{0.75f, 0.55f, 0.7f, 1}));
-            buttonDrawer.draw();*/
-
-            gl10.glEnable(GL10.GL_TEXTURE_2D);
-            gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
-            gl10.glLoadIdentity();
-
-            float[][] glText = cFlow.continueLabel.getLettersTexture();
-
-            Drawer textDrawer = new Drawer(gl10, glText.length, true, false);
-            for(int i = 0; i < glText.length; i++)
-                textDrawer.addJavaVertex(glText[i]);
-
-            textDrawer.draw();
-
-        }
 
     }
 
