@@ -132,7 +132,7 @@ public class MainGameFlow extends GameFlow {
         if(currentBait != BaitSelected.NONE && dragElement.position.y < GameLevels.MAX_PLAYING_HEIGHT) {
             synchronized (levelElements) {
                 if (currentBait == BaitSelected.PRIMARY)
-                    levelElements.add(new Organism(BAIT_TIME, dragElement.position, FOOD_SIZE));
+                    levelElements.add(new Organism(BAIT_TIME, dragElement.position, FOOD_SIZE, 0, 0));
                 else
                     levelElements.add(new Trap(dragElement.position, SPECIAL_SIZE));
             }

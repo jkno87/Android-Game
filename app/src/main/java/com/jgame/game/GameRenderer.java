@@ -82,6 +82,15 @@ public class GameRenderer implements Renderer {
         return textureIds[0];
     }
 
+    private void addDigitsTexture(float x, float y, float size, int number, Drawer digitsDrawer){
+        while(true){
+            int nVal = number / 10;
+            int rem = number % 10;
+            number = nVal;
+        }
+    }
+
+
     /**
      * Se dibuja en pantalla el numero proporcionado a la funcion
      * @param x coordenada x en la que se inicia el dibujo
@@ -103,16 +112,17 @@ public class GameRenderer implements Renderer {
                 break;
         }
 
-        Drawer digitsDrawer = new Drawer(gl10, textures.size(), true, true);
+        Drawer digitsDrawer = new Drawer();
         float currentX = x;
 
         for(int i = textures.size() - 1; i >= 0; i--) {
+            digitsDrawer.addVertex();
             digitsDrawer.addJavaVertex(new Square(currentX, y, 10, 10)
                     .getTextureColorCoords(textures.get(i), GameElement.DEFAULT_COLOR));
             currentX += 22;
         }
 
-        digitsDrawer.draw();
+        digitsDrawer.draw(gl10, true, true);
     }
 
     @Override
@@ -329,11 +339,13 @@ public class GameRenderer implements Renderer {
 
         for(GameButton gb : flow.levels){
             float[][] glText = gb.label.getLettersTexture();
-            Drawer textDrawer = new Drawer(gl10, glText.length, true, false);
-            for(int i = 0; i < glText.length; i++)
-                textDrawer.addJavaVertex(glText[i]);
+            Drawer textDrawer = new Drawer(true, false);
 
-            textDrawer.draw();
+            for(int i = 0; i < glText.length; i++)
+                for(int j = 0; j < glText[i].length; j++)
+                    textDrawer.addVertex(glText[i][j]);
+
+            textDrawer.draw(gl10);
         }
 
 
