@@ -120,6 +120,7 @@ public class GameLevels {
                 private final static float AVG_DISTANCE_Y = 120;
                 private final static float AVG_X = 100;
                 private final static float AVG_Y = 100;
+                private final static float FOOD_HP = 12;
 
                 public void initialize(){
                     spawnTimer = new TimeCounter(3f);

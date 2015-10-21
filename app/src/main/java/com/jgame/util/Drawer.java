@@ -13,19 +13,6 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class Drawer {
 
-    private class VertexInfo {
-        final ArrayList<Float> position;
-        final ArrayList<Float> color;
-        final ArrayList<Float> texture;
-
-        private VertexInfo(){
-            position = new ArrayList<>();
-            color = null;
-            texture = null;
-        }
-    }
-
-
     private GL10 gl;
     public static final int BYTES_ON_FLOAT = 4;
     public static final int VERTEX_PER_ELEMENT = 4;
@@ -41,17 +28,116 @@ public class Drawer {
         this.withTexture = withTexture;
     }
 
-    public void addSquare(float x, float y, float len){
-        addVertex(x - len);
-        addVertex(y - len);
-        addVertex(x + len);
-        addVertex(y - len);
-        addVertex(x + len);
-        addVertex(y + len);
-        addVertex(x - len);
-        addVertex(y + len);
+    /**
+     * Agrega un indice que representa una coordenada de un cuadrado
+     * @param x coordenada X del indice
+     * @param y coordenada Y del indice
+     * @return Drawer con el indice
+     */
+    public Drawer addSquareIndex(float x, float y){
+        return addVertex(x).addVertex(y);
     }
 
+    /**
+     * Agrega un indice que representa una coordenada de un cuadrado con textura
+     * @param x coordenada X del indice
+     * @param y coordenada Y del indice
+     * @param textX coordenada X de la textura del indice
+     * @param textY coordenada Y de la textura del indice
+     * @return Drawer que contiene el indice
+     */
+    public Drawer addSquareIndex(float x, float y, float textX, float textY){
+        return addVertex(x).addVertex(y).addVertex(textX).addVertex(textY);
+    }
+
+    /**
+     * Agrega un indice que representa una coordenada de un cuadrado con textura y color
+     * @param x coordenada X del indice
+     * @param y coordenada Y del indice
+     * @param textX coordenada X de la textura del indice
+     * @param textY coordenada Y de la textura del indice
+     * @param color arreglo con los colores del indice
+     * @return Drawer que contiene el indice
+     */
+    public Drawer addSquareIndex(float x, float y, float textX, float textY, float[] color){
+        return addSquareIndex(x,y,textX, textY).addVertex(color[0])
+                .addVertex(color[1]).addVertex(color[2]).addVertex(color[3]);
+    }
+
+    /**
+     * Agrega un indice que representa una coordenada con un cuadrado con color
+     * @param x coordenada X del indice
+     * @param y coordenada Y del indice
+     * @param color arreglo con el color del cuadrado
+     * @return Drawer con los indices agregados
+     */
+    public Drawer addSquareIndex(float x, float y, float[] color){
+        return addSquareIndex(x, y).addVertex(color[0])
+                .addVertex(color[1]).addVertex(color[2]).addVertex(color[3]);
+    }
+
+
+    /**
+     * Agrega los vertices de un rectangulo
+     * @param x coordenada x del centro del rectangulo
+     * @param y coordenada y del centro del rectangulo
+     * @param lenX longitud X del rectangulo
+     * @param lenY longitud Y del rectangulo
+     * @return Drawer con los vertices del rectangulo agregado
+     */
+    public Drawer addRectangle(float x, float y, float lenX, float lenY){
+        return addSquareIndex(x - lenX, y - lenY).addSquareIndex(x + lenX, y + lenY)
+                .addSquareIndex(x + lenX, y + lenY).addSquareIndex(x - lenX, y + lenY);
+    }
+
+    /**
+     * Agrega los vertices de un cuadrado
+     * @param x coordenada X
+     * @param y coordenada Y
+     * @param len longitud de los lados
+     * @return Drawer que ya incluye los indices del cuadrado
+     */
+    public Drawer addSquare(float x, float y, float len){
+        return addRectangle(x, y, len, len);
+    }
+
+
+    /**
+     * Agrega los vertices de un cuadrado con textura y color
+     * @param x coordenada X del centro del cuadrado
+     * @param y coordenada Y del centro de cuadrado
+     * @param len longitud del cuadrado
+     * @param textIndices arreglo con los indices de las texturas
+     * @param colors arreglo con los indices del color
+     * @return Drawer que contiene los vertices del cuadrado
+     */
+    public Drawer addTexturedSquare(float x, float y, float len, float[] textIndices, float[] colors){
+        return addSquareIndex(x - len, y - len, textIndices[0], textIndices[1], colors)
+                .addSquareIndex(x + len, y - len, textIndices[2], textIndices[3], colors)
+                .addSquareIndex(x + len, y + len, textIndices[4], textIndices[5], colors)
+                .addSquareIndex(x - len, y + len, textIndices[6], textIndices[7], colors);
+    }
+
+    /**
+     * Agrega los vertices de un rectangulo con color
+     * @param x coordenada X del centro del rectangulo
+     * @param y coordenada Y del centro del rectangulo
+     * @param lenX longitud en el eje X del rectangulo
+     * @param lenY longitud en el eje Y del rectangulo
+     * @param colors arreglo con los colores del rectangulo
+     * @return Drawer que contiene los vertices del rectangulo
+     */
+    public Drawer addColoredRectangle(float x, float y, float lenX, float lenY, float[] colors){
+        return addSquareIndex(x - lenX, y - lenY, colors).addSquareIndex(x + lenX, y - lenY, colors)
+                .addSquareIndex(x + lenX, y + lenY, colors).addSquareIndex(x - lenX, y + lenY, colors);
+    }
+
+
+    /**
+     * Agrega un float a los vertices del Drawer
+     * @param e float que se agrega al Drawer
+     * @return Drawer que contiene el float
+     */
     public Drawer addVertex(float e){
         vertexQueue.add(e);
         elementsAdded++;
