@@ -107,12 +107,11 @@ public class GameRenderer implements Renderer {
         float currentX = x;
 
         for(int i = textures.size() - 1; i >= 0; i--) {
-            digitsDrawer.addJavaVertex(new Square(currentX, y, 10, 10)
-                    .getTextureColorCoords(textures.get(i), GameElement.DEFAULT_COLOR));
+            digitsDrawer.addTexturedSquare(currentX, y, 10, textures.get(i), GameElement.DEFAULT_COLOR);
             currentX += 22;
         }
 
-        digitsDrawer.draw();
+        digitsDrawer.draw(gl10);
     }
 
     @Override
@@ -133,9 +132,7 @@ public class GameRenderer implements Renderer {
             }
         }
 
-        if(gameFlow instanceof CharacterSelectFlow)
-            drawCharacterSelect(gameFlow);
-        else if (gameFlow instanceof MainGameFlow)
+        if (gameFlow instanceof MainGameFlow)
             drawMainGameFlow(gameFlow);
         else if (gameFlow instanceof LevelSelectFlow)
             drawLevelSelect((LevelSelectFlow) gameFlow);
@@ -174,9 +171,9 @@ public class GameRenderer implements Renderer {
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
 
-        Drawer bannerDrawer = new Drawer(gl10, 1, false, true);
-        bannerDrawer.addJavaVertex(Square.getSimpleCoords(0, 0, FRUSTUM_WIDTH, FRUSTUM_HEIGHT, new float[]{0, 0, 0, 0.5f}));
-        bannerDrawer.draw();
+        Drawer bannerDrawer = new Drawer(false, true);
+        bannerDrawer.addColoredRectangle(0, 0, FRUSTUM_WIDTH, FRUSTUM_HEIGHT, new float[]{0,0,0,0.5f});
+        bannerDrawer.draw(gl10);
 
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
@@ -184,14 +181,14 @@ public class GameRenderer implements Renderer {
 
         float [][] textContinue = gameActivity.continueButton.label.getLettersTexture();
         float [][] textQuit = gameActivity.quitButton.label.getLettersTexture();
-        Drawer textDrawer = new Drawer(gl10, textContinue.length + textQuit.length, true, false);
+        Drawer textDrawer = new Drawer(true, false);
         for(int i = 0; i < textContinue.length; i++)
-            textDrawer.addJavaVertex(textContinue[i]);
+            textDrawer.add(textContinue[i]);
 
         for(int i = 0; i < textQuit.length; i++)
             textDrawer.addJavaVertex(textQuit[i]);
 
-        textDrawer.draw();
+        textDrawer.draw(gl10);
     }
 
     private void drawPlayingGame(MainGameFlow gameFlow){
@@ -211,12 +208,12 @@ public class GameRenderer implements Renderer {
             if (!gameFlow.levelElements.isEmpty()) {
                 gl10.glLoadIdentity();
                 gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-                Drawer bannerDrawer = new Drawer(gl10, gameFlow.levelElements.size(), false, true);
+                Drawer bannerDrawer = new Drawer(false, true);
                 for (GameElement e : gameFlow.levelElements) {
-                    bannerDrawer.addJavaVertex(Square.getSimpleCoords(e.getPosition(), e.getSize(), e.getSize(),
-                            getOrganismColor(e.getId(), e.getPctAlive())));
+                    bannerDrawer.addColoredRectangle(e.getPosition().x, e.getPosition().y,
+                            e.getSize(), e.getSize(), getOrganismColor(e.getId(), e.getPctAlive()));
                 }
-                bannerDrawer.draw();
+                bannerDrawer.draw(gl10);
             }
         }
 
@@ -228,8 +225,9 @@ public class GameRenderer implements Renderer {
             lastUpdatedBait = gameFlow.currentBait;
         }
 
-        Drawer infoDrawer = new Drawer(gl10, lastUpdatedBait == MainGameFlow.BaitSelected.NONE ? 3 : 4, false, true);
-        infoDrawer.addJavaVertex(Square.getSimpleCoords(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 40, FRUSTUM_WIDTH / 2, 40, new float[]{0, 0.75f, 0.5f, 1}));
+        Drawer infoDrawer = new Drawer(false, true);
+        infoDrawer.addColoredRectangle(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 40, FRUSTUM_WIDTH / 2, 40, new float[]{0, 0.75f, 0.5f, 1});
+        infoDrawer.addColoredRectangle(gameFlow.inputBasic.position, gameFlow)
         infoDrawer.addJavaVertex(Square.getSimpleCoords(gameFlow.inputBasic.position, gameFlow.inputBasic.radius, gameFlow.inputBasic.radius, new float[]{1, 0, 0, 1}));
         infoDrawer.addJavaVertex(Square.getSimpleCoords(gameFlow.inputSecondary.position, gameFlow.inputSecondary.radius, gameFlow.inputSecondary.radius, new float[]{1, 0, 1, 1}));
         if(lastUpdatedBait != MainGameFlow.BaitSelected.NONE)

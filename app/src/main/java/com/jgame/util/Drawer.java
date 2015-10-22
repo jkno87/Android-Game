@@ -132,7 +132,6 @@ public class Drawer {
                 .addSquareIndex(x + lenX, y + lenY, colors).addSquareIndex(x - lenX, y + lenY, colors);
     }
 
-
     /**
      * Agrega un float a los vertices del Drawer
      * @param e float que se agrega al Drawer
