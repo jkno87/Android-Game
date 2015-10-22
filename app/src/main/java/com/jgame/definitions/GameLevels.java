@@ -120,6 +120,7 @@ public class GameLevels {
                 private final static float AVG_DISTANCE_Y = 120;
                 private final static float AVG_X = 100;
                 private final static float AVG_Y = 100;
+                private final static float FOOD_HP = 12;
 
                 public void initialize(){
                     spawnTimer = new TimeCounter(3f);
@@ -141,7 +142,7 @@ public class GameLevels {
 
                     for(int i = 0; i < random.nextInt(10) + 3; i++)
                         elements.add(new Organism(AVG_LIFESPAN + ((random.nextFloat() - 0.5f) * AVG_LIFESPAN), generatePosition(AVG_X, AVG_Y)
-                        , 8.0f));
+                        , 8.0f, 0, 0));
 
                     for(int i = 0; i < random.nextInt(5) + 1; i++)
                         elements.add(new MovingOrganism(13 + ((random.nextFloat() - 0.5f) * 13),

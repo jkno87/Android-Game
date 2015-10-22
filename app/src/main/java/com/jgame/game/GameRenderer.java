@@ -103,7 +103,7 @@ public class GameRenderer implements Renderer {
                 break;
         }
 
-        Drawer digitsDrawer = new Drawer(gl10, textures.size(), true, true);
+        Drawer digitsDrawer = new Drawer(true, true);
         float currentX = x;
 
         for(int i = textures.size() - 1; i >= 0; i--) {
@@ -133,7 +133,9 @@ public class GameRenderer implements Renderer {
             }
         }
 
-        if (gameFlow instanceof MainGameFlow)
+        if(gameFlow instanceof CharacterSelectFlow)
+            drawCharacterSelect(gameFlow);
+        else if (gameFlow instanceof MainGameFlow)
             drawMainGameFlow(gameFlow);
         else if (gameFlow instanceof LevelSelectFlow)
             drawLevelSelect((LevelSelectFlow) gameFlow);
@@ -327,11 +329,13 @@ public class GameRenderer implements Renderer {
 
         for(GameButton gb : flow.levels){
             float[][] glText = gb.label.getLettersTexture();
-            Drawer textDrawer = new Drawer(gl10, glText.length, true, false);
-            for(int i = 0; i < glText.length; i++)
-                textDrawer.addJavaVertex(glText[i]);
+            Drawer textDrawer = new Drawer(true, false);
 
-            textDrawer.draw();
+            for(int i = 0; i < glText.length; i++)
+                for(int j = 0; j < glText[i].length; j++)
+                    textDrawer.addVertex(glText[i][j]);
+
+            textDrawer.draw(gl10);
         }
 
 

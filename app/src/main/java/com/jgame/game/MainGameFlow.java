@@ -39,6 +39,8 @@ public class MainGameFlow extends GameFlow {
     public final static float FRUSTUM_HEIGHT = 480f;
     public final static float FRUSTUM_WIDTH = 320f;
     public final static float BAIT_TIME = 3f;
+    public final static int BAIT_HP = 1;
+    public final static int BAIT_FP = 1;
     public final ElementCreator elementCreator;
     public final List<GameElement> levelElements;
     public final List<LevelObjective> levelObjectives;
@@ -132,7 +134,7 @@ public class MainGameFlow extends GameFlow {
         if(currentBait != BaitSelected.NONE && dragElement.position.y < GameLevels.MAX_PLAYING_HEIGHT) {
             synchronized (levelElements) {
                 if (currentBait == BaitSelected.PRIMARY)
-                    levelElements.add(new Organism(BAIT_TIME, dragElement.position, FOOD_SIZE));
+                    levelElements.add(new Organism(BAIT_TIME, dragElement.position, FOOD_SIZE, BAIT_HP, BAIT_FP));
                 else
                     levelElements.add(new Trap(dragElement.position, SPECIAL_SIZE));
             }
