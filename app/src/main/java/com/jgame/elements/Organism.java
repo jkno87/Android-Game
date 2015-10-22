@@ -14,10 +14,15 @@ public class Organism implements GameElement {
 
     public TimeCounter lifeTimer;
     public Circle interactionBox;
+    public int hp;
+    public final int foodPoints;
 
-    public Organism (float timeToLive, Vector2 position, float size){
+    public Organism (float timeToLive, Vector2 position, float size, int hp, int foodPoints){
         lifeTimer = new TimeCounter(timeToLive);
         interactionBox = new Circle(position, size);
+        this.hp = hp;
+        this.foodPoints = foodPoints;
+
     }
 
     @Override
@@ -40,12 +45,19 @@ public class Organism implements GameElement {
         return interactionBox.radius;
     }
 
-    public void decreaseLife(float time){
-        lifeTimer.accum(time);
+    /**
+     * Regresa un entero que representa la porcion de comida representada por foodPoints o por el hp disponible.
+     * @return cantidad de comida disponible en un turno
+     */
+    public int takeFood(){
+        int foodAvailable = hp >= foodPoints ? foodPoints : hp;
+        hp -= foodAvailable;
+
+        return foodAvailable;
     }
 
     public boolean vivo(){
-        return !lifeTimer.completed();
+        return !lifeTimer.completed() && hp > 0;
     }
 
     public Vector2 getPosition(){

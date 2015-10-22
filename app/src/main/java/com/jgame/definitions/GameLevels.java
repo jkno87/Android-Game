@@ -108,16 +108,16 @@ public class GameLevels {
 
 
     public static final LevelInfoCreator TUTORIAL_CREATOR =
-            new LevelInfoCreator().addObjective(GameIds.EVOLVED_ORGANISM_ID, 2);
+            new LevelInfoCreator().addObjective(GameIds.EVOLVED_ORGANISM_ID, 1)
+            .addObjective(GameIds.MOVING_ORGANISM_ID, 3);
 
     public static final ElementCreator.ElementWave SIMPLE_WAVE =
             new ElementCreator.ElementWave(){
                 private TimeCounter spawnTimer;
                 private Random random;
                 private final static float AVG_LIFESPAN = 6;
-                private final static float AVG_DISTANCE = 150;
-                private final static float FOOD_SIZE = 8.0f;
-                private final static float MOVING_SIZE = 5;
+                private final static float AVG_DISTANCE_X = 70;
+                private final static float AVG_DISTANCE_Y = 120;
                 private final static float AVG_X = 100;
                 private final static float AVG_Y = 100;
 
@@ -127,8 +127,8 @@ public class GameLevels {
                 }
 
                 private Vector2 generatePosition(float avgX, float avgY){
-                    return new Vector2(((random.nextFloat() - 0.5f) * AVG_DISTANCE) + avgX,
-                            ((random.nextFloat() - 0.5f) * AVG_DISTANCE) + avgY);
+                    return new Vector2(((random.nextFloat() - 0.5f) * AVG_DISTANCE_X) + avgX,
+                            ((random.nextFloat() - 0.5f) * AVG_DISTANCE_Y) + avgY);
                 }
 
                 @Override
@@ -141,11 +141,11 @@ public class GameLevels {
 
                     for(int i = 0; i < random.nextInt(10) + 3; i++)
                         elements.add(new Organism(AVG_LIFESPAN + ((random.nextFloat() - 0.5f) * AVG_LIFESPAN), generatePosition(AVG_X, AVG_Y)
-                        , FOOD_SIZE));
+                        , 8.0f));
 
                     for(int i = 0; i < random.nextInt(5) + 1; i++)
-                        elements.add(new MovingOrganism(10 + ((random.nextFloat() - 0.5f) * 10),
-                                generatePosition(250,250), 35f, 5f, MOVING_SIZE));
+                        elements.add(new MovingOrganism(13 + ((random.nextFloat() - 0.5f) * 13),
+                                generatePosition(150,250), 35f, 5f, 5f));
 
                     spawnTimer.reset();
 

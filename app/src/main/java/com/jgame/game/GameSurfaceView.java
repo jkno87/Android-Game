@@ -21,7 +21,8 @@ public class GameSurfaceView extends GLSurfaceView {
     @Override
     public boolean onTouchEvent(MotionEvent event){
 
-        synchronized(this){
+            if(gameActivity.isPaused())
+                return false;
 
             float x = (event.getX() / (float) getWidth());
             float y = (((float) getHeight() - event.getY()) / (float) getHeight());
@@ -41,7 +42,5 @@ public class GameSurfaceView extends GLSurfaceView {
             }
 
             return true;
-
-        }
     }
 }

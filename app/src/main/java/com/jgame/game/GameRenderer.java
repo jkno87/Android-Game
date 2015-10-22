@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import com.jgame.definitions.GameIds;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Organism;
@@ -89,9 +90,8 @@ public class GameRenderer implements Renderer {
      */
     private void drawDigits(float x, float y, int number){
         //TODO: no utilizar ese tama;o arbitrario de los numeros
-        gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
         gl10.glLoadIdentity();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
         ArrayList <float[]> textures = new ArrayList<float[]>();
 
         while(true){
@@ -118,12 +118,13 @@ public class GameRenderer implements Renderer {
     @Override
     public void onDrawFrame(GL10 arg0) {
         GameFlow gameFlow = gameActivity.getGameFlow();
+        long newTime = System.nanoTime();
+        float interval = (newTime - lastUpdate) / NANO_SCALE;
+        lastUpdate = newTime;
         boolean isPaused = gameActivity.isPaused(); //Se copia el valor para soltar el lock
 
         if(!isPaused) {
-            long newTime = System.nanoTime();
-            float interval = (newTime - lastUpdate) / NANO_SCALE;
-            lastUpdate = newTime;
+
             updateCounter.accum(interval);
 
             if (updateCounter.completed()) {
@@ -142,19 +143,19 @@ public class GameRenderer implements Renderer {
 
     }
 
-    private float[] getOrganismColor(GameElement e){
-        if(e instanceof Organism)
-            return new float[]{1, 0, 0, e.getPctAlive()};
-        else if(e instanceof  MovingOrganism){
-            MovingOrganism m = (MovingOrganism) e;
-            if(m.currentState == MovingOrganism.State.EVOLVED)
-                return new float[]{0,1,0, e.getPctAlive()};
-            else
-                return new float[]{0,0,1, e.getPctAlive()};
-        } else if(e instanceof Trap)
-            return new float[]{1,0,1,1};
-        else
-            return new float[]{0,0,0,0};
+    private float[] getOrganismColor(int id, float pctAlive){
+        switch(id){
+            case GameIds.FOOD_ORGANISM_ID :
+                return new float[]{1, 0, 0, pctAlive};
+            case GameIds.MOVING_ORGANISM_ID :
+                return new float[]{0,0,1, pctAlive};
+            case GameIds.EVOLVED_ORGANISM_ID:
+                return new float[]{0,1,0, pctAlive};
+            case GameIds.TRAP_ID:
+                return new float[]{1,0,1,1};
+        }
+
+        return new float[]{0,0,0,0};
     }
 
     private void drawMainGameFlow(GameFlow flow){
@@ -167,15 +168,17 @@ public class GameRenderer implements Renderer {
 
 
     private void drawPauseMenu(){
+
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+
         Drawer bannerDrawer = new Drawer(gl10, 1, false, true);
         bannerDrawer.addJavaVertex(Square.getSimpleCoords(0, 0, FRUSTUM_WIDTH, FRUSTUM_HEIGHT, new float[]{0, 0, 0, 0.5f}));
         bannerDrawer.draw();
 
-        gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
         gl10.glLoadIdentity();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
+
 
         float [][] textContinue = gameActivity.continueButton.label.getLettersTexture();
         float [][] textQuit = gameActivity.quitButton.label.getLettersTexture();
@@ -187,9 +190,6 @@ public class GameRenderer implements Renderer {
             textDrawer.addJavaVertex(textQuit[i]);
 
         textDrawer.draw();
-
-
-
     }
 
     private void drawPlayingGame(MainGameFlow gameFlow){
@@ -204,14 +204,6 @@ public class GameRenderer implements Renderer {
         gl10.glEnable(GL10.GL_BLEND);
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
-        gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
-        gl10.glLoadIdentity();
-
-        Drawer characterDrawer = new Drawer(gl10, 1, true, true);
-        characterDrawer.addJavaVertex(new Square(50, FRUSTUM_HEIGHT - 50, 25, 25)
-                .getTextureColorCoords(TextureData.USE_WHOLE_IMAGE, new float[]{1, 1, 1, 1}));
-        characterDrawer.draw();
 
         synchronized (gameFlow.levelElements) {
             if (!gameFlow.levelElements.isEmpty()) {
@@ -220,7 +212,7 @@ public class GameRenderer implements Renderer {
                 Drawer bannerDrawer = new Drawer(gl10, gameFlow.levelElements.size(), false, true);
                 for (GameElement e : gameFlow.levelElements) {
                     bannerDrawer.addJavaVertex(Square.getSimpleCoords(e.getPosition(), e.getSize(), e.getSize(),
-                            getOrganismColor(e)));
+                            getOrganismColor(e.getId(), e.getPctAlive())));
                 }
                 bannerDrawer.draw();
             }
@@ -238,7 +230,7 @@ public class GameRenderer implements Renderer {
         infoDrawer.addJavaVertex(Square.getSimpleCoords(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 40, FRUSTUM_WIDTH / 2, 40, new float[]{0, 0.75f, 0.5f, 1}));
         infoDrawer.addJavaVertex(Square.getSimpleCoords(gameFlow.inputBasic.position, gameFlow.inputBasic.radius, gameFlow.inputBasic.radius, new float[]{1, 0, 0, 1}));
         infoDrawer.addJavaVertex(Square.getSimpleCoords(gameFlow.inputSecondary.position, gameFlow.inputSecondary.radius, gameFlow.inputSecondary.radius, new float[]{1, 0, 1, 1}));
-        if(gameFlow.currentBait != MainGameFlow.BaitSelected.NONE)
+        if(lastUpdatedBait != MainGameFlow.BaitSelected.NONE)
             infoDrawer.addJavaVertex(gameFlow.dragElement
                     .getSimpleCoords(lastUpdatedBait == MainGameFlow.BaitSelected.PRIMARY ? new float[]{1,0,0,1} : new float[]{1,0,1,1}));
 
@@ -248,9 +240,9 @@ public class GameRenderer implements Renderer {
         infoDrawer = new Drawer(gl10, objectivesNum, false, true);
         for(LevelInformation.LevelObjective o : gameFlow.levelObjectives) {
             infoDrawer.addJavaVertex(Square.getSimpleCoords(OBJECTIVES_X_DRAW, objCurrentY,
-                    OBJECTIVES_SIZE, OBJECTIVES_SIZE, new float[]{0, 1, 0, 1}));
+                    OBJECTIVES_SIZE, OBJECTIVES_SIZE, getOrganismColor(o.id, 1)));
             drawDigits(OBJECTIVES_AMOUNT_X, objCurrentY, o.count);
-            objCurrentY += OBJECTIVES_SIZE;
+            objCurrentY -= OBJECTIVES_SIZE + 20;
         }
 
         gl10.glLoadIdentity();
