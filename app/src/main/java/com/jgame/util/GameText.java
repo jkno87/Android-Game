@@ -2,6 +2,8 @@ package com.jgame.util;
 
 import android.util.Log;
 
+import com.jgame.elements.GameElement;
+
 /**
  * Created by ej-jose on 17/08/15.
  */
@@ -53,5 +55,24 @@ public class GameText {
 
         return textures;
     }
+
+    /**
+     * Agrega los vertices a letterDrawer para dibujar el GameText.
+     * @param letterDrawer Drawer al que se agregaran los vertices
+     * @return Drawer que contiene los vertices de GameText
+     */
+    public Drawer addLetterTexture(Drawer letterDrawer){
+        float currentX = x - size * (texto.length / 2);
+        float offset = texto.length * 0.2f;
+
+        for(int i = 0; i < texto.length; i++){
+            letterDrawer.addTexturedSquare(currentX, y, size,
+                    getTextureData(texto[i]), GameElement.DEFAULT_COLOR);
+            currentX += size + offset;
+        }
+
+        return letterDrawer;
+    }
+
 
 }

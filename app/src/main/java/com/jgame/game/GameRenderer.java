@@ -178,15 +178,9 @@ public class GameRenderer implements Renderer {
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
 
-
-        float [][] textContinue = gameActivity.continueButton.label.getLettersTexture();
-        float [][] textQuit = gameActivity.quitButton.label.getLettersTexture();
-        Drawer textDrawer = new Drawer(true, false);
-        for(int i = 0; i < textContinue.length; i++)
-            textDrawer.add(textContinue[i]);
-
-        for(int i = 0; i < textQuit.length; i++)
-            textDrawer.addJavaVertex(textQuit[i]);
+        Drawer textDrawer = new Drawer(true, true);
+        gameActivity.continueButton.label.addLetterTexture(textDrawer);
+        gameActivity.quitButton.label.addLetterTexture(textDrawer);
 
         textDrawer.draw(gl10);
     }
@@ -209,10 +203,10 @@ public class GameRenderer implements Renderer {
                 gl10.glLoadIdentity();
                 gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
                 Drawer bannerDrawer = new Drawer(false, true);
-                for (GameElement e : gameFlow.levelElements) {
+                for (GameElement e : gameFlow.levelElements)
                     bannerDrawer.addColoredRectangle(e.getPosition().x, e.getPosition().y,
                             e.getSize(), e.getSize(), getOrganismColor(e.getId(), e.getPctAlive()));
-                }
+
                 bannerDrawer.draw(gl10);
             }
         }
@@ -227,27 +221,27 @@ public class GameRenderer implements Renderer {
 
         Drawer infoDrawer = new Drawer(false, true);
         infoDrawer.addColoredRectangle(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 40, FRUSTUM_WIDTH / 2, 40, new float[]{0, 0.75f, 0.5f, 1});
-        infoDrawer.addColoredRectangle(gameFlow.inputBasic.position, gameFlow)
-        infoDrawer.addJavaVertex(Square.getSimpleCoords(gameFlow.inputBasic.position, gameFlow.inputBasic.radius, gameFlow.inputBasic.radius, new float[]{1, 0, 0, 1}));
-        infoDrawer.addJavaVertex(Square.getSimpleCoords(gameFlow.inputSecondary.position, gameFlow.inputSecondary.radius, gameFlow.inputSecondary.radius, new float[]{1, 0, 1, 1}));
+        infoDrawer.addColoredRectangle(gameFlow.inputBasic.position, gameFlow.inputBasic.radius, gameFlow.inputBasic.radius, new float[]{1, 0, 0, 1});
+        infoDrawer.addColoredRectangle(gameFlow.inputSecondary.position, gameFlow.inputSecondary.radius, gameFlow.inputSecondary.radius, new float[]{1, 0, 1, 1});
         if(lastUpdatedBait != MainGameFlow.BaitSelected.NONE)
-            infoDrawer.addJavaVertex(gameFlow.dragElement
-                    .getSimpleCoords(lastUpdatedBait == MainGameFlow.BaitSelected.PRIMARY ? new float[]{1,0,0,1} : new float[]{1,0,1,1}));
+            infoDrawer.addColoredRectangle(gameFlow.dragElement.position, gameFlow.dragElement.lenX, gameFlow.dragElement.lenY,
+                    lastUpdatedBait == MainGameFlow.BaitSelected.PRIMARY ? new float[]{1,0,0,1} : new float[]{1,0,1,1});
 
-        infoDrawer.draw();
+        infoDrawer.draw(gl10);
         float objCurrentY = OBJECTIVES_Y_DRAW;
-        int objectivesNum = gameFlow.levelObjectives.size();
-        infoDrawer = new Drawer(gl10, objectivesNum, false, true);
+
+        infoDrawer = new Drawer(false, true);
+
         for(LevelInformation.LevelObjective o : gameFlow.levelObjectives) {
-            infoDrawer.addJavaVertex(Square.getSimpleCoords(OBJECTIVES_X_DRAW, objCurrentY,
-                    OBJECTIVES_SIZE, OBJECTIVES_SIZE, getOrganismColor(o.id, 1)));
+            infoDrawer.addColoredRectangle(OBJECTIVES_X_DRAW, objCurrentY, OBJECTIVES_SIZE,
+                    OBJECTIVES_SIZE, getOrganismColor(o.id, 1));
             drawDigits(OBJECTIVES_AMOUNT_X, objCurrentY, o.count);
             objCurrentY -= OBJECTIVES_SIZE + 20;
         }
 
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-        infoDrawer.draw();
+        infoDrawer.draw(gl10);
 
         drawDigits(TIMER_POSITION.x, TIMER_POSITION.y, gameFlow.getTimeRemaining());
     }
@@ -272,27 +266,23 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
         gl10.glLoadIdentity();
 
-        float [][] glText = endgameLabels.getLettersTexture();
-
-        Drawer textDrawer = new Drawer(gl10, glText.length, true, false);
-        for(int i = 0; i < glText.length; i++)
-            textDrawer.addJavaVertex(glText[i]);
-
-        textDrawer.draw();
+        Drawer textDrawer = new Drawer(true, true);
+        endgameLabels.addLetterTexture(textDrawer);
+        textDrawer.draw(gl10);
 
         currentY -= 40;
-        textDrawer = new Drawer(gl10, gameFlow.levelObjectives.size(), false, true);
+        textDrawer = new Drawer(false, true);
 
         for(LevelInformation.LevelObjective o : gameFlow.levelObjectives) {
-            textDrawer.addJavaVertex(Square.getSimpleCoords(ENDGAME_LABELS_X, currentY,
-                    OBJECTIVES_SIZE * 2, OBJECTIVES_SIZE * 2, new float[]{0, 1, 0, 1}));
+            textDrawer.addColoredRectangle(ENDGAME_LABELS_X, currentY,
+                    OBJECTIVES_SIZE * 2, OBJECTIVES_SIZE * 2, new float[]{0, 1, 0, 1});
             drawDigits(ENDGAME_NUMBERS_X, currentY, o.count);
             currentY -= 40;
         }
 
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-        textDrawer.draw();
+        textDrawer.draw(gl10);
 
         currentY -= 40;
 
@@ -300,12 +290,10 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
         gl10.glLoadIdentity();
 
-        glText = new GameText(gameFlow.stageCleared ? "win" : "lose", ENDGAME_LABELS_X, currentY, 15).getLettersTexture();
-        textDrawer = new Drawer(gl10, glText.length, true, false);
-        for(int i = 0; i < glText.length; i++)
-            textDrawer.addJavaVertex(glText[i]);
+        textDrawer = new Drawer(true, true);
+        new GameText(gameFlow.stageCleared ? "win" : "lose", ENDGAME_LABELS_X, currentY, 15).addLetterTexture(textDrawer);
 
-        textDrawer.draw();
+        textDrawer.draw(gl10);
 
     }
 

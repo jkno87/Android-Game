@@ -26,6 +26,7 @@ public class Drawer {
     public Drawer(boolean withTexture, boolean withColor){
         this.withColor = withColor;
         this.withTexture = withTexture;
+        vertexQueue = new ArrayList<>();
     }
 
     /**
@@ -130,6 +131,18 @@ public class Drawer {
     public Drawer addColoredRectangle(float x, float y, float lenX, float lenY, float[] colors){
         return addSquareIndex(x - lenX, y - lenY, colors).addSquareIndex(x + lenX, y - lenY, colors)
                 .addSquareIndex(x + lenX, y + lenY, colors).addSquareIndex(x - lenX, y + lenY, colors);
+    }
+
+    /**
+     * Agrega los vertices de un rectangulo con color
+     * @param position Vector que representa el centro del rectangulo
+     * @param lenX longitud en el eje X del rectangulo
+     * @param lenY lognitud en el eje Y del rectangulo
+     * @param colors arreglo con los colores del rectangulo
+     * @return Drawer que contiene los vertices del rectangulo
+     */
+    public Drawer addColoredRectangle(Vector2 position, float lenX, float lenY, float[] colors){
+        return addColoredRectangle(position.x, position.y, lenX, lenY, colors);
     }
 
     /**
