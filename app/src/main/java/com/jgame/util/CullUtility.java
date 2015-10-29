@@ -72,18 +72,21 @@ public class CullUtility {
         @Override
         public String toString(){
             StringBuilder sb = new StringBuilder();
+            sb.append("center:");
             sb.append(centerX);
             sb.append(",");
             sb.append(centerY);
             if(regionSet){
+                sb.append(" sons:");
+                sb.append("->(UL");
                 sb.append(upperLeft);
-                sb.append("\n");
+                sb.append("->UR");
                 sb.append(upperRight);
-                sb.append("\n");
+                sb.append("->LL");
                 sb.append(lowerLeft);
-                sb.append("\n");
+                sb.append("->LR");
                 sb.append(lowerRight);
-                sb.append("\n");
+                sb.append(")");
             }
 
 
@@ -102,17 +105,16 @@ public class CullUtility {
      * @param minArea area mas pequena que se pretende tener en la division
      * @return Lista con CullZones que representa las regiones contenidas en el centro x,y
      */
-    private List<Region> getSubRegions(Region r, float minArea){
+    private List<Region> getSubRegions(Region r, float cullSizeX, float cullSizeY ,float minArea){
         ArrayList<Region> subRegions = new ArrayList<>();
-        float halfX = r.centerX / 2;
-        float halfY = r.centerY / 2;
+        //float halfX = r.centerX / 2;
+        //float halfY = r.centerY / 2;
 
-        System.out.println("Current Center " + halfX + ',' + halfY);
-        System.out.println(minArea);
-
-        if(halfX > minArea && halfY > minArea) {
-            r.setRegions(new Region(halfX, r.centerY + halfY), new Region(halfX + r.centerX, r.centerY + halfY),
-            new Region(halfX, halfY), new Region(r.centerX + halfX, halfY));
+        if(cullSizeX > minArea && cullSizeY > minArea) {
+            r.setRegions(new Region(r.centerX - cullSizeX / 2, r.centerY + cullSizeY / 2),
+                    new Region(cullSizeX / 2 + r.centerX, r.centerY + cullSizeY / 2),
+                    new Region(r.centerX - cullSizeX / 2, r.centerY - cullSizeY / 2),
+                    new Region(r.centerX + cullSizeX / 2, r.centerY - cullSizeY / 2));
             subRegions.add(r.lowerLeft);
             subRegions.add(r.lowerRight);
             subRegions.add(r.upperLeft);
@@ -127,12 +129,14 @@ public class CullUtility {
         float cullSizeY = totalY / 2;
         this.head = new Region(cullSizeX, cullSizeY);
         ArrayList<Region> currentRegions = new ArrayList<>();
-        currentRegions.addAll(getSubRegions(head, minLength));
+        currentRegions.addAll(getSubRegions(head, cullSizeX, cullSizeY ,minLength));
 
         while(!currentRegions.isEmpty()){
+            cullSizeX = cullSizeX / 2;
+            cullSizeY = cullSizeY / 2;
             ArrayList<Region> newRegions = new ArrayList<>();
             for(Region r : currentRegions)
-                newRegions.addAll(getSubRegions(r, minLength));
+                newRegions.addAll(getSubRegions(r, cullSizeX, cullSizeY, minLength));
             currentRegions.clear();
             currentRegions.addAll(newRegions);
         }
