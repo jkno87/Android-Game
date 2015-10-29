@@ -314,13 +314,8 @@ public class GameRenderer implements Renderer {
         gl10.glLoadIdentity();
 
         for(GameButton gb : flow.levels){
-            float[][] glText = gb.label.getLettersTexture();
-            Drawer textDrawer = new Drawer(true, false);
-
-            for(int i = 0; i < glText.length; i++)
-                for(int j = 0; j < glText[i].length; j++)
-                    textDrawer.addVertex(glText[i][j]);
-
+            Drawer textDrawer = new Drawer(true, true);
+            gb.label.addLetterTexture(textDrawer);
             textDrawer.draw(gl10);
         }
 
