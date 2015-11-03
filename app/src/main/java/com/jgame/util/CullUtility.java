@@ -204,4 +204,16 @@ public class CullUtility {
 
         return head;
     }
+
+
+    public static List<GameElement> generateRegions(float lenX, float lenY, float minX, float minY){
+        float adjustedX = lenX / minX;
+        float adjustedY = lenY / minY;
+
+        System.out.println(adjustedX);
+        System.out.println(adjustedY);
+
+        return null;
+    }
+
 }

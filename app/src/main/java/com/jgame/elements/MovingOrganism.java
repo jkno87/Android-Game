@@ -3,6 +3,7 @@ package com.jgame.elements;
 import com.jgame.definitions.GameIds;
 import com.jgame.definitions.GameLevels;
 import com.jgame.util.Circle;
+import com.jgame.util.GeometricElement;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import java.util.List;
@@ -49,6 +50,11 @@ public class MovingOrganism implements GameElement {
 
     private void setDirection(){
         direction.set(random.nextInt(3) - 1, random.nextInt(3) - 1).nor();
+    }
+
+    @Override
+    public GeometricElement getBounds(){
+        return interaction;
     }
 
     @Override

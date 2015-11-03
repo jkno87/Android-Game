@@ -1,6 +1,7 @@
 package com.jgame.util;
 
 import com.jgame.elements.GameElement;
+import com.jgame.util.CullUtility;
 import com.jgame.util.CullUtility.Region;
 import org.junit.Test;
 import java.util.List;
@@ -75,5 +76,8 @@ public class CullUtilityTest {
         assertEquals(1, neighbors.get(1).getId());
         testInstance.clear();
         assertEquals(0, testInstance.getSize());
+
+        CullUtility.generateRegions(320, 480, 50, 50);
+
     }
 }
