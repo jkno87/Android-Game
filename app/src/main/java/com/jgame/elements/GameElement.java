@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.util.GeometricElement;
 import com.jgame.util.Vector2;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public interface GameElement {
     public float getPctAlive();
     public void interact(GameElement other);
     public float getSize();
+    public GeometricElement getBounds();
     public void update(List<GameElement> otherElements, float timeDifference);
 
 }

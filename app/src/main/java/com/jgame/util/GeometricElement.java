@@ -5,4 +5,6 @@ package com.jgame.util;
  */
 public abstract class GeometricElement {
     public abstract boolean contains(float x, float y);
+    public abstract boolean intersectsX(float x);
+    public abstract boolean intersectsY(float y);
 }
