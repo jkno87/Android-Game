@@ -77,7 +77,8 @@ public class CullUtilityTest {
         testInstance.clear();
         assertEquals(0, testInstance.getSize());
 
-        CullUtility.generateRegions(320, 480, 50, 50);
+        List<GameElement> regiones = CullUtility.generateRegions(320, 480, 60, 60);
+        assertEquals(40, regiones.size());
 
     }
 }

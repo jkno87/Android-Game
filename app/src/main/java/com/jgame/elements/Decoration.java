@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by jose on 24/02/15.
  */
-public class Decoration implements GameElement {
+public class Decoration {
 
     private float x;
     private float y;
@@ -33,27 +33,22 @@ public class Decoration implements GameElement {
         return new Vector2();
     }
 
-    @Override
     public float getSize(){
         return 0.0f;
     }
 
-    @Override
     public void update(List<GameElement> others, float timeDifference){
 
     }
 
-    @Override
     public void interact(GameElement e){
 
     }
 
-    @Override
     public boolean vivo() {
         return timeAlive > 0;
     }
 
-    @Override
     public int getId(){
         return 0;
     }

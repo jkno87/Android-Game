@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by jose on 10/02/15.
  */
-public class MainCharacter implements GameElement {
+public class MainCharacter {
 
     public enum CharacterState {
         NORMAL, STUNNED, SPECIAL
@@ -54,27 +54,22 @@ public class MainCharacter implements GameElement {
             this.state = CharacterState.NORMAL;
     }
 
-    @Override
     public void interact(GameElement e){
 
     }
 
-    @Override
     public float getSize(){
         return 0;
     }
 
-    @Override
     public void update(List<GameElement> others, float timeDifference){
 
     }
 
-    @Override
     public boolean vivo() {
         return false;
     }
 
-    @Override
     public int getId(){
         return 0;
     }

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.jgame.definitions.GameIds;
 import com.jgame.util.Circle;
+import com.jgame.util.GeometricElement;
 import com.jgame.util.Vector2;
 
 import java.util.ArrayList;
@@ -67,6 +68,11 @@ public class Trap implements GameElement {
     @Override
     public float getSize() {
         return locationInfo.radius;
+    }
+
+    @Override
+    public GeometricElement getBounds(){
+        return locationInfo;
     }
 
     @Override

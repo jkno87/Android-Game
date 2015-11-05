@@ -37,6 +37,16 @@ public class Square extends GeometricElement {
                 && y <= position.y + lenY && y >= position.y - lenY;
     }
 
+    @Override
+    public boolean intersectsX(float x) {
+        return position.x + lenX >= x && position.x - lenX <= x;
+    }
+
+    @Override
+    public boolean intersectsY(float y) {
+        return position.y + lenY >= y && position.y - lenY <= y;
+    }
+
 
     public static float[] getSimpleCoords(Vector2 position, float sizeX, float sizeY, float[] colors){
         return getSimpleCoords(position.x, position.y, sizeX, sizeY, colors);

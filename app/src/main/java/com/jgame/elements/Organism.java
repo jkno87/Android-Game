@@ -2,6 +2,7 @@ package com.jgame.elements;
 
 import com.jgame.definitions.GameIds;
 import com.jgame.util.Circle;
+import com.jgame.util.GeometricElement;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
@@ -43,6 +44,11 @@ public class Organism implements GameElement {
     @Override
     public float getSize(){
         return interactionBox.radius;
+    }
+
+    @Override
+    public GeometricElement getBounds(){
+        return interactionBox;
     }
 
     /**

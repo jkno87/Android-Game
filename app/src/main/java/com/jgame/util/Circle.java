@@ -29,6 +29,16 @@ public class Circle extends GeometricElement {
         return position.dist(x, y) <= radius;
     }
 
+    @Override
+    public boolean intersectsX(float x) {
+        return position.dist(x, position.y) <= radius;
+    }
+
+    @Override
+    public boolean intersectsY(float y) {
+        return position.dist(position.x, y) <= radius;
+    }
+
     /**
      * Determina si el círculo toca a otro círculo
      * @param c Circle que se pretende comprarar

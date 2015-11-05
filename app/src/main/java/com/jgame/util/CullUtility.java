@@ -90,6 +90,11 @@ public class CullUtility {
         }
 
         public void clear(){
+            if(!regionSet) {
+                elements.clear();
+                return;
+            }
+
             upperLeft.clear();
             upperRight.clear();
             lowerLeft.clear();
@@ -206,14 +211,27 @@ public class CullUtility {
     }
 
 
+    /**
+     * Genera las regiones que se utilizaran para dividir el mapa en regiones mas pequenas
+     * @param lenX longitud total del mapa en el eje X
+     * @param lenY longitud total del mapa en el eje Y
+     * @param minX longitud minima de la region en el eje X
+     * @param minY longitud minima de la region en el eje Y
+     * @return Lista que contiene las diferentes regiones del mapa
+     */
     public static List<GameElement> generateRegions(float lenX, float lenY, float minX, float minY){
-        float adjustedX = lenX / minX;
-        float adjustedY = lenY / minY;
+        int gridColumns = (int) (lenX / minX);
+        int gridRows = (int) (lenY / minY);
 
-        System.out.println(adjustedX);
-        System.out.println(adjustedY);
+        float gridSizeX = minX + (lenX % minX) / gridColumns;
+        float gridSizeY = minY + (lenY % minY) / gridRows;
 
-        return null;
+        ArrayList<GameElement> regions = new ArrayList<>(gridColumns * gridRows);
+
+        System.out.println(gridSizeX);
+        System.out.println(gridSizeY);
+
+        return regions;
     }
 
 }
