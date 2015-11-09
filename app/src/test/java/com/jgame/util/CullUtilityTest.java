@@ -64,10 +64,14 @@ public class CullUtilityTest {
     }
 
     @Test
-    public void simpleTest(){
+    public void pointIndexTest(){
         //TODO: Implementar el constructor de CullUtility utilizando las dimensiones de la grid 10 x 10 y el size original
         Grid instance = new Grid(320, 480, 60, 60);
         assertEquals(40, instance.cells.size());
+        assertEquals(64.0f, instance.gridSizeX, 0.01f);
+        assertEquals(60f, instance.gridSizeY, 0.01f);
+        assertEquals(0, instance.getSingleCell(10, 10));
+        assertEquals(35, instance.getSingleCell(10, 480));
 
     }
 }

@@ -15,8 +15,8 @@ public class CullUtility {
         public ArrayList<List<GameElement>> cells;
         private final int gridColumns;
         private final int gridRows;
-        private final float gridSizeX;
-        private final float gridSizeY;
+        public final float gridSizeX;
+        public final float gridSizeY;
 
         public Grid(float lenX, float lenY, float minX, float minY){
             gridColumns = (int)(lenX / minX);
@@ -45,9 +45,21 @@ public class CullUtility {
 
         public int[] getCells(Circle c){
 
+
+            return null;
         }
 
-
+        /**
+         * Regresa el indice de la celda en la que se encuentra el punto x,y
+         * @param x coordenada X donde se encuentra el punto
+         * @param y coordenada Y donde se encuentra el punto
+         * @return Indice de la celda en la que se encuentra el punto x,y
+         */
+        public int getSingleCell(float x, float y){
+            System.out.println(gridSizeY);
+            System.out.println(y / gridSizeY);
+            return (int)(x / gridSizeX) + ((int)(y / gridSizeY)) * gridColumns;
+        }
     }
 
 }
