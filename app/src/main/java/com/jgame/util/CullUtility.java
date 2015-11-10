@@ -12,6 +12,7 @@ public class CullUtility {
 
     public static class Grid {
         private static final int INITIAL_CELL_SIZE = 10;
+        private static final int EMPTY_CELL_INDEX = -1;
         public ArrayList<List<GameElement>> cells;
         private final int gridColumns;
         private final int gridRows;
@@ -43,7 +44,40 @@ public class CullUtility {
 
         }
 
+        /**
+         * Regresa los indices que puede ocupar un circulo en la grid.
+         * Asumiendo que el elemento mas grande no excede las dimensiones de las celdas,
+         * un circulo puede ocupar maximo 4 celdas de la grid.
+         * @param c circulo del cual se obtendran los indices
+         * @return int[] que contiene los indices a los que pertenece el circulo
+         */
         public int[] getCells(Circle c){
+            //Utiliza el mismo calculo que getSingleCell. Usaria una funcion para evitar esto, pero asi mantenemos mas contento al GC
+            int column = (int)(c.position.x / gridSizeX);
+            int row = ((int)(c.position.y / gridSizeY));
+            int[] indices = new int[4];
+            indices[0] = column + row * gridColumns;
+
+            if(column > 0 && c.intersectsX(column * gridSizeX))
+                indices[1] = column - 1 + row * gridColumns;
+            else if(column + 1 < gridColumns && c.intersectsX((column + 1) * gridSizeX)) //Se checa si contiene a la frontera superior
+                indices[1] = column + 1 + row * gridColumns;
+            else
+                indices[1] = EMPTY_CELL_INDEX;
+
+            if(row > 0 && c.intersectsX(row * gridSizeY))
+                indices[2] = column + (row - 1) * gridColumns;
+            else if(column + 1 < gridRows && c.intersectsX((row + 1) * gridSizeY)) //Se checa si contiene a la frontera superior
+                indices[2] = column + (row + 1) * gridColumns;
+            else
+                indices[2] = EMPTY_CELL_INDEX;
+
+            if(indices[1] != EMPTY_CELL_INDEX && indices[2] != EMPTY_CELL_INDEX){
+                if(indices[1] > indices[0]){
+                    if(indices[2] > indices[0])
+                        indices[3] =
+                }
+            }
 
 
             return null;
@@ -56,8 +90,6 @@ public class CullUtility {
          * @return Indice de la celda en la que se encuentra el punto x,y
          */
         public int getSingleCell(float x, float y){
-            System.out.println(gridSizeY);
-            System.out.println(y / gridSizeY);
             return (int)(x / gridSizeX) + ((int)(y / gridSizeY)) * gridColumns;
         }
     }

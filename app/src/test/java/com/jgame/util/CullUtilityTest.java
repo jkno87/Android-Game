@@ -71,7 +71,18 @@ public class CullUtilityTest {
         assertEquals(64.0f, instance.gridSizeX, 0.01f);
         assertEquals(60f, instance.gridSizeY, 0.01f);
         assertEquals(0, instance.getSingleCell(10, 10));
-        assertEquals(35, instance.getSingleCell(10, 480));
-
+        assertEquals(4, instance.getSingleCell(300, 10));
+        assertEquals(5, instance.getSingleCell(10, 70));
+        assertEquals(35, instance.getSingleCell(10, 470));
     }
+
+    @Test
+    public void circleIndexTest(){
+        Grid instance = new Grid(320, 480, 60, 60);
+        assertEquals(new int[]{0,-1,-1,-1}, instance.getCells(new Circle(25,25,10)));
+        assertEquals(new int[]{0,1,-1,-1}, instance.getCells(new Circle(60,25,10)));
+        assertEquals(new int[]{0,5,-1,-1}, instance.getCells(new Circle(25,60,10)));
+        assertEquals(new int[]{0,1,5,6}, instance.getCells(new Circle(60,60,10)));
+    }
+
 }
