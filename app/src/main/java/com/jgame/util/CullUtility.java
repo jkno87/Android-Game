@@ -13,13 +13,21 @@ public class CullUtility {
     public static class Grid {
         private static final int INITIAL_CELL_SIZE = 10;
         private static final int EMPTY_CELL_INDEX = -1;
+        private static final int CENTER_INDEX = 0;
+        private static final int VERTICAL_NEIGHBOR = 2;
+        private static final int HORIZONTAL_NEIGHBOR = 1;
+        private static final int DIAGONAL_NEIGHBOR = 3;
         public ArrayList<List<GameElement>> cells;
         private final int gridColumns;
         private final int gridRows;
+        private final float lenX;
+        private final float lenY;
         public final float gridSizeX;
         public final float gridSizeY;
 
         public Grid(float lenX, float lenY, float minX, float minY){
+            this.lenX = lenX;
+            this.lenY = lenY;
             gridColumns = (int)(lenX / minX);
             gridRows = (int) (lenY / minY);
             gridSizeX = minX + (lenX % minX) / gridColumns;
@@ -40,8 +48,43 @@ public class CullUtility {
                 cells.get(i).clear();
         }
 
+        /**
+         * Agrega un GameElement a la grid de elementos del mapa.
+         * @param e GameElement que se agregara.
+         */
         public void addElement(GameElement e){
+            int[] indices = getElementIndexes(e.getBounds());
+            for(int i = 0; i < indices.length; i++){
+                if(indices[i] != EMPTY_CELL_INDEX)
+                    cells.get(indices[i]).add(e);
+            }
+        }
 
+        /**
+         * Regresa una lista con los elementos que se encuentran en las mismas celdas que ocupa
+         * el GameElement e
+         * @param e GameElement que buscara vecinos en el grid
+         * @return List con los elementos que se encuentran en las mismas celdas.
+         */
+        public List<GameElement> getNeighbors(GameElement e){
+            int[] indices = getElementIndexes(e.getBounds());
+            for(int i = 0; i < indices.length; i++){
+                if(indices[i] != EMPTY_CELL_INDEX)
+                    cells.get(indices[i]).add(e);
+            }
+        }
+
+
+        /**
+         * Genera los indices del GeomentricElement e que se agrega a la grid
+         * @param e GeometricElement que se agregara al grid
+         * @return int[] con los indices
+         */
+        private int[] getElementIndexes(GeometricElement e){
+            if(e instanceof Circle)
+                return getCells((Circle) e);
+            else
+                throw new UnsupportedOperationException("Este GeomentricElement no ha sido implementado en CullUtility");
         }
 
         /**
@@ -52,35 +95,39 @@ public class CullUtility {
          * @return int[] que contiene los indices a los que pertenece el circulo
          */
         public int[] getCells(Circle c){
-            //Utiliza el mismo calculo que getSingleCell. Usaria una funcion para evitar esto, pero asi mantenemos mas contento al GC
-            int column = (int)(c.position.x / gridSizeX);
-            int row = ((int)(c.position.y / gridSizeY));
             int[] indices = new int[4];
-            indices[0] = column + row * gridColumns;
+            indices[CENTER_INDEX] = getSingleCell(c.position.x, c.position.y);
+            int i1 = getSingleCell(c.position.x + c.radius, c.position.y);
+            int i2 = getSingleCell(c.position.x - c.radius, c.position.y);
+            int i3 = getSingleCell(c.position.x, c.position.y + c.radius);
+            int i4 = getSingleCell(c.position.x, c.position.y - c.radius);
 
-            if(column > 0 && c.intersectsX(column * gridSizeX))
-                indices[1] = column - 1 + row * gridColumns;
-            else if(column + 1 < gridColumns && c.intersectsX((column + 1) * gridSizeX)) //Se checa si contiene a la frontera superior
-                indices[1] = column + 1 + row * gridColumns;
+            //Se busca si tiene un vecino lateral
+            if(i1 > indices[CENTER_INDEX])
+                indices[HORIZONTAL_NEIGHBOR] = i1;
+            else if(i2 > EMPTY_CELL_INDEX && i2 < indices[CENTER_INDEX])
+                indices[HORIZONTAL_NEIGHBOR] = i2;
             else
-                indices[1] = EMPTY_CELL_INDEX;
+                indices[HORIZONTAL_NEIGHBOR] = EMPTY_CELL_INDEX;
 
-            if(row > 0 && c.intersectsX(row * gridSizeY))
-                indices[2] = column + (row - 1) * gridColumns;
-            else if(column + 1 < gridRows && c.intersectsX((row + 1) * gridSizeY)) //Se checa si contiene a la frontera superior
-                indices[2] = column + (row + 1) * gridColumns;
+            //Se busca si tiene un vecino vertical
+            if(i3 > indices[CENTER_INDEX])
+                indices[VERTICAL_NEIGHBOR] = i3;
+            else if(i4 > EMPTY_CELL_INDEX && i4 < indices[CENTER_INDEX])
+                indices[VERTICAL_NEIGHBOR] = i4;
             else
-                indices[2] = EMPTY_CELL_INDEX;
+                indices[VERTICAL_NEIGHBOR] = EMPTY_CELL_INDEX;
 
-            if(indices[1] != EMPTY_CELL_INDEX && indices[2] != EMPTY_CELL_INDEX){
-                if(indices[1] > indices[0]){
-                    if(indices[2] > indices[0])
-                        indices[3] =
-                }
-            }
+            //Se checa si cae en el vecino diagonal (no es completamente preciso el calculo, por ahora esta bien)
+            if(indices[HORIZONTAL_NEIGHBOR] != EMPTY_CELL_INDEX && indices[VERTICAL_NEIGHBOR] != EMPTY_CELL_INDEX){
+                if(indices[HORIZONTAL_NEIGHBOR] > indices[CENTER_INDEX])
+                    indices[DIAGONAL_NEIGHBOR] = indices[VERTICAL_NEIGHBOR] + 1;
+                else
+                    indices[DIAGONAL_NEIGHBOR] = indices[VERTICAL_NEIGHBOR] - 1;
+            } else
+                indices[DIAGONAL_NEIGHBOR] = -1;
 
-
-            return null;
+            return indices;
         }
 
         /**
@@ -90,6 +137,9 @@ public class CullUtility {
          * @return Indice de la celda en la que se encuentra el punto x,y
          */
         public int getSingleCell(float x, float y){
+            if(x < 0 || y < 0 || x > lenX || y > lenY)
+                return EMPTY_CELL_INDEX;
+
             return (int)(x / gridSizeX) + ((int)(y / gridSizeY)) * gridColumns;
         }
     }
