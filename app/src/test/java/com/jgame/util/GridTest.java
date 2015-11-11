@@ -1,17 +1,16 @@
 package com.jgame.util;
 
 import com.jgame.elements.GameElement;
-import com.jgame.util.CullUtility;
-import com.jgame.util.CullUtility.Grid;
 import org.junit.Test;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by jose on 12/10/15.
  */
-public class CullUtilityTest {
+public class GridTest {
 
     class GameElementTest implements GameElement {
 
@@ -60,8 +59,21 @@ public class CullUtilityTest {
 
         @Override
         public void update(List<GameElement> otherElements, float timeDifference) {
-
         }
+
+        @Override
+        public boolean equals(Object o){
+            if(!(o instanceof GameElementTest))
+                return false;
+
+            GameElementTest gt = (GameElementTest)o;
+            return gt.getId() == getId();
+        }
+
+        public int hashCode(){
+            return getId();
+        }
+
     }
 
     @Test
@@ -88,6 +100,44 @@ public class CullUtilityTest {
         assertArrayEquals(new int[]{0, 1, -1, -1}, instance.getCells(new Circle(60, 25, 10)));
         assertArrayEquals(new int[]{0, -1, 5, -1}, instance.getCells(new Circle(25, 59, 10)));
         assertArrayEquals(new int[]{0, 1, 5, 6}, instance.getCells(new Circle(60, 59, 10)));
+
+        assertArrayEquals(new int[]{4, -1, -1, -1}, instance.getCells(new Circle(300, 25, 10)));
+        assertArrayEquals(new int[]{4, 3, -1, -1}, instance.getCells(new Circle(260, 25, 10)));
+        assertArrayEquals(new int[]{4, -1, 9, -1}, instance.getCells(new Circle(300, 59, 10)));
+        assertArrayEquals(new int[]{4, 3, 9, 8}, instance.getCells(new Circle(260, 59, 10)));
+
+        assertArrayEquals(new int[]{35, -1, -1, -1}, instance.getCells(new Circle(25, 460, 10)));
+        assertArrayEquals(new int[]{35, 36, -1, -1}, instance.getCells(new Circle(60, 460, 10)));
+        assertArrayEquals(new int[]{35, -1, 30, -1}, instance.getCells(new Circle(25, 425, 10)));
+        assertArrayEquals(new int[]{35, 36, 30, 31}, instance.getCells(new Circle(60, 425, 10)));
+    }
+
+    @Test
+    public void neighborsTest(){
+        int currentId = 0;
+        GameElementTest instance1 = new GameElementTest(25, 25, 10, currentId++);
+        Grid gridInstance = new Grid(320, 480, 60, 60);
+        List<GameElement> results = gridInstance.getNeighbors(instance1);
+        assertTrue(results.isEmpty());
+        //Se agrega un elemento y debe seguir vacio el resultado porque el elemento no puede ser su propio vecino
+        gridInstance.addElement(instance1);
+        results = gridInstance.getNeighbors(instance1);
+        assertTrue(results.isEmpty());
+        //Se agrega otro elemento
+        GameElementTest instance2 = new GameElementTest(50,50, 5, currentId++);
+        gridInstance.addElement(instance2);
+        results = gridInstance.getNeighbors(instance1);
+        assertEquals(1, results.size());
+        //Se agrega otro elemento que no deberia aparecer cuando se busquen vecinos
+        GameElementTest instance3 = new GameElementTest(300, 300, 19, currentId++);
+        gridInstance.addElement(instance3);
+        results = gridInstance.getNeighbors(instance1);
+        assertEquals(1, results.size());
+        //Se checa que cuando se haga clear, los vecinos sean cero
+        gridInstance.clear();
+        results = gridInstance.getNeighbors(instance1);
+        assertTrue(results.isEmpty());
+
     }
 
 }
