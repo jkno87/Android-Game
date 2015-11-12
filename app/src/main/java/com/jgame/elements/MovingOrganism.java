@@ -12,12 +12,14 @@ import java.util.Random;
 /**
  * Created by jose on 10/09/15.
  */
-public class MovingOrganism implements GameElement {
+public class MovingOrganism extends Organism {
 
     public enum State {
         NORMAL, GROWING ,EVOLVED
     };
 
+    private static final int HP = 1;
+    private static final int FOOD_POINTS = 0;
     public static final float POINTS_SCALE = 0.1f;
     public static final float POINTS_SPEED = 0.05f;
     public static final int FOOD_TO_EVOLVE = 10;
@@ -33,6 +35,22 @@ public class MovingOrganism implements GameElement {
     private float speedModifier;
     private int foodConsumed;
     private float size;
+    private OrganismBehavior initialBehavior;
+
+    public MovingOrganism(float timeToLive, Vector2 position, float sightDistance, float interactionDistance, float initialSize){
+        initialBehavior = new OrganismBehavior(timeToLive, new Circle(position, initialSize), HP, FOOD_POINTS, true) {
+            @Override
+            public void age(float timeDifference) {
+
+            }
+
+            @Override
+            public void collide(GameElement e) {
+
+            }
+        }
+    }
+
 
     public MovingOrganism (float timeToLive, Vector2 position, float sightDistance, float interactionDistance, float initialSize){
         this.timeToLive = new TimeCounter(timeToLive);

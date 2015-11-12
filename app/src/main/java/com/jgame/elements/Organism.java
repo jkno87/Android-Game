@@ -13,27 +13,29 @@ import java.util.List;
  */
 public class Organism implements GameElement {
 
-    public TimeCounter lifeTimer;
-    public Circle interactionBox;
-    public int hp;
-    public final int foodPoints;
+    public OrganismBehavior behavior;
 
-    public Organism (float timeToLive, Vector2 position, float size, int hp, int foodPoints){
-        lifeTimer = new TimeCounter(timeToLive);
-        interactionBox = new Circle(position, size);
-        this.hp = hp;
-        this.foodPoints = foodPoints;
+    public Organism(){
 
+    }
+
+    public Organism (OrganismBehavior behavior){
+        this.behavior = behavior;
+    }
+
+    public void setBehavior(OrganismBehavior behavior){
+        this.behavior = behavior;
     }
 
     @Override
     public void update(List<GameElement> others, float timeDifference){
-        lifeTimer.accum(timeDifference);
-    }
+        behavior.age(timeDifference);
+        if(!behavior.active)
+            return;
 
-    @Override
-    public void interact(GameElement e){
-
+        for(GameElement e: others)
+            if(behavior.bounds.collides(e.getBounds()))
+                behavior.collide(e);
     }
 
     @Override
@@ -42,35 +44,7 @@ public class Organism implements GameElement {
     }
 
     @Override
-    public float getSize(){
-        return interactionBox.radius;
-    }
-
-    @Override
     public GeometricElement getBounds(){
-        return interactionBox;
-    }
-
-    /**
-     * Regresa un entero que representa la porcion de comida representada por foodPoints o por el hp disponible.
-     * @return cantidad de comida disponible en un turno
-     */
-    public int takeFood(){
-        int foodAvailable = hp >= foodPoints ? foodPoints : hp;
-        hp -= foodAvailable;
-
-        return foodAvailable;
-    }
-
-    public boolean vivo(){
-        return !lifeTimer.completed() && hp > 0;
-    }
-
-    public Vector2 getPosition(){
-        return interactionBox.position;
-    }
-
-    public float getPctAlive(){
-        return 1.0f - lifeTimer.pctCharged();
+        return behavior.bounds;
     }
 }
