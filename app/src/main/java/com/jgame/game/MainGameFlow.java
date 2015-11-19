@@ -3,6 +3,7 @@ package com.jgame.game;
 import android.util.Log;
 
 import com.jgame.definitions.GameLevels;
+import com.jgame.elements.FoodOrganism;
 import com.jgame.game.LevelInformation.LevelObjective;
 import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
@@ -134,7 +135,7 @@ public class MainGameFlow extends GameFlow {
         if(currentBait != BaitSelected.NONE && dragElement.position.y < GameLevels.MAX_PLAYING_HEIGHT) {
             synchronized (levelElements) {
                 if (currentBait == BaitSelected.PRIMARY)
-                    levelElements.add(new Organism(BAIT_TIME, dragElement.position, FOOD_SIZE, BAIT_HP, BAIT_FP));
+                    levelElements.add(new FoodOrganism(BAIT_TIME, dragElement.position, FOOD_SIZE, BAIT_HP, BAIT_FP));
                 else
                     levelElements.add(new Trap(dragElement.position, SPECIAL_SIZE));
             }
@@ -177,7 +178,7 @@ public class MainGameFlow extends GameFlow {
                         captured.addAll(t.capturedElements);
                         t.capturedElements.clear();
                     }
-                    if (!e.vivo())
+                    if (!e.alive())
                         itElements.remove();
                 }
 

@@ -29,13 +29,13 @@ public class MovingOrganism extends Organism {
     private int foodConsumed;
     private OrganismBehavior initialBehavior;
 
-    public MovingOrganism(float timeToLive, final Vector2 position, float sightDistance, final float interactionDistance){
+    public MovingOrganism(float timeToLive, final Vector2 position, final float sightDistance, float interactionDistance){
 
-        initialBehavior = new OrganismBehavior(timeToLive, new Circle(position, sightDistance), HP, FOOD_POINTS, true) {
+        initialBehavior = new OrganismBehavior(timeToLive, new Circle(position, interactionDistance), HP, FOOD_POINTS, true) {
             private int movesLeft = DEFAULT_MOVES;
             private Vector2 direction = new Vector2();
             private Random random = new Random();
-            private Circle organismBounds = new Circle(position, interactionDistance);
+            private Circle organismSight = new Circle(position, sightDistance);
             @Override
             public void age(float timeDifference) {
                 if(movesLeft <= 0) {
@@ -57,44 +57,22 @@ public class MovingOrganism extends Organism {
             }
 
             @Override
-            public void collide(GameElement e) {
+            public void evaluateCollision(GameElement e) {
                 if(e instanceof Organism){
                     Organism o = (Organism) e;
-                    //Aqui falta hacer algo para que represente que consume comida
-
-                    if(foodConsumed > FOOD_TO_EVOLVE) {
-                        currentState = State.GROWING;
-                        movesLeft = DEFAULT_MOVES;
+                    if(bounds.collides(o.getBounds())){
+                        //Aqui falta hacer algo para que represente que consume comida
                     }
+
+                    if(organismSight.collides(o.getBounds()))
+                        direction.set(new Vector2(o.getBounds().getPosition()).sub(position).nor()).mul(speedModifier);
+
                 }
             }
         };
 
         setBehavior(initialBehavior);
 
-    }
-
-    @Override
-    public void update(List<GameElement> others, float timeDifference){
-
-        behavior.age(timeDifference);
-
-        for(GameElement e : others) {
-            if(e instanceof MovingOrganism || e instanceof Trap)
-                continue;
-
-            //TODO: Aqui se hace un cast porque en este momento solo existe otro tipo de organismo en el juego
-            Organism o = (Organism) e;
-
-            if(behavior.bounds.collides(o.getBounds()))
-                behavior.collide(o);
-
-
-            if (sight.collides(o.getBounds())) {
-                direction.set(new Vector2(o.interactionBox.position).sub(position).nor()).mul(speedModifier);
-                break;
-            }
-        }
     }
 
     @Override

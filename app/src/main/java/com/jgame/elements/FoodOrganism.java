@@ -16,7 +16,7 @@ public class FoodOrganism extends Organism {
             }
 
             @Override
-            public void collide(GameElement e){
+            public void evaluateCollision(GameElement e) {
                 //Implementar que cuando colisione con un elemento que lo puede comer, tome la comida
             }
         });

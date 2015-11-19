@@ -34,8 +34,7 @@ public class Organism implements GameElement {
             return;
 
         for(GameElement e: others)
-            if(behavior.bounds.collides(e.getBounds()))
-                behavior.collide(e);
+            behavior.evaluateCollision(e);
     }
 
     @Override
@@ -47,4 +46,10 @@ public class Organism implements GameElement {
     public GeometricElement getBounds(){
         return behavior.bounds;
     }
+
+    @Override
+    public boolean alive(){
+        return behavior.isAlive();
+    }
+
 }

@@ -42,8 +42,8 @@ public abstract class OrganismBehavior {
     public abstract void age(float timeDifference);
 
     /**
-     * Actualiza el estado del organismo al colisionar con otro GameElement
-     * @param e GameElement que colisiono con el organismo
+     * Evalua si el organismo colisiona con otro elemento del juego
+     * @param e GameElement que puede colisionar
      */
-    public abstract void collide(GameElement e);
+    public abstract void evaluateCollision(GameElement e);
 }

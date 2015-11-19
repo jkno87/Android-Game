@@ -23,33 +23,8 @@ public class GridTest {
         }
 
         @Override
-        public boolean vivo() {
-            return false;
-        }
-
-        @Override
         public int getId() {
             return id;
-        }
-
-        @Override
-        public Vector2 getPosition() {
-            return bounds.position;
-        }
-
-        @Override
-        public float getPctAlive() {
-            return 0;
-        }
-
-        @Override
-        public void interact(GameElement other) {
-
-        }
-
-        @Override
-        public float getSize() {
-            return 0;
         }
 
         @Override
@@ -59,6 +34,11 @@ public class GridTest {
 
         @Override
         public void update(List<GameElement> otherElements, float timeDifference) {
+        }
+
+        @Override
+        public boolean alive() {
+            return false;
         }
 
         @Override

@@ -3,6 +3,8 @@ package com.jgame.definitions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import com.jgame.elements.FoodOrganism;
 import com.jgame.game.LevelInformation.LevelInfoCreator;
 import com.jgame.characters.MovementController;
 import com.jgame.elements.ElementCreator;
@@ -24,53 +26,7 @@ public class GameLevels {
     public static final int ID_LION = 1;
 
 
-    public static final MovementController CIRCLE_CONTROLLER = new MovementController(new Vector2(), 0) {
-        private boolean stunned;
-        private TimeCounter stunCounter;
-        private Vector2 stunDirection;
-        private float size = 50;
-
-        @Override
-        public boolean stunned() {
-            return stunned;
-        }
-
-        @Override
-        public void stun(Vector2 stunPosition, StunInfo stunInfo) {
-            stunCounter = new TimeCounter(stunInfo.time);
-            stunDirection = new Vector2(position).sub(stunPosition).nor().mul(stunInfo.force);
-            stunned = true;
-        }
-
-        @Override
-        public boolean collision(GameElement e) {
-            return position.dist(e.getPosition()) < e.getSize() + size;
-        }
-
-        @Override
-        public boolean containsPoint(float x, float y) {
-            return position.dist(x, y) <= size;
-        }
-
-        @Override
-        public void move(float x, float y) {
-            position.set(x, y);
-        }
-
-        @Override
-        public void updateDirection(float x, float y){
-            angle = new Vector2(x,y).sub(position).angle();
-        }
-
-        @Override
-        public void update(GameFlow gameInstance, float timeDifference) {
-            if(stunned){
-                throw new UnsupportedOperationException("Falta implementar un el comportamiento del personaje cuando esta stunned");
-            }
-        }
-    };
-
-    public static final CharacterInformation CHARACTER_INFO_FENCE =
+/*    public static final CharacterInformation CHARACTER_INFO_FENCE =
             new CharacterInformation(30f, 5, 5, ID_FENCE, new float[]{0,0.5f,1,0.5f,1,0,0,0}, CIRCLE_CONTROLLER){
             };
 
@@ -141,12 +97,12 @@ public class GameLevels {
                         return elements;
 
                     for(int i = 0; i < random.nextInt(10) + 3; i++)
-                        elements.add(new Organism(AVG_LIFESPAN + ((random.nextFloat() - 0.5f) * AVG_LIFESPAN), generatePosition(AVG_X, AVG_Y)
+                        elements.add(new FoodOrganism(AVG_LIFESPAN + ((random.nextFloat() - 0.5f) * AVG_LIFESPAN), generatePosition(AVG_X, AVG_Y)
                         , 8.0f, 0, 0));
 
                     for(int i = 0; i < random.nextInt(5) + 1; i++)
                         elements.add(new MovingOrganism(13 + ((random.nextFloat() - 0.5f) * 13),
-                                generatePosition(150,250), 35f, 5f, 5f));
+                                generatePosition(150,250), 35f, 5f));
 
                     spawnTimer.reset();
 

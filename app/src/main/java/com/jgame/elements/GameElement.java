@@ -12,5 +12,6 @@ public interface GameElement {
     public int getId();
     public GeometricElement getBounds();
     public void update(List<GameElement> others, float timeDifference);
+    public boolean alive();
 
 }

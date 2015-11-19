@@ -203,9 +203,10 @@ public class GameRenderer implements Renderer {
                 gl10.glLoadIdentity();
                 gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
                 Drawer bannerDrawer = new Drawer(false, true);
+                float[] drawArray = new float[4];
                 for (GameElement e : gameFlow.levelElements)
-                    bannerDrawer.addColoredRectangle(e.getPosition().x, e.getPosition().y,
-                            e.getSize(), e.getSize(), getOrganismColor(e.getId(), e.getPctAlive()));
+                    bannerDrawer.addColoredRectangle(drawArray[0], drawArray[1],
+                            drawArray[2], drawArray[3], getOrganismColor(e.getId(), 1));
 
                 bannerDrawer.draw(gl10);
             }

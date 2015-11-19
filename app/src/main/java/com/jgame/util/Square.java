@@ -32,21 +32,28 @@ public class Square extends GeometricElement {
     }
 
     @Override
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    @Override
     public boolean contains(float x, float y){
         return x <= position.x + lenX && x >= position.x - lenX
                 && y <= position.y + lenY && y >= position.y - lenY;
     }
 
     @Override
-    public boolean intersectsX(float x) {
-        return position.x + lenX >= x && position.x - lenX <= x;
+    public boolean collides(GeometricElement e) {
+        return false;
     }
 
     @Override
-    public boolean intersectsY(float y) {
-        return position.y + lenY >= y && position.y - lenY <= y;
+    public void fillDrawRect(float[] drawArray) {
+        drawArray[0] = position.x;
+        drawArray[1] = position.y;
+        drawArray[2] = lenX;
+        drawArray[3] = lenY;
     }
-
 
     public static float[] getSimpleCoords(Vector2 position, float sizeX, float sizeY, float[] colors){
         return getSimpleCoords(position.x, position.y, sizeX, sizeY, colors);

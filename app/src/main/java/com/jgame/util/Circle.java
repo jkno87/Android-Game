@@ -18,6 +18,11 @@ public class Circle extends GeometricElement {
         this.radius = radius;
     }
 
+    @Override
+    public Vector2 getPosition(){
+        return position;
+    }
+
     /**
      * Determina si el punto x,y se encuentra dentro del circulo
      * @param x coordenada x
@@ -30,13 +35,19 @@ public class Circle extends GeometricElement {
     }
 
     @Override
-    public boolean intersectsX(float x) {
-        return position.dist(x, position.y) <= radius;
+    public boolean collides(GeometricElement e) {
+        if(e instanceof Circle)
+            return containsCircle((Circle) e);
+        else
+            throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean intersectsY(float y) {
-        return position.dist(position.x, y) <= radius;
+    public void fillDrawRect(float[] drawArray) {
+        drawArray[0] = position.x;
+        drawArray[1] = position.y;
+        drawArray[2] = radius;
+        drawArray[3] = radius;
     }
 
     /**

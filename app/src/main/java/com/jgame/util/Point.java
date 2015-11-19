@@ -16,17 +16,26 @@ public class Point extends GeometricElement{
     }
 
     @Override
-    public boolean intersectsX(float x){
-        return x == position.x;
-    }
-
-    @Override
-    public boolean intersectsY(float y){
-        return y == position.y;
+    public Vector2 getPosition() {
+        return position;
     }
 
     @Override
     public boolean contains(float x, float y) {
         return x == position.x && y == position.y;
+    }
+
+    @Override
+    public boolean collides(GeometricElement e) {
+        return false;
+    }
+
+    @Override
+    public void fillDrawRect(float[] drawArray) {
+        drawArray[0] = position.x;
+        drawArray[1] = position.y;
+        //Esto solo se hace para que se pueda ver un punto al dibujarse
+        drawArray[2] = 0.01f;
+        drawArray[3] = 0.01f;
     }
 }
