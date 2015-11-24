@@ -26,7 +26,7 @@ public class Drawer {
     public Drawer(boolean withTexture, boolean withColor){
         this.withColor = withColor;
         this.withTexture = withTexture;
-        vertexQueue = new ArrayList<>();
+        vertexQueue = new ArrayList<>(10);
     }
 
     /**

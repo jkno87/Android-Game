@@ -64,7 +64,7 @@ public class MainGameFlow extends GameFlow {
         this.gameActivity = gameActivity;
         this.elementCreator = elementCreator;
         this.timeLimit = timeLimit;
-        levelElements = new ArrayList<GameElement>();
+        levelElements = new ArrayList<GameElement>(15);
         currentState = GameState.PLAYING;
         elementCreator.start();
         inputBasic = new Circle(FRUSTUM_WIDTH / 2 - 30, FRUSTUM_HEIGHT - 50, 25);
@@ -165,7 +165,7 @@ public class MainGameFlow extends GameFlow {
     public void update(float interval){
         if(currentState == GameState.PLAYING) {
             timeElapsed += interval;
-            List<GameElement> captured = new ArrayList<>();
+            List<GameElement> captured = new ArrayList<>(10);
             synchronized (levelElements) {
                 levelElements.addAll(elementCreator.createElements(interval));
                 Iterator<GameElement> itElements = levelElements.iterator();
