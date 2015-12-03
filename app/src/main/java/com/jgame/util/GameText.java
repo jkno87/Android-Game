@@ -61,7 +61,7 @@ public class GameText {
      * @param letterDrawer Drawer al que se agregaran los vertices
      * @return Drawer que contiene los vertices de GameText
      */
-    public Drawer addLetterTexture(Drawer letterDrawer){
+    public void addLetterTexture(TextureDrawer letterDrawer){
         float currentX = x - size * (texto.length / 2);
         float offset = texto.length * 0.2f;
 
@@ -70,9 +70,22 @@ public class GameText {
                     getTextureData(texto[i]), GameElement.DEFAULT_COLOR);
             currentX += size + offset;
         }
-
-        return letterDrawer;
     }
 
+    /**
+     * Agrega los vertices a letterDrawer para dibujar el GameText.
+     * @param letterDrawer Drawer al que se agregaran los vertices
+     * @return Drawer que contiene los vertices de GameText
+     */
+    public void addLetterTexture(Drawer letterDrawer){
+        float currentX = x - size * (texto.length / 2);
+        float offset = texto.length * 0.2f;
+
+        for(int i = 0; i < texto.length; i++){
+            letterDrawer.addTexturedSquare(currentX, y, size,
+                    getTextureData(texto[i]), GameElement.DEFAULT_COLOR);
+            currentX += size + offset;
+        }
+    }
 
 }

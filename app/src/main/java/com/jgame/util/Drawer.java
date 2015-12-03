@@ -169,7 +169,7 @@ public class Drawer {
             return;
 
         int arraySize = (2 + (withTexture?2:0) + (withColor?4:0)) * VERTEX_PER_ELEMENT;
-        ByteBuffer buffer = ByteBuffer.allocateDirect(elementsAdded * arraySize * VERTEX_PER_ELEMENT);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(elementsAdded * arraySize * Float.SIZE);
         buffer.order(ByteOrder.nativeOrder());
         FloatBuffer vertices = buffer.asFloatBuffer();
 

@@ -18,6 +18,7 @@ import com.jgame.util.GameText;
 import com.jgame.util.TextureData;
 import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.Square;
+import com.jgame.util.TextureDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
@@ -59,14 +60,14 @@ public class GameRenderer implements Renderer {
     int personaje2Id;
     int personajesId;
     int alfabetoId;
-    private Drawer levelSelectDrawer;
+    private TextureDrawer levelSelectDrawer;
     private Drawer pauseDrawer;
 
     public GameRenderer(GameActivity gameActivity){
         updateCounter = new TimeCounter(FRAME_INTERVAL);
         lastUpdate = System.nanoTime();
         this.gameActivity = gameActivity;
-        levelSelectDrawer = new Drawer(true, true);
+        levelSelectDrawer = new TextureDrawer(true);
         pauseDrawer = new Drawer(false, true);
     }
 
@@ -318,16 +319,16 @@ public class GameRenderer implements Renderer {
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
         gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
         gl10.glLoadIdentity();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
 
-        levelSelectDrawer.clear();
+        levelSelectDrawer.reset();
 
         for(int i = 0; i < flow.levels.size(); i++){
-
             flow.levels.get(i).label.addLetterTexture(levelSelectDrawer);
-            levelSelectDrawer.draw(gl10);
         }
+
+        levelSelectDrawer.draw(gl10);
     }
 
     @Override
