@@ -6,12 +6,11 @@ import com.jgame.util.Vector2;
 import java.util.List;
 
 public interface GameElement {
-    public static final float[] DEFAULT_COLOR = new float[]{1,1,1,1};
-    public static final float[] HIT_COLOR = new float[]{1,0,0,1};
+    float[] DEFAULT_COLOR = new float[]{1,1,1,1};
 
-    public int getId();
-    public GeometricElement getBounds();
-    public void update(List<GameElement> others, float timeDifference);
-    public boolean alive();
+    int getId();
+    GeometricElement getBounds();
+    void update(List<GameElement> others, float timeDifference);
+    boolean alive();
 
 }

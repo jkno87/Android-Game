@@ -15,62 +15,58 @@ import java.util.List;
  */
 public class Trap extends Organism {
 
+    private static final int HP = 1;
+    private static final int FOOD_POINTS = 0;
     private static float TIME_TO_EXPLODE = 3;
     private static float EXPLOSION_TIME = 0.15f;
     private static final float EXPLOSION_GROWTH_RATE = 1.15f;
-    private float remExplosionTime;
     private OrganismBehavior timerBehavior;
+    private OrganismBehavior explodingBehavior;
     public List<GameElement> capturedElements;
 
     public Trap(Vector2 position, float size){
-        timerBehavior = new OrganismBehavior(TIME_TO_EXPLODE, new Circle(position, size), 0, 0, false) {
+        final Circle organismBounds = new Circle(position,size);
+        timerBehavior = new OrganismBehavior(TIME_TO_EXPLODE, organismBounds, HP,FOOD_POINTS, false) {
             @Override
             public void age(float timeDifference) {
                 timeRemaining.accum(timeDifference);
                 if(timeRemaining.completed())
-                    setBehavior(null);
+                    setBehavior(explodingBehavior);
             }
 
             @Override
             public void evaluateCollision(GameElement e) {
                 //Cuando se encuentra con este comportamiento no interactua con el mundo
             }
-
-            @Override
-            /**
-             * Se cambia la funcion is Alive porque tiene un comportamiento diferente a un organismo normal
-             */
-            public boolean isAlive(){
-                return true;
-            }
-
         };
 
-        remExplosionTime = EXPLOSION_TIME;
-        capturedElements = new ArrayList<>();
+        explodingBehavior = new OrganismBehavior(EXPLOSION_TIME, organismBounds,HP,FOOD_POINTS, true){
+
+            @Override
+            public void age(float timeDifference) {
+                timeRemaining.accum(timeDifference);
+                organismBounds.radius *= EXPLOSION_GROWTH_RATE;
+            }
+
+            @Override
+            public void evaluateCollision(GameElement e) {
+                if(!(e instanceof Organism))
+                    return;
+
+                Organism o = (Organism) e;
+                if(bounds.collides(o.getBounds()))
+                    capturedElements.add(o);
+
+            }
+        };
+
+        setBehavior(timerBehavior);
+        capturedElements = new ArrayList<>(5);
     }
 
     @Override
     public int getId() {
         return GameIds.TRAP_ID;
     }
-
-    /*@Override
-    public void interact(GameElement other) {
-        if(other instanceof MovingOrganism) {
-            MovingOrganism mOther = (MovingOrganism) other;
-            if(locationInfo.containsCircle(mOther.interaction))
-                capturedElements.add(mOther);
-        }
-    }
-
-    /*@Override
-    public void update(List<GameElement> otherElements, float timeDifference) {
-            remExplosionTime -= timeDifference;
-            locationInfo.radius *= EXPLOSION_GROWTH_RATE;
-            for(GameElement e : otherElements)
-                interact(e);
-
-    }*/
 
 }

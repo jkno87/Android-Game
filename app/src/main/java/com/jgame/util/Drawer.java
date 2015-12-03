@@ -13,7 +13,6 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class Drawer {
 
-    private GL10 gl;
     public static final int BYTES_ON_FLOAT = 4;
     public static final int VERTEX_PER_ELEMENT = 4;
     public static final int INDICES_PER_ELEMENT = 6;
@@ -26,7 +25,7 @@ public class Drawer {
     public Drawer(boolean withTexture, boolean withColor){
         this.withColor = withColor;
         this.withTexture = withTexture;
-        vertexQueue = new ArrayList<>(10);
+        vertexQueue = new ArrayList<>(50);
     }
 
     /**
@@ -155,6 +154,14 @@ public class Drawer {
         elementsAdded++;
 
         return this;
+    }
+
+    /**
+     * Remueve todos los elementos agregados al Drawer
+     */
+    public void clear(){
+        vertexQueue.clear();
+        elementsAdded = 0;
     }
 
     public void draw(GL10 gl){

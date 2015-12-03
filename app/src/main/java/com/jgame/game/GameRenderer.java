@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
 
 public class GameRenderer implements Renderer {
 
@@ -58,11 +59,15 @@ public class GameRenderer implements Renderer {
     int personaje2Id;
     int personajesId;
     int alfabetoId;
+    private Drawer levelSelectDrawer;
+    private Drawer pauseDrawer;
 
     public GameRenderer(GameActivity gameActivity){
         updateCounter = new TimeCounter(FRAME_INTERVAL);
         lastUpdate = System.nanoTime();
         this.gameActivity = gameActivity;
+        levelSelectDrawer = new Drawer(true, true);
+        pauseDrawer = new Drawer(false, true);
     }
 
     public void setSurfaceView(GameSurfaceView surfaceView){
@@ -204,9 +209,11 @@ public class GameRenderer implements Renderer {
                 gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
                 Drawer bannerDrawer = new Drawer(false, true);
                 float[] drawArray = new float[4];
-                for (GameElement e : gameFlow.levelElements)
+                for (GameElement e : gameFlow.levelElements) {
+                    e.getBounds().fillDrawRect(drawArray);
                     bannerDrawer.addColoredRectangle(drawArray[0], drawArray[1],
                             drawArray[2], drawArray[3], getOrganismColor(e.getId(), 1));
+                }
 
                 bannerDrawer.draw(gl10);
             }
@@ -314,13 +321,13 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
         gl10.glLoadIdentity();
 
-        for(GameButton gb : flow.levels){
-            Drawer textDrawer = new Drawer(true, true);
-            gb.label.addLetterTexture(textDrawer);
-            textDrawer.draw(gl10);
+        levelSelectDrawer.clear();
+
+        for(int i = 0; i < flow.levels.size(); i++){
+
+            flow.levels.get(i).label.addLetterTexture(levelSelectDrawer);
+            levelSelectDrawer.draw(gl10);
         }
-
-
     }
 
     @Override
