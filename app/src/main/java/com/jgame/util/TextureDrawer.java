@@ -17,7 +17,7 @@ public class TextureDrawer {
     private final static int MAX_TEXTURES = 100;
     private final static int VERTEX_PER_ELEMENT = 4;
     private final static int INDICES_PER_ELEMENT = 6;
-    private final float[] verticesBuffer;
+    private float[] verticesBuffer;
     private int currentIndex;
     private int elementsAdded;
     private final int elementSize;
@@ -65,12 +65,34 @@ public class TextureDrawer {
      * @param colors arreglo con los indices del color
      * @return Drawer que contiene los vertices del cuadrado
      */
-    public void addTexturedSquare(float x, float y, float len, float[] textIndices, float[] colors){
+    public void addTexturedSquare(float x, float y, float len, float t1, float t2, float t3, float t4, float t5, float t6, float t7, float t8){
         elementsAdded++;
-        addSquareIndex(x - len, y - len, textIndices[0], textIndices[1], colors);
-        addSquareIndex(x + len, y - len, textIndices[2], textIndices[3], colors);
-        addSquareIndex(x + len, y + len, textIndices[4], textIndices[5], colors);
-        addSquareIndex(x - len, y + len, textIndices[6], textIndices[7], colors);
+
+        float x1 = x - len;
+        float x2 = x + len;
+        float y1 = y - len;
+        float y2 = y + len;
+
+        verticesBuffer[currentIndex++] = x1;
+        verticesBuffer[currentIndex++] = y1;
+        verticesBuffer[currentIndex++] = t1;
+        verticesBuffer[currentIndex++] = t2;
+
+        verticesBuffer[currentIndex++] = x2;
+        verticesBuffer[currentIndex++] = y1;
+        verticesBuffer[currentIndex++] = t3;
+        verticesBuffer[currentIndex++] = t4;
+
+        verticesBuffer[currentIndex++] = x2;
+        verticesBuffer[currentIndex++] = y2;
+        verticesBuffer[currentIndex++] = t5;
+        verticesBuffer[currentIndex++] = t6;
+
+        verticesBuffer[currentIndex++] = x1;
+        verticesBuffer[currentIndex++] = y2;
+        verticesBuffer[currentIndex++] = t7;
+        verticesBuffer[currentIndex++] = t8;
+
     }
 
     /**

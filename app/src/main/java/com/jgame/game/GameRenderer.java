@@ -67,7 +67,7 @@ public class GameRenderer implements Renderer {
         updateCounter = new TimeCounter(FRAME_INTERVAL);
         lastUpdate = System.nanoTime();
         this.gameActivity = gameActivity;
-        levelSelectDrawer = new TextureDrawer(true);
+        levelSelectDrawer = new TextureDrawer(false);
         pauseDrawer = new Drawer(false, true);
     }
 
@@ -324,10 +324,12 @@ public class GameRenderer implements Renderer {
 
         levelSelectDrawer.reset();
 
+        levelSelectDrawer.addTexturedSquare(50, 50, 15,0,0.0625f,0.0625f,0.0625f,0.0625f,0,0,0);
+        /*
         for(int i = 0; i < flow.levels.size(); i++){
             flow.levels.get(i).label.addLetterTexture(levelSelectDrawer);
         }
-
+        //*/
         levelSelectDrawer.draw(gl10);
     }
 

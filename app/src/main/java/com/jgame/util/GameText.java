@@ -15,7 +15,7 @@ public class GameText {
     private float size;
     private static int LETTERS_COLUMN = 16;
     private static int LETTERS_ROW = 16;
-    private static final SimpleTextureData LETTERS_DATA = new SimpleTextureData(LETTERS_COLUMN, LETTERS_ROW);
+    public static final SimpleTextureData LETTERS_DATA = new SimpleTextureData(LETTERS_COLUMN, LETTERS_ROW);
 
     public GameText(String texto, float x, float y, float size){
         this.texto = texto.getBytes();
@@ -61,7 +61,7 @@ public class GameText {
      * @param letterDrawer Drawer al que se agregaran los vertices
      * @return Drawer que contiene los vertices de GameText
      */
-    public void addLetterTexture(TextureDrawer letterDrawer){
+    /*public void addLetterTexture(TextureDrawer letterDrawer){
         float currentX = x - size * (texto.length / 2);
         float offset = texto.length * 0.2f;
 
@@ -70,7 +70,7 @@ public class GameText {
                     getTextureData(texto[i]), GameElement.DEFAULT_COLOR);
             currentX += size + offset;
         }
-    }
+    }*/
 
     /**
      * Agrega los vertices a letterDrawer para dibujar el GameText.
