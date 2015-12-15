@@ -178,15 +178,15 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
 
         Drawer bannerDrawer = new Drawer(false, true);
-        bannerDrawer.addColoredRectangle(0, 0, FRUSTUM_WIDTH, FRUSTUM_HEIGHT, new float[]{0,0,0,0.5f});
+        bannerDrawer.addColoredRectangle(0, 0, FRUSTUM_WIDTH, FRUSTUM_HEIGHT, new float[]{0, 0, 0, 0.5f});
         bannerDrawer.draw(gl10);
 
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
 
         Drawer textDrawer = new Drawer(true, true);
-        gameActivity.continueButton.label.addLetterTexture(textDrawer);
-        gameActivity.quitButton.label.addLetterTexture(textDrawer);
+        //gameActivity.continueButton.label.addLetterTexture(textDrawer);
+        //gameActivity.quitButton.label.addLetterTexture(textDrawer);
 
         textDrawer.draw(gl10);
     }
@@ -276,7 +276,7 @@ public class GameRenderer implements Renderer {
         gl10.glLoadIdentity();
 
         Drawer textDrawer = new Drawer(true, true);
-        endgameLabels.addLetterTexture(textDrawer);
+        //endgameLabels.addLetterTexture(textDrawer);
         textDrawer.draw(gl10);
 
         currentY -= 40;
@@ -300,7 +300,7 @@ public class GameRenderer implements Renderer {
         gl10.glLoadIdentity();
 
         textDrawer = new Drawer(true, true);
-        new GameText(gameFlow.stageCleared ? "win" : "lose", ENDGAME_LABELS_X, currentY, 15).addLetterTexture(textDrawer);
+        //new GameText(gameFlow.stageCleared ? "win" : "lose", ENDGAME_LABELS_X, currentY, 15).addLetterTexture(textDrawer);
 
         textDrawer.draw(gl10);
 
@@ -324,12 +324,9 @@ public class GameRenderer implements Renderer {
 
         levelSelectDrawer.reset();
 
-        levelSelectDrawer.addTexturedSquare(50, 50, 15,0,0.0625f,0.0625f,0.0625f,0.0625f,0,0,0);
-        /*
-        for(int i = 0; i < flow.levels.size(); i++){
+        for(int i=0;i<flow.levels.size();i++)
             flow.levels.get(i).label.addLetterTexture(levelSelectDrawer);
-        }
-        //*/
+
         levelSelectDrawer.draw(gl10);
     }
 

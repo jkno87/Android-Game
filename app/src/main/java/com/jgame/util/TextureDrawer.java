@@ -14,6 +14,22 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class TextureDrawer {
 
+    public static class TextureData {
+        public final float v1;
+        public final float u1;
+        public final float v2;
+        public final float u2;
+
+        public TextureData(float v1, float u1, float v2, float u2){
+            this.v1 = v1;
+            this.u1 = u1;
+            this.v2 = v2;
+            this.u2 = u2;
+        }
+
+    }
+
+
     private final static int MAX_TEXTURES = 100;
     private final static int VERTEX_PER_ELEMENT = 4;
     private final static int INDICES_PER_ELEMENT = 6;
@@ -26,7 +42,6 @@ public class TextureDrawer {
     private final ShortBuffer indices;
 
     public TextureDrawer(boolean withColor){
-        Log.d("game", "Allocating");
         this.withColor = withColor;
         elementSize = (4 + (withColor ? 4:0)) * VERTEX_PER_ELEMENT;
         verticesBuffer = new float[elementSize * MAX_TEXTURES];
@@ -65,7 +80,7 @@ public class TextureDrawer {
      * @param colors arreglo con los indices del color
      * @return Drawer que contiene los vertices del cuadrado
      */
-    public void addTexturedSquare(float x, float y, float len, float t1, float t2, float t3, float t4, float t5, float t6, float t7, float t8){
+    public void addTexturedSquare(float x, float y, float len, TextureData tdata){
         elementsAdded++;
 
         float x1 = x - len;
@@ -75,23 +90,23 @@ public class TextureDrawer {
 
         verticesBuffer[currentIndex++] = x1;
         verticesBuffer[currentIndex++] = y1;
-        verticesBuffer[currentIndex++] = t1;
-        verticesBuffer[currentIndex++] = t2;
+        verticesBuffer[currentIndex++] = tdata.v1;
+        verticesBuffer[currentIndex++] = tdata.u2;
 
         verticesBuffer[currentIndex++] = x2;
         verticesBuffer[currentIndex++] = y1;
-        verticesBuffer[currentIndex++] = t3;
-        verticesBuffer[currentIndex++] = t4;
+        verticesBuffer[currentIndex++] = tdata.v2;
+        verticesBuffer[currentIndex++] = tdata.u2;
 
         verticesBuffer[currentIndex++] = x2;
         verticesBuffer[currentIndex++] = y2;
-        verticesBuffer[currentIndex++] = t5;
-        verticesBuffer[currentIndex++] = t6;
+        verticesBuffer[currentIndex++] = tdata.v2;
+        verticesBuffer[currentIndex++] = tdata.u1;
 
         verticesBuffer[currentIndex++] = x1;
         verticesBuffer[currentIndex++] = y2;
-        verticesBuffer[currentIndex++] = t7;
-        verticesBuffer[currentIndex++] = t8;
+        verticesBuffer[currentIndex++] = tdata.v1;
+        verticesBuffer[currentIndex++] = tdata.u1;
 
     }
 

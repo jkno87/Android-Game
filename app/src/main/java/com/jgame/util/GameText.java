@@ -1,7 +1,8 @@
 package com.jgame.util;
 
 import android.util.Log;
-
+import com.jgame.util.TextureDrawer;
+import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.elements.GameElement;
 
 /**
@@ -15,6 +16,9 @@ public class GameText {
     private float size;
     private static int LETTERS_COLUMN = 16;
     private static int LETTERS_ROW = 16;
+    private static int TOTAL_LETTERS = 32;
+    private static final TextureData[] LETTERS = new TextureData[1];
+    public static final TextureData LETTER_A = new TextureData(0, 0,0.0625f,0.0625f);
     public static final SimpleTextureData LETTERS_DATA = new SimpleTextureData(LETTERS_COLUMN, LETTERS_ROW);
 
     public GameText(String texto, float x, float y, float size){
@@ -22,6 +26,20 @@ public class GameText {
         this.x = x;
         this.y = y;
         this.size = size;
+    }
+
+    /**
+     * Genera la TextureData del alfabeto que se utilizara en la aplicacion.
+     * Ej. resultado[0] = TextureData con la informacion de la letra 'a'
+     * @return Arreglo con la TextureData del alfabeto
+     */
+    private static TextureData[] generateLettersTexture(){
+        TextureData[] textures = new TextureData[TOTAL_LETTERS];
+        for(int i = 0; i < TOTAL_LETTERS; i++){
+
+        }
+
+        return textures;
     }
 
     /**
@@ -58,32 +76,22 @@ public class GameText {
 
     /**
      * Agrega los vertices a letterDrawer para dibujar el GameText.
-     * @param letterDrawer Drawer al que se agregaran los vertices
-     * @return Drawer que contiene los vertices de GameText
+     * @param textureDrawer Drawer al que se agregaran los vertices
      */
-    /*public void addLetterTexture(TextureDrawer letterDrawer){
+    public void addLetterTexture(TextureDrawer textureDrawer){
         float currentX = x - size * (texto.length / 2);
         float offset = texto.length * 0.2f;
 
         for(int i = 0; i < texto.length; i++){
-            letterDrawer.addTexturedSquare(currentX, y, size,
-                    getTextureData(texto[i]), GameElement.DEFAULT_COLOR);
-            currentX += size + offset;
-        }
-    }*/
+            int column = (int) texto[i] - 97;
+            int row = column < LETTERS_COLUMN ? 0 : 1;
 
-    /**
-     * Agrega los vertices a letterDrawer para dibujar el GameText.
-     * @param letterDrawer Drawer al que se agregaran los vertices
-     * @return Drawer que contiene los vertices de GameText
-     */
-    public void addLetterTexture(Drawer letterDrawer){
-        float currentX = x - size * (texto.length / 2);
-        float offset = texto.length * 0.2f;
+            float x1 = column / LETTERS_COLUMN;
+            float y1 = row / LETTERS_ROW;
+            float x2 = (column + 1) / LETTERS_COLUMN;
+            float y2 = (row + 1) / LETTERS_ROW;
 
-        for(int i = 0; i < texto.length; i++){
-            letterDrawer.addTexturedSquare(currentX, y, size,
-                    getTextureData(texto[i]), GameElement.DEFAULT_COLOR);
+            textureDrawer.addTexturedSquare(currentX, y, size, LETTER_A);
             currentX += size + offset;
         }
     }
