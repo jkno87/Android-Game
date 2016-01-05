@@ -110,6 +110,7 @@ public class GameActivity extends Activity {
     @Override
     public void onPause(){
         super.onPause();
+        Log.d("Game", "onPause");
         soundManager.terminar();
         gameSurfaceView.onPause();
         gameFlow.pause();

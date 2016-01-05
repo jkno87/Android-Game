@@ -30,7 +30,7 @@ public class TextureDrawer {
     }
 
 
-    private final static int MAX_TEXTURES = 100;
+    private final static int MAX_TEXTURES = 50;
     private final static int VERTEX_PER_ELEMENT = 4;
     private final static int INDICES_PER_ELEMENT = 6;
     private float[] verticesBuffer;
