@@ -15,6 +15,7 @@ import com.jgame.elements.Trap;
 import com.jgame.util.Drawer;
 import com.jgame.util.GameButton;
 import com.jgame.util.GameText;
+import com.jgame.util.SimpleDrawer;
 import com.jgame.util.TextureData;
 import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.Square;
@@ -62,7 +63,8 @@ public class GameRenderer implements Renderer {
     int alfabetoId;
     private TextureDrawer levelSelectDrawer;
     private TextureDrawer pauseTextureDrawer;
-    private Drawer pauseDrawer;
+    private SimpleDrawer basicDrawer;
+    SimpleDrawer.ColorData pauseOverlay;
 
     public GameRenderer(GameActivity gameActivity){
         updateCounter = new TimeCounter(FRAME_INTERVAL);
@@ -70,7 +72,9 @@ public class GameRenderer implements Renderer {
         this.gameActivity = gameActivity;
         levelSelectDrawer = new TextureDrawer(false);
         pauseTextureDrawer = new TextureDrawer(false);
-        pauseDrawer = new Drawer(false, true);
+        basicDrawer = new SimpleDrawer(true);
+        pauseOverlay = new SimpleDrawer.ColorData(0,0,0,0.5f);
+
     }
 
     public void setSurfaceView(GameSurfaceView surfaceView){
@@ -98,7 +102,7 @@ public class GameRenderer implements Renderer {
      */
     private void drawDigits(float x, float y, int number){
         //TODO: no utilizar ese tama;o arbitrario de los numeros
-        gl10.glLoadIdentity();
+        /*gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
         ArrayList <float[]> textures = new ArrayList<float[]>();
 
@@ -119,7 +123,7 @@ public class GameRenderer implements Renderer {
             currentX += 22;
         }
 
-        digitsDrawer.draw(gl10);
+        digitsDrawer.draw(gl10);*/
     }
 
     @Override
@@ -179,9 +183,9 @@ public class GameRenderer implements Renderer {
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
 
-        Drawer bannerDrawer = new Drawer(false, true);
-        bannerDrawer.addColoredRectangle(0, 0, FRUSTUM_WIDTH, FRUSTUM_HEIGHT, new float[]{0, 0, 0, 0.5f});
-        bannerDrawer.draw(gl10);
+        basicDrawer.reset();
+        basicDrawer.addColoredRectangle(0, 0, FRUSTUM_WIDTH, FRUSTUM_HEIGHT, pauseOverlay);
+        basicDrawer.draw(gl10);
 
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
@@ -217,7 +221,7 @@ public class GameRenderer implements Renderer {
     }
 
     private void drawPlayingGame(MainGameFlow gameFlow){
-        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
+        /*gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
         gl10.glMatrixMode(GL10.GL_PROJECTION);
@@ -277,11 +281,11 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
         infoDrawer.draw(gl10);
 
-        drawDigits(TIMER_POSITION.x, TIMER_POSITION.y, gameFlow.getTimeRemaining());
+        drawDigits(TIMER_POSITION.x, TIMER_POSITION.y, gameFlow.getTimeRemaining());*/
     }
 
     private void drawGameFinished(MainGameFlow gameFlow){
-        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
+        /*gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
         gl10.glMatrixMode(GL10.GL_PROJECTION);
@@ -327,7 +331,7 @@ public class GameRenderer implements Renderer {
         textDrawer = new Drawer(true, true);
         //new GameText(gameFlow.stageCleared ? "win" : "lose", ENDGAME_LABELS_X, currentY, 15).addLetterTexture(textDrawer);
 
-        textDrawer.draw(gl10);
+        textDrawer.draw(gl10);*/
 
     }
 
