@@ -37,27 +37,31 @@ public class MainGameFlow extends GameFlow {
     private final float FOOD_SIZE = 5;
     private final float SPECIAL_SIZE = 10;
     private final TimeCounter GAME_OVER_UPDATE_INTERVAL = new TimeCounter(0.02f);
-    public final static float FRUSTUM_HEIGHT = 480f;
-    public final static float FRUSTUM_WIDTH = 320f;
     public final static float BAIT_TIME = 3f;
     public final static int BAIT_HP = 1;
     public final static int BAIT_FP = 1;
     public final ElementCreator elementCreator;
     public final List<GameElement> levelElements;
+    public final List<GameElement> elementsInSight;
     public final List<LevelObjective> levelObjectives;
     public final float timeLimit;
     public float timeElapsed;
     public GameState currentState;
     public int timePoints;
-    public final Circle inputBasic;
-    public final Circle inputSecondary;
+    //public final Circle inputBasic;
+    //public final Circle inputSecondary;
     public BaitSelected currentBait;
     public Square dragElement;
     public boolean stageCleared;
-    public final GameButton retryButton;
-    public final GameButton quitButton;
+    //public final GameButton retryButton;
+    //public final GameButton quitButton;
     private final GameActivity gameActivity;
     private final LevelInformation levelInfo;
+    public final float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH * 3;
+    public final float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT * 3;
+    private final float PLAYING_LENGTH_X = GameLevels.FRUSTUM_WIDTH / 2;
+    private final float PLAYING_LENGTH_Y = GameLevels.FRUSTUM_HEIGHT / 2;
+    public Square sightArea;
 
     public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit, GameActivity gameActivity){
         this.levelInfo = levelInfo;
@@ -65,15 +69,18 @@ public class MainGameFlow extends GameFlow {
         this.elementCreator = elementCreator;
         this.timeLimit = timeLimit;
         levelElements = new ArrayList<GameElement>(15);
+        elementsInSight = new ArrayList<GameElement>(15);
         currentState = GameState.PLAYING;
         elementCreator.start();
-        inputBasic = new Circle(FRUSTUM_WIDTH / 2 - 30, FRUSTUM_HEIGHT - 50, 25);
-        inputSecondary = new Circle(FRUSTUM_WIDTH / 2 + 30, FRUSTUM_HEIGHT - 50, 25);
+        //inputBasic = new Circle(FRUSTUM_WIDTH / 2 - 30, FRUSTUM_HEIGHT - 50, 25);
+        //inputSecondary = new Circle(FRUSTUM_WIDTH / 2 + 30, FRUSTUM_HEIGHT - 50, 25);
         currentBait = BaitSelected.NONE;
         levelObjectives = levelInfo.getObjectives();
-        retryButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 100, 60, 25), "retry");
-        quitButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 50, 60, 25), "return");
+        //retryButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 100, 60, 25), "retry");
+        //quitButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 50, 60, 25), "return");
         dragElement = new Square(0,0,0,0);
+        sightArea = new Square(PLAYING_WIDTH/2, PLAYING_HEIGHT/2, PLAYING_LENGTH_X, PLAYING_LENGTH_Y);
+        levelElements.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), FOOD_SIZE, BAIT_HP, BAIT_FP));
     }
 
 
@@ -99,11 +106,11 @@ public class MainGameFlow extends GameFlow {
 
     @Override
     public void handleDrag(float x, float y){
-        if(currentBait != BaitSelected.NONE) {
+        /*if(currentBait != BaitSelected.NONE) {
             synchronized (dragElement) {
                 dragElement.position.set(FRUSTUM_WIDTH * x, FRUSTUM_HEIGHT * y);
             }
-        }
+        }*/
     }
 
     @Override
@@ -111,14 +118,14 @@ public class MainGameFlow extends GameFlow {
         if(currentState == GameState.PLAYING)
             handleUpPlaying(x, y);
         else if(currentState == GameState.FINISHED){
-            float gameX = FRUSTUM_WIDTH * x;
+            /*float gameX = FRUSTUM_WIDTH * x;
             float gameY = FRUSTUM_HEIGHT * y;
 
             if(retryButton.bounds.contains(gameX, gameY)){
                 gameActivity.setGameFlow(new MainGameFlow(levelInfo, elementCreator, timeLimit, gameActivity));
             } else if(quitButton.bounds.contains(gameX, gameY))
                 gameActivity.setGameFlow(new LevelSelectFlow(gameActivity));
-
+            */
         }
     }
 
@@ -128,18 +135,18 @@ public class MainGameFlow extends GameFlow {
      * @param y
      */
     public void handleUpPlaying(float x, float y){
-        float gameX = FRUSTUM_WIDTH * x;
-        float gameY = FRUSTUM_HEIGHT * y;
+        //float gameX = FRUSTUM_WIDTH * x;
+        //float gameY = FRUSTUM_HEIGHT * y;
 
         //Se obtiene el lock del objeto levelElements
-        if(currentBait != BaitSelected.NONE && dragElement.position.y < GameLevels.MAX_PLAYING_HEIGHT) {
+        /*if(currentBait != BaitSelected.NONE && dragElement.position.y < GameLevels.MAX_PLAYING_HEIGHT) {
             synchronized (levelElements) {
                 if (currentBait == BaitSelected.PRIMARY)
                     levelElements.add(new FoodOrganism(BAIT_TIME, dragElement.position, FOOD_SIZE, BAIT_HP, BAIT_FP));
                 else
                     levelElements.add(new Trap(dragElement.position, SPECIAL_SIZE));
             }
-        }
+        }*/
 
         synchronized (currentBait) {
             currentBait = BaitSelected.NONE;
@@ -148,16 +155,16 @@ public class MainGameFlow extends GameFlow {
 
     @Override
     public void handleDown(float x, float y){
-        float gameX = FRUSTUM_WIDTH * x;
-        float gameY = FRUSTUM_HEIGHT * y;
+        //float gameX = FRUSTUM_WIDTH * x;
+        //float gameY = FRUSTUM_HEIGHT * y;
 
-        if(inputBasic.contains(gameX, gameY)) {
+        /*if(inputBasic.contains(gameX, gameY)) {
             currentBait = BaitSelected.PRIMARY;
             dragElement = new Square(gameX, gameY, inputBasic.radius, inputBasic.radius, 0);
         } else if (inputSecondary.contains(gameX, gameY)) {
             currentBait = BaitSelected.SECONDARY;
             dragElement = new Square(gameX, gameY, inputSecondary.radius, inputSecondary.radius, 0);
-        }
+        }*/
 
     }
 
@@ -165,7 +172,12 @@ public class MainGameFlow extends GameFlow {
     public void update(float interval){
         if(currentState == GameState.PLAYING) {
             timeElapsed += interval;
-            List<GameElement> captured = new ArrayList<>(10);
+            elementsInSight.clear();
+            for(GameElement e : levelElements){
+                if(sightArea.collides(e.getBounds()))
+                    elementsInSight.add(e);
+            }
+            /*List<GameElement> captured = new ArrayList<>(10);
             synchronized (levelElements) {
                 levelElements.addAll(elementCreator.createElements(interval));
                 Iterator<GameElement> itElements = levelElements.iterator();
@@ -188,15 +200,19 @@ public class MainGameFlow extends GameFlow {
 
             //Esto se vuelve hacer para hacer calculos que no dependen de levelElements y soltar el lock
             for(GameElement e : captured)
-                updateObjectives(e);
+                updateObjectives(e);*/
 
-            if(timeElapsed >= timeLimit)
-                currentState = GameState.FINISHED;
+            //if(timeElapsed >= timeLimit)
+            //    currentState = GameState.FINISHED;
         } else if (currentState == GameState.FINISHED){
             updateFinishedGame(interval);
         }
     }
 
+
+    public void setCurrentOrigin(Vector2 currentOrigin){
+        currentOrigin.set(sightArea.getPosition()).sub(PLAYING_LENGTH_X, PLAYING_LENGTH_Y);
+    }
 
     /**
      * Funcion que se llamara cuando el juego se encuentre en el estado game over.

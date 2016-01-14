@@ -8,6 +8,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.jgame.definitions.GameIds;
+import com.jgame.definitions.GameLevels;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Organism;
@@ -32,17 +33,17 @@ import android.util.Log;
 public class GameRenderer implements Renderer {
 
     private static final int NO_TEXTURE = 0;
-    private final float FRUSTUM_HEIGHT = 480f;
-    private final float FRUSTUM_WIDTH = 320f;
+    //private final float FRUSTUM_HEIGHT = 480f;
+    //private final float FRUSTUM_WIDTH = 320f;
     private final float FRAME_INTERVAL = 0.015384615f;
     private final float NANO_SCALE = 1000000000.0f;
-    private final float OBJECTIVES_X_DRAW = FRUSTUM_WIDTH - 65;
+    /*private final float OBJECTIVES_X_DRAW = FRUSTUM_WIDTH - 65;
     private final float OBJECTIVES_AMOUNT_X = FRUSTUM_WIDTH - 35;
     private final float OBJECTIVES_Y_DRAW = FRUSTUM_HEIGHT - 15;
     private final float OBJECTIVES_SIZE = 10f;
     private final float ENDGAME_LABELS_X = FRUSTUM_WIDTH / 2 - 35;
     private final float ENDGAME_NUMBERS_X = FRUSTUM_WIDTH / 2 + 20;
-    private final Vector2 TIMER_POSITION = new Vector2(15, FRUSTUM_HEIGHT - 15);
+    private final Vector2 TIMER_POSITION = new Vector2(15, FRUSTUM_HEIGHT - 15);*/
     public static float[][] TEXTURE_DIGITS = TextureData.createTextureArray(0.0625f, 10);
     private GameSurfaceView surfaceView;
     private long lastUpdate;
@@ -65,6 +66,8 @@ public class GameRenderer implements Renderer {
     private TextureDrawer pauseTextureDrawer;
     private SimpleDrawer basicDrawer;
     SimpleDrawer.ColorData pauseOverlay;
+    SimpleDrawer.ColorData menuBase;
+    private Vector2 currentOrigin;
 
     public GameRenderer(GameActivity gameActivity){
         updateCounter = new TimeCounter(FRAME_INTERVAL);
@@ -74,7 +77,8 @@ public class GameRenderer implements Renderer {
         pauseTextureDrawer = new TextureDrawer(false);
         basicDrawer = new SimpleDrawer(true);
         pauseOverlay = new SimpleDrawer.ColorData(0,0,0,0.5f);
-
+        menuBase = new SimpleDrawer.ColorData(0,0.75f,0.5f,1);
+        currentOrigin = new Vector2();
     }
 
     public void setSurfaceView(GameSurfaceView surfaceView){
@@ -170,11 +174,11 @@ public class GameRenderer implements Renderer {
     }
 
     private void drawMainGameFlow(GameFlow flow){
-        MainGameFlow gameFlow = (MainGameFlow) flow;
-        if(gameFlow.currentState == GameState.PLAYING)
-            drawPlayingGame(gameFlow);
-        else if(gameFlow.currentState == GameState.FINISHED)
-            drawGameFinished(gameFlow);
+        MainGameFlow mainGameFlow = (MainGameFlow) flow;
+        if(mainGameFlow.currentState == GameState.PLAYING)
+            drawPlayingGame(mainGameFlow);
+        /*else if(gameFlow.currentState == GameState.FINISHED)
+            drawGameFinished(gameFlow);*/
     }
 
 
@@ -184,7 +188,7 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
 
         basicDrawer.reset();
-        basicDrawer.addColoredRectangle(0, 0, FRUSTUM_WIDTH, FRUSTUM_HEIGHT, pauseOverlay);
+        basicDrawer.addColoredRectangle(0, 0, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT, pauseOverlay);
         basicDrawer.draw(gl10);
 
         gl10.glLoadIdentity();
@@ -202,7 +206,7 @@ public class GameRenderer implements Renderer {
 
         gl10.glMatrixMode(GL10.GL_PROJECTION);
         gl10.glLoadIdentity();
-        gl10.glOrthof(0, FRUSTUM_WIDTH, 0, FRUSTUM_HEIGHT, 1, -1);
+        gl10.glOrthof(0, GameLevels.FRUSTUM_WIDTH, 0, GameLevels.FRUSTUM_HEIGHT, 1, -1);
 
         gl10.glMatrixMode(GL10.GL_MODELVIEW);
         gl10.glEnable(GL10.GL_BLEND);
@@ -221,17 +225,22 @@ public class GameRenderer implements Renderer {
     }
 
     private void drawPlayingGame(MainGameFlow gameFlow){
-        /*gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
+        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
         gl10.glMatrixMode(GL10.GL_PROJECTION);
         gl10.glLoadIdentity();
-        gl10.glOrthof(0, FRUSTUM_WIDTH, 0, FRUSTUM_HEIGHT, 1, -1);
+        gl10.glOrthof(0, GameLevels.FRUSTUM_WIDTH, 0, GameLevels.FRUSTUM_HEIGHT, 1, -1);
 
         gl10.glMatrixMode(GL10.GL_MODELVIEW);
         gl10.glEnable(GL10.GL_BLEND);
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+
+        /*basicDrawer.reset();
+        basicDrawer.addColoredRectangle(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 40, FRUSTUM_WIDTH / 2, 40,menuBase);
+        basicDrawer.draw(gl10);
 
         synchronized (gameFlow.levelElements) {
             if (!gameFlow.levelElements.isEmpty()) {
@@ -247,17 +256,20 @@ public class GameRenderer implements Renderer {
 
                 bannerDrawer.draw(gl10);
             }
-        }
+        }*/
 
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-        MainGameFlow.BaitSelected lastUpdatedBait = null;
+        basicDrawer.reset();
+        //Mutabilidad T_T
+        gameFlow.setCurrentOrigin(currentOrigin);
 
-        synchronized (gameFlow.currentBait) {
-            lastUpdatedBait = gameFlow.currentBait;
+
+        for(GameElement e : gameFlow.elementsInSight){
+            e.getBounds().fillBasicDrawer(basicDrawer, currentOrigin);
         }
 
-        Drawer infoDrawer = new Drawer(false, true);
+        /*Drawer infoDrawer = new Drawer(false, true);
         infoDrawer.addColoredRectangle(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 40, FRUSTUM_WIDTH / 2, 40, new float[]{0, 0.75f, 0.5f, 1});
         infoDrawer.addColoredRectangle(gameFlow.inputBasic.position, gameFlow.inputBasic.radius, gameFlow.inputBasic.radius, new float[]{1, 0, 0, 1});
         infoDrawer.addColoredRectangle(gameFlow.inputSecondary.position, gameFlow.inputSecondary.radius, gameFlow.inputSecondary.radius, new float[]{1, 0, 1, 1});

@@ -7,5 +7,6 @@ public abstract class GeometricElement {
     public abstract Vector2 getPosition();
     public abstract boolean contains(float x, float y);
     public abstract boolean collides(GeometricElement e);
+    public abstract void fillBasicDrawer(Drawer d, float adjOriginX, float adjOriginY);
     public abstract void fillDrawRect(float[] drawArray);
 }

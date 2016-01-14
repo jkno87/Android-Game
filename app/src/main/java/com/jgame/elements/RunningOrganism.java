@@ -33,10 +33,10 @@ public class RunningOrganism extends Organism {
 
                 position.add(direction);
 
-                if(position.x <= 0 || position.x >= GameLevels.FRUSTUM_WIDTH)
+                /*if(position.x <= 0 || position.x >= GameLevels.FRUSTUM_WIDTH)
                     direction.x *= -1;
                 if(position.y <= 0 || position.y >= GameLevels.MAX_PLAYING_HEIGHT)
-                    direction.y *= -1;
+                    direction.y *= -1;*/
 
                 timeRemaining.accum(timeDifference);
             }
