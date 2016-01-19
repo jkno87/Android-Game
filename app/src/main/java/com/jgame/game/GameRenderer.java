@@ -264,10 +264,10 @@ public class GameRenderer implements Renderer {
         //Mutabilidad T_T
         gameFlow.setCurrentOrigin(currentOrigin);
 
+        for(GameElement e : gameFlow.elementsInSight)
+            e.getBounds().fillSimpleDrawer(basicDrawer,menuBase,currentOrigin);
 
-        for(GameElement e : gameFlow.elementsInSight){
-            e.getBounds().fillBasicDrawer(basicDrawer, currentOrigin);
-        }
+        basicDrawer.draw(gl10);
 
         /*Drawer infoDrawer = new Drawer(false, true);
         infoDrawer.addColoredRectangle(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 40, FRUSTUM_WIDTH / 2, 40, new float[]{0, 0.75f, 0.5f, 1});

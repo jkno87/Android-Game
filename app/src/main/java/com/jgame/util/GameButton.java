@@ -9,6 +9,6 @@ public class GameButton {
 
     public GameButton(Square bounds, String label){
         this.bounds = bounds;
-        this.label = new GameText(label, bounds.position.x, bounds.position.y, 10);
+        this.label = new GameText(label, bounds.position.x + bounds.drawLengthX, bounds.position.y + bounds.drawLengthY, 10);
     }
 }

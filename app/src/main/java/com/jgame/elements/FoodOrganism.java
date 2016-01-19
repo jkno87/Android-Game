@@ -1,6 +1,7 @@
 package com.jgame.elements;
 
 import com.jgame.util.Circle;
+import com.jgame.util.Square;
 import com.jgame.util.Vector2;
 
 /**
@@ -9,7 +10,7 @@ import com.jgame.util.Vector2;
 public class FoodOrganism extends Organism {
 
     public FoodOrganism (float timeToLive, Vector2 position, float size, int hp, int foodPoints){
-        super(new OrganismBehavior(timeToLive, new Circle(position, size), hp, foodPoints, false) {
+        super(new OrganismBehavior(timeToLive, new Square(position, size, size, 0), hp, foodPoints, false) {
             @Override
             public void age(float timeDifference) {
                 timeRemaining.accum(timeDifference);

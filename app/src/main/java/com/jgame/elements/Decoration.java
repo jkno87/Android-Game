@@ -53,9 +53,9 @@ public class Decoration {
         return 0;
     }
 
-    public Square getDrawSquare(){
+    /*public Square getDrawSquare(){
         return new Square(x, y, size, size, angle);
-    }
+    }*/
 
     public float getPctAlive(){
         return 0;

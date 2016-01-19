@@ -120,4 +120,9 @@ public class Vector2 {
         return (float) Math.acos(dot / mags);
     }
 
+    @Override
+    public String toString(){
+        return "[" + x + "," + y + "]";
+    }
+
 }

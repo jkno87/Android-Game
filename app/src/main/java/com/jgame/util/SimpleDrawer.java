@@ -71,4 +71,42 @@ public class SimpleDrawer extends Drawer {
         verticesBuffer[currentIndex++] = cData.a;
 
     }
+
+    /**
+     * Agrega los vertices de un cuadrado con textura y color
+     * @param cData Informacion de color que se utilizara
+     * @return Drawer que contiene los vertices del cuadrado
+     */
+    public void addSquare(Square s, ColorData cData, Vector2 offset){
+        elementsAdded++;
+
+        verticesBuffer[currentIndex++] = s.position.x - offset.x;
+        verticesBuffer[currentIndex++] = s.position.y - offset.y;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position2.x - offset.x;
+        verticesBuffer[currentIndex++] = s.position.y - offset.y;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position2.x - offset.x;
+        verticesBuffer[currentIndex++] = s.position2.y - offset.y;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position.x - offset.x;
+        verticesBuffer[currentIndex++] = s.position2.y - offset.y;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+    }
 }

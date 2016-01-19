@@ -1,5 +1,7 @@
 package com.jgame.util;
 
+import android.util.Log;
+
 /**
  * Created by ej-jose on 11/08/15.
  */
@@ -43,11 +45,8 @@ public class Circle extends GeometricElement {
     }
 
     @Override
-    public void fillDrawRect(float[] drawArray) {
-        drawArray[0] = position.x;
-        drawArray[1] = position.y;
-        drawArray[2] = radius;
-        drawArray[3] = radius;
+    public void fillSimpleDrawer(SimpleDrawer d, SimpleDrawer.ColorData cd, Vector2 offset){
+        d.addColoredRectangle(position.x - offset.x, position.y - offset.y, radius, radius, cd);
     }
 
     /**

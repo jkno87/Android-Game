@@ -5,7 +5,10 @@ package com.jgame.util;
  */
 public class Point extends GeometricElement{
 
+
     public final Vector2 position;
+    //Esto solo se hace para que se vea el punto al dibujarse
+    private final float POINT_SIZE = 0.01f;
 
     public Point(float x, float y){
         position = new Vector2(x, y);
@@ -31,11 +34,7 @@ public class Point extends GeometricElement{
     }
 
     @Override
-    public void fillDrawRect(float[] drawArray) {
-        drawArray[0] = position.x;
-        drawArray[1] = position.y;
-        //Esto solo se hace para que se pueda ver un punto al dibujarse
-        drawArray[2] = 0.01f;
-        drawArray[3] = 0.01f;
+    public void fillSimpleDrawer(SimpleDrawer d, SimpleDrawer.ColorData cd, Vector2 offset){
+        d.addColoredRectangle(position.x - offset.x, position.y - offset.y, POINT_SIZE, POINT_SIZE, cd);
     }
 }

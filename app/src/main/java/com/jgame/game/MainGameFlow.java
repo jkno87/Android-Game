@@ -80,7 +80,7 @@ public class MainGameFlow extends GameFlow {
         //quitButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 50, 60, 25), "return");
         dragElement = new Square(0,0,0,0);
         sightArea = new Square(PLAYING_WIDTH/2, PLAYING_HEIGHT/2, PLAYING_LENGTH_X, PLAYING_LENGTH_Y);
-        levelElements.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), FOOD_SIZE, BAIT_HP, BAIT_FP));
+        elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), FOOD_SIZE, BAIT_HP, BAIT_FP));
     }
 
 
@@ -172,11 +172,11 @@ public class MainGameFlow extends GameFlow {
     public void update(float interval){
         if(currentState == GameState.PLAYING) {
             timeElapsed += interval;
-            elementsInSight.clear();
-            for(GameElement e : levelElements){
+            //elementsInSight.clear();
+            /*for(GameElement e : levelElements){
                 if(sightArea.collides(e.getBounds()))
                     elementsInSight.add(e);
-            }
+            }*/
             /*List<GameElement> captured = new ArrayList<>(10);
             synchronized (levelElements) {
                 levelElements.addAll(elementCreator.createElements(interval));
