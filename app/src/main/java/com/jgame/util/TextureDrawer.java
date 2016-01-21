@@ -43,21 +43,19 @@ public class TextureDrawer extends Drawer {
      * @param tdata Informacion de la textura que se utilizara
      * @return Drawer que contiene los vertices del cuadrado
      */
-    public void addTexturedSquare(float x, float y, float len, TextureData tdata){
+    public void addTexturedSquare(float x, float y, float lenX, float lenY, TextureData tdata){
         elementsAdded++;
 
-        float x1 = x - len;
-        float x2 = x + len;
-        float y1 = y - len;
-        float y2 = y + len;
+        float x2 = x + lenX;
+        float y2 = y + lenY;
 
-        verticesBuffer[currentIndex++] = x1;
-        verticesBuffer[currentIndex++] = y1;
+        verticesBuffer[currentIndex++] = x;
+        verticesBuffer[currentIndex++] = y;
         verticesBuffer[currentIndex++] = tdata.v1;
         verticesBuffer[currentIndex++] = tdata.u2;
 
         verticesBuffer[currentIndex++] = x2;
-        verticesBuffer[currentIndex++] = y1;
+        verticesBuffer[currentIndex++] = y;
         verticesBuffer[currentIndex++] = tdata.v2;
         verticesBuffer[currentIndex++] = tdata.u2;
 
@@ -66,10 +64,41 @@ public class TextureDrawer extends Drawer {
         verticesBuffer[currentIndex++] = tdata.v2;
         verticesBuffer[currentIndex++] = tdata.u1;
 
-        verticesBuffer[currentIndex++] = x1;
+        verticesBuffer[currentIndex++] = x;
         verticesBuffer[currentIndex++] = y2;
         verticesBuffer[currentIndex++] = tdata.v1;
         verticesBuffer[currentIndex++] = tdata.u1;
 
     }
+
+    /**
+     * Agrega los vertices de un cuadrado con textura y color
+     * @param tData Informacion de textura que se utilizara
+     * @return Drawer que contiene los vertices del cuadrado
+     */
+    public void addTexturedSquare(Square s, TextureData tData){
+        elementsAdded++;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u2;
+
+        verticesBuffer[currentIndex++] = s.position2.x;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u2;
+
+        verticesBuffer[currentIndex++] = s.position2.x;
+        verticesBuffer[currentIndex++] = s.position2.y;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u1;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position2.y;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u1;
+    }
+
+
 }

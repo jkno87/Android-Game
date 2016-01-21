@@ -8,9 +8,8 @@ import com.jgame.util.TextureDrawer.TextureData;
 public class GameText {
 
     private final byte[] texto;
-    private float x;
-    private float y;
-    private float size;
+    private Square bounds;
+    private float letterSize;
     private static int LETTERS_COLUMN = 16;
     private static int LETTERS_ROW = 16;
     public static final TextureData[] LETTERS = generateAlphabet(LETTERS_COLUMN, LETTERS_ROW);
@@ -40,11 +39,10 @@ public class GameText {
     }
 
 
-    public GameText(String texto, float x, float y, float size){
+    public GameText(String texto, Square bounds){
         this.texto = texto.getBytes();
-        this.x = x;
-        this.y = y;
-        this.size = size;
+        this.bounds = bounds;
+        this.letterSize = bounds.drawLengthX / this.texto.length;
     }
 
     /**
@@ -52,13 +50,15 @@ public class GameText {
      * @param textureDrawer Drawer al que se agregaran los vertices
      */
     public void addLetterTexture(TextureDrawer textureDrawer){
-        float currentX = x - size * (texto.length / 2);
-        float offset = texto.length * 0.2f;
+        float currentX = bounds.position.x;
+        //float offset = texto.length * 0.2f;
 
-        for(int i = 0; i < texto.length; i++){
-            textureDrawer.addTexturedSquare(currentX, y, size, LETTERS[(int)texto[i] - 97]);
-            currentX += size + offset;
-        }
+        textureDrawer.addTexturedSquare(bounds, LETTERS[0]);
+        /*for(int i = 0; i < texto.length; i++){
+            textureDrawer.addTexturedSquare(currentX, bounds.position.y,
+                    bounds.drawLengthX, bounds.drawLengthY, LETTERS[(int)texto[i] - 97]);
+            currentX += letterSize;
+        }*/
     }
 
 }
