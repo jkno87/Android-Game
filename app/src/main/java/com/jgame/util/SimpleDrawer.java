@@ -87,22 +87,22 @@ public class SimpleDrawer extends Drawer {
         verticesBuffer[currentIndex++] = cData.b;
         verticesBuffer[currentIndex++] = cData.a;
 
-        verticesBuffer[currentIndex++] = s.position2.x - offset.x;
+        verticesBuffer[currentIndex++] = (s.position.x + s.lenX) - offset.x;
         verticesBuffer[currentIndex++] = s.position.y - offset.y;
         verticesBuffer[currentIndex++] = cData.r;
         verticesBuffer[currentIndex++] = cData.g;
         verticesBuffer[currentIndex++] = cData.b;
         verticesBuffer[currentIndex++] = cData.a;
 
-        verticesBuffer[currentIndex++] = s.position2.x - offset.x;
-        verticesBuffer[currentIndex++] = s.position2.y - offset.y;
+        verticesBuffer[currentIndex++] = (s.position.x + s.lenX) - offset.x;
+        verticesBuffer[currentIndex++] = (s.position.y + s.lenY) - offset.y;
         verticesBuffer[currentIndex++] = cData.r;
         verticesBuffer[currentIndex++] = cData.g;
         verticesBuffer[currentIndex++] = cData.b;
         verticesBuffer[currentIndex++] = cData.a;
 
         verticesBuffer[currentIndex++] = s.position.x - offset.x;
-        verticesBuffer[currentIndex++] = s.position2.y - offset.y;
+        verticesBuffer[currentIndex++] = (s.position.y + s.lenY) - offset.y;
         verticesBuffer[currentIndex++] = cData.r;
         verticesBuffer[currentIndex++] = cData.g;
         verticesBuffer[currentIndex++] = cData.b;

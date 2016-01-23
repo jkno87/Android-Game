@@ -17,7 +17,7 @@ public class LevelSelectFlow extends GameFlow {
 
     public LevelSelectFlow(GameActivity gameActivity){
         levels = new ArrayList<>(5);
-        levels.add(new GameButton(new Square(GameLevels.FRUSTUM_WIDTH/2, GameLevels.FRUSTUM_HEIGHT/2, 50, 15)
+        levels.add(new GameButton(new Square(GameLevels.FRUSTUM_WIDTH/2 - 50, GameLevels.FRUSTUM_HEIGHT/2, 100, 35)
                 , "tutorial"));
 
         this.gameActivity = gameActivity;

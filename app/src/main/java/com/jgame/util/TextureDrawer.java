@@ -84,18 +84,18 @@ public class TextureDrawer extends Drawer {
         verticesBuffer[currentIndex++] = tData.v1;
         verticesBuffer[currentIndex++] = tData.u2;
 
-        verticesBuffer[currentIndex++] = s.position2.x;
+        verticesBuffer[currentIndex++] = s.position.x + s.lenX;
         verticesBuffer[currentIndex++] = s.position.y;
         verticesBuffer[currentIndex++] = tData.v2;
         verticesBuffer[currentIndex++] = tData.u2;
 
-        verticesBuffer[currentIndex++] = s.position2.x;
-        verticesBuffer[currentIndex++] = s.position2.y;
+        verticesBuffer[currentIndex++] = s.position.x + s.lenX;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
         verticesBuffer[currentIndex++] = tData.v2;
         verticesBuffer[currentIndex++] = tData.u1;
 
         verticesBuffer[currentIndex++] = s.position.x;
-        verticesBuffer[currentIndex++] = s.position2.y;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
         verticesBuffer[currentIndex++] = tData.v1;
         verticesBuffer[currentIndex++] = tData.u1;
     }
