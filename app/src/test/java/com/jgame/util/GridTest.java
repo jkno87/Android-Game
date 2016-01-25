@@ -93,6 +93,20 @@ public class GridTest {
     }
 
     @Test
+    public void squareIndexTest(){
+        Grid instance = new Grid(320, 480, 60, 60);
+        assertArrayEquals(new int[]{0, -1, -1, -1}, instance.getCellsSquare(new Square(new Vector2(25, 25), 10.0f, 10.0f, 0.0f)));
+        assertArrayEquals(new int[]{0, 1, -1, -1}, instance.getCellsSquare(new Square(new Vector2(55, 25), 10.0f, 10.0f, 0.0f)));
+        assertArrayEquals(new int[]{0, -1, 5, -1}, instance.getCellsSquare(new Square(new Vector2(25, 55), 10.0f, 10.0f, 0.0f)));
+        assertArrayEquals(new int[]{0, 1, 5, 6}, instance.getCellsSquare(new Square(new Vector2(55, 55), 10.0f, 10.0f, 0.0f)));
+
+        assertArrayEquals(new int[]{-1, -1, -1, 0}, instance.getCellsSquare(new Square(new Vector2(-5, -5), 10.0f, 10.0f, 0.0f)));
+        assertArrayEquals(new int[]{-1, -1, -1, -1}, instance.getCellsSquare(new Square(new Vector2(-25, -25), 10.0f, 10.0f, 0.0f)));
+        assertArrayEquals(new int[]{-1, -1, -1, -1}, instance.getCellsSquare(new Square(new Vector2(-25, -5), 10.0f, 10.0f, 0.0f)));
+        assertArrayEquals(new int[]{-1, -1, -1, -1}, instance.getCellsSquare(new Square(new Vector2(-5, -25), 10.0f, 10.0f, 0.0f)));
+    }
+
+    @Test
     public void neighborsTest(){
         int currentId = 0;
         GameElementTest instance1 = new GameElementTest(25, 25, 10, currentId++);

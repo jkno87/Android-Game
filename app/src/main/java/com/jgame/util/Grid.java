@@ -91,8 +91,53 @@ public class Grid {
     private int[] getElementIndexes(GeometricElement e){
         if(e instanceof Circle)
             return getCells((Circle) e);
+        else if(e instanceof Square)
+            return getCellsSquare((Square) e);
         else
             throw new UnsupportedOperationException("Este GeomentricElement no ha sido implementado en CullUtility");
+    }
+
+    /**
+     * Regresa los indices que puede ocupar un circulo en la grid.
+     * Asumiendo que el elemento mas grande no excede las dimensiones de las celdas,
+     * un circulo puede ocupar maximo 4 celdas de la grid.
+     * @param s square del que se obtendran los indices
+     * @return int[] que contiene los indices a los que pertenece el rectangulo
+     */
+    public int[] getCellsSquare(Square s){
+        int[] indices = new int[4];
+        int i1 = getSingleCell(s.position.x, s.position.y);
+        int i2 = getSingleCell(s.position.x + s.lenX, s.position.y);
+        int i3 = getSingleCell(s.position.x, s.position.y + s.lenY);
+        int i4 = getSingleCell(s.position.x + s.lenX, s.position.y + s.lenY);
+
+        //caso en el que se encuentra dentro de una celda
+        if(i1 == i4){
+            indices[CENTER_INDEX] = i1;
+            indices[HORIZONTAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            indices[VERTICAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            indices[DIAGONAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+        } else if(i3 == i4){
+            //caso en el que tiene un vecino vertical
+            indices[CENTER_INDEX] = i1;
+            indices[HORIZONTAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            indices[VERTICAL_NEIGHBOR] = i3;
+            indices[DIAGONAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+        } else if(i2 == i4){
+            //caso en el que tiene un vecino horizontal
+            indices[CENTER_INDEX] = i1;
+            indices[HORIZONTAL_NEIGHBOR] = i2;
+            indices[VERTICAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            indices[DIAGONAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+        } else {
+            indices[CENTER_INDEX] = i1;
+            indices[HORIZONTAL_NEIGHBOR] = i2;
+            indices[VERTICAL_NEIGHBOR] = i3;
+            indices[DIAGONAL_NEIGHBOR] = i4;
+        }
+
+
+        return indices;
     }
 
     /**
