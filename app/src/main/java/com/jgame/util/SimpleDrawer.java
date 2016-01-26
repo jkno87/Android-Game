@@ -37,20 +37,18 @@ public class SimpleDrawer extends Drawer {
     public void addColoredRectangle(float x, float y, float lenX, float lenY, ColorData cData){
         elementsAdded++;
 
-        float x1 = x - lenX;
         float x2 = x + lenX;
-        float y1 = y - lenY;
         float y2 = y + lenY;
 
-        verticesBuffer[currentIndex++] = x1;
-        verticesBuffer[currentIndex++] = y1;
+        verticesBuffer[currentIndex++] = x;
+        verticesBuffer[currentIndex++] = y;
         verticesBuffer[currentIndex++] = cData.r;
         verticesBuffer[currentIndex++] = cData.g;
         verticesBuffer[currentIndex++] = cData.b;
         verticesBuffer[currentIndex++] = cData.a;
 
         verticesBuffer[currentIndex++] = x2;
-        verticesBuffer[currentIndex++] = y1;
+        verticesBuffer[currentIndex++] = y;
         verticesBuffer[currentIndex++] = cData.r;
         verticesBuffer[currentIndex++] = cData.g;
         verticesBuffer[currentIndex++] = cData.b;
@@ -63,7 +61,7 @@ public class SimpleDrawer extends Drawer {
         verticesBuffer[currentIndex++] = cData.b;
         verticesBuffer[currentIndex++] = cData.a;
 
-        verticesBuffer[currentIndex++] = x1;
+        verticesBuffer[currentIndex++] = x;
         verticesBuffer[currentIndex++] = y2;
         verticesBuffer[currentIndex++] = cData.r;
         verticesBuffer[currentIndex++] = cData.g;

@@ -159,21 +159,6 @@ public class GameRenderer implements Renderer {
 
     }
 
-    private float[] getOrganismColor(int id, float pctAlive){
-        switch(id){
-            case GameIds.FOOD_ORGANISM_ID :
-                return new float[]{1, 0, 0, pctAlive};
-            case GameIds.MOVING_ORGANISM_ID :
-                return new float[]{0,0,1, pctAlive};
-            case GameIds.EVOLVED_ORGANISM_ID:
-                return new float[]{0,1,0, pctAlive};
-            case GameIds.TRAP_ID:
-                return new float[]{1,0,1,1};
-        }
-
-        return new float[]{0,0,0,0};
-    }
-
     private void drawMainGameFlow(GameFlow flow){
         MainGameFlow mainGameFlow = (MainGameFlow) flow;
         if(mainGameFlow.currentState == GameState.PLAYING)
@@ -264,10 +249,24 @@ public class GameRenderer implements Renderer {
         basicDrawer.reset();
         //Mutabilidad T_T
         gameFlow.setCurrentOrigin(currentOrigin);
-        if(gameFlow.player.state == Player.PlayerState.NORMAL)
-            gameFlow.player.getBounds().fillSimpleDrawer(basicDrawer, Player.REGULAR_COLOR, currentOrigin);
-        else
+        gameFlow.player.getBounds().fillSimpleDrawer(basicDrawer, Player.REGULAR_COLOR, currentOrigin);
+        if(gameFlow.player.state == Player.PlayerState.INPUT_SELECTION) {
             gameFlow.player.getBounds().fillSimpleDrawer(basicDrawer, Player.SELECTED_COLOR, currentOrigin);
+            float currentX = gameFlow.player.inputArea.position.x - currentOrigin.x;
+            float currentY = gameFlow.player.inputArea.position.y - currentOrigin.y;
+            float len = gameFlow.player.inputArea.lenX;
+
+            basicDrawer.addColoredRectangle(currentX, currentY, len,len, Player.INPUT_COLOR);
+
+            /*for(int i = 0; i < 3; i++){
+                for(int j = 0; j < 3; j++){
+                    basicDrawer.addColoredRectangle(currentX, currentY,len,len,Player.INPUT_COLOR);
+                    currentX += len;
+                }
+                currentX = gameFlow.player.inputArea.position.x - currentOrigin.x;
+                currentY += len;
+            }*/
+        }
 
         //for(GameElement e : gameFlow.elementsInSight)
         //    e.getBounds().fillSimpleDrawer(basicDrawer,menuBase,currentOrigin);

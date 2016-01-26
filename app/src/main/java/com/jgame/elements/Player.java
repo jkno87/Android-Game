@@ -13,41 +13,41 @@ import java.util.List;
 public class Player implements GameElement {
 
     public enum PlayerState {
-        NORMAL, INPUT_SELECTION
+        STOPPED, INPUT_SELECTION, MOVING
     }
 
     public static final ColorData REGULAR_COLOR = new ColorData(0.75f,0.5f,1,1);
     public static final ColorData SELECTED_COLOR = new ColorData(1,0.9f,1,0.85f);
+    public static final ColorData INPUT_COLOR = new ColorData(1,0,0,0.75f);
 
-    private final Vector2 direction;
+    public final Vector2 direction;
+    public final Square inputArea;
     private Square bounds;
-    private Square[] inputs;
     public PlayerState state;
 
     public Player(Vector2 position, float length) {
         bounds = new Square(position, length, length, 0);
         direction = new Vector2();
-        state = PlayerState.NORMAL;
-        inputs = new Square[9];
-
-        float currInputX = position.x - length;
-        float currInputY = position.y - length;
-
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                inputs[i + j] = new Square(new Vector2(currInputX, currInputY), length, length, 0);
-                currInputX += length;
-            }
-            currInputY += length;
-        }
+        state = PlayerState.STOPPED;
+        inputArea = new Square(new Vector2(position).sub(length,length), length*3, length*3,0);
     }
 
     public void setStateInputSelection(){
         this.state = PlayerState.INPUT_SELECTION;
+        direction.x = 0;
+        direction.y = 0;
     }
 
-    public void setNormalState(float x, float y){
-        direction.set(x,y);
+    public void setStoppedState(){
+        this.state = PlayerState.STOPPED;
+        direction.x = 0;
+        direction.y = 0;
+    }
+
+    public void changeDirection(float x, float y){
+        direction.x = ((int)((x - inputArea.position.x) / bounds.lenX)) - 1;
+        direction.y = ((int)((y - inputArea.position.y) / bounds.lenY)) - 1;
+        this.state = PlayerState.MOVING;
     }
 
     @Override
@@ -62,7 +62,8 @@ public class Player implements GameElement {
 
     @Override
     public void update(List<GameElement> others, float timeDifference) {
-
+        bounds.position.add(direction);
+        inputArea.position.add(direction);
     }
 
     @Override

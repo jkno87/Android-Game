@@ -61,10 +61,11 @@ public class MainGameFlow extends GameFlow {
     private final LevelInformation levelInfo;
     public final float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH * 3;
     public final float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT * 3;
-    private final float PLAYING_LENGTH_X = GameLevels.FRUSTUM_WIDTH / 2;
-    private final float PLAYING_LENGTH_Y = GameLevels.FRUSTUM_HEIGHT / 2;
+    //private final float PLAYING_LENGTH_X = GameLevels.FRUSTUM_WIDTH;
+    //private final float PLAYING_LENGTH_Y = GameLevels.FRUSTUM_HEIGHT;
     public Square sightArea;
     public final Player player;
+    public final Object playerStateLock = new Object();
 
 
     public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit, GameActivity gameActivity){
@@ -83,7 +84,7 @@ public class MainGameFlow extends GameFlow {
         //retryButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 100, 60, 25), "retry");
         //quitButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 50, 60, 25), "return");
         dragElement = new Square(0,0,0,0);
-        sightArea = new Square(PLAYING_WIDTH/2, PLAYING_HEIGHT/2, PLAYING_LENGTH_X, PLAYING_LENGTH_Y);
+        sightArea = new Square(PLAYING_WIDTH/3, PLAYING_HEIGHT/3, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
         elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), FOOD_SIZE, BAIT_HP, BAIT_FP));
         player = new Player(new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), PLAYER_SIZE);
     }
@@ -160,14 +161,23 @@ public class MainGameFlow extends GameFlow {
 
     @Override
     public void handleDown(float x, float y){
-        float gameX = GameLevels.FRUSTUM_WIDTH * x;
-        float gameY = GameLevels.FRUSTUM_HEIGHT * y;
+        float gameX = GameLevels.FRUSTUM_WIDTH * x + sightArea.position.x;
+        float gameY = GameLevels.FRUSTUM_HEIGHT * y + sightArea.position.y;
 
-        if(player.getBounds().contains(gameX, gameY)){
-            if(player.state == Player.PlayerState.NORMAL)
-                player.setStateInputSelection();
-            else
-                player.setNormalState(0,0);
+        synchronized (playerStateLock) {
+            if (player.getBounds().contains(gameX, gameY)) {
+                if (player.state == Player.PlayerState.STOPPED)
+                    player.setStateInputSelection();
+                else
+                    player.setStoppedState();
+            }
+
+            else if(player.state == Player.PlayerState.INPUT_SELECTION){
+                if(player.inputArea.contains(gameX, gameY))
+                    player.changeDirection(gameX, gameY);
+                else
+                    player.setStoppedState();
+            }
         }
 
         /*if(inputBasic.contains(gameX, gameY)) {
@@ -184,6 +194,7 @@ public class MainGameFlow extends GameFlow {
     public void update(float interval){
         if(currentState == GameState.PLAYING) {
             timeElapsed += interval;
+            player.update(null,interval);
             //elementsInSight.clear();
             /*for(GameElement e : levelElements){
                 if(sightArea.collides(e.getBounds()))
@@ -227,7 +238,7 @@ public class MainGameFlow extends GameFlow {
      * @param currentOrigin
      */
     public void setCurrentOrigin(Vector2 currentOrigin){
-        currentOrigin.set(sightArea.getPosition()).sub(PLAYING_LENGTH_X, PLAYING_LENGTH_Y);
+        currentOrigin.set(sightArea.getPosition());
     }
 
     /**

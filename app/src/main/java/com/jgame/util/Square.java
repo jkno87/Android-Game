@@ -31,8 +31,8 @@ public class Square extends GeometricElement {
 
     @Override
     public boolean contains(float x, float y){
-        return x <= position.x + lenX && x >= position.x
-                && y <= position.y + lenY && y >= position.y;
+        return x < position.x + lenX && x > position.x
+                && y < position.y + lenY && y > position.y;
     }
 
     @Override
