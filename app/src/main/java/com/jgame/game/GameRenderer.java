@@ -12,6 +12,7 @@ import com.jgame.definitions.GameLevels;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Organism;
+import com.jgame.elements.Player;
 import com.jgame.elements.Trap;
 import com.jgame.util.Drawer;
 import com.jgame.util.GameButton;
@@ -263,9 +264,13 @@ public class GameRenderer implements Renderer {
         basicDrawer.reset();
         //Mutabilidad T_T
         gameFlow.setCurrentOrigin(currentOrigin);
+        if(gameFlow.player.state == Player.PlayerState.NORMAL)
+            gameFlow.player.getBounds().fillSimpleDrawer(basicDrawer, Player.REGULAR_COLOR, currentOrigin);
+        else
+            gameFlow.player.getBounds().fillSimpleDrawer(basicDrawer, Player.SELECTED_COLOR, currentOrigin);
 
-        for(GameElement e : gameFlow.elementsInSight)
-            e.getBounds().fillSimpleDrawer(basicDrawer,menuBase,currentOrigin);
+        //for(GameElement e : gameFlow.elementsInSight)
+        //    e.getBounds().fillSimpleDrawer(basicDrawer,menuBase,currentOrigin);
 
         basicDrawer.draw(gl10);
 

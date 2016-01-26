@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.FoodOrganism;
+import com.jgame.elements.Player;
 import com.jgame.game.LevelInformation.LevelObjective;
 import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
@@ -33,6 +34,7 @@ public class MainGameFlow extends GameFlow {
         NONE, PRIMARY, SECONDARY
     }
 
+    private final float PLAYER_SIZE = 85f;
     private final int POINTS_PER_SECOND = 10;
     private final float FOOD_SIZE = 5;
     private final float SPECIAL_SIZE = 10;
@@ -62,6 +64,8 @@ public class MainGameFlow extends GameFlow {
     private final float PLAYING_LENGTH_X = GameLevels.FRUSTUM_WIDTH / 2;
     private final float PLAYING_LENGTH_Y = GameLevels.FRUSTUM_HEIGHT / 2;
     public Square sightArea;
+    public final Player player;
+
 
     public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit, GameActivity gameActivity){
         this.levelInfo = levelInfo;
@@ -81,6 +85,7 @@ public class MainGameFlow extends GameFlow {
         dragElement = new Square(0,0,0,0);
         sightArea = new Square(PLAYING_WIDTH/2, PLAYING_HEIGHT/2, PLAYING_LENGTH_X, PLAYING_LENGTH_Y);
         elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), FOOD_SIZE, BAIT_HP, BAIT_FP));
+        player = new Player(new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), PLAYER_SIZE);
     }
 
 
@@ -155,8 +160,15 @@ public class MainGameFlow extends GameFlow {
 
     @Override
     public void handleDown(float x, float y){
-        //float gameX = FRUSTUM_WIDTH * x;
-        //float gameY = FRUSTUM_HEIGHT * y;
+        float gameX = GameLevels.FRUSTUM_WIDTH * x;
+        float gameY = GameLevels.FRUSTUM_HEIGHT * y;
+
+        if(player.getBounds().contains(gameX, gameY)){
+            if(player.state == Player.PlayerState.NORMAL)
+                player.setStateInputSelection();
+            else
+                player.setNormalState(0,0);
+        }
 
         /*if(inputBasic.contains(gameX, gameY)) {
             currentBait = BaitSelected.PRIMARY;
@@ -209,7 +221,11 @@ public class MainGameFlow extends GameFlow {
         }
     }
 
-
+    /**
+     * Recibe un Vector2 al cual le asigna el origen del juego y se dibuje correctamente en la pantalla.
+     * Esto se hace para que se ahorre memoria y no se generen mas variables.
+     * @param currentOrigin
+     */
     public void setCurrentOrigin(Vector2 currentOrigin){
         currentOrigin.set(sightArea.getPosition()).sub(PLAYING_LENGTH_X, PLAYING_LENGTH_Y);
     }
