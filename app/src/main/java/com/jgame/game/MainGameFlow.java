@@ -50,8 +50,6 @@ public class MainGameFlow extends GameFlow {
     public float timeElapsed;
     public GameState currentState;
     public int timePoints;
-    //public final Circle inputBasic;
-    //public final Circle inputSecondary;
     public BaitSelected currentBait;
     public Square dragElement;
     public boolean stageCleared;
@@ -61,9 +59,6 @@ public class MainGameFlow extends GameFlow {
     private final LevelInformation levelInfo;
     public final float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH * 3;
     public final float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT * 3;
-    //private final float PLAYING_LENGTH_X = GameLevels.FRUSTUM_WIDTH;
-    //private final float PLAYING_LENGTH_Y = GameLevels.FRUSTUM_HEIGHT;
-    public Square sightArea;
     public final Player player;
     public final Object playerStateLock = new Object();
 
@@ -84,9 +79,15 @@ public class MainGameFlow extends GameFlow {
         //retryButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 100, 60, 25), "retry");
         //quitButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 50, 60, 25), "return");
         dragElement = new Square(0,0,0,0);
-        sightArea = new Square(PLAYING_WIDTH/3, PLAYING_HEIGHT/3, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
-        elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), FOOD_SIZE, BAIT_HP, BAIT_FP));
-        player = new Player(new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), PLAYER_SIZE);
+        player = new Player(new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), PLAYER_SIZE,
+                GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
+
+        float offset = GameLevels.FRUSTUM_WIDTH / 2;
+
+        elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 - offset, PLAYING_HEIGHT/2 - offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
+        elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 + offset, PLAYING_HEIGHT/2 - offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
+        elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 + offset, PLAYING_HEIGHT/2 + offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
+        elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 - offset, PLAYING_HEIGHT/2 + offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
     }
 
 
@@ -161,8 +162,8 @@ public class MainGameFlow extends GameFlow {
 
     @Override
     public void handleDown(float x, float y){
-        float gameX = GameLevels.FRUSTUM_WIDTH * x + sightArea.position.x;
-        float gameY = GameLevels.FRUSTUM_HEIGHT * y + sightArea.position.y;
+        float gameX = GameLevels.FRUSTUM_WIDTH * x + player.sightArea.position.x;
+        float gameY = GameLevels.FRUSTUM_HEIGHT * y + player.sightArea.position.y;
 
         synchronized (playerStateLock) {
             if (player.getBounds().contains(gameX, gameY)) {
@@ -238,7 +239,7 @@ public class MainGameFlow extends GameFlow {
      * @param currentOrigin
      */
     public void setCurrentOrigin(Vector2 currentOrigin){
-        currentOrigin.set(sightArea.getPosition());
+        currentOrigin.set(player.sightArea.getPosition());
     }
 
     /**

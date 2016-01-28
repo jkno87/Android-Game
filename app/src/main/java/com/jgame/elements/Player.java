@@ -21,15 +21,26 @@ public class Player implements GameElement {
     public static final ColorData INPUT_COLOR = new ColorData(1,0,0,0.75f);
 
     public final Vector2 direction;
+    public final Square sightArea;
     public final Square inputArea;
     private Square bounds;
     public PlayerState state;
+    private final float maxWidth;
+    private final float maxHeight;
 
-    public Player(Vector2 position, float length) {
-        bounds = new Square(position, length, length, 0);
+
+    public Player(Vector2 position, float characterLength, float sightLengthX, float sightLengthY) {
+        sightArea = new Square(new Vector2(position).sub(sightLengthX / 2, sightLengthY / 2), sightLengthX, sightLengthY,0);
+        //Se modifica position para que el centro del personaje quede en position
+        bounds = new Square(position.sub(characterLength / 2, characterLength / 2), characterLength, characterLength,0);
+        //Se crea la inputArea tomando como origen la posicion real de bounds
+        inputArea = new Square(new Vector2(position).sub(characterLength, characterLength),
+                characterLength*3, characterLength*3,0);
+
         direction = new Vector2();
         state = PlayerState.STOPPED;
-        inputArea = new Square(new Vector2(position).sub(length,length), length*3, length*3,0);
+        maxWidth = 3*sightLengthX;
+        maxHeight = 3*sightLengthY;
     }
 
     public void setStateInputSelection(){
@@ -62,8 +73,15 @@ public class Player implements GameElement {
 
     @Override
     public void update(List<GameElement> others, float timeDifference) {
+        if(sightArea.position.x == 0 || sightArea.position.x == maxWidth)
+            direction.x = 0;
+
+        if(sightArea.position.y == 0 || sightArea.position.y == maxHeight)
+            direction.y = 0;
+
         bounds.position.add(direction);
         inputArea.position.add(direction);
+        sightArea.position.add(direction);
     }
 
     @Override
