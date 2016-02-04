@@ -74,10 +74,10 @@ public class Player implements GameElement {
     @Override
     public void update(List<GameElement> others, float timeDifference) {
         if(sightArea.position.x == 0 || sightArea.position.x == maxWidth)
-            direction.x = 0;
+            direction.x *= -1;
 
         if(sightArea.position.y == 0 || sightArea.position.y == maxHeight)
-            direction.y = 0;
+            direction.y *= -1;
 
         bounds.position.add(direction);
         inputArea.position.add(direction);

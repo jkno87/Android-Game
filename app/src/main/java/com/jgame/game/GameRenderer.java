@@ -250,8 +250,10 @@ public class GameRenderer implements Renderer {
         //Mutabilidad T_T
         gameFlow.setCurrentOrigin(currentOrigin);
 
-        for(GameElement e : gameFlow.elementsInSight)
-            e.getBounds().fillSimpleDrawer(basicDrawer,menuBase,currentOrigin);
+        synchronized (gameFlow.elementsLock) {
+            for (GameElement e : gameFlow.elementsInSight)
+                e.getBounds().fillSimpleDrawer(basicDrawer, menuBase, currentOrigin);
+        }
 
         gameFlow.player.getBounds().fillSimpleDrawer(basicDrawer, Player.REGULAR_COLOR, currentOrigin);
         if(gameFlow.player.state == Player.PlayerState.INPUT_SELECTION) {

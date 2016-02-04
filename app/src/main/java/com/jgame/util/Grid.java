@@ -1,5 +1,6 @@
 package com.jgame.util;
 
+import com.jgame.definitions.GameLevels;
 import com.jgame.elements.GameElement;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public class Grid {
 
-    private static final int INITIAL_CELL_SIZE = 10;
+    private static final int INITIAL_CELL_SIZE = 25;
     private static final int INITIAL_NEIGHBORS_SIZE = 15;
     private static final int EMPTY_CELL_INDEX = -1;
     private static final int CENTER_INDEX = 0;
@@ -80,6 +81,23 @@ public class Grid {
         }
 
         return neighbors;
+    }
+
+    /**
+     * Regresa una lista con los elementos que se encuentran en el area del GeometricElement
+     * @param e GameElement que buscara vecinos en el grid.
+     * @param elements Lista a la que se agregaran los elementos
+     * @return List con los elementos que se encuentran en las mismas celdas.
+     */
+    public void getElementsIn(GeometricElement e, List<GameElement> elements){
+        int[] indices = getElementIndexes(e);
+        for(int i = 0; i < indices.length; i++){
+            if(indices[i] != EMPTY_CELL_INDEX)
+                for(GameElement n : cells.get(indices[i])){
+                    if(!elements.contains(n))
+                        elements.add(n);
+                }
+        }
     }
 
 
@@ -190,7 +208,7 @@ public class Grid {
      * @return Indice de la celda en la que se encuentra el punto x,y
      */
     public int getSingleCell(float x, float y){
-        if(x < 0 || y < 0 || x > lenX || y > lenY)
+        if(x < 0 || y < 0 || x >= lenX || y >= lenY)
             return EMPTY_CELL_INDEX;
 
         return (int)(x / gridSizeX) + ((int)(y / gridSizeY)) * gridColumns;

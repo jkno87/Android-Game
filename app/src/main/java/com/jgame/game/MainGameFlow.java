@@ -3,6 +3,7 @@ package com.jgame.game;
 import android.util.Log;
 
 import com.jgame.definitions.GameLevels;
+import com.jgame.elements.DecorationElement;
 import com.jgame.elements.FoodOrganism;
 import com.jgame.elements.Player;
 import com.jgame.game.LevelInformation.LevelObjective;
@@ -12,6 +13,7 @@ import com.jgame.elements.Organism;
 import com.jgame.elements.Trap;
 import com.jgame.util.Circle;
 import com.jgame.util.GameButton;
+import com.jgame.util.Grid;
 import com.jgame.util.Square;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
@@ -57,10 +59,13 @@ public class MainGameFlow extends GameFlow {
     //public final GameButton quitButton;
     private final GameActivity gameActivity;
     private final LevelInformation levelInfo;
-    public final float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH * 3;
-    public final float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT * 3;
+    public final static float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH * 3;
+    public final static float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT * 3;
     public final Player player;
+    public final Object elementsLock = new Object();
     public final Object playerStateLock = new Object();
+    public final Grid constantElements;
+
 
 
     public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit, GameActivity gameActivity){
@@ -69,11 +74,9 @@ public class MainGameFlow extends GameFlow {
         this.elementCreator = elementCreator;
         this.timeLimit = timeLimit;
         levelElements = new ArrayList<GameElement>(15);
-        elementsInSight = new ArrayList<GameElement>(15);
+        elementsInSight = new ArrayList<GameElement>(35);
         currentState = GameState.PLAYING;
         elementCreator.start();
-        //inputBasic = new Circle(FRUSTUM_WIDTH / 2 - 30, FRUSTUM_HEIGHT - 50, 25);
-        //inputSecondary = new Circle(FRUSTUM_WIDTH / 2 + 30, FRUSTUM_HEIGHT - 50, 25);
         currentBait = BaitSelected.NONE;
         levelObjectives = levelInfo.getObjectives();
         //retryButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 100, 60, 25), "retry");
@@ -83,11 +86,13 @@ public class MainGameFlow extends GameFlow {
                 GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
 
         float offset = GameLevels.FRUSTUM_WIDTH / 2;
+        constantElements = new Grid(PLAYING_WIDTH, PLAYING_HEIGHT, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
+        DecorationElement.initializeGrid(constantElements, 100, 10.0f, null);
 
-        elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 - offset, PLAYING_HEIGHT/2 - offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
-        elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 + offset, PLAYING_HEIGHT/2 - offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
-        elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 + offset, PLAYING_HEIGHT/2 + offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
-        elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 - offset, PLAYING_HEIGHT/2 + offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
+        //elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 - offset, PLAYING_HEIGHT/2 - offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
+        //elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 + offset, PLAYING_HEIGHT/2 - offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
+        //elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 + offset, PLAYING_HEIGHT/2 + offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
+        //elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 - offset, PLAYING_HEIGHT/2 + offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
     }
 
 
@@ -196,7 +201,10 @@ public class MainGameFlow extends GameFlow {
         if(currentState == GameState.PLAYING) {
             timeElapsed += interval;
             player.update(null,interval);
-            //elementsInSight.clear();
+            synchronized (elementsLock) {
+                elementsInSight.clear();
+                constantElements.getElementsIn(player.sightArea, elementsInSight);
+            }
             /*for(GameElement e : levelElements){
                 if(sightArea.collides(e.getBounds()))
                     elementsInSight.add(e);
