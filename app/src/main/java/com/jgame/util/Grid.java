@@ -135,13 +135,13 @@ public class Grid {
             indices[HORIZONTAL_NEIGHBOR] = EMPTY_CELL_INDEX;
             indices[VERTICAL_NEIGHBOR] = EMPTY_CELL_INDEX;
             indices[DIAGONAL_NEIGHBOR] = EMPTY_CELL_INDEX;
-        } else if(i3 == i4){
+        } else if(i3 == i4 && i3 != EMPTY_CELL_INDEX){
             //caso en el que tiene un vecino vertical
             indices[CENTER_INDEX] = i1;
             indices[HORIZONTAL_NEIGHBOR] = EMPTY_CELL_INDEX;
             indices[VERTICAL_NEIGHBOR] = i3;
             indices[DIAGONAL_NEIGHBOR] = EMPTY_CELL_INDEX;
-        } else if(i2 == i4){
+        } else if(i2 == i4 && i2 != EMPTY_CELL_INDEX){
             //caso en el que tiene un vecino horizontal
             indices[CENTER_INDEX] = i1;
             indices[HORIZONTAL_NEIGHBOR] = i2;

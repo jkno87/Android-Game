@@ -107,6 +107,13 @@ public class GridTest {
     }
 
     @Test
+    public void playingTest(){
+        Grid instance = new Grid(960, 1440, 320, 480);
+        assertArrayEquals(new int[]{5, -1, 8, -1}, instance.getCellsSquare(new Square(new Vector2(700.5f, 940.5f), 320, 480, 0.0f)));
+        assertArrayEquals(new int[]{5, -1, 8, -1}, instance.getCellsSquare(new Square(new Vector2(658.5f, 898.5f), 320, 480, 0.0f)));
+    }
+
+    @Test
     public void neighborsTest(){
         int currentId = 0;
         GameElementTest instance1 = new GameElementTest(25, 25, 10, currentId++);

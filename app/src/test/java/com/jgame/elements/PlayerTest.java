@@ -12,7 +12,7 @@ public class PlayerTest {
 
     @Test
     public void testChangeDirection(){
-        Player instance = new Player(new Vector2(50,50), 10);
+        Player instance = new Player(new Vector2(50,50), 10, 30, 30);
         instance.changeDirection(45,45);
         assertEquals((int)instance.direction.x, -1);
         assertEquals((int)instance.direction.y, -1);
