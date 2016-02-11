@@ -8,6 +8,18 @@ public class Vector2 {
     public static float TO_DEGREES = (1 / (float) Math.PI) * 180;
     public float x,y;
 
+    public static class RotationMatrix {
+        public final float cos;
+        public final float sin;
+
+        public RotationMatrix(float angle){
+            float rad = angle * TO_RADIANS;
+            cos = FloatMath.cos(rad);
+            sin = FloatMath.sin(rad);
+        }
+
+    }
+
     public Vector2(){
 
     }
@@ -88,16 +100,10 @@ public class Vector2 {
         return angle;
     }
 
-    public Vector2 rotate(float angle){
-        float rad = angle * TO_RADIANS;
-        float cos = FloatMath.cos(rad);
-        float sin = FloatMath.sin(rad);
+    public Vector2 rotate(RotationMatrix rm){
+        this.x = this.x * rm.cos - this.y * rm.sin;
+        this.y = this.x * rm.sin + this.y * rm.cos;
 
-        float newX = this.x * cos - this.y * sin;
-        float newY = this.x * sin + this.y * cos;
-
-        this.x = newX;
-        this.y = newY;
         return this;
     }
 

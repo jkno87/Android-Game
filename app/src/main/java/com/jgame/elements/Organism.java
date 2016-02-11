@@ -14,13 +14,15 @@ import java.util.List;
 public class Organism implements GameElement {
 
     public OrganismBehavior behavior;
+    public int id;
 
     public Organism(){
 
     }
 
-    public Organism (OrganismBehavior behavior){
+    public Organism (OrganismBehavior behavior, int id){
         this.behavior = behavior;
+        this.id = id;
     }
 
     public void setBehavior(OrganismBehavior behavior){
@@ -39,7 +41,7 @@ public class Organism implements GameElement {
 
     @Override
     public int getId(){
-        return GameIds.FOOD_ORGANISM_ID;
+        return id;
     }
 
     @Override

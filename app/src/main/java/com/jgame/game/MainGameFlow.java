@@ -61,16 +61,15 @@ public class MainGameFlow extends GameFlow {
     //public final GameButton quitButton;
     private final GameActivity gameActivity;
     private final LevelInformation levelInfo;
-    public final static float NUMBER_OF_ROWS = 4;
-    public final static float NUMBER_OF_COLUMNS = 3;
+    public final static int NUMBER_OF_ROWS = 4;
+    public final static int NUMBER_OF_COLUMNS = 3;
     public final static float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH * NUMBER_OF_COLUMNS;
     public final static float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT * NUMBER_OF_ROWS;
     public final Player player;
     public final Object elementsLock = new Object();
     public final Object playerStateLock = new Object();
     public final Grid constantElements;
-
-
+    public final Grid dynamicElements;
 
     public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit, GameActivity gameActivity){
         this.levelInfo = levelInfo;
@@ -89,9 +88,9 @@ public class MainGameFlow extends GameFlow {
         player = new Player(new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), PLAYER_SIZE,
                 GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
 
-        float offset = GameLevels.FRUSTUM_WIDTH / 2;
         constantElements = new Grid(PLAYING_WIDTH, PLAYING_HEIGHT, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
-        initializeGrid(constantElements,100,10.0f,null);
+        initializeGrid(constantElements,12,10.0f,null);
+        dynamicElements = new Grid(PLAYING_WIDTH, PLAYING_HEIGHT, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
     }
 
 
@@ -112,7 +111,7 @@ public class MainGameFlow extends GameFlow {
                 grid.addElement(new DecorationElement(tdata,
                     new Square(r.nextFloat() * GameLevels.FRUSTUM_WIDTH + currentX,
                             r.nextFloat() * GameLevels.FRUSTUM_HEIGHT + currentY,
-                            decorationSize, decorationSize), i) {
+                            decorationSize, decorationSize), j + elementsPerRegion * (i-1)) {
                     @Override
                     public void update(List<GameElement> others, float timeDifference) {
 
@@ -242,6 +241,7 @@ public class MainGameFlow extends GameFlow {
             synchronized (elementsLock) {
                 elementsInSight.clear();
                 constantElements.getElementsIn(player.sightArea, elementsInSight);
+                dynamicElements.getElementsIn(player.sightArea, elementsInSight);
             }
             /*for(GameElement e : levelElements){
                 if(sightArea.collides(e.getBounds()))
