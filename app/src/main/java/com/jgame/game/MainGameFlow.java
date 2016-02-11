@@ -15,12 +15,14 @@ import com.jgame.util.Circle;
 import com.jgame.util.GameButton;
 import com.jgame.util.Grid;
 import com.jgame.util.Square;
+import com.jgame.util.TextureDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 
 /**
@@ -59,8 +61,10 @@ public class MainGameFlow extends GameFlow {
     //public final GameButton quitButton;
     private final GameActivity gameActivity;
     private final LevelInformation levelInfo;
-    public final static float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH * 3;
-    public final static float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT * 3;
+    public final static float NUMBER_OF_ROWS = 4;
+    public final static float NUMBER_OF_COLUMNS = 3;
+    public final static float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH * NUMBER_OF_COLUMNS;
+    public final static float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT * NUMBER_OF_ROWS;
     public final Player player;
     public final Object elementsLock = new Object();
     public final Object playerStateLock = new Object();
@@ -87,12 +91,46 @@ public class MainGameFlow extends GameFlow {
 
         float offset = GameLevels.FRUSTUM_WIDTH / 2;
         constantElements = new Grid(PLAYING_WIDTH, PLAYING_HEIGHT, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
-        DecorationElement.initializeGrid(constantElements, 100, 10.0f, null);
+        initializeGrid(constantElements,100,10.0f,null);
+    }
 
-        //elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 - offset, PLAYING_HEIGHT/2 - offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
-        //elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 + offset, PLAYING_HEIGHT/2 - offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
-        //elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 + offset, PLAYING_HEIGHT/2 + offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
-        //elementsInSight.add(new FoodOrganism(BAIT_TIME, new Vector2(PLAYING_WIDTH/2 - offset, PLAYING_HEIGHT/2 + offset), FOOD_SIZE, BAIT_HP, BAIT_FP));
+
+    /**
+     * Se inicializa el grid con los elementos que van a funcionar como decoracion en el juego.
+     * @param grid Grid que se llenara con los elementos decorativos
+     * @param elementsPerRegion Numero de elementos que se generaran para cada region
+     * @param decorationSize Tama;o de los elementos que se van a generar
+     * @param tdata informacion de la textura de los elementos que se van a generar
+     */
+    private void initializeGrid(Grid grid, int elementsPerRegion, float decorationSize, TextureDrawer.TextureData tdata){
+        Random r = new Random();
+        float currentX = 0;
+        float currentY = 0;
+
+        for(int i = 1; i <= NUMBER_OF_ROWS * NUMBER_OF_COLUMNS; i++) {
+            for(int j = 0; j < elementsPerRegion; j++)
+                grid.addElement(new DecorationElement(tdata,
+                    new Square(r.nextFloat() * GameLevels.FRUSTUM_WIDTH + currentX,
+                            r.nextFloat() * GameLevels.FRUSTUM_HEIGHT + currentY,
+                            decorationSize, decorationSize), i) {
+                    @Override
+                    public void update(List<GameElement> others, float timeDifference) {
+
+                    }
+
+                    @Override
+                    public boolean alive() {
+                        return true;
+                    }
+                });
+
+            currentX += GameLevels.FRUSTUM_WIDTH;
+
+            if(i % NUMBER_OF_COLUMNS == 0){
+                currentX = 0;
+                currentY += GameLevels.FRUSTUM_HEIGHT;
+            }
+        }
     }
 
 
