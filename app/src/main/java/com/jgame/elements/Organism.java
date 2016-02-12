@@ -35,8 +35,8 @@ public class Organism implements GameElement {
         if(!behavior.active)
             return;
 
-        for(GameElement e: others)
-            behavior.evaluateCollision(e);
+        //for(GameElement e: others)
+        //    behavior.evaluateCollision(e);
     }
 
     @Override

@@ -102,7 +102,7 @@ public class GameLevels {
 
                     for(int i = 0; i < random.nextInt(5) + 1; i++)
                         elements.add(new MovingOrganism(13 + ((random.nextFloat() - 0.5f) * 13),
-                                generatePosition(150,250), 35f, 5f));
+                                generatePosition(150,250), 35f, 5f,0));
 
                     spawnTimer.reset();
 

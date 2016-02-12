@@ -29,22 +29,22 @@ public class MovingOrganism extends Organism {
     private int foodConsumed;
     private OrganismBehavior initialBehavior;
 
-    public MovingOrganism(float timeToLive, final Vector2 position, final float sightDistance, float interactionDistance){
+    public MovingOrganism(float timeToLive, final Vector2 position, final float sightDistance, float interactionDistance, int id){
 
         initialBehavior = new OrganismBehavior(timeToLive, new Circle(position, interactionDistance), HP, FOOD_POINTS, true) {
             private int movesLeft = DEFAULT_MOVES;
-            private Vector2 direction = new Vector2();
+            private Vector2 direction = new Vector2(0,-1);
             private Random random = new Random();
             private Circle organismSight = new Circle(position, sightDistance);
             @Override
             public void age(float timeDifference) {
-                if(movesLeft <= 0) {
+                /*if(movesLeft <= 0) {
                     movesLeft = DEFAULT_MOVES;
                     direction.set(random.nextInt(3) - 1, random.nextInt(3) - 1).nor();
                     direction.mul(speedModifier);
-                }
+                }*/
 
-                movesLeft--;
+                //movesLeft--;
 
                 position.add(direction);
 
@@ -72,14 +72,6 @@ public class MovingOrganism extends Organism {
         };
 
         setBehavior(initialBehavior);
-
-    }
-
-    @Override
-    public int getId(){
-        if(currentState == State.EVOLVED)
-            return GameIds.EVOLVED_ORGANISM_ID;
-        else
-            return GameIds.MOVING_ORGANISM_ID;
+        this.id = id;
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.DecorationElement;
 import com.jgame.elements.FoodOrganism;
+import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Player;
 import com.jgame.game.LevelInformation.LevelObjective;
 import com.jgame.elements.ElementCreator;
@@ -39,13 +40,13 @@ public class MainGameFlow extends GameFlow {
     }
 
     private final float PLAYER_SIZE = 85f;
-    private final int POINTS_PER_SECOND = 10;
-    private final float FOOD_SIZE = 5;
-    private final float SPECIAL_SIZE = 10;
-    private final TimeCounter GAME_OVER_UPDATE_INTERVAL = new TimeCounter(0.02f);
-    public final static float BAIT_TIME = 3f;
-    public final static int BAIT_HP = 1;
-    public final static int BAIT_FP = 1;
+    //private final int POINTS_PER_SECOND = 10;
+    //private final float FOOD_SIZE = 5;
+    //private final float SPECIAL_SIZE = 10;
+    //private final TimeCounter GAME_OVER_UPDATE_INTERVAL = new TimeCounter(0.02f);
+    //public final static float BAIT_TIME = 3f;
+    //public final static int BAIT_HP = 1;
+    //public final static int BAIT_FP = 1;
     public final ElementCreator elementCreator;
     public final List<GameElement> levelElements;
     public final List<GameElement> elementsInSight;
@@ -53,13 +54,13 @@ public class MainGameFlow extends GameFlow {
     public final float timeLimit;
     public float timeElapsed;
     public GameState currentState;
-    public int timePoints;
+    //public int timePoints;
     public BaitSelected currentBait;
     public Square dragElement;
     public boolean stageCleared;
     //public final GameButton retryButton;
     //public final GameButton quitButton;
-    private final GameActivity gameActivity;
+    //private final GameActivity gameActivity;
     private final LevelInformation levelInfo;
     public final static int NUMBER_OF_ROWS = 4;
     public final static int NUMBER_OF_COLUMNS = 3;
@@ -70,10 +71,11 @@ public class MainGameFlow extends GameFlow {
     public final Object playerStateLock = new Object();
     public final Grid constantElements;
     public final Grid dynamicElements;
+    private final List<GameElement> interactiveElements;
 
     public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit, GameActivity gameActivity){
         this.levelInfo = levelInfo;
-        this.gameActivity = gameActivity;
+        //this.gameActivity = gameActivity;
         this.elementCreator = elementCreator;
         this.timeLimit = timeLimit;
         levelElements = new ArrayList<GameElement>(15);
@@ -91,6 +93,8 @@ public class MainGameFlow extends GameFlow {
         constantElements = new Grid(PLAYING_WIDTH, PLAYING_HEIGHT, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
         initializeGrid(constantElements,12,10.0f,null);
         dynamicElements = new Grid(PLAYING_WIDTH, PLAYING_HEIGHT, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
+        interactiveElements = new ArrayList<>(50);
+        interactiveElements.add(new MovingOrganism(50, new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), 15, 20, 1000));
     }
 
 
@@ -237,7 +241,14 @@ public class MainGameFlow extends GameFlow {
     public void update(float interval){
         if(currentState == GameState.PLAYING) {
             timeElapsed += interval;
-            player.update(null,interval);
+            player.update(null, interval);
+            dynamicElements.clear();
+
+            for(GameElement e : interactiveElements) {
+                e.update(null, interval);
+                dynamicElements.addElement(e);
+            }
+
             synchronized (elementsLock) {
                 elementsInSight.clear();
                 constantElements.getElementsIn(player.sightArea, elementsInSight);
@@ -294,7 +305,7 @@ public class MainGameFlow extends GameFlow {
      * @param interval diferencia de tiempo que ha transcurrido desde el ultimo update.
      */
     private void updateFinishedGame(float interval){
-        GAME_OVER_UPDATE_INTERVAL.accum(interval);
+        /*GAME_OVER_UPDATE_INTERVAL.accum(interval);
         if(!GAME_OVER_UPDATE_INTERVAL.completed())
             return;
 
@@ -308,7 +319,7 @@ public class MainGameFlow extends GameFlow {
             timePoints += POINTS_PER_SECOND;
         }
 
-        GAME_OVER_UPDATE_INTERVAL.reset();
+        GAME_OVER_UPDATE_INTERVAL.reset();*/
     }
 
     public int getTimeRemaining(){

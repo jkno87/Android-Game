@@ -20,6 +20,6 @@ public class FoodOrganism extends Organism {
             public void evaluateCollision(GameElement e) {
                 //Implementar que cuando colisione con un elemento que lo puede comer, tome la comida
             }
-        });
+        }, 0);
     }
 }
