@@ -138,7 +138,31 @@ public class GridTest {
         gridInstance.clear();
         results = gridInstance.getNeighbors(instance1);
         assertTrue(results.isEmpty());
+    }
 
+    @Test
+    public void removeTest(){
+        int currentId = 0;
+        GameElementTest instance1 = new GameElementTest(25, 25, 10, currentId++);
+        GameElementTest instance2 = new GameElementTest(25, 25, 10, currentId++);
+        Grid gridInstance = new Grid(320, 480, 60, 60);
+        List<GameElement> results = gridInstance.getNeighbors(instance1);
+        assertTrue(results.isEmpty());
+        //Debe encontrar solamente a instance2 porque tiene un id diferente
+        gridInstance.addElement(instance1);
+        gridInstance.addElement(instance2);
+        results = gridInstance.getNeighbors(instance1);
+        assertEquals(1, results.size());
+        assertEquals(instance2, results.get(0));
+        //Se quita el mismo elemento y debe dar el mismo resultado
+        gridInstance.remove(instance1);
+        results = gridInstance.getNeighbors(instance1);
+        assertEquals(1, results.size());
+        assertEquals(instance2, results.get(0));
+        //Se quita el otro elemento y debe regresar una lista vacia de vecinos
+        gridInstance.remove(instance2);
+        results = gridInstance.getNeighbors(instance1);
+        assertTrue(results.isEmpty());
     }
 
 }

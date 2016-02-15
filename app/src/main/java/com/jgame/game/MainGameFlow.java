@@ -242,14 +242,14 @@ public class MainGameFlow extends GameFlow {
         if(currentState == GameState.PLAYING) {
             timeElapsed += interval;
             player.update(null, interval);
-            dynamicElements.clear();
-
-            for(GameElement e : interactiveElements) {
-                e.update(null, interval);
-                dynamicElements.addElement(e);
-            }
 
             synchronized (elementsLock) {
+
+                for(GameElement e : interactiveElements) {
+                    e.update(null, interval);
+                    dynamicElements.addElement(e);
+                }
+
                 elementsInSight.clear();
                 constantElements.getElementsIn(player.sightArea, elementsInSight);
                 dynamicElements.getElementsIn(player.sightArea, elementsInSight);

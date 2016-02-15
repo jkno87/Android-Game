@@ -25,7 +25,7 @@ public class Grid {
     private final float lenY;
     public final float gridSizeX;
     public final float gridSizeY;
-    private ArrayList<GameElement> neighbors;
+    private final ArrayList<GameElement> neighbors;
 
     public Grid(float lenX, float lenY, float minX, float minY){
         this.lenX = lenX;
@@ -98,6 +98,13 @@ public class Grid {
                         elements.add(n);
                 }
         }
+    }
+
+    public void remove(GameElement g){
+        int[] indices = getElementIndexes(g.getBounds());
+        for(int i = 0; i < indices.length; i++)
+            if(indices[i] != EMPTY_CELL_INDEX)
+                cells.get(indices[i]).remove(g);
     }
 
 

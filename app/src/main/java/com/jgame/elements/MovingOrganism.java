@@ -38,13 +38,13 @@ public class MovingOrganism extends Organism {
             private Circle organismSight = new Circle(position, sightDistance);
             @Override
             public void age(float timeDifference) {
-                /*if(movesLeft <= 0) {
+                if(movesLeft <= 0) {
                     movesLeft = DEFAULT_MOVES;
                     direction.set(random.nextInt(3) - 1, random.nextInt(3) - 1).nor();
                     direction.mul(speedModifier);
-                }*/
+                }
 
-                //movesLeft--;
+                movesLeft--;
 
                 position.add(direction);
 
