@@ -9,13 +9,18 @@ public class TimeCounter {
     private float time;
     //private boolean charging;
 
+    public TimeCounter(){
+
+    }
+
     public TimeCounter(float time){
         this.time = time;
         //charging = true;
     }
 
-    public void changeInterval(float time){
+    public void setInterval(float time){
         this.time = time;
+        accumTime = 0;
     }
 
     public void accum(float timeDiff){

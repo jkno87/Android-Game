@@ -1,5 +1,7 @@
 package com.jgame.elements;
 
+import android.util.Log;
+
 import com.jgame.definitions.GameIds;
 import com.jgame.definitions.GameLevels;
 import com.jgame.util.Circle;
@@ -25,7 +27,7 @@ public class MovingOrganism extends Organism {
     public static final int FOOD_TO_EVOLVE = 10;
     public static final int DEFAULT_MOVES = 10;
     public State currentState;
-    private float speedModifier;
+    private float speedModifier = 2.0f;
     private int foodConsumed;
     private OrganismBehavior initialBehavior;
 

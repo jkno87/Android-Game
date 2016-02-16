@@ -94,7 +94,7 @@ public class MainGameFlow extends GameFlow {
         initializeGrid(constantElements,12,10.0f,null);
         dynamicElements = new Grid(PLAYING_WIDTH, PLAYING_HEIGHT, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
         interactiveElements = new ArrayList<>(50);
-        interactiveElements.add(new MovingOrganism(50, new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), 15, 20, 1000));
+        interactiveElements.add(new MovingOrganism(10, new Vector2(PLAYING_WIDTH/2 + 30, PLAYING_HEIGHT/2 + 30), 15, 20, 1000));
     }
 
 
@@ -240,20 +240,30 @@ public class MainGameFlow extends GameFlow {
     @Override
     public void update(float interval){
         if(currentState == GameState.PLAYING) {
+
             timeElapsed += interval;
-            player.update(null, interval);
+            player.update(dynamicElements.getNeighbors(player), interval);
 
             synchronized (elementsLock) {
 
                 for(GameElement e : interactiveElements) {
-                    e.update(null, interval);
-                    dynamicElements.addElement(e);
+                    dynamicElements.remove(e);
+                    e.update(dynamicElements.getNeighbors(e), interval);
+                    if(e.alive())
+                        dynamicElements.addElement(e);
+                    //else
+                    //    interactiveElements.remove(e);
                 }
 
                 elementsInSight.clear();
                 constantElements.getElementsIn(player.sightArea, elementsInSight);
                 dynamicElements.getElementsIn(player.sightArea, elementsInSight);
             }
+
+            List<GameElement> created = elementCreator.createElements(interval);
+            if(!created.isEmpty())
+                interactiveElements.addAll(created);
+
             /*for(GameElement e : levelElements){
                 if(sightArea.collides(e.getBounds()))
                     elementsInSight.add(e);

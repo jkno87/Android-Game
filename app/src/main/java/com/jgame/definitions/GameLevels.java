@@ -69,44 +69,57 @@ public class GameLevels {
 
     public static final ElementCreator.ElementWave SIMPLE_WAVE =
             new ElementCreator.ElementWave(){
-                private TimeCounter spawnTimer;
-                private Random random;
-                private final static float AVG_LIFESPAN = 6;
-                private final static float AVG_DISTANCE_X = 70;
-                private final static float AVG_DISTANCE_Y = 120;
-                private final static float AVG_X = 100;
-                private final static float AVG_Y = 100;
-                private final static float FOOD_HP = 12;
+                private TimeCounter spawnTimer = new TimeCounter();
+                private Random random = new Random();
+                private List<GameElement> generatedElements = new ArrayList<>(10);
+                private float avgLifespan;
+                private float maxDistanceX;
+                private float maxDistanceY;
+                private float originX;
+                private float originY;
+                private int currentId = 2000;
+                //private float avgHp;
+
 
                 public void initialize(){
-                    spawnTimer = new TimeCounter(3f);
-                    random = new Random();
+                    initialize(5, 50, 50, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT, 6);
                 }
 
-                private Vector2 generatePosition(float avgX, float avgY){
-                    return new Vector2(((random.nextFloat() - 0.5f) * AVG_DISTANCE_X) + avgX,
-                            ((random.nextFloat() - 0.5f) * AVG_DISTANCE_Y) + avgY);
+                /**
+                 * Metodo que se requiere para que funcione correctamente la instancia. Establece los valores que se utilizaran para
+                 * generar la ola de GameElements
+                 * @param avgLifespan
+                 * @param maxDistanceX
+                 * @param maxDistanceY
+                 * @param originX
+                 * @param originY
+                 * @param interval
+                 */
+                public void initialize(float avgLifespan, float maxDistanceX, float maxDistanceY, float originX, float originY, float interval){
+                    spawnTimer.setInterval(interval);
+                    this.avgLifespan = avgLifespan;
+                    this.maxDistanceX = maxDistanceX;
+                    this.maxDistanceY = maxDistanceY;
+                    this.originX = originX;
+                    this.originY = originY;
                 }
 
                 @Override
                 public List<GameElement> generate(float interval){
+                    generatedElements.clear();
                     spawnTimer.accum(interval);
-                    List<GameElement> elements = new ArrayList<GameElement>();
 
                     if(!spawnTimer.completed())
-                        return elements;
+                        return generatedElements;
 
-                    for(int i = 0; i < random.nextInt(10) + 3; i++)
-                        elements.add(new FoodOrganism(AVG_LIFESPAN + ((random.nextFloat() - 0.5f) * AVG_LIFESPAN), generatePosition(AVG_X, AVG_Y)
-                        , 8.0f, 0, 0));
-
-                    for(int i = 0; i < random.nextInt(5) + 1; i++)
-                        elements.add(new MovingOrganism(13 + ((random.nextFloat() - 0.5f) * 13),
-                                generatePosition(150,250), 35f, 5f,0));
+                    for(int i = 0; i < random.nextInt(10) + 1; i++)
+                        generatedElements.add(new MovingOrganism(avgLifespan+((random.nextFloat() - 0.5f) * avgLifespan),
+                                new Vector2(originX + random.nextFloat()*maxDistanceX, originY+random.nextFloat()*maxDistanceY)
+                                , 15, 20, currentId++));
 
                     spawnTimer.reset();
 
-                    return elements;
+                    return generatedElements;
                 }
             };
 
