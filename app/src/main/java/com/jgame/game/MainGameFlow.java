@@ -6,6 +6,7 @@ import com.jgame.definitions.GameLevels;
 import com.jgame.elements.DecorationElement;
 import com.jgame.elements.FoodOrganism;
 import com.jgame.elements.MovingOrganism;
+import com.jgame.elements.Particle;
 import com.jgame.elements.Player;
 import com.jgame.game.LevelInformation.LevelObjective;
 import com.jgame.elements.ElementCreator;
@@ -15,6 +16,7 @@ import com.jgame.elements.Trap;
 import com.jgame.util.Circle;
 import com.jgame.util.GameButton;
 import com.jgame.util.Grid;
+import com.jgame.util.IdGenerator;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TimeCounter;
@@ -40,6 +42,9 @@ public class MainGameFlow extends GameFlow {
     }
 
     private final float PLAYER_SIZE = 85f;
+    private final float PARTICLE_MOVEMENT_MAGNITUDE = 2;
+    private final float PARTICLE_TTL = 1.5f;
+    private final Vector2.RotationMatrix PARTICLE_RM = new Vector2.RotationMatrix(30);
     //private final int POINTS_PER_SECOND = 10;
     //private final float FOOD_SIZE = 5;
     //private final float SPECIAL_SIZE = 10;
@@ -72,6 +77,7 @@ public class MainGameFlow extends GameFlow {
     public final Grid constantElements;
     public final Grid dynamicElements;
     private final List<GameElement> interactiveElements;
+    private final IdGenerator idGenerator;
 
     public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit, GameActivity gameActivity){
         this.levelInfo = levelInfo;
@@ -89,12 +95,12 @@ public class MainGameFlow extends GameFlow {
         dragElement = new Square(0,0,0,0);
         player = new Player(new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), PLAYER_SIZE,
                 GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
-
+        idGenerator = new IdGenerator();
         constantElements = new Grid(PLAYING_WIDTH, PLAYING_HEIGHT, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
         initializeGrid(constantElements,12,10.0f,null);
         dynamicElements = new Grid(PLAYING_WIDTH, PLAYING_HEIGHT, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
         interactiveElements = new ArrayList<>(50);
-        interactiveElements.add(new MovingOrganism(50, new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), 15, 20, 1000));
+        interactiveElements.add(new MovingOrganism(50, new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), 15, 20, idGenerator.getId()));
     }
 
 
@@ -115,7 +121,7 @@ public class MainGameFlow extends GameFlow {
                 grid.addElement(new DecorationElement(tdata,
                     new Square(r.nextFloat() * GameLevels.FRUSTUM_WIDTH + currentX,
                             r.nextFloat() * GameLevels.FRUSTUM_HEIGHT + currentY,
-                            decorationSize, decorationSize), j + elementsPerRegion * (i-1)) {
+                            decorationSize, decorationSize), idGenerator.getId()) {
                     @Override
                     public void update(List<GameElement> others, float timeDifference) {
 
@@ -156,6 +162,22 @@ public class MainGameFlow extends GameFlow {
         }
 
     }
+
+    /**
+     * Se encarga de agregar particulas en el punto (x,y) del mapa de juego
+     * @param amount Numero de particulas que se agregan a dynamicelements
+     * @param x posicion x de la particula
+     * @param y posicion y de la particula
+     */
+    private void addParticles(int amount, float x, float y){
+        for(int i = 0; i < amount; i++)
+            dynamicElements.addElement(new Particle(null, new Square(x, y,3,3),
+                    idGenerator.getId(),
+                    new Vector2(0,PARTICLE_MOVEMENT_MAGNITUDE).rotate(PARTICLE_RM,i+1),
+                    PARTICLE_TTL));
+
+    }
+
 
     @Override
     public void handleDrag(float x, float y){
@@ -217,6 +239,8 @@ public class MainGameFlow extends GameFlow {
                     player.setStateInputSelection();
                 else
                     player.setStoppedState();
+
+                return;
             }
 
             else if(player.state == Player.PlayerState.INPUT_SELECTION){
@@ -224,7 +248,13 @@ public class MainGameFlow extends GameFlow {
                     player.changeDirection(gameX, gameY);
                 else
                     player.setStoppedState();
+
+                return;
             }
+        }
+
+        synchronized (elementsLock){
+            addParticles(3, gameX, gameY);
         }
 
         /*if(inputBasic.contains(gameX, gameY)) {

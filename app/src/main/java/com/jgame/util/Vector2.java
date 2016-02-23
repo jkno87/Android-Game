@@ -107,6 +107,18 @@ public class Vector2 {
         return this;
     }
 
+    /**
+     * Multiplica el vector con la matriz de rotacion rm el numero de veces times.
+     * @param rm matriz de rotacion
+     * @param times veces que se va a rotar
+     * @return vector con la transformacion aplicada
+     */
+    public Vector2 rotate(RotationMatrix rm, int times){
+        for(int i = 0; i < times; i++)
+            this.rotate(rm);
+        return this;
+    }
+
     public float dist(float x, float y){
         float distX = this.x - x;
         float distY = this.y - y;
