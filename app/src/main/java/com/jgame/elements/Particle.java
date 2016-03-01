@@ -11,7 +11,6 @@ import java.util.List;
  */
 public class Particle extends DecorationElement {
 
-    private final static Vector2 GRAVITY_MAGNITUDE = new Vector2(0,-0.5f);
     private final Vector2 particleDirection;
     private float timeToLive;
 
@@ -25,8 +24,9 @@ public class Particle extends DecorationElement {
     @Override
     public void update(List<GameElement> others, float timeDifference) {
         bounds.position.add(particleDirection);
-        particleDirection.add(GRAVITY_MAGNITUDE);
-        timeToLive--;
+        //Se quita la gravedad, estan en el espacio :P
+        //particleDirection.add(GRAVITY_MAGNITUDE);
+        timeToLive -= timeDifference;
     }
 
     @Override

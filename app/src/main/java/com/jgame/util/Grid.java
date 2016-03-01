@@ -26,6 +26,7 @@ public class Grid {
     public final float gridSizeX;
     public final float gridSizeY;
     private final ArrayList<GameElement> neighbors;
+    private final int[] elementIndices;
 
     public Grid(float lenX, float lenY, float minX, float minY){
         this.lenX = lenX;
@@ -34,7 +35,7 @@ public class Grid {
         gridRows = (int) (lenY / minY);
         gridSizeX = minX + (lenX % minX) / gridColumns;
         gridSizeY = minY + (lenY % minY) / gridRows;
-
+        elementIndices = new int[4];
         int totalCells = gridColumns * gridRows;
         neighbors = new ArrayList<GameElement>(INITIAL_NEIGHBORS_SIZE);
 
@@ -56,10 +57,10 @@ public class Grid {
      * @param e GameElement que se agregara.
      */
     public void addElement(GameElement e){
-        int[] indices = getElementIndexes(e.getBounds());
-        for(int i = 0; i < indices.length; i++){
-            if(indices[i] != EMPTY_CELL_INDEX)
-                cells.get(indices[i]).add(e);
+        setElementIndexes(e.getBounds());
+        for(int i = 0; i < elementIndices.length; i++){
+            if(elementIndices[i] != EMPTY_CELL_INDEX)
+                cells.get(elementIndices[i]).add(e);
         }
     }
 
@@ -71,10 +72,10 @@ public class Grid {
      */
     public List<GameElement> getNeighbors(GameElement e){
         neighbors.clear();
-        int[] indices = getElementIndexes(e.getBounds());
-        for(int i = 0; i < indices.length; i++){
-            if(indices[i] != EMPTY_CELL_INDEX)
-                for(GameElement n : cells.get(indices[i])){
+        setElementIndexes(e.getBounds());
+        for(int i = 0; i < elementIndices.length; i++){
+            if(elementIndices[i] != EMPTY_CELL_INDEX)
+                for(GameElement n : cells.get(elementIndices[i])){
                     if(e.getId() != n.getId() && !neighbors.contains(n))
                         neighbors.add(n);
                 }
@@ -90,47 +91,49 @@ public class Grid {
      * @return List con los elementos que se encuentran en las mismas celdas.
      */
     public void getElementsIn(GeometricElement e, List<GameElement> elements){
-        int[] indices = getElementIndexes(e);
-        for(int i = 0; i < indices.length; i++){
-            if(indices[i] != EMPTY_CELL_INDEX)
-                for(GameElement n : cells.get(indices[i])){
+        setElementIndexes(e);
+        for(int i = 0; i < elementIndices.length; i++){
+            if(elementIndices[i] != EMPTY_CELL_INDEX)
+                for(GameElement n : cells.get(elementIndices[i])){
                     if(!elements.contains(n))
                         elements.add(n);
                 }
         }
     }
 
+    /**
+     * Quita el GameElement g de la coleccion de objetos.
+     * @param g Elemento que se desea remover del Grid
+     */
     public void remove(GameElement g){
-        int[] indices = getElementIndexes(g.getBounds());
-        for(int i = 0; i < indices.length; i++)
-            if(indices[i] != EMPTY_CELL_INDEX)
-                cells.get(indices[i]).remove(g);
+        setElementIndexes(g.getBounds());
+        for(int i = 0; i < elementIndices.length; i++)
+            if(elementIndices[i] != EMPTY_CELL_INDEX)
+                cells.get(elementIndices[i]).remove(g);
     }
 
 
     /**
-     * Genera los indices del GeomentricElement e que se agrega a la grid
+     * Genera los indices del GeomentricElement e que se agrega a la grid. Se asignan
+     * a la variable global indices para ahorrar memoria.
      * @param e GeometricElement que se agregara al grid
-     * @return int[] con los indices
      */
-    private int[] getElementIndexes(GeometricElement e){
+    private void setElementIndexes(GeometricElement e){
         if(e instanceof Circle)
-            return getCells((Circle) e);
+            setIndicesCircle((Circle) e);
         else if(e instanceof Square)
-            return getCellsSquare((Square) e);
+            setIndicesSquare((Square) e);
         else
             throw new UnsupportedOperationException("Este GeomentricElement no ha sido implementado en CullUtility");
     }
 
     /**
-     * Regresa los indices que puede ocupar un circulo en la grid.
+     * Asigna los indices del rectangulo en la variable global indices.
      * Asumiendo que el elemento mas grande no excede las dimensiones de las celdas,
      * un circulo puede ocupar maximo 4 celdas de la grid.
      * @param s square del que se obtendran los indices
-     * @return int[] que contiene los indices a los que pertenece el rectangulo
      */
-    public int[] getCellsSquare(Square s){
-        int[] indices = new int[4];
+    public void setIndicesSquare(Square s){
         int i1 = getSingleCell(s.position.x, s.position.y);
         int i2 = getSingleCell(s.position.x + s.lenX, s.position.y);
         int i3 = getSingleCell(s.position.x, s.position.y + s.lenY);
@@ -138,74 +141,67 @@ public class Grid {
 
         //caso en el que se encuentra dentro de una celda
         if(i1 == i4){
-            indices[CENTER_INDEX] = i1;
-            indices[HORIZONTAL_NEIGHBOR] = EMPTY_CELL_INDEX;
-            indices[VERTICAL_NEIGHBOR] = EMPTY_CELL_INDEX;
-            indices[DIAGONAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            elementIndices[CENTER_INDEX] = i1;
+            elementIndices[HORIZONTAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            elementIndices[VERTICAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            elementIndices[DIAGONAL_NEIGHBOR] = EMPTY_CELL_INDEX;
         } else if(i3 == i4 && i3 != EMPTY_CELL_INDEX){
             //caso en el que tiene un vecino vertical
-            indices[CENTER_INDEX] = i1;
-            indices[HORIZONTAL_NEIGHBOR] = EMPTY_CELL_INDEX;
-            indices[VERTICAL_NEIGHBOR] = i3;
-            indices[DIAGONAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            elementIndices[CENTER_INDEX] = i1;
+            elementIndices[HORIZONTAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            elementIndices[VERTICAL_NEIGHBOR] = i3;
+            elementIndices[DIAGONAL_NEIGHBOR] = EMPTY_CELL_INDEX;
         } else if(i2 == i4 && i2 != EMPTY_CELL_INDEX){
             //caso en el que tiene un vecino horizontal
-            indices[CENTER_INDEX] = i1;
-            indices[HORIZONTAL_NEIGHBOR] = i2;
-            indices[VERTICAL_NEIGHBOR] = EMPTY_CELL_INDEX;
-            indices[DIAGONAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            elementIndices[CENTER_INDEX] = i1;
+            elementIndices[HORIZONTAL_NEIGHBOR] = i2;
+            elementIndices[VERTICAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            elementIndices[DIAGONAL_NEIGHBOR] = EMPTY_CELL_INDEX;
         } else {
-            indices[CENTER_INDEX] = i1;
-            indices[HORIZONTAL_NEIGHBOR] = i2;
-            indices[VERTICAL_NEIGHBOR] = i3;
-            indices[DIAGONAL_NEIGHBOR] = i4;
+            elementIndices[CENTER_INDEX] = i1;
+            elementIndices[HORIZONTAL_NEIGHBOR] = i2;
+            elementIndices[VERTICAL_NEIGHBOR] = i3;
+            elementIndices[DIAGONAL_NEIGHBOR] = i4;
         }
-
-
-        return indices;
     }
 
     /**
-     * Regresa los indices que puede ocupar un circulo en la grid.
+     * Asigna los indices del rectangulo en la variable global indices.
      * Asumiendo que el elemento mas grande no excede las dimensiones de las celdas,
      * un circulo puede ocupar maximo 4 celdas de la grid.
      * @param c circulo del cual se obtendran los indices
-     * @return int[] que contiene los indices a los que pertenece el circulo
      */
-    public int[] getCells(Circle c){
-        int[] indices = new int[4];
-        indices[CENTER_INDEX] = getSingleCell(c.position.x, c.position.y);
+    public void setIndicesCircle(Circle c){
+        elementIndices[CENTER_INDEX] = getSingleCell(c.position.x, c.position.y);
         int i1 = getSingleCell(c.position.x + c.radius, c.position.y);
         int i2 = getSingleCell(c.position.x - c.radius, c.position.y);
         int i3 = getSingleCell(c.position.x, c.position.y + c.radius);
         int i4 = getSingleCell(c.position.x, c.position.y - c.radius);
 
         //Se busca si tiene un vecino lateral
-        if(i1 > indices[CENTER_INDEX])
-            indices[HORIZONTAL_NEIGHBOR] = i1;
-        else if(i2 > EMPTY_CELL_INDEX && i2 < indices[CENTER_INDEX])
-            indices[HORIZONTAL_NEIGHBOR] = i2;
+        if(i1 > elementIndices[CENTER_INDEX])
+            elementIndices[HORIZONTAL_NEIGHBOR] = i1;
+        else if(i2 > EMPTY_CELL_INDEX && i2 < elementIndices[CENTER_INDEX])
+            elementIndices[HORIZONTAL_NEIGHBOR] = i2;
         else
-            indices[HORIZONTAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            elementIndices[HORIZONTAL_NEIGHBOR] = EMPTY_CELL_INDEX;
 
         //Se busca si tiene un vecino vertical
-        if(i3 > indices[CENTER_INDEX])
-            indices[VERTICAL_NEIGHBOR] = i3;
-        else if(i4 > EMPTY_CELL_INDEX && i4 < indices[CENTER_INDEX])
-            indices[VERTICAL_NEIGHBOR] = i4;
+        if(i3 > elementIndices[CENTER_INDEX])
+            elementIndices[VERTICAL_NEIGHBOR] = i3;
+        else if(i4 > EMPTY_CELL_INDEX && i4 < elementIndices[CENTER_INDEX])
+            elementIndices[VERTICAL_NEIGHBOR] = i4;
         else
-            indices[VERTICAL_NEIGHBOR] = EMPTY_CELL_INDEX;
+            elementIndices[VERTICAL_NEIGHBOR] = EMPTY_CELL_INDEX;
 
         //Se checa si cae en el vecino diagonal (no es completamente preciso el calculo, por ahora esta bien)
-        if(indices[HORIZONTAL_NEIGHBOR] != EMPTY_CELL_INDEX && indices[VERTICAL_NEIGHBOR] != EMPTY_CELL_INDEX){
-            if(indices[HORIZONTAL_NEIGHBOR] > indices[CENTER_INDEX])
-                indices[DIAGONAL_NEIGHBOR] = indices[VERTICAL_NEIGHBOR] + 1;
+        if(elementIndices[HORIZONTAL_NEIGHBOR] != EMPTY_CELL_INDEX && elementIndices[VERTICAL_NEIGHBOR] != EMPTY_CELL_INDEX){
+            if(elementIndices[HORIZONTAL_NEIGHBOR] > elementIndices[CENTER_INDEX])
+                elementIndices[DIAGONAL_NEIGHBOR] = elementIndices[VERTICAL_NEIGHBOR] + 1;
             else
-                indices[DIAGONAL_NEIGHBOR] = indices[VERTICAL_NEIGHBOR] - 1;
+                elementIndices[DIAGONAL_NEIGHBOR] = elementIndices[VERTICAL_NEIGHBOR] - 1;
         } else
-            indices[DIAGONAL_NEIGHBOR] = -1;
-
-        return indices;
+            elementIndices[DIAGONAL_NEIGHBOR] = -1;
     }
 
     /**

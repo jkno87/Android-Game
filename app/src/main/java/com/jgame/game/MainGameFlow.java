@@ -43,7 +43,9 @@ public class MainGameFlow extends GameFlow {
 
     private final float PLAYER_SIZE = 85f;
     private final float PARTICLE_MOVEMENT_MAGNITUDE = 2;
-    private final float PARTICLE_TTL = 1.5f;
+    private final float PARTICLE_TTL = 0.3f;
+    private final float PARTICLE_SIZE = 3;
+    private final int PARTICLE_MAX_ROTATIONS = 10;
     private final Vector2.RotationMatrix PARTICLE_RM = new Vector2.RotationMatrix(30);
     //private final int POINTS_PER_SECOND = 10;
     //private final float FOOD_SIZE = 5;
@@ -78,6 +80,7 @@ public class MainGameFlow extends GameFlow {
     public final Grid dynamicElements;
     private final List<GameElement> interactiveElements;
     private final IdGenerator idGenerator;
+    Random r = new Random();
 
     public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit, GameActivity gameActivity){
         this.levelInfo = levelInfo;
@@ -112,7 +115,6 @@ public class MainGameFlow extends GameFlow {
      * @param tdata informacion de la textura de los elementos que se van a generar
      */
     private void initializeGrid(Grid grid, int elementsPerRegion, float decorationSize, TextureDrawer.TextureData tdata){
-        Random r = new Random();
         float currentX = 0;
         float currentY = 0;
 
@@ -171,9 +173,9 @@ public class MainGameFlow extends GameFlow {
      */
     private void addParticles(int amount, float x, float y){
         for(int i = 0; i < amount; i++)
-            dynamicElements.addElement(new Particle(null, new Square(x, y,3,3),
+            interactiveElements.add(new Particle(null, new Square(x, y, PARTICLE_SIZE, PARTICLE_SIZE),
                     idGenerator.getId(),
-                    new Vector2(0,PARTICLE_MOVEMENT_MAGNITUDE).rotate(PARTICLE_RM,i+1),
+                    new Vector2(0, PARTICLE_MOVEMENT_MAGNITUDE).rotate(PARTICLE_RM, r.nextInt(PARTICLE_MAX_ROTATIONS)),
                     PARTICLE_TTL));
 
     }
@@ -254,7 +256,7 @@ public class MainGameFlow extends GameFlow {
         }
 
         synchronized (elementsLock){
-            addParticles(3, gameX, gameY);
+            addParticles(5, gameX, gameY);
         }
 
         /*if(inputBasic.contains(gameX, gameY)) {
@@ -281,8 +283,6 @@ public class MainGameFlow extends GameFlow {
                     e.update(dynamicElements.getNeighbors(e), interval);
                     if(e.alive())
                         dynamicElements.addElement(e);
-                    //else
-                    //    interactiveElements.remove(e);
                 }
 
                 elementsInSight.clear();
