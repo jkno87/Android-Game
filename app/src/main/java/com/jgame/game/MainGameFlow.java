@@ -21,7 +21,8 @@ import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
-
+import com.jgame.util.Pool.ObjectFactory;
+import com.jgame.util.Pool;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -81,6 +82,7 @@ public class MainGameFlow extends GameFlow {
     private final List<GameElement> interactiveElements;
     private final IdGenerator idGenerator;
     Random r = new Random();
+    private final Pool<Particle> decorationsPool;
 
     public MainGameFlow(LevelInformation levelInfo, ElementCreator elementCreator, float timeLimit, GameActivity gameActivity){
         this.levelInfo = levelInfo;
@@ -103,7 +105,15 @@ public class MainGameFlow extends GameFlow {
         initializeGrid(constantElements,12,10.0f,null);
         dynamicElements = new Grid(PLAYING_WIDTH, PLAYING_HEIGHT, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);
         interactiveElements = new ArrayList<>(50);
-        interactiveElements.add(new MovingOrganism(50, new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), 15, 20, 1000));
+
+        decorationsPool = new Pool<>(new ObjectFactory<Particle>() {
+            @Override
+            public Particle create() {
+                return new Particle(null, new Square(0,0, PARTICLE_SIZE, PARTICLE_SIZE),
+                        idGenerator.getId(), new Vector2(0, PARTICLE_MOVEMENT_MAGNITUDE), PARTICLE_TTL);
+            }
+        }, 20);
+
     }
 
 
@@ -172,12 +182,14 @@ public class MainGameFlow extends GameFlow {
      * @param y posicion y de la particula
      */
     private void addParticles(int amount, float x, float y){
-        for(int i = 0; i < amount; i++)
-            interactiveElements.add(new Particle(null, new Square(x, y, PARTICLE_SIZE, PARTICLE_SIZE),
-                    idGenerator.getId(),
-                    new Vector2(0, PARTICLE_MOVEMENT_MAGNITUDE).rotate(PARTICLE_RM, r.nextInt(PARTICLE_MAX_ROTATIONS)),
-                    PARTICLE_TTL));
-
+        for(int i = 0; i < amount; i++){
+            Particle p = decorationsPool.createObject();
+            p.getBounds().getPosition().set(x,y);
+            p.particleDirection.set(0, PARTICLE_MOVEMENT_MAGNITUDE)
+                    .rotate(PARTICLE_RM, r.nextInt(PARTICLE_MAX_ROTATIONS));
+            p.timeToLive = PARTICLE_TTL;
+            interactiveElements.add(p);
+        }
     }
 
 
@@ -278,11 +290,17 @@ public class MainGameFlow extends GameFlow {
 
             synchronized (elementsLock) {
 
-                for(GameElement e : interactiveElements) {
+                Iterator<GameElement> elementIterator = interactiveElements.iterator();
+                while(elementIterator.hasNext()) {
+                    GameElement e = elementIterator.next();
                     dynamicElements.remove(e);
                     e.update(dynamicElements.getNeighbors(e), interval);
+                    if(e instanceof Particle && !e.alive())
+                        decorationsPool.free((Particle)e);
                     if(e.alive())
                         dynamicElements.addElement(e);
+                    else
+                        elementIterator.remove();
                 }
 
                 elementsInSight.clear();

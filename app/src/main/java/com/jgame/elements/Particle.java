@@ -11,8 +11,8 @@ import java.util.List;
  */
 public class Particle extends DecorationElement {
 
-    private final Vector2 particleDirection;
-    private float timeToLive;
+    public final Vector2 particleDirection;
+    public float timeToLive;
 
     public Particle(TextureDrawer.TextureData tData, Square bounds, int id, Vector2 initialDirection, float timeToLive){
         super(tData, bounds, id);
