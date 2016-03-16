@@ -107,6 +107,13 @@ public class Vector2 {
         return this;
     }
 
+    public void changeBase(Vector2 b){
+        float nX = x * b.x - y * b.y;
+        float nY = x * b.y + y * b.x;
+        this.x = nX;
+        this.y = nY;
+    }
+
     /**
      * Multiplica el vector con la matriz de rotacion rm el numero de veces times.
      * @param rm matriz de rotacion
