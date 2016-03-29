@@ -24,6 +24,11 @@ public class Point extends GeometricElement{
     }
 
     @Override
+    public void setPosition(Vector2 v){
+        this.position.set(v);
+    }
+
+    @Override
     public boolean contains(float x, float y) {
         return x == position.x && y == position.y;
     }

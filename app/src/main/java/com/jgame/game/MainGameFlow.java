@@ -5,7 +5,9 @@ import android.util.Log;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.DecorationElement;
 import com.jgame.elements.FoodOrganism;
+import com.jgame.elements.GameObject;
 import com.jgame.elements.MovingOrganism;
+import com.jgame.elements.OrganismBehavior;
 import com.jgame.elements.Particle;
 import com.jgame.elements.Player;
 import com.jgame.game.LevelInformation.LevelObjective;
@@ -114,6 +116,36 @@ public class MainGameFlow extends GameFlow {
             }
         }, 20);
 
+        OrganismBehavior b = new OrganismBehavior(10, new Square(PLAYING_WIDTH/2, PLAYING_HEIGHT/2,10,10), 10, 0, false){
+
+            @Override
+            public void age(float timeDifference) {
+                this.bounds.getPosition().add(0.1f,0);
+                this.testRotation(this.base);
+            }
+
+            @Override
+            public void evaluateCollision(GameElement e) {
+
+            }
+        };
+
+        OrganismBehavior subB = new OrganismBehavior(10, new Square(0,0,10,10), 10, 0, false){
+
+            @Override
+            public void age(float timeDifference) {
+            }
+
+            @Override
+            public void evaluateCollision(GameElement e) {
+
+            }
+        };
+
+        GameObject go = new GameObject(b, idGenerator.getId());
+        GameObject sub = new GameObject(subB, idGenerator.getId(), go, new Vector2(0,15));
+        interactiveElements.add(go);
+        interactiveElements.add(sub);
     }
 
 

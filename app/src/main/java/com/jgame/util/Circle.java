@@ -21,6 +21,11 @@ public class Circle extends GeometricElement {
     }
 
     @Override
+    public void setPosition(Vector2 v){
+        this.position.set(v);
+    }
+
+    @Override
     public Vector2 getPosition(){
         return position;
     }

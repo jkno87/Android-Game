@@ -101,17 +101,21 @@ public class Vector2 {
     }
 
     public Vector2 rotate(RotationMatrix rm){
-        this.x = this.x * rm.cos - this.y * rm.sin;
-        this.y = this.x * rm.sin + this.y * rm.cos;
+        float newX = this.x * rm.cos - this.y * rm.sin;
+        float newY = this.x * rm.sin + this.y * rm.cos;
+        this.x = newX;
+        this.y = newY;
 
         return this;
     }
 
-    public void changeBase(Vector2 b){
+    public Vector2 changeBase(Vector2 b){
         float nX = x * b.x - y * b.y;
         float nY = x * b.y + y * b.x;
         this.x = nX;
         this.y = nY;
+
+        return this;
     }
 
     /**
