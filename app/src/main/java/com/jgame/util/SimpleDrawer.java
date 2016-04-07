@@ -73,6 +73,8 @@ public class SimpleDrawer extends Drawer {
     /**
      * Agrega los vertices de un cuadrado con textura y color
      * @param cData Informacion de color que se utilizara
+     * @param offset Es un vector que modifica la posicion de Square s.
+     *               Esto se utiliza porque normalmente la posicion en el juego es diferente de la posicion en la que se dibuja en pantalla
      * @return Drawer que contiene los vertices del cuadrado
      */
     public void addSquare(Square s, ColorData cData, Vector2 offset){

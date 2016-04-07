@@ -153,6 +153,8 @@ public class GameRenderer implements Renderer {
             drawMainGameFlow(gameFlow);
         else if (gameFlow instanceof LevelSelectFlow)
             drawLevelSelect((LevelSelectFlow) gameFlow);
+        else if (gameFlow instanceof FightingGameFlow)
+            drawFightingGameFlow((FightingGameFlow) gameFlow);
 
         if(isPaused)
             drawPauseMenu();
@@ -165,6 +167,30 @@ public class GameRenderer implements Renderer {
             drawPlayingGame(mainGameFlow);
         /*else if(gameFlow.currentState == GameState.FINISHED)
             drawGameFinished(gameFlow);*/
+    }
+
+    private void drawFightingGameFlow(FightingGameFlow flow){
+        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
+        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+        gl10.glMatrixMode(GL10.GL_PROJECTION);
+        gl10.glLoadIdentity();
+        gl10.glOrthof(0, GameLevels.FRUSTUM_WIDTH, 0, GameLevels.FRUSTUM_HEIGHT, 1, -1);
+
+        gl10.glMatrixMode(GL10.GL_MODELVIEW);
+        gl10.glEnable(GL10.GL_BLEND);
+        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+
+        basicDrawer.reset();
+        flow.gameFloor.fillSimpleDrawer(basicDrawer, Player.REGULAR_COLOR, currentOrigin);
+        flow.inputLeft.fillSimpleDrawer(basicDrawer, Player.INPUT_COLOR, currentOrigin);
+        flow.inputRight.fillSimpleDrawer(basicDrawer, Player.INPUT_COLOR, currentOrigin);
+        flow.inputA.fillSimpleDrawer(basicDrawer, Player.INPUT_COLOR, currentOrigin);
+        flow.inputB.fillSimpleDrawer(basicDrawer, Player.INPUT_COLOR, currentOrigin);
+        basicDrawer.draw(gl10);
+
     }
 
 
