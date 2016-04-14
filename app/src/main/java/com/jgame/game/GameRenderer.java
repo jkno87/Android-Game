@@ -185,10 +185,10 @@ public class GameRenderer implements Renderer {
 
         basicDrawer.reset();
         flow.gameFloor.fillSimpleDrawer(basicDrawer, Player.REGULAR_COLOR, currentOrigin);
-        flow.inputLeft.fillSimpleDrawer(basicDrawer, Player.INPUT_COLOR, currentOrigin);
-        flow.inputRight.fillSimpleDrawer(basicDrawer, Player.INPUT_COLOR, currentOrigin);
-        flow.inputA.fillSimpleDrawer(basicDrawer, Player.INPUT_COLOR, currentOrigin);
-        flow.inputB.fillSimpleDrawer(basicDrawer, Player.INPUT_COLOR, currentOrigin);
+        flow.inputLeft.bounds.fillSimpleDrawer(basicDrawer, flow.inputLeft.getCurrentColor(), currentOrigin);
+        flow.inputRight.bounds.fillSimpleDrawer(basicDrawer, flow.inputRight.getCurrentColor(), currentOrigin);
+        flow.inputA.bounds.fillSimpleDrawer(basicDrawer, flow.inputA.getCurrentColor(), currentOrigin);
+        flow.inputB.bounds.fillSimpleDrawer(basicDrawer, flow.inputB.getCurrentColor(), currentOrigin);
         basicDrawer.draw(gl10);
 
     }
