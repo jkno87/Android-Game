@@ -60,4 +60,13 @@ public class LevelSelectFlow extends GameFlow {
     public void resume() {
 
     }
+
+    public void handlePointerDown(float x, float y){
+
+    }
+
+    public void handlePointerUp(float x, float y){
+
+    }
+
 }

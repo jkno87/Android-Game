@@ -44,11 +44,11 @@ public class GameSurfaceView extends GLSurfaceView {
                 break;
 
             case MotionEvent.ACTION_POINTER_DOWN:
-                //gameActivity.getGameFlow().handlePointerDown(x,y);
+                gameActivity.getGameFlow().handlePointerDown(x,y);
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
-                //gameActivity.getGameFlow().handlePointerUp(x,y);
+                gameActivity.getGameFlow().handlePointerUp(x,y);
                 break;
 
         }

@@ -274,6 +274,14 @@ public class MainGameFlow extends GameFlow {
         }
     }
 
+    public void handlePointerDown(float x, float y){
+
+    }
+
+    public void handlePointerUp(float x, float y){
+
+    }
+
     @Override
     public void handleDown(float x, float y){
         float gameX = GameLevels.FRUSTUM_WIDTH * x + player.sightArea.position.x;
