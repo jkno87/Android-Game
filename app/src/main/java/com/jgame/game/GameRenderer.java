@@ -10,6 +10,7 @@ import javax.microedition.khronos.opengles.GL10;
 import com.jgame.definitions.GameIds;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.GameElement;
+import com.jgame.elements.MainCharacter;
 import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Organism;
 import com.jgame.elements.Player;
@@ -187,11 +188,13 @@ public class GameRenderer implements Renderer {
         flow.gameFloor.fillSimpleDrawer(basicDrawer, Player.REGULAR_COLOR, currentOrigin);
         for(int i = 0; i < flow.gameButtons.length; i++)
             flow.gameButtons[i].bounds.fillSimpleDrawer(basicDrawer, flow.gameButtons[i].getCurrentColor(), currentOrigin);
+        if(flow.mainCharacter.state == MainCharacter.GameState.INPUT_A)
+            flow.mainCharacter.getBounds().fillSimpleDrawer(basicDrawer, MainCharacter.INPUT_A_COLOR, currentOrigin);
+        else if(flow.mainCharacter.state == MainCharacter.GameState.INPUT_B)
+            flow.mainCharacter.getBounds().fillSimpleDrawer(basicDrawer, MainCharacter.INPUT_B_COLOR, currentOrigin);
+        else
+            flow.mainCharacter.getBounds().fillSimpleDrawer(basicDrawer, MainCharacter.PLAYER_COLOR, currentOrigin);
 
-        /*flow.inputLeft.bounds.fillSimpleDrawer(basicDrawer, flow.inputLeft.getCurrentColor(), currentOrigin);
-        flow.inputRight.bounds.fillSimpleDrawer(basicDrawer, flow.inputRight.getCurrentColor(), currentOrigin);
-        flow.inputA.bounds.fillSimpleDrawer(basicDrawer, flow.inputA.getCurrentColor(), currentOrigin);
-        flow.inputB.bounds.fillSimpleDrawer(basicDrawer, flow.inputB.getCurrentColor(), currentOrigin);*/
         basicDrawer.draw(gl10);
 
     }

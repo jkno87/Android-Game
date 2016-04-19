@@ -2,7 +2,9 @@ package com.jgame.game;
 
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.GameButton;
+import com.jgame.elements.MainCharacter;
 import com.jgame.util.Square;
+import com.jgame.util.Vector2;
 
 /**
  * Created by jose on 7/04/16.
@@ -17,21 +19,26 @@ public class FightingGameFlow extends GameFlow {
 
     public static float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH;
     public static float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT;
+    private final float CONTROLS_HEIGHT = PLAYING_HEIGHT * 0.25f;
+    private final float PLAYER_HEIGHT = 20;
     private final float DIRECTION_WIDTH = 45;
     private final float BUTTONS_WIDTH = 50;
     private final float INPUTS_HEIGHT = 15;
     public final Square gameFloor;
     public final GameButton[] gameButtons;
     private int mainButtonPressed;
+    public final MainCharacter mainCharacter;
 
 
     public FightingGameFlow(){
-        gameFloor = new Square(0, 0, PLAYING_WIDTH, PLAYING_HEIGHT * 0.25f);
+        gameFloor = new Square(0, 0, PLAYING_WIDTH, CONTROLS_HEIGHT);
         gameButtons = new GameButton[4];
         gameButtons[INPUT_LEFT] = new GameButton(new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
         gameButtons[INPUT_RIGHT] = new GameButton(new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
         gameButtons[INPUT_A] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
         gameButtons[INPUT_B] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
+        mainCharacter = new MainCharacter(0, new Vector2(15,CONTROLS_HEIGHT + PLAYER_HEIGHT), gameButtons[INPUT_LEFT],
+                gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B]);
     }
 
     private void calculateMainInput(float gameX, float gameY){
@@ -75,7 +82,7 @@ public class FightingGameFlow extends GameFlow {
 
     @Override
     public void update(float interval) {
-
+        mainCharacter.update(null, interval);
     }
 
     @Override
