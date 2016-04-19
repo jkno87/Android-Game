@@ -22,6 +22,7 @@ public class MainCharacter implements GameElement {
     public final int CHARACTER_LENGTH = 15;
     public final int CHARACTER_HEIGHT = 45;
     private int id;
+    private final float MOVING_SPEED = 0.75f;
     private final Square bounds;
     public GameState state;
 
@@ -113,9 +114,9 @@ public class MainCharacter implements GameElement {
             if (state == GameState.IDLE)
                 return;
             if (state == GameState.MOVING_FORWARD)
-                bounds.getPosition().add(1, 0);
+                bounds.getPosition().add(MOVING_SPEED, 0);
             if (state == GameState.MOVING_BACKWARDS)
-                bounds.getPosition().add(-1, 0);
+                bounds.getPosition().add(-MOVING_SPEED, 0);
         }
     }
 
