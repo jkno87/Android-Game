@@ -15,7 +15,7 @@ public class FightingGameFlow extends GameFlow {
     private final int INPUT_RIGHT = 1;
     private final int INPUT_A = 2;
     private final int INPUT_B = 3;
-
+    private final int INPUT_NONE = -1;
 
     public static float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH;
     public static float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT;
@@ -33,6 +33,7 @@ public class FightingGameFlow extends GameFlow {
     public FightingGameFlow(){
         gameFloor = new Square(0, 0, PLAYING_WIDTH, CONTROLS_HEIGHT);
         gameButtons = new GameButton[4];
+        mainButtonPressed = INPUT_NONE;
         gameButtons[INPUT_LEFT] = new GameButton(new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
         gameButtons[INPUT_RIGHT] = new GameButton(new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
         gameButtons[INPUT_A] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
@@ -50,12 +51,17 @@ public class FightingGameFlow extends GameFlow {
             mainButtonPressed = INPUT_A;
         else if(gameButtons[INPUT_B].bounds.contains(gameX, gameY))
             mainButtonPressed = INPUT_B;
+        else
+            mainButtonPressed = INPUT_NONE;
 
-        gameButtons[mainButtonPressed].press();
+        if(mainButtonPressed != INPUT_NONE)
+            gameButtons[mainButtonPressed].press();
     }
 
     @Override
     public void handleDrag(float x, float y) {
+        if(mainButtonPressed == INPUT_NONE)
+            return;
 
         float gameX = GameLevels.FRUSTUM_WIDTH * x;
         float gameY = GameLevels.FRUSTUM_HEIGHT * y;
@@ -77,7 +83,8 @@ public class FightingGameFlow extends GameFlow {
 
     @Override
     public void handleUp(float x, float y) {
-        gameButtons[mainButtonPressed].release();
+        if(mainButtonPressed != INPUT_NONE)
+            gameButtons[mainButtonPressed].release();
     }
 
     @Override
