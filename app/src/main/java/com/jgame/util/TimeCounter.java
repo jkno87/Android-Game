@@ -7,7 +7,6 @@ public class TimeCounter {
 
     private float accumTime;
     private float time;
-    //private boolean charging;
 
     public TimeCounter(){
 
@@ -15,7 +14,6 @@ public class TimeCounter {
 
     public TimeCounter(float time){
         this.time = time;
-        //charging = true;
     }
 
     public void setInterval(float time){
@@ -24,8 +22,7 @@ public class TimeCounter {
     }
 
     public void accum(float timeDiff){
-        //if(charging)
-            accumTime += timeDiff;
+        accumTime += timeDiff;
     }
 
     public boolean completed(){
@@ -35,19 +32,7 @@ public class TimeCounter {
     public void reset(){
         this.accumTime = 0.0f;
     }
-/*
-    public void enableCharging(){
-        charging = true;
-    }
 
-    public void disableCharging(){
-        charging = false;
-    }
-
-    public boolean isCharging(){
-        return charging;
-    }
-*/
     public float pctCharged(){
         if(accumTime > time)
             return 1;
