@@ -30,7 +30,6 @@ public class GameButton {
         state = State.FREE;
     }
 
-
     /**
      * Agrega el buttonListener al boton
      * @param buttonListener Listener que se utilizara en el boton

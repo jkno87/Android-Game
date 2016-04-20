@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by jose on 14/01/16.
  */
-public class MainCharacter implements GameElement {
+public class MainCharacter {
 
     public enum GameState {
         IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B
@@ -26,16 +26,17 @@ public class MainCharacter implements GameElement {
     private final TimeCounter MOVE_A_COUNTER = new TimeCounter(0.33f);
     private final TimeCounter MOVE_B_COUNTER = new TimeCounter(0.64f);
     private final float MOVING_SPEED = 0.75f;
-    private final Square bounds;
-    public GameState state;
+    public final GameObject mainObject;
     private final GameButton inputLeft;
     private final GameButton inputRight;
+    public GameState state;
 
     public MainCharacter(int id, Vector2 position, final GameButton inputLeft, final GameButton inputRight,
                          final GameButton inputA, final GameButton inputB){
         this.state = GameState.IDLE;
         this.id = id;
-        bounds = new Square(position,CHARACTER_LENGTH,CHARACTER_HEIGHT,0);
+        mainObject = new GameObject(id, position);
+        //bounds = new Square(position,CHARACTER_LENGTH,CHARACTER_HEIGHT,0);
         this.inputLeft = inputLeft;
         this.inputRight = inputRight;
         this.inputLeft.setButtonListener(new ButtonListener() {
@@ -102,25 +103,14 @@ public class MainCharacter implements GameElement {
         this.state = state;
     }
 
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public GeometricElement getBounds() {
-        return bounds;
-    }
-
-    @Override
     public void update(List<GameElement> others, float timeDifference) {
         synchronized (this) {
             if (state == GameState.IDLE)
                 return;
             if (state == GameState.MOVING_FORWARD)
-                bounds.getPosition().add(MOVING_SPEED, 0);
+                ;//bounds.getPosition().add(MOVING_SPEED, 0);
             if (state == GameState.MOVING_BACKWARDS)
-                bounds.getPosition().add(-MOVING_SPEED, 0);
+                ;//bounds.getPosition().add(-MOVING_SPEED, 0);
             if(state == GameState.INPUT_A){
                 MOVE_A_COUNTER.accum(timeDifference);
                 if(MOVE_A_COUNTER.completed()){
@@ -143,10 +133,5 @@ public class MainCharacter implements GameElement {
                 }
             }
         }
-    }
-
-    @Override
-    public boolean alive() {
-        return false;
     }
 }
