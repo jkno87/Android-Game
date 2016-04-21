@@ -1,6 +1,5 @@
 package com.jgame.elements;
 
-import com.jgame.util.GeometricElement;
 import com.jgame.util.Vector2;
 import java.util.List;
 
@@ -10,53 +9,53 @@ import java.util.List;
  */
 public class GameObject {
 
-    public OrganismBehavior behavior;
     public int id;
-    private final GameObject parent;
+    private GameObject parent;
     final Vector2 relativePosition;
     public final Vector2 base;
+    public final Vector2 position;
 
-    public GameObject(OrganismBehavior behavior, int id){
-        this.behavior = behavior;
-        this.id = id;
+    public GameObject(Vector2 position, int id){
         this.parent = null;
+        this.id = id;
         this.relativePosition = new Vector2();
         this.base = new Vector2(1,0);
-        behavior.setBase(base);
+        this.position = position;
     }
 
-    public GameObject(OrganismBehavior behavior, int id, GameObject parent, Vector2 relativePosition){
-        this.behavior = behavior;
-        this.id = id;
+    public void updatePosition(){
+        if(parent != null){
+            position.set(relativePosition);
+            position.changeBase(base).add(parent.position);
+        }
+    }
+
+    public void setParent(GameObject parent){
         this.parent = parent;
-        this.relativePosition = relativePosition;
-        this.base = parent.base;
-        behavior.setBase(base);
+        updatePosition();
     }
 
     public void update(List<GameElement> others, float timeDifference){
-        if(parent != null) {
-            behavior.bounds.setPosition(relativePosition);
-            behavior.bounds.getPosition().changeBase(base).add(parent.getBounds().getPosition());
-        }
-        behavior.age(timeDifference);
-        if(!behavior.active)
-            return;
+        updatePosition();
     }
 
     public int getId(){
         return id;
     }
 
-    public GeometricElement getBounds(){
-        return behavior.bounds;
+    /**
+     * Suma el vector direction a position.
+     * @param direction direccion en la que se movera el GameObject
+     */
+    public void move(Vector2 direction){
+        position.add(direction);
     }
 
     /**
      * Funcion que determina si el GameObject puede ser dibujado en el renderer.
      * @return
      */
-    public boolean isRenderable(){
+    public boolean isDrawable(){
         return false;
     }
 }

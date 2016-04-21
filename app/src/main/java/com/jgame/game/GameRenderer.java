@@ -188,12 +188,15 @@ public class GameRenderer implements Renderer {
         flow.gameFloor.fillSimpleDrawer(basicDrawer, Player.REGULAR_COLOR, currentOrigin);
         for(int i = 0; i < flow.gameButtons.length; i++)
             flow.gameButtons[i].bounds.fillSimpleDrawer(basicDrawer, flow.gameButtons[i].getCurrentColor(), currentOrigin);
+
+        Square characterBounds = flow.mainCharacter.getActiveCollisionBox().bounds;
+
         if(flow.mainCharacter.state == MainCharacter.GameState.INPUT_A)
-            flow.mainCharacter.getBounds().fillSimpleDrawer(basicDrawer, MainCharacter.INPUT_A_COLOR, currentOrigin);
+            characterBounds.fillSimpleDrawer(basicDrawer, MainCharacter.INPUT_A_COLOR, currentOrigin);
         else if(flow.mainCharacter.state == MainCharacter.GameState.INPUT_B)
-            flow.mainCharacter.getBounds().fillSimpleDrawer(basicDrawer, MainCharacter.INPUT_B_COLOR, currentOrigin);
+            characterBounds.fillSimpleDrawer(basicDrawer, MainCharacter.INPUT_B_COLOR, currentOrigin);
         else
-            flow.mainCharacter.getBounds().fillSimpleDrawer(basicDrawer, MainCharacter.PLAYER_COLOR, currentOrigin);
+            characterBounds.fillSimpleDrawer(basicDrawer, MainCharacter.PLAYER_COLOR, currentOrigin);
 
         basicDrawer.draw(gl10);
 

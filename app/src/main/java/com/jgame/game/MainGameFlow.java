@@ -142,10 +142,10 @@ public class MainGameFlow extends GameFlow {
             }
         };
 
-        GameObject go = new GameObject(b, idGenerator.getId());
+        /*GameObject go = new GameObject(b, idGenerator.getId());
         GameObject sub = new GameObject(subB, idGenerator.getId(), go, new Vector2(0,15));
         interactiveElements.add(go);
-        interactiveElements.add(sub);
+        interactiveElements.add(sub);*/
     }
 
 
