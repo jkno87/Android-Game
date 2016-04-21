@@ -147,6 +147,7 @@ public class MainCharacter {
                 }
             }
 
+            mainObject.update(others, timeDifference);
             collisionBox.update(others, timeDifference);
             collisionMoveA.update(others, timeDifference);
         }

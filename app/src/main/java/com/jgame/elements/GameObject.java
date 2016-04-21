@@ -1,5 +1,7 @@
 package com.jgame.elements;
 
+import android.util.Log;
+
 import com.jgame.util.Vector2;
 import java.util.List;
 
@@ -12,21 +14,25 @@ public class GameObject {
     public int id;
     private GameObject parent;
     final Vector2 relativePosition;
-    public final Vector2 base;
+    public Vector2 base;
     public final Vector2 position;
 
     public GameObject(Vector2 position, int id){
         this.parent = null;
         this.id = id;
-        this.relativePosition = new Vector2();
+        this.relativePosition = position;
         this.base = new Vector2(1,0);
-        this.position = position;
+        this.position = new Vector2(position);
     }
 
     public void updatePosition(){
         if(parent != null){
             position.set(relativePosition);
-            position.changeBase(base).add(parent.position);
+            position.changeBase(parent.base);
+            position.add(parent.position);
+        } else {
+            position.set(relativePosition);
+            position.changeBase(base);
         }
     }
 
@@ -48,7 +54,7 @@ public class GameObject {
      * @param direction direccion en la que se movera el GameObject
      */
     public void move(Vector2 direction){
-        position.add(direction);
+        relativePosition.add(direction);
     }
 
     /**
