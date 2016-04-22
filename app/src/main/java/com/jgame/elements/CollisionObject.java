@@ -10,8 +10,9 @@ public class CollisionObject extends GameObject {
 
     public final Square bounds;
 
-    public CollisionObject(Vector2 relativePosition, int id, float length, float height) {
+    public CollisionObject(Vector2 relativePosition, int id, float length, float height, GameObject parent) {
         super(relativePosition, id);
         bounds = new Square(position, length, height, 0);
+        setParent(parent);
     }
 }

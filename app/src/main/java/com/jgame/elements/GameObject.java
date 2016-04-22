@@ -14,25 +14,26 @@ public class GameObject {
     public int id;
     private GameObject parent;
     final Vector2 relativePosition;
-    public Vector2 base;
+    public Vector2 baseA;
+    public Vector2 baseB;
     public final Vector2 position;
 
     public GameObject(Vector2 position, int id){
         this.parent = null;
         this.id = id;
         this.relativePosition = position;
-        this.base = new Vector2(1,0);
+        this.baseA = new Vector2(1,0);
+        this.baseB = new Vector2(0,1);
         this.position = new Vector2(position);
     }
 
     public void updatePosition(){
         if(parent != null){
             position.set(relativePosition);
-            position.changeBase(parent.base);
+            position.changeBase(parent.baseA, parent.baseB);
             position.add(parent.position);
         } else {
             position.set(relativePosition);
-            position.changeBase(base);
         }
     }
 

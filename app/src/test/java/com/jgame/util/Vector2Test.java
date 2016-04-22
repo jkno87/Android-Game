@@ -15,8 +15,12 @@ public class Vector2Test {
         assertEquals(1.0f, v.x, 0.0f);
         assertEquals(-2.0f, v.y, 0.0f);
         v = new Vector2(2,1);
-        v.changeBase(new Vector2(-1,0));
+        v.changeBase(new Vector2(-1, 0));
         assertEquals(-2.0f, v.x, 0.0f);
         assertEquals(-1.0f, v.y, 0.0f);
+        v = new Vector2(2,1);
+        v.changeBase(new Vector2(-1, 0), new Vector2(0, 1));
+        assertEquals(-2.0f, v.x, 0.0f);
+        assertEquals(1.0f, v.y, 0.0f);
     }
 }

@@ -109,9 +109,30 @@ public class Vector2 {
         return this;
     }
 
+    /**
+     * Cambia la base del vector utilizando b. Genera un vector ortogonal en base a b.
+     * @param b
+     * @return regresa el mismo vector con la base diferente.
+     */
     public Vector2 changeBase(Vector2 b){
         float nX = x * b.x - y * b.y;
         float nY = x * b.y + y * b.x;
+        this.x = nX;
+        this.y = nY;
+
+        return this;
+    }
+
+    /**
+     * Cambia la base de los vector utilizando las bases a, b. Si los vectores no son ortogonales, buena suerte ;)
+     * @param a
+     * @param b
+     * @return Regresa el vector con la base ab.
+     */
+    public Vector2 changeBase(Vector2 a, Vector2 b){
+        float nX = x * a.x + y * b.x;
+        float nY = x * a.y + y * b.y;
+
         this.x = nX;
         this.y = nY;
 

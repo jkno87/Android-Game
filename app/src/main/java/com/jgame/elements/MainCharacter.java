@@ -1,6 +1,7 @@
 package com.jgame.elements;
 
 import com.jgame.elements.GameButton.ButtonListener;
+import com.jgame.util.Drawer;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
@@ -29,8 +30,8 @@ public class MainCharacter {
     private final TimeCounter MOVE_A_COUNTER = new TimeCounter(0.33f);
     private final TimeCounter MOVE_B_COUNTER = new TimeCounter(0.64f);
     public final GameObject mainObject;
+    public final CollisionObject[] collisionsMoveA;
     public final CollisionObject collisionBox;
-    public final CollisionObject collisionMoveA;
     private final GameButton inputLeft;
     private final GameButton inputRight;
     public GameState state;
@@ -40,10 +41,12 @@ public class MainCharacter {
         this.state = GameState.IDLE;
         this.id = id;
         mainObject = new GameObject(position,id);
-        collisionBox = new CollisionObject(new Vector2(), id, CHARACTER_LENGTH, CHARACTER_HEIGHT);
-        collisionBox.setParent(mainObject);
-        collisionMoveA = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A, HEIGHT_MOVE_A);
-        collisionMoveA.setParent(mainObject);
+        mainObject.baseA.set(-1,0);
+        collisionsMoveA = new CollisionObject[2];
+        initializeCollisionBoxes();
+        collisionBox = new CollisionObject(new Vector2(), id, CHARACTER_LENGTH, CHARACTER_HEIGHT, mainObject);
+        collisionsMoveA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
+        collisionsMoveA[1] = new CollisionObject(new Vector2(LENGTH_MOVE_A, HEIGHT_MOVE_A), id, 15, 10, mainObject);
         this.inputLeft = inputLeft;
         this.inputRight = inputRight;
         this.inputLeft.setButtonListener(new ButtonListener() {
@@ -93,11 +96,24 @@ public class MainCharacter {
         });
     }
 
-    public synchronized CollisionObject getActiveCollisionBox(){
+    private void initializeCollisionBoxes(){
+
+    }
+
+
+    /*public synchronized CollisionObject getActiveCollisionBox(){
         if(state == GameState.INPUT_A)
             return collisionMoveA;
         else
             return collisionBox;
+    }*/
+
+    public synchronized void fillDrawer(SimpleDrawer d, Vector2 origin){
+        if(state == GameState.INPUT_A){
+            collisionsMoveA[0].bounds.fillSimpleDrawer(d, MainCharacter.INPUT_A_COLOR, origin);
+            collisionsMoveA[1].bounds.fillSimpleDrawer(d, MainCharacter.INPUT_B_COLOR, origin);
+        } else
+            collisionBox.bounds.fillSimpleDrawer(d, MainCharacter.INPUT_B_COLOR, origin);
     }
 
     /**
@@ -149,7 +165,8 @@ public class MainCharacter {
 
             mainObject.update(others, timeDifference);
             collisionBox.update(others, timeDifference);
-            collisionMoveA.update(others, timeDifference);
+            collisionsMoveA[0].update(others, timeDifference);
+            collisionsMoveA[1].update(others, timeDifference);
         }
     }
 }
