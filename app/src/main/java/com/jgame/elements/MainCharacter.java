@@ -27,10 +27,9 @@ public class MainCharacter {
     public final int LENGTH_MOVE_A = 35;
     public final int HEIGHT_MOVE_A = 85;
     private int id;
-    private final TimeCounter MOVE_A_COUNTER = new TimeCounter(0.33f);
     private final TimeCounter MOVE_B_COUNTER = new TimeCounter(0.64f);
     public final GameObject mainObject;
-    public final CollisionObject[] collisionsMoveA;
+    public final CollisionState moveA;
     public final CollisionObject collisionBox;
     private final GameButton inputLeft;
     private final GameButton inputRight;
@@ -42,11 +41,9 @@ public class MainCharacter {
         this.id = id;
         mainObject = new GameObject(position,id);
         mainObject.baseA.set(-1,0);
-        collisionsMoveA = new CollisionObject[2];
+        moveA = new CollisionState(0.2f,0.15f,0.26f);
         initializeCollisionBoxes();
         collisionBox = new CollisionObject(new Vector2(), id, CHARACTER_LENGTH, CHARACTER_HEIGHT, mainObject);
-        collisionsMoveA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
-        collisionsMoveA[1] = new CollisionObject(new Vector2(LENGTH_MOVE_A, HEIGHT_MOVE_A), id, 15, 10, mainObject);
         this.inputLeft = inputLeft;
         this.inputRight = inputRight;
         this.inputLeft.setButtonListener(new ButtonListener() {
@@ -97,7 +94,16 @@ public class MainCharacter {
     }
 
     private void initializeCollisionBoxes(){
-
+        CollisionObject [] startupA = new CollisionObject[1];
+        startupA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
+        CollisionObject [] activeA = new CollisionObject[2];
+        activeA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
+        activeA[1] = new CollisionObject(new Vector2(LENGTH_MOVE_A, HEIGHT_MOVE_A), id, 15, 10, mainObject);
+        CollisionObject [] recoveryA = new CollisionObject[1];
+        recoveryA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
+        moveA.setStartupBoxes(startupA);
+        moveA.setActiveBoxes(activeA);
+        moveA.setRecoveryBoxes(recoveryA);
     }
 
 
@@ -110,8 +116,7 @@ public class MainCharacter {
 
     public synchronized void fillDrawer(SimpleDrawer d, Vector2 origin){
         if(state == GameState.INPUT_A){
-            collisionsMoveA[0].bounds.fillSimpleDrawer(d, MainCharacter.INPUT_A_COLOR, origin);
-            collisionsMoveA[1].bounds.fillSimpleDrawer(d, MainCharacter.INPUT_B_COLOR, origin);
+            moveA.fillDrawer(d, origin);
         } else
             collisionBox.bounds.fillSimpleDrawer(d, MainCharacter.INPUT_B_COLOR, origin);
     }
@@ -125,9 +130,9 @@ public class MainCharacter {
         if(this.state == GameState.INPUT_A || this.state == GameState.INPUT_B)
             return;
 
-        if(state == GameState.INPUT_A)
-            MOVE_A_COUNTER.reset();
-        else if(state == GameState.INPUT_B)
+        if(state == GameState.INPUT_A) {
+            moveA.reset();
+        } else if(state == GameState.INPUT_B)
             MOVE_B_COUNTER.reset();
 
         this.state = state;
@@ -142,8 +147,8 @@ public class MainCharacter {
             if (state == GameState.MOVING_BACKWARDS)
                 mainObject.move(LEFT_MOVE_SPEED);
             if(state == GameState.INPUT_A){
-                MOVE_A_COUNTER.accum(timeDifference);
-                if(MOVE_A_COUNTER.completed()){
+                moveA.update(timeDifference);
+                if(moveA.completed()){
                     this.state = GameState.IDLE;
                     if(inputLeft.pressed())
                         this.state = GameState.MOVING_BACKWARDS;
@@ -165,8 +170,7 @@ public class MainCharacter {
 
             mainObject.update(others, timeDifference);
             collisionBox.update(others, timeDifference);
-            collisionsMoveA[0].update(others, timeDifference);
-            collisionsMoveA[1].update(others, timeDifference);
+
         }
     }
 }
