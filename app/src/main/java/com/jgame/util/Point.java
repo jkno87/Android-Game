@@ -37,9 +37,4 @@ public class Point extends GeometricElement{
     public boolean collides(GeometricElement e) {
         return false;
     }
-
-    @Override
-    public void fillSimpleDrawer(SimpleDrawer d, SimpleDrawer.ColorData cd, Vector2 offset){
-        d.addColoredRectangle(position.x - offset.x, position.y - offset.y, POINT_SIZE, POINT_SIZE, cd);
-    }
 }

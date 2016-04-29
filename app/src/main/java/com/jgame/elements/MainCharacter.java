@@ -1,11 +1,11 @@
 package com.jgame.elements;
 
 import com.jgame.elements.GameButton.ButtonListener;
-import com.jgame.util.Drawer;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import java.util.List;
+import com.jgame.elements.CollisionState.CollisionSt;
 
 /**
  * Created by jose on 14/01/16.
@@ -40,7 +40,7 @@ public class MainCharacter {
         this.state = GameState.IDLE;
         this.id = id;
         mainObject = new GameObject(position,id);
-        mainObject.baseA.set(-1,0);
+        mainObject.baseX.set(-1, 0);
         moveA = new CollisionState(0.2f,0.15f,0.26f);
         initializeCollisionBoxes();
         collisionBox = new CollisionObject(new Vector2(), id, CHARACTER_LENGTH, CHARACTER_HEIGHT, mainObject);
@@ -106,19 +106,19 @@ public class MainCharacter {
         moveA.setRecoveryBoxes(recoveryA);
     }
 
-
-    /*public synchronized CollisionObject getActiveCollisionBox(){
-        if(state == GameState.INPUT_A)
-            return collisionMoveA;
-        else
-            return collisionBox;
-    }*/
-
     public synchronized void fillDrawer(SimpleDrawer d, Vector2 origin){
         if(state == GameState.INPUT_A){
-            moveA.fillDrawer(d, origin);
+            if(moveA.currentState == CollisionSt.STARTUP)
+                for(CollisionObject o : moveA.startup)
+                    d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, mainObject.baseX);
+            else if(moveA.currentState == CollisionSt.ACTIVE)
+                for(CollisionObject o : moveA.active)
+                    d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, mainObject.baseX);
+            else if(moveA.currentState == CollisionSt.RECOVERY)
+                for(CollisionObject o : moveA.recovery)
+                    d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, mainObject.baseX);
         } else
-            collisionBox.bounds.fillSimpleDrawer(d, MainCharacter.INPUT_B_COLOR, origin);
+            d.addSquare(collisionBox.bounds, MainCharacter.INPUT_B_COLOR, origin, mainObject.baseX);
     }
 
     /**

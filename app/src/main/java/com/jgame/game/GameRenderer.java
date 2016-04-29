@@ -185,18 +185,9 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
 
         basicDrawer.reset();
-        flow.gameFloor.fillSimpleDrawer(basicDrawer, Player.REGULAR_COLOR, currentOrigin);
+        basicDrawer.addSquare(flow.gameFloor, Player.REGULAR_COLOR, currentOrigin);
         for(int i = 0; i < flow.gameButtons.length; i++)
-            flow.gameButtons[i].bounds.fillSimpleDrawer(basicDrawer, flow.gameButtons[i].getCurrentColor(), currentOrigin);
-
-        //Square characterBounds = flow.mainCharacter.getActiveCollisionBox().bounds;
-
-        /*if(flow.mainCharacter.state == MainCharacter.GameState.INPUT_A)
-            characterBounds.fillSimpleDrawer(basicDrawer, MainCharacter.INPUT_A_COLOR, currentOrigin);
-        else if(flow.mainCharacter.state == MainCharacter.GameState.INPUT_B)
-            characterBounds.fillSimpleDrawer(basicDrawer, MainCharacter.INPUT_B_COLOR, currentOrigin);
-        else
-            characterBounds.fillSimpleDrawer(basicDrawer, MainCharacter.PLAYER_COLOR, currentOrigin);*/
+            basicDrawer.addSquare(flow.gameButtons[i].bounds, flow.gameButtons[i].getCurrentColor(), currentOrigin);
 
         flow.mainCharacter.fillDrawer(basicDrawer, currentOrigin);
 
@@ -279,7 +270,7 @@ public class GameRenderer implements Renderer {
                 bannerDrawer.draw(gl10);
             }
         }*/
-
+/*
         gl10.glLoadIdentity();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
         basicDrawer.reset();

@@ -49,11 +49,6 @@ public class Circle extends GeometricElement {
             throw new UnsupportedOperationException();
     }
 
-    @Override
-    public void fillSimpleDrawer(SimpleDrawer d, SimpleDrawer.ColorData cd, Vector2 offset){
-        d.addColoredRectangle(position.x - offset.x, position.y - offset.y, radius, radius, cd);
-    }
-
     /**
      * Determina si el círculo toca a otro círculo
      * @param c Circle que se pretende comprarar

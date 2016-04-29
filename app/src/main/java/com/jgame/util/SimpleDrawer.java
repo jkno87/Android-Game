@@ -107,6 +107,45 @@ public class SimpleDrawer extends Drawer {
         verticesBuffer[currentIndex++] = cData.g;
         verticesBuffer[currentIndex++] = cData.b;
         verticesBuffer[currentIndex++] = cData.a;
-
     }
+
+    /**
+     * Agrega los vertices de un cuadrado con textura y color
+     * @param cData Informacion de color que se utilizara
+     * @param offset Es un vector que modifica la posicion de Square s.
+     *               Esto se utiliza porque normalmente la posicion en el juego es diferente de la posicion en la que se dibuja en pantalla
+     * @return Drawer que contiene los vertices del cuadrado
+     */
+    public void addSquare(Square s, ColorData cData, Vector2 offset, Vector2 baseX){
+        elementsAdded++;
+
+        verticesBuffer[currentIndex++] = s.position.x - offset.x;
+        verticesBuffer[currentIndex++] = s.position.y - offset.y;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = (s.position.x + s.lenX * baseX.x) - offset.x;
+        verticesBuffer[currentIndex++] = s.position.y - offset.y;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = (s.position.x + s.lenX * baseX.x) - offset.x;
+        verticesBuffer[currentIndex++] = (s.position.y + s.lenY) - offset.y;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position.x - offset.x;
+        verticesBuffer[currentIndex++] = (s.position.y + s.lenY) - offset.y;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+    }
+
 }

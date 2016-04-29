@@ -10,7 +10,7 @@ import com.jgame.util.Vector2;
  */
 public class CollisionState {
 
-    enum State {
+    enum CollisionSt {
         STARTUP, ACTIVE, RECOVERY, FINISHED
     }
 
@@ -20,13 +20,13 @@ public class CollisionState {
     private final TimeCounter startupCounter;
     private final TimeCounter activeCounter;
     private final TimeCounter recoveryCounter;
-    public State currentState;
+    public CollisionSt currentState;
 
     public CollisionState(float startup, float active, float recovery){
         startupCounter = new TimeCounter(startup);
         activeCounter = new TimeCounter(active);
         recoveryCounter = new TimeCounter(recovery);
-        currentState = State.STARTUP;
+        currentState = CollisionSt.STARTUP;
     }
 
     public void setStartupBoxes(CollisionObject [] startup){
@@ -45,7 +45,7 @@ public class CollisionState {
         startupCounter.reset();
         activeCounter.reset();
         recoveryCounter.reset();
-        currentState = State.STARTUP;
+        currentState = CollisionSt.STARTUP;
         for(CollisionObject o : startup)
             o.updatePosition();
         for(CollisionObject o : active)
@@ -55,41 +55,28 @@ public class CollisionState {
     }
 
     public boolean completed(){
-        return currentState == State.FINISHED;
+        return currentState == CollisionSt.FINISHED;
     }
 
     public void update(float timeDifference){
-        if(currentState == State.STARTUP){
+        if(currentState == CollisionSt.STARTUP){
             startupCounter.accum(timeDifference);
             for(CollisionObject o : startup)
                 o.update(null, timeDifference);
             if(startupCounter.completed())
-                currentState = State.ACTIVE;
-        } else if (currentState == State.ACTIVE){
+                currentState = CollisionSt.ACTIVE;
+        } else if (currentState == CollisionSt.ACTIVE){
             activeCounter.accum(timeDifference);
             for(CollisionObject o : active)
                 o.update(null, timeDifference);
             if(activeCounter.completed())
-                currentState = State.RECOVERY;
-        } else if (currentState == State.RECOVERY){
+                currentState = CollisionSt.RECOVERY;
+        } else if (currentState == CollisionSt.RECOVERY){
             recoveryCounter.accum(timeDifference);
             for(CollisionObject o : recovery)
                 o.update(null, timeDifference);
             if(recoveryCounter.completed())
-                currentState = State.FINISHED;
+                currentState = CollisionSt.FINISHED;
         }
     }
-
-    public void fillDrawer(SimpleDrawer d, Vector2 origin){
-        if(currentState == State.STARTUP)
-            for(CollisionObject o : startup)
-                o.bounds.fillSimpleDrawer(d, MainCharacter.INPUT_A_COLOR, origin);
-        else if(currentState == State.ACTIVE)
-            for(CollisionObject o : active)
-                o.bounds.fillSimpleDrawer(d, MainCharacter.INPUT_A_COLOR, origin);
-        else if(currentState == State.RECOVERY)
-            for(CollisionObject o : recovery)
-                o.bounds.fillSimpleDrawer(d, MainCharacter.INPUT_A_COLOR, origin);
-    }
-
 }
