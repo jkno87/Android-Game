@@ -190,6 +190,7 @@ public class GameRenderer implements Renderer {
             basicDrawer.addSquare(flow.gameButtons[i].bounds, flow.gameButtons[i].getCurrentColor(), currentOrigin);
 
         flow.mainCharacter.fillDrawer(basicDrawer, currentOrigin);
+        flow.sampleEnemy.fillDrawer(basicDrawer, currentOrigin);
 
         basicDrawer.draw(gl10);
 

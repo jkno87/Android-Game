@@ -27,6 +27,9 @@ public class GameObject {
         this.position = new Vector2(position);
     }
 
+    /**
+     * Actualiza la posicion del GameObject. Si tiene un padre, actualiza su posicion utilizando la posicion relativa.
+     */
     public void updatePosition(){
         if(parent != null){
             position.set(relativePosition);

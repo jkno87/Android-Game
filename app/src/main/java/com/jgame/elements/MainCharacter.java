@@ -5,7 +5,7 @@ import com.jgame.util.SimpleDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import java.util.List;
-import com.jgame.elements.CollisionState.CollisionSt;
+import com.jgame.elements.AttackData.CollisionState;
 
 /**
  * Created by jose on 14/01/16.
@@ -16,21 +16,20 @@ public class MainCharacter {
         IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B
     }
 
-    public static final SimpleDrawer.ColorData PLAYER_COLOR = new SimpleDrawer.ColorData(0.65f,0.5f,0.85f,1);
     public static final SimpleDrawer.ColorData INPUT_A_COLOR = new SimpleDrawer.ColorData(0.65f,0.75f,0.85f,1);
-    public static final SimpleDrawer.ColorData INPUT_B_COLOR = new SimpleDrawer.ColorData(0.65f,0.25f,0.60f,1);
+    public final int CHARACTER_LENGTH = 40;
+    public final int CHARACTER_HEIGHT = 80;
+    private final Vector2 CHARACTER_OFFSET = new Vector2(-CHARACTER_LENGTH/2,0);
     private final float MOVING_SPEED = 0.75f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
-    public final int CHARACTER_LENGTH = 40;
-    public final int CHARACTER_HEIGHT = 80;
     public final int LENGTH_MOVE_A = 35;
     public final int HEIGHT_MOVE_A = 85;
     private int id;
     private final TimeCounter MOVE_B_COUNTER = new TimeCounter(0.64f);
     public final GameObject mainObject;
-    public final CollisionState moveA;
-    public final CollisionObject collisionBox;
+    public final AttackData moveA;
+    public final CollisionObject idleCollisionBox;
     private final GameButton inputLeft;
     private final GameButton inputRight;
     public GameState state;
@@ -41,9 +40,9 @@ public class MainCharacter {
         this.id = id;
         mainObject = new GameObject(position,id);
         mainObject.baseX.set(-1, 0);
-        moveA = new CollisionState(0.2f,0.15f,0.26f);
+        moveA = new AttackData(0.2f,0.15f,0.26f);
+        idleCollisionBox = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, CHARACTER_LENGTH, CHARACTER_HEIGHT, mainObject);
         initializeCollisionBoxes();
-        collisionBox = new CollisionObject(new Vector2(), id, CHARACTER_LENGTH, CHARACTER_HEIGHT, mainObject);
         this.inputLeft = inputLeft;
         this.inputRight = inputRight;
         this.inputLeft.setButtonListener(new ButtonListener() {
@@ -95,12 +94,12 @@ public class MainCharacter {
 
     private void initializeCollisionBoxes(){
         CollisionObject [] startupA = new CollisionObject[1];
-        startupA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
+        startupA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
         CollisionObject [] activeA = new CollisionObject[2];
-        activeA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
-        activeA[1] = new CollisionObject(new Vector2(LENGTH_MOVE_A, HEIGHT_MOVE_A), id, 15, 10, mainObject);
+        activeA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
+        activeA[1] = new CollisionObject(new Vector2(CHARACTER_OFFSET).add(LENGTH_MOVE_A, HEIGHT_MOVE_A), id, 15, 10, mainObject);
         CollisionObject [] recoveryA = new CollisionObject[1];
-        recoveryA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
+        recoveryA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
         moveA.setStartupBoxes(startupA);
         moveA.setActiveBoxes(activeA);
         moveA.setRecoveryBoxes(recoveryA);
@@ -108,17 +107,17 @@ public class MainCharacter {
 
     public synchronized void fillDrawer(SimpleDrawer d, Vector2 origin){
         if(state == GameState.INPUT_A){
-            if(moveA.currentState == CollisionSt.STARTUP)
+            if(moveA.currentState == CollisionState.STARTUP)
                 for(CollisionObject o : moveA.startup)
                     d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, mainObject.baseX);
-            else if(moveA.currentState == CollisionSt.ACTIVE)
+            else if(moveA.currentState == CollisionState.ACTIVE)
                 for(CollisionObject o : moveA.active)
                     d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, mainObject.baseX);
-            else if(moveA.currentState == CollisionSt.RECOVERY)
+            else if(moveA.currentState == CollisionState.RECOVERY)
                 for(CollisionObject o : moveA.recovery)
                     d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, mainObject.baseX);
         } else
-            d.addSquare(collisionBox.bounds, MainCharacter.INPUT_B_COLOR, origin, mainObject.baseX);
+            d.addSquare(idleCollisionBox.bounds, MainCharacter.INPUT_A_COLOR, origin, mainObject.baseX);
     }
 
     /**
@@ -169,8 +168,7 @@ public class MainCharacter {
             }
 
             mainObject.update(others, timeDifference);
-            collisionBox.update(others, timeDifference);
-
+            idleCollisionBox.updatePosition();
         }
     }
 }
