@@ -49,11 +49,11 @@ public class FightingGameFlow extends GameFlow {
 
     private void setupSampleEnemy(){
         AttackData sample = new AttackData(0.33f,0.1f,0.45f);
-        CollisionObject[] startupA = new CollisionObject[]{sampleEnemy.idleCollisionBox};
+        CollisionObject[] startupA = new CollisionObject[]{sampleEnemy.idleCollisionBoxes[0]};
         CollisionObject[] activeA = new CollisionObject[2];
-        activeA[0] = sampleEnemy.idleCollisionBox;
-        activeA[1] = new CollisionObject(new Vector2(15,25),0,10,5,sampleEnemy);
-        CollisionObject[] recoveryA = new CollisionObject[]{sampleEnemy.idleCollisionBox};
+        activeA[0] = sampleEnemy.idleCollisionBoxes[0];
+        activeA[1] = new CollisionObject(new Vector2(15,25),0,10,5,sampleEnemy, CollisionObject.TYPE_ATTACK);
+        CollisionObject[] recoveryA = new CollisionObject[]{sampleEnemy.idleCollisionBoxes[0]};
         sample.setStartupBoxes(startupA);
         sample.setActiveBoxes(activeA);
         sample.setRecoveryBoxes(recoveryA);

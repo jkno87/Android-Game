@@ -29,7 +29,7 @@ public class MainCharacter {
     private final TimeCounter MOVE_B_COUNTER = new TimeCounter(0.64f);
     public final GameObject mainObject;
     public final AttackData moveA;
-    public final CollisionObject idleCollisionBox;
+    public final CollisionObject[] idleCollisionBoxes;
     private final GameButton inputLeft;
     private final GameButton inputRight;
     public GameState state;
@@ -41,7 +41,8 @@ public class MainCharacter {
         mainObject = new GameObject(position,id);
         mainObject.baseX.set(-1, 0);
         moveA = new AttackData(0.2f,0.15f,0.26f);
-        idleCollisionBox = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, CHARACTER_LENGTH, CHARACTER_HEIGHT, mainObject);
+        idleCollisionBoxes = new CollisionObject[]{new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
+                CHARACTER_LENGTH, CHARACTER_HEIGHT, mainObject, CollisionObject.TYPE_HITTABLE)};
         initializeCollisionBoxes();
         this.inputLeft = inputLeft;
         this.inputRight = inputRight;
@@ -94,30 +95,32 @@ public class MainCharacter {
 
     private void initializeCollisionBoxes(){
         CollisionObject [] startupA = new CollisionObject[1];
-        startupA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
+        startupA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A,
+                HEIGHT_MOVE_A, mainObject, CollisionObject.TYPE_HITTABLE);
         CollisionObject [] activeA = new CollisionObject[2];
-        activeA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
-        activeA[1] = new CollisionObject(new Vector2(CHARACTER_OFFSET).add(LENGTH_MOVE_A, HEIGHT_MOVE_A), id, 15, 10, mainObject);
+        activeA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
+                LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject, CollisionObject.TYPE_HITTABLE);
+        activeA[1] = new CollisionObject(new Vector2(CHARACTER_OFFSET).add(LENGTH_MOVE_A, HEIGHT_MOVE_A),
+                id, 15, 10, mainObject, CollisionObject.TYPE_ATTACK);
         CollisionObject [] recoveryA = new CollisionObject[1];
-        recoveryA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject);
+        recoveryA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
+                LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject, CollisionObject.TYPE_HITTABLE);
         moveA.setStartupBoxes(startupA);
         moveA.setActiveBoxes(activeA);
         moveA.setRecoveryBoxes(recoveryA);
     }
 
-    public synchronized void fillDrawer(SimpleDrawer d, Vector2 origin){
+    public synchronized CollisionObject[] getActiveCollisionBoxes(){
         if(state == GameState.INPUT_A){
             if(moveA.currentState == CollisionState.STARTUP)
-                for(CollisionObject o : moveA.startup)
-                    d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, mainObject.baseX);
+                return moveA.startup;
             else if(moveA.currentState == CollisionState.ACTIVE)
-                for(CollisionObject o : moveA.active)
-                    d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, mainObject.baseX);
+                return moveA.active;
             else if(moveA.currentState == CollisionState.RECOVERY)
-                for(CollisionObject o : moveA.recovery)
-                    d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, mainObject.baseX);
-        } else
-            d.addSquare(idleCollisionBox.bounds, MainCharacter.INPUT_A_COLOR, origin, mainObject.baseX);
+                return moveA.recovery;
+        }
+
+        return idleCollisionBoxes;
     }
 
     /**
@@ -168,7 +171,8 @@ public class MainCharacter {
             }
 
             mainObject.update(others, timeDifference);
-            idleCollisionBox.updatePosition();
+            //Esto esta horripilante, esto se va al diablo con cualquier cambio
+            idleCollisionBoxes[0].updatePosition();
         }
     }
 }

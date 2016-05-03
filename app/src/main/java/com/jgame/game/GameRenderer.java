@@ -9,6 +9,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import com.jgame.definitions.GameIds;
 import com.jgame.definitions.GameLevels;
+import com.jgame.elements.CollisionObject;
 import com.jgame.elements.GameElement;
 import com.jgame.elements.MainCharacter;
 import com.jgame.elements.MovingOrganism;
@@ -19,6 +20,7 @@ import com.jgame.util.Drawer;
 import com.jgame.util.GameButton;
 import com.jgame.util.GameText;
 import com.jgame.util.SimpleDrawer;
+import com.jgame.util.SimpleDrawer.ColorData;
 import com.jgame.util.TextureData;
 import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.Square;
@@ -39,6 +41,8 @@ public class GameRenderer implements Renderer {
     //private final float FRUSTUM_WIDTH = 320f;
     private final float FRAME_INTERVAL = 0.015384615f;
     private final float NANO_SCALE = 1000000000.0f;
+    public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
+    public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     /*private final float OBJECTIVES_X_DRAW = FRUSTUM_WIDTH - 65;
     private final float OBJECTIVES_AMOUNT_X = FRUSTUM_WIDTH - 35;
     private final float OBJECTIVES_Y_DRAW = FRUSTUM_HEIGHT - 15;
@@ -189,8 +193,17 @@ public class GameRenderer implements Renderer {
         for(int i = 0; i < flow.gameButtons.length; i++)
             basicDrawer.addSquare(flow.gameButtons[i].bounds, flow.gameButtons[i].getCurrentColor(), currentOrigin);
 
-        flow.mainCharacter.fillDrawer(basicDrawer, currentOrigin);
-        flow.sampleEnemy.fillDrawer(basicDrawer, currentOrigin);
+        for(CollisionObject o : flow.mainCharacter.getActiveCollisionBoxes())
+            if(o.type == CollisionObject.TYPE_ATTACK)
+                basicDrawer.addSquare(o.bounds, ATTACK_COLOR, currentOrigin, flow.mainCharacter.mainObject.baseX);
+            else
+                basicDrawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin, flow.mainCharacter.mainObject.baseX);
+
+        for(CollisionObject o : flow.sampleEnemy.getActiveCollisionBoxes())
+            if(o.type == CollisionObject.TYPE_ATTACK)
+                basicDrawer.addSquare(o.bounds, ATTACK_COLOR, currentOrigin, flow.sampleEnemy.baseX);
+            else
+                basicDrawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin, flow.sampleEnemy.baseX);
 
         basicDrawer.draw(gl10);
 
@@ -251,125 +264,6 @@ public class GameRenderer implements Renderer {
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-
-        /*basicDrawer.reset();
-        basicDrawer.addColoredRectangle(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 40, FRUSTUM_WIDTH / 2, 40,menuBase);
-        basicDrawer.draw(gl10);
-
-        synchronized (gameFlow.levelElements) {
-            if (!gameFlow.levelElements.isEmpty()) {
-                gl10.glLoadIdentity();
-                gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-                Drawer bannerDrawer = new Drawer(false, true);
-                float[] drawArray = new float[4];
-                for (GameElement e : gameFlow.levelElements) {
-                    e.getBounds().fillDrawRect(drawArray);
-                    bannerDrawer.addColoredRectangle(drawArray[0], drawArray[1],
-                            drawArray[2], drawArray[3], getOrganismColor(e.getId(), 1));
-                }
-
-                bannerDrawer.draw(gl10);
-            }
-        }*/
-/*
-        gl10.glLoadIdentity();
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-        basicDrawer.reset();
-        //Mutabilidad T_T
-        gameFlow.setCurrentOrigin(currentOrigin);
-
-        synchronized (gameFlow.elementsLock) {
-            for (GameElement e : gameFlow.elementsInSight)
-                e.getBounds().fillSimpleDrawer(basicDrawer, menuBase, currentOrigin);
-        }
-
-        gameFlow.player.getBounds().fillSimpleDrawer(basicDrawer, Player.REGULAR_COLOR, currentOrigin);
-        if(gameFlow.player.state == Player.PlayerState.INPUT_SELECTION) {
-            gameFlow.player.getBounds().fillSimpleDrawer(basicDrawer, Player.SELECTED_COLOR, currentOrigin);
-            float currentX = gameFlow.player.inputArea.position.x - currentOrigin.x;
-            float currentY = gameFlow.player.inputArea.position.y - currentOrigin.y;
-            float len = gameFlow.player.inputArea.lenX;
-            basicDrawer.addColoredRectangle(currentX, currentY, len,len, Player.INPUT_COLOR);
-        }
-
-        basicDrawer.draw(gl10);
-
-        /*Drawer infoDrawer = new Drawer(false, true);
-        infoDrawer.addColoredRectangle(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT - 40, FRUSTUM_WIDTH / 2, 40, new float[]{0, 0.75f, 0.5f, 1});
-        infoDrawer.addColoredRectangle(gameFlow.inputBasic.position, gameFlow.inputBasic.radius, gameFlow.inputBasic.radius, new float[]{1, 0, 0, 1});
-        infoDrawer.addColoredRectangle(gameFlow.inputSecondary.position, gameFlow.inputSecondary.radius, gameFlow.inputSecondary.radius, new float[]{1, 0, 1, 1});
-        if(lastUpdatedBait != MainGameFlow.BaitSelected.NONE)
-            infoDrawer.addColoredRectangle(gameFlow.dragElement.position, gameFlow.dragElement.lenX, gameFlow.dragElement.lenY,
-                    lastUpdatedBait == MainGameFlow.BaitSelected.PRIMARY ? new float[]{1,0,0,1} : new float[]{1,0,1,1});
-
-        infoDrawer.draw(gl10);
-        float objCurrentY = OBJECTIVES_Y_DRAW;
-
-        infoDrawer = new Drawer(false, true);
-
-        for(LevelInformation.LevelObjective o : gameFlow.levelObjectives) {
-            infoDrawer.addColoredRectangle(OBJECTIVES_X_DRAW, objCurrentY, OBJECTIVES_SIZE,
-                    OBJECTIVES_SIZE, getOrganismColor(o.id, 1));
-            drawDigits(OBJECTIVES_AMOUNT_X, objCurrentY, o.count);
-            objCurrentY -= OBJECTIVES_SIZE + 20;
-        }
-
-        gl10.glLoadIdentity();
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-        infoDrawer.draw(gl10);
-
-        drawDigits(TIMER_POSITION.x, TIMER_POSITION.y, gameFlow.getTimeRemaining());*/
-    }
-
-    private void drawGameFinished(MainGameFlow gameFlow){
-        /*gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
-        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-        gl10.glMatrixMode(GL10.GL_PROJECTION);
-        gl10.glLoadIdentity();
-        gl10.glOrthof(0, FRUSTUM_WIDTH, 0, FRUSTUM_HEIGHT, 1, -1);
-
-        gl10.glMatrixMode(GL10.GL_MODELVIEW);
-        gl10.glEnable(GL10.GL_BLEND);
-        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-
-        float currentY = FRUSTUM_HEIGHT - 50;
-        GameText endgameLabels = new GameText("time", ENDGAME_LABELS_X, currentY, 10);
-        drawDigits(ENDGAME_NUMBERS_X, currentY, gameFlow.getTimeRemaining());
-
-        gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
-        gl10.glLoadIdentity();
-
-        Drawer textDrawer = new Drawer(true, true);
-        //endgameLabels.addLetterTexture(textDrawer);
-        textDrawer.draw(gl10);
-
-        currentY -= 40;
-        textDrawer = new Drawer(false, true);
-
-        for(LevelInformation.LevelObjective o : gameFlow.levelObjectives) {
-            textDrawer.addColoredRectangle(ENDGAME_LABELS_X, currentY,
-                    OBJECTIVES_SIZE * 2, OBJECTIVES_SIZE * 2, new float[]{0, 1, 0, 1});
-            drawDigits(ENDGAME_NUMBERS_X, currentY, o.count);
-            currentY -= 40;
-        }
-
-        gl10.glLoadIdentity();
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-        textDrawer.draw(gl10);
-
-        currentY -= 40;
-
-        gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
-        gl10.glLoadIdentity();
-
-        textDrawer = new Drawer(true, true);
-        //new GameText(gameFlow.stageCleared ? "win" : "lose", ENDGAME_LABELS_X, currentY, 15).addLetterTexture(textDrawer);
-
-        textDrawer.draw(gl10);*/
-
     }
 
     @Override
