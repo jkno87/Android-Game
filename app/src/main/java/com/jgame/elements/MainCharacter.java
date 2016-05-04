@@ -140,7 +140,8 @@ public class MainCharacter {
         this.state = state;
     }
 
-    public void update(List<GameElement> others, float timeDifference) {
+
+    public void update(List<GameObject> others, float timeDifference) {
         synchronized (this) {
             if (state == GameState.IDLE)
                 return;

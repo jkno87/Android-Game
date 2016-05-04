@@ -45,7 +45,7 @@ public class GameObject {
         updatePosition();
     }
 
-    public void update(List<GameElement> others, float timeDifference){
+    public void update(List<? extends GameObject> others, float timeDifference){
         updatePosition();
     }
 

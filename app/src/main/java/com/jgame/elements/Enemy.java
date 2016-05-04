@@ -54,7 +54,7 @@ public class Enemy extends GameObject {
     }
 
     @Override
-    public void update(List<GameElement> objects, float timeDifference){
+    public void update(List<? extends GameObject> objects, float timeDifference){
         if(currentState == State.IDLE) {
             idleTimer.accum(timeDifference);
             if (idleTimer.completed()) {
@@ -69,6 +69,13 @@ public class Enemy extends GameObject {
             if(activeAttack.completed()){
                 currentState = State.IDLE;
                 idleTimer.reset();
+            }
+        }
+
+        for(GameObject o : objects){
+            if(o instanceof Enemy && o.id != id){
+                for(CollisionObject co : getActiveCollisionBoxes())
+                    co.checkCollision((Enemy)o);
             }
         }
     }

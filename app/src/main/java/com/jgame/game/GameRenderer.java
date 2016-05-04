@@ -10,7 +10,9 @@ import javax.microedition.khronos.opengles.GL10;
 import com.jgame.definitions.GameIds;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.CollisionObject;
+import com.jgame.elements.Enemy;
 import com.jgame.elements.GameElement;
+import com.jgame.elements.GameObject;
 import com.jgame.elements.MainCharacter;
 import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.Organism;
@@ -43,6 +45,7 @@ public class GameRenderer implements Renderer {
     private final float NANO_SCALE = 1000000000.0f;
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
+    public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
     /*private final float OBJECTIVES_X_DRAW = FRUSTUM_WIDTH - 65;
     private final float OBJECTIVES_AMOUNT_X = FRUSTUM_WIDTH - 35;
     private final float OBJECTIVES_Y_DRAW = FRUSTUM_HEIGHT - 15;
@@ -174,6 +177,23 @@ public class GameRenderer implements Renderer {
             drawGameFinished(gameFlow);*/
     }
 
+    /**
+     * Se encarga de agregar la informacion de las collisionBoxes a SimpleDrawer
+     * @param e
+     * @param drawer
+     * @param currentOrigin
+     */
+    private void renderEnemy(Enemy e, SimpleDrawer drawer, Vector2 currentOrigin){
+        for(CollisionObject o : e.getActiveCollisionBoxes())
+            if(o.type == CollisionObject.TYPE_ATTACK)
+                drawer.addSquare(o.bounds, ATTACK_COLOR, currentOrigin, e.baseX);
+            else if(o.type == CollisionObject.TYPE_SMASHED)
+                drawer.addSquare(o.bounds, SMASHED_COLOR, currentOrigin, e.baseX);
+            else
+                drawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin, e.baseX);
+    }
+
+
     private void drawFightingGameFlow(FightingGameFlow flow){
         gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
@@ -199,11 +219,8 @@ public class GameRenderer implements Renderer {
             else
                 basicDrawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin, flow.mainCharacter.mainObject.baseX);
 
-        for(CollisionObject o : flow.sampleEnemy.getActiveCollisionBoxes())
-            if(o.type == CollisionObject.TYPE_ATTACK)
-                basicDrawer.addSquare(o.bounds, ATTACK_COLOR, currentOrigin, flow.sampleEnemy.baseX);
-            else
-                basicDrawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin, flow.sampleEnemy.baseX);
+        for(GameObject o : flow.worldObjects)
+            renderEnemy((Enemy) o, basicDrawer, currentOrigin);
 
         basicDrawer.draw(gl10);
 
