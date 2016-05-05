@@ -1,7 +1,5 @@
 package com.jgame.elements;
 
-import android.util.Log;
-
 import com.jgame.util.Vector2;
 import java.util.List;
 
@@ -14,8 +12,8 @@ public class GameObject {
     public int id;
     private GameObject parent;
     final Vector2 relativePosition;
-    public Vector2 baseX;
-    public Vector2 baseB;
+    public final Vector2 baseX;
+    public final Vector2 baseB;
     public final Vector2 position;
 
     public GameObject(Vector2 position, int id){

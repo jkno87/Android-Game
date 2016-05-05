@@ -1,7 +1,6 @@
 package com.jgame.elements;
 
 import com.jgame.elements.GameButton.ButtonListener;
-import com.jgame.util.SimpleDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import java.util.List;
@@ -10,15 +9,14 @@ import com.jgame.elements.AttackData.CollisionState;
 /**
  * Created by jose on 14/01/16.
  */
-public class MainCharacter {
+public class MainCharacter extends Character {
 
     public enum GameState {
         IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B
     }
 
-    public static final SimpleDrawer.ColorData INPUT_A_COLOR = new SimpleDrawer.ColorData(0.65f,0.75f,0.85f,1);
-    public final int CHARACTER_LENGTH = 40;
-    public final int CHARACTER_HEIGHT = 80;
+    public static final int CHARACTER_LENGTH = 40;
+    public static final int CHARACTER_HEIGHT = 80;
     private final Vector2 CHARACTER_OFFSET = new Vector2(-CHARACTER_LENGTH/2,0);
     private final float MOVING_SPEED = 0.75f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
@@ -27,7 +25,6 @@ public class MainCharacter {
     public final int HEIGHT_MOVE_A = 85;
     private int id;
     private final TimeCounter MOVE_B_COUNTER = new TimeCounter(0.64f);
-    public final GameObject mainObject;
     public final AttackData moveA;
     public final CollisionObject[] idleCollisionBoxes;
     private final GameButton inputLeft;
@@ -36,13 +33,13 @@ public class MainCharacter {
 
     public MainCharacter(int id, Vector2 position, final GameButton inputLeft, final GameButton inputRight,
                          final GameButton inputA, final GameButton inputB){
+        super(CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id, 0);
         this.state = GameState.IDLE;
         this.id = id;
-        mainObject = new GameObject(position,id);
-        mainObject.baseX.set(-1, 0);
+        //baseX.set(-1, 0);
         moveA = new AttackData(0.2f,0.15f,0.26f);
         idleCollisionBoxes = new CollisionObject[]{new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
-                CHARACTER_LENGTH, CHARACTER_HEIGHT, mainObject, CollisionObject.TYPE_HITTABLE)};
+                CHARACTER_LENGTH, CHARACTER_HEIGHT, this, CollisionObject.TYPE_HITTABLE)};
         initializeCollisionBoxes();
         this.inputLeft = inputLeft;
         this.inputRight = inputRight;
@@ -96,20 +93,21 @@ public class MainCharacter {
     private void initializeCollisionBoxes(){
         CollisionObject [] startupA = new CollisionObject[1];
         startupA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A,
-                HEIGHT_MOVE_A, mainObject, CollisionObject.TYPE_HITTABLE);
+                HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
         CollisionObject [] activeA = new CollisionObject[2];
         activeA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
-                LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject, CollisionObject.TYPE_HITTABLE);
+                LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
         activeA[1] = new CollisionObject(new Vector2(CHARACTER_OFFSET).add(LENGTH_MOVE_A, HEIGHT_MOVE_A),
-                id, 15, 10, mainObject, CollisionObject.TYPE_ATTACK);
+                id, 15, 10, this, CollisionObject.TYPE_ATTACK);
         CollisionObject [] recoveryA = new CollisionObject[1];
         recoveryA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
-                LENGTH_MOVE_A, HEIGHT_MOVE_A, mainObject, CollisionObject.TYPE_HITTABLE);
+                LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
         moveA.setStartupBoxes(startupA);
         moveA.setActiveBoxes(activeA);
         moveA.setRecoveryBoxes(recoveryA);
     }
 
+    @Override
     public synchronized CollisionObject[] getActiveCollisionBoxes(){
         if(state == GameState.INPUT_A){
             if(moveA.currentState == CollisionState.STARTUP)
@@ -140,16 +138,22 @@ public class MainCharacter {
         this.state = state;
     }
 
-
-    public void update(List<GameObject> others, float timeDifference) {
+    @Override
+    public void update(List<? extends GameObject> others, float timeDifference) {
         synchronized (this) {
             if (state == GameState.IDLE)
                 return;
-            if (state == GameState.MOVING_FORWARD)
-                mainObject.move(RIGHT_MOVE_SPEED);
-            if (state == GameState.MOVING_BACKWARDS)
-                mainObject.move(LEFT_MOVE_SPEED);
-            if(state == GameState.INPUT_A){
+            if (state == GameState.MOVING_FORWARD) {
+                move(RIGHT_MOVE_SPEED);
+                updatePosition();
+                //Esto esta horripilante, esto se va al diablo con cualquier cambio
+                idleCollisionBoxes[0].updatePosition();
+            } if (state == GameState.MOVING_BACKWARDS) {
+                move(LEFT_MOVE_SPEED);
+                updatePosition();
+                //Esto esta horripilante, esto se va al diablo con cualquier cambio
+                idleCollisionBoxes[0].updatePosition();
+            } if(state == GameState.INPUT_A){
                 moveA.update(timeDifference);
                 if(moveA.completed()){
                     this.state = GameState.IDLE;
@@ -171,9 +175,13 @@ public class MainCharacter {
                 }
             }
 
-            mainObject.update(others, timeDifference);
-            //Esto esta horripilante, esto se va al diablo con cualquier cambio
-            idleCollisionBoxes[0].updatePosition();
+            for(GameObject o : others){
+                if(o instanceof Character && o.id != id){
+                    for(CollisionObject co : getActiveCollisionBoxes())
+                        co.checkCollision((Character)o);
+                }
+            }
+
         }
     }
 }

@@ -1,31 +1,17 @@
 package com.jgame.game;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.jgame.definitions.GameIds;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.CollisionObject;
-import com.jgame.elements.Enemy;
-import com.jgame.elements.GameElement;
+import com.jgame.elements.Character;
 import com.jgame.elements.GameObject;
-import com.jgame.elements.MainCharacter;
-import com.jgame.elements.MovingOrganism;
-import com.jgame.elements.Organism;
 import com.jgame.elements.Player;
-import com.jgame.elements.Trap;
-import com.jgame.util.Drawer;
-import com.jgame.util.GameButton;
-import com.jgame.util.GameText;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.SimpleDrawer.ColorData;
 import com.jgame.util.TextureData;
 import com.jgame.game.MainGameFlow.GameState;
-import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
@@ -34,7 +20,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
 
 public class GameRenderer implements Renderer {
 
@@ -183,14 +168,14 @@ public class GameRenderer implements Renderer {
      * @param drawer
      * @param currentOrigin
      */
-    private void renderEnemy(Enemy e, SimpleDrawer drawer, Vector2 currentOrigin){
-        for(CollisionObject o : e.getActiveCollisionBoxes())
+    private void renderEnemy(Character c, SimpleDrawer drawer, Vector2 currentOrigin){
+        for(CollisionObject o : c.getActiveCollisionBoxes())
             if(o.type == CollisionObject.TYPE_ATTACK)
-                drawer.addSquare(o.bounds, ATTACK_COLOR, currentOrigin, e.baseX);
+                drawer.addSquare(o.bounds, ATTACK_COLOR, currentOrigin, c.baseX);
             else if(o.type == CollisionObject.TYPE_SMASHED)
-                drawer.addSquare(o.bounds, SMASHED_COLOR, currentOrigin, e.baseX);
+                drawer.addSquare(o.bounds, SMASHED_COLOR, currentOrigin, c.baseX);
             else
-                drawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin, e.baseX);
+                drawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin, c.baseX);
     }
 
 
@@ -213,14 +198,8 @@ public class GameRenderer implements Renderer {
         for(int i = 0; i < flow.gameButtons.length; i++)
             basicDrawer.addSquare(flow.gameButtons[i].bounds, flow.gameButtons[i].getCurrentColor(), currentOrigin);
 
-        for(CollisionObject o : flow.mainCharacter.getActiveCollisionBoxes())
-            if(o.type == CollisionObject.TYPE_ATTACK)
-                basicDrawer.addSquare(o.bounds, ATTACK_COLOR, currentOrigin, flow.mainCharacter.mainObject.baseX);
-            else
-                basicDrawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin, flow.mainCharacter.mainObject.baseX);
-
         for(GameObject o : flow.worldObjects)
-            renderEnemy((Enemy) o, basicDrawer, currentOrigin);
+            renderEnemy((Character) o, basicDrawer, currentOrigin);
 
         basicDrawer.draw(gl10);
 

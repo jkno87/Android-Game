@@ -58,7 +58,7 @@ public class AttackData {
         return currentState == CollisionState.FINISHED;
     }
 
-    public synchronized void fillDrawer(SimpleDrawer d, Vector2 origin, Vector2 baseX){
+    /*public synchronized void fillDrawer(SimpleDrawer d, Vector2 origin, Vector2 baseX){
         if(currentState == CollisionState.STARTUP)
             for(CollisionObject o : startup)
                 d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, baseX);
@@ -68,7 +68,7 @@ public class AttackData {
         else if(currentState == CollisionState.RECOVERY)
             for(CollisionObject o : recovery)
                 d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, baseX);
-    }
+    }*/
 
     public void update(float timeDifference){
         if(currentState == CollisionState.STARTUP){

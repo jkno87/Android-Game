@@ -2,7 +2,6 @@ package com.jgame.elements;
 
 import com.jgame.util.Square;
 import com.jgame.util.Vector2;
-import java.util.List;
 
 /**
  * Objeto que interactua con otros CollisionObject para desatar eventos en el juego.
@@ -27,7 +26,7 @@ public class CollisionObject extends GameObject {
      * Checa si el otro enemigo colisiona con el objeto en caso de que sea del tipo TYPE_ATTACK
      * @param other
      */
-    public void checkCollision(Enemy other){
+    public void checkCollision(Character other){
         if(type != TYPE_ATTACK)
             return;
 

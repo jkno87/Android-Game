@@ -3,9 +3,8 @@ package com.jgame.game;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.AttackData;
 import com.jgame.elements.CollisionObject;
-import com.jgame.elements.Enemy;
+import com.jgame.elements.Character;
 import com.jgame.elements.GameButton;
-import com.jgame.elements.GameObject;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.IdGenerator;
 import com.jgame.util.Square;
@@ -37,7 +36,7 @@ public class FightingGameFlow extends GameFlow {
     public final GameButton[] gameButtons;
     private int mainButtonPressed;
     public final MainCharacter mainCharacter;
-    public final List<Enemy> worldObjects;
+    public final List<Character> worldObjects;
 
 
     public FightingGameFlow(){
@@ -50,12 +49,13 @@ public class FightingGameFlow extends GameFlow {
         gameButtons[INPUT_B] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
         mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(15,ELEMENTS_HEIGHT), gameButtons[INPUT_LEFT],
                 gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B]);
-        worldObjects = new ArrayList<Enemy>(MAX_WORLD_OBJECTS);
+        worldObjects = new ArrayList<Character>(MAX_WORLD_OBJECTS);
+        worldObjects.add(mainCharacter);
         setupSampleEnemy();
     }
 
     private void setupSampleEnemy(){
-        Enemy sampleEnemy = new Enemy(30,100,new Vector2(150,ELEMENTS_HEIGHT),ID_GEN.getId(),mainCharacter, 1);
+        Character sampleEnemy = new Character(30,100,new Vector2(150,ELEMENTS_HEIGHT),ID_GEN.getId(),mainCharacter, 1);
         AttackData sample = new AttackData(0.33f,0.1f,0.45f);
         CollisionObject[] startupA = new CollisionObject[]{sampleEnemy.idleCollisionBoxes[0]};
         CollisionObject[] activeA = new CollisionObject[2];
@@ -67,7 +67,7 @@ public class FightingGameFlow extends GameFlow {
         sample.setRecoveryBoxes(recoveryA);
         sampleEnemy.attacks[0] = sample;
 
-        Enemy sampleEnemy2 = new Enemy(30,100,new Vector2(185,ELEMENTS_HEIGHT),ID_GEN.getId(),mainCharacter, 1);
+        Character sampleEnemy2 = new Character(30,100,new Vector2(185,ELEMENTS_HEIGHT),ID_GEN.getId(),mainCharacter, 1);
         AttackData sample2 = new AttackData(0.33f,0.1f,0.45f);
         CollisionObject[] startupA2 = new CollisionObject[]{sampleEnemy2.idleCollisionBoxes[0]};
         CollisionObject[] activeA2 = new CollisionObject[2];
@@ -131,8 +131,8 @@ public class FightingGameFlow extends GameFlow {
 
     @Override
     public void update(float interval) {
-        mainCharacter.update(null, interval);
-        for(Enemy e : worldObjects)
+        //mainCharacter.update(null, interval);
+        for(Character e : worldObjects)
             e.update(worldObjects, interval);
     }
 
