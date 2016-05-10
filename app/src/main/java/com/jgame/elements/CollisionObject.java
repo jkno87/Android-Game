@@ -23,6 +23,17 @@ public class CollisionObject extends GameObject {
     }
 
     /**
+     * Se agrega esta funcion para que en caso de tener una base X negativa, ajustar la posicion en la que se dibuja.
+     */
+    public void updatePosition(){
+        super.updatePosition();
+        //Se supone que este tipo de objeto necesita un parent. Esta parte no me gusta nada
+        //Esto funciona asumiendo que solo cambiara este vector base
+        if(parent.baseX.x < 0)
+            position.sub(bounds.lenX, 0);
+    }
+
+    /**
      * Checa si el otro enemigo colisiona con el objeto en caso de que sea del tipo TYPE_ATTACK
      * @param other
      */

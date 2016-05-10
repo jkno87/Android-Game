@@ -171,11 +171,11 @@ public class GameRenderer implements Renderer {
     private void renderEnemy(Character c, SimpleDrawer drawer, Vector2 currentOrigin){
         for(CollisionObject o : c.getActiveCollisionBoxes())
             if(o.type == CollisionObject.TYPE_ATTACK)
-                drawer.addSquare(o.bounds, ATTACK_COLOR, currentOrigin, c.baseX);
+                drawer.addSquare(o.bounds, ATTACK_COLOR, currentOrigin);
             else if(o.type == CollisionObject.TYPE_SMASHED)
-                drawer.addSquare(o.bounds, SMASHED_COLOR, currentOrigin, c.baseX);
+                drawer.addSquare(o.bounds, SMASHED_COLOR, currentOrigin);
             else
-                drawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin, c.baseX);
+                drawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin);
     }
 
 

@@ -10,7 +10,7 @@ import java.util.List;
 public class GameObject {
 
     public int id;
-    private GameObject parent;
+    protected GameObject parent;
     final Vector2 relativePosition;
     public final Vector2 baseX;
     public final Vector2 baseB;

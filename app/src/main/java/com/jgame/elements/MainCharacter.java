@@ -36,7 +36,7 @@ public class MainCharacter extends Character {
         super(CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id, 0);
         this.state = GameState.IDLE;
         this.id = id;
-        //baseX.set(-1, 0);
+        baseX.set(-1, 0);
         moveA = new AttackData(0.2f,0.15f,0.26f);
         idleCollisionBoxes = new CollisionObject[]{new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
                 CHARACTER_LENGTH, CHARACTER_HEIGHT, this, CollisionObject.TYPE_HITTABLE)};
