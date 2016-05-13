@@ -31,6 +31,7 @@ public class GameRenderer implements Renderer {
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
+    private final TextureDrawer.TextureData TEXTURE = new TextureDrawer.TextureData(0,0,1,0.5f);
     /*private final float OBJECTIVES_X_DRAW = FRUSTUM_WIDTH - 65;
     private final float OBJECTIVES_AMOUNT_X = FRUSTUM_WIDTH - 35;
     private final float OBJECTIVES_Y_DRAW = FRUSTUM_HEIGHT - 15;
@@ -56,6 +57,7 @@ public class GameRenderer implements Renderer {
     int personaje2Id;
     int personajesId;
     int alfabetoId;
+    private TextureDrawer mainTextureDrawer;
     private TextureDrawer levelSelectDrawer;
     private TextureDrawer pauseTextureDrawer;
     private SimpleDrawer basicDrawer;
@@ -69,6 +71,7 @@ public class GameRenderer implements Renderer {
         this.gameActivity = gameActivity;
         levelSelectDrawer = new TextureDrawer(false);
         pauseTextureDrawer = new TextureDrawer(false);
+        mainTextureDrawer = new TextureDrawer(false);
         basicDrawer = new SimpleDrawer(true);
         pauseOverlay = new SimpleDrawer.ColorData(0,0,0,0.5f);
         menuBase = new SimpleDrawer.ColorData(0,0.75f,0.5f,1);
@@ -164,7 +167,7 @@ public class GameRenderer implements Renderer {
 
     /**
      * Se encarga de agregar la informacion de las collisionBoxes a SimpleDrawer
-     * @param e
+     * @param c
      * @param drawer
      * @param currentOrigin
      */
@@ -176,6 +179,16 @@ public class GameRenderer implements Renderer {
                 drawer.addSquare(o.bounds, SMASHED_COLOR, currentOrigin);
             else
                 drawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin);
+    }
+
+    /**
+     * Asigna el sprite que se debe de dibujar para Character c. Requiere que al menos uno de los
+     * activeCollisionBoxes sea del tipo TYPE_SPRITE_CONTAINER
+     * @param c Character que se va a dibujar
+     * @param drawer TextureDrawer al que se le agregara la informacion del personaje.
+     */
+    private void renderCharacter(Character c, TextureDrawer drawer){
+        drawer.addTexturedSquare(c.spriteContainer, TEXTURE);
     }
 
 
@@ -191,6 +204,7 @@ public class GameRenderer implements Renderer {
         gl10.glEnable(GL10.GL_BLEND);
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
 
         basicDrawer.reset();
@@ -200,8 +214,13 @@ public class GameRenderer implements Renderer {
 
         for(GameObject o : flow.worldObjects)
             renderEnemy((Character) o, basicDrawer, currentOrigin);
-
         basicDrawer.draw(gl10);
+
+        mainTextureDrawer.reset();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
+        for(GameObject o : flow.worldObjects)
+            renderCharacter((Character)o, mainTextureDrawer);
+        mainTextureDrawer.draw(gl10);
 
     }
 
