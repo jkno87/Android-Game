@@ -20,18 +20,25 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
 
 public class GameRenderer implements Renderer {
 
-    private final boolean RENDER_BOXES = true;
-    private final TextureDrawer.TextureData MAIN_CHARACTER_TEXTURE = new TextureDrawer.TextureData(0,0,0.03125f,0.0625f);
     private static final int NO_TEXTURE = 0;
+    //private final float FRUSTUM_HEIGHT = 480f;
+    //private final float FRUSTUM_WIDTH = 320f;
     private final float FRAME_INTERVAL = 0.015384615f;
     private final float NANO_SCALE = 1000000000.0f;
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
-    public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.25f);
+    public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
+    private final TextureDrawer.TextureData TEXTURE = new TextureDrawer.TextureData(0,0,1,0.5f);
+    /*private final float OBJECTIVES_X_DRAW = FRUSTUM_WIDTH - 65;
+    private final float OBJECTIVES_AMOUNT_X = FRUSTUM_WIDTH - 35;
+    private final float OBJECTIVES_Y_DRAW = FRUSTUM_HEIGHT - 15;
+    private final float OBJECTIVES_SIZE = 10f;
+    private final float ENDGAME_LABELS_X = FRUSTUM_WIDTH / 2 - 35;
+    private final float ENDGAME_NUMBERS_X = FRUSTUM_WIDTH / 2 + 20;
+    private final Vector2 TIMER_POSITION = new Vector2(15, FRUSTUM_HEIGHT - 15);*/
     public static float[][] TEXTURE_DIGITS = TextureData.createTextureArray(0.0625f, 10);
     private GameSurfaceView surfaceView;
     private long lastUpdate;
@@ -50,10 +57,10 @@ public class GameRenderer implements Renderer {
     int personaje2Id;
     int personajesId;
     int alfabetoId;
+    private TextureDrawer mainTextureDrawer;
     private TextureDrawer levelSelectDrawer;
     private TextureDrawer pauseTextureDrawer;
     private SimpleDrawer basicDrawer;
-    private TextureDrawer mainTextureDrawer;
     SimpleDrawer.ColorData pauseOverlay;
     SimpleDrawer.ColorData menuBase;
     private Vector2 currentOrigin;
@@ -160,6 +167,7 @@ public class GameRenderer implements Renderer {
 
     /**
      * Se encarga de agregar la informacion de las collisionBoxes a SimpleDrawer
+     * @param c
      * @param drawer
      * @param currentOrigin
      */
@@ -173,9 +181,14 @@ public class GameRenderer implements Renderer {
                 drawer.addSquare(o.bounds, HITTABLE_COLOR, currentOrigin);
     }
 
-    private void renderEnemy(Character c, TextureDrawer drawer){
-        for(CollisionObject o : c.getActiveCollisionBoxes())
-            drawer.addTexturedSquare(o.bounds, MAIN_CHARACTER_TEXTURE);
+    /**
+     * Asigna el sprite que se debe de dibujar para Character c. Requiere que al menos uno de los
+     * activeCollisionBoxes sea del tipo TYPE_SPRITE_CONTAINER
+     * @param c Character que se va a dibujar
+     * @param drawer TextureDrawer al que se le agregara la informacion del personaje.
+     */
+    private void renderCharacter(Character c, TextureDrawer drawer){
+        drawer.addTexturedSquare(c.spriteContainer, TEXTURE);
     }
 
 
@@ -191,35 +204,23 @@ public class GameRenderer implements Renderer {
         gl10.glEnable(GL10.GL_BLEND);
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, mothershipId);
-        mainTextureDrawer.reset();
-        // Create Nearest Filtered Texture
-        gl10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
-                GL10.GL_LINEAR);
-        gl10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER,
-                GL10.GL_LINEAR);
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
 
-        // Different possible texture parameters, e.g. GL10.GL_CLAMP_TO_EDGE
-        gl10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
-                GL10.GL_CLAMP_TO_EDGE);
-        gl10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
-                GL10.GL_REPEAT);
-
+        basicDrawer.reset();
+        basicDrawer.addSquare(flow.gameFloor, Player.REGULAR_COLOR, currentOrigin);
+        for(int i = 0; i < flow.gameButtons.length; i++)
+            basicDrawer.addSquare(flow.gameButtons[i].bounds, flow.gameButtons[i].getCurrentColor(), currentOrigin);
 
         for(GameObject o : flow.worldObjects)
-            renderEnemy((Character)o, mainTextureDrawer);
-        mainTextureDrawer.draw(gl10);
+            renderEnemy((Character) o, basicDrawer, currentOrigin);
+        basicDrawer.draw(gl10);
 
-        if(RENDER_BOXES) {
-            gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
-            basicDrawer.reset();
-            basicDrawer.addSquare(flow.gameFloor, Player.REGULAR_COLOR, currentOrigin);
-            for (int i = 0; i < flow.gameButtons.length; i++)
-                basicDrawer.addSquare(flow.gameButtons[i].bounds, flow.gameButtons[i].getCurrentColor(), currentOrigin);
-            //for (GameObject o : flow.worldObjects)
-            //    renderEnemy((Character) o, basicDrawer, currentOrigin);
-            basicDrawer.draw(gl10);
-        }
+        mainTextureDrawer.reset();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
+        for(GameObject o : flow.worldObjects)
+            renderCharacter((Character)o, mainTextureDrawer);
+        mainTextureDrawer.draw(gl10);
 
     }
 
@@ -293,7 +294,7 @@ public class GameRenderer implements Renderer {
         proyectileId = loadTexture(R.raw.proyectil);
         alfabetoId = loadTexture(R.raw.alfabeto);
         enemyId = loadTexture(R.raw.enemigos);
-        mainCharId = loadTexture(R.raw.atlas);
+        mainCharId = loadTexture(R.raw.personaje);
         shipId = loadTexture(R.raw.nave);
         decorationId = loadTexture(R.raw.bullseye);
         gameOverId = loadTexture(R.raw.gover);

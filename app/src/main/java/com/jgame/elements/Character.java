@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.util.Square;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import java.util.List;
@@ -20,16 +21,19 @@ public class Character extends GameObject {
     public final AttackData[] attacks;
     public TimeCounter idleTimer;
     public State currentState;
+    public final Square spriteContainer;
 
     public Character(float sizeX, float sizeY, Vector2 position, int id, int moves) {
         super(position, id);
         positionOffset = new Vector2(-sizeX/2,0);
+        spriteContainer = new Square(new Vector2(), sizeX, sizeY, 0);
         idleCollisionBoxes = new CollisionObject[]{
                 new CollisionObject(new Vector2(positionOffset), id, sizeX, sizeY, this, CollisionObject.TYPE_HITTABLE)
         };
         idleTimer = new TimeCounter(1.5f);
         currentState = State.IDLE;
         attacks = new AttackData[moves];
+        updatePosition();
     }
 
     /**
@@ -61,6 +65,15 @@ public class Character extends GameObject {
 
     public synchronized void changeDirection(){
         baseX.set(baseX.x * -1, 0);
+    }
+
+    /**
+     * Se agrega la funcionalidad de actualizar la posicion del spriteContainer
+     */
+    @Override
+    public void updatePosition(){
+        super.updatePosition();
+        spriteContainer.position.set(position).add(positionOffset);
     }
 
     @Override

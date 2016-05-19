@@ -26,7 +26,6 @@ public class MainCharacter extends Character {
     private int id;
     private final TimeCounter MOVE_B_COUNTER = new TimeCounter(0.64f);
     public final AttackData moveA;
-    public final CollisionObject[] idleCollisionBoxes;
     private final GameButton inputLeft;
     private final GameButton inputRight;
     public GameState state;
@@ -38,8 +37,6 @@ public class MainCharacter extends Character {
         this.id = id;
         baseX.set(-1, 0);
         moveA = new AttackData(0.2f,0.15f,0.26f);
-        idleCollisionBoxes = new CollisionObject[]{new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
-                CHARACTER_LENGTH, CHARACTER_HEIGHT, this, CollisionObject.TYPE_HITTABLE)};
         initializeCollisionBoxes();
         this.inputLeft = inputLeft;
         this.inputRight = inputRight;
