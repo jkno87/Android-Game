@@ -322,11 +322,11 @@ public class MainGameFlow extends GameFlow {
     }
 
     @Override
-    public void update(float interval){
+    public void update(UpdateInterval interval){
         if(currentState == GameState.PLAYING) {
 
-            timeElapsed += interval;
-            player.update(dynamicElements.getNeighbors(player), interval);
+            timeElapsed += interval.delta;
+            player.update(dynamicElements.getNeighbors(player), interval.delta);
 
             synchronized (elementsLock) {
 
@@ -334,7 +334,7 @@ public class MainGameFlow extends GameFlow {
                 while(elementIterator.hasNext()) {
                     GameElement e = elementIterator.next();
                     dynamicElements.remove(e);
-                    e.update(dynamicElements.getNeighbors(e), interval);
+                    e.update(dynamicElements.getNeighbors(e), interval.delta);
                     if(e instanceof Particle && !e.alive())
                         decorationsPool.free((Particle)e);
                     if(e.alive())
@@ -348,7 +348,7 @@ public class MainGameFlow extends GameFlow {
                 dynamicElements.getElementsIn(player.sightArea, elementsInSight);
             }
 
-            List<GameElement> created = elementCreator.createElements(interval);
+            List<GameElement> created = elementCreator.createElements(interval.delta);
             if(!created.isEmpty())
                 interactiveElements.addAll(created);
 
@@ -384,7 +384,7 @@ public class MainGameFlow extends GameFlow {
             //if(timeElapsed >= timeLimit)
             //    currentState = GameState.FINISHED;
         } else if (currentState == GameState.FINISHED){
-            updateFinishedGame(interval);
+            updateFinishedGame(interval.delta);
         }
     }
 

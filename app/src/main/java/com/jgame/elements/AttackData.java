@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.game.GameFlow;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
@@ -70,21 +71,21 @@ public class AttackData {
                 d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, baseX);
     }*/
 
-    public void update(float timeDifference){
+    public void update(GameFlow.UpdateInterval timeDifference){
         if(currentState == CollisionState.STARTUP){
-            startupCounter.accum(timeDifference);
+            startupCounter.accum(timeDifference.delta);
             for(CollisionObject o : startup)
                 o.update(null, timeDifference);
             if(startupCounter.completed())
                 currentState = CollisionState.ACTIVE;
         } else if (currentState == CollisionState.ACTIVE){
-            activeCounter.accum(timeDifference);
+            activeCounter.accum(timeDifference.delta);
             for(CollisionObject o : active)
                 o.update(null, timeDifference);
             if(activeCounter.completed())
                 currentState = CollisionState.RECOVERY;
         } else if (currentState == CollisionState.RECOVERY){
-            recoveryCounter.accum(timeDifference);
+            recoveryCounter.accum(timeDifference.delta);
             for(CollisionObject o : recovery)
                 o.update(null, timeDifference);
             if(recoveryCounter.completed())

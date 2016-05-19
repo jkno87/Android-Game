@@ -45,16 +45,6 @@ public class GameRenderer implements Renderer {
     private final TimeCounter updateCounter;
     private GameActivity gameActivity;
     private GL10 gl10;
-    int proyectileId;
-    int enemyId;
-    int mainCharId;
-    int decorationId;
-    int gameOverId;
-    int shipId;
-    int digitsId;
-    int specialButtonId;
-    int mothershipId;
-    int personaje2Id;
     int personajesId;
     int alfabetoId;
     private TextureDrawer mainTextureDrawer;
@@ -64,6 +54,7 @@ public class GameRenderer implements Renderer {
     SimpleDrawer.ColorData pauseOverlay;
     SimpleDrawer.ColorData menuBase;
     private Vector2 currentOrigin;
+    private final GameFlow.UpdateInterval interval;
 
     public GameRenderer(GameActivity gameActivity){
         updateCounter = new TimeCounter(FRAME_INTERVAL);
@@ -76,6 +67,7 @@ public class GameRenderer implements Renderer {
         pauseOverlay = new SimpleDrawer.ColorData(0,0,0,0.5f);
         menuBase = new SimpleDrawer.ColorData(0,0.75f,0.5f,1);
         currentOrigin = new Vector2();
+        interval = new GameFlow.UpdateInterval();
     }
 
     public void setSurfaceView(GameSurfaceView surfaceView){
@@ -131,13 +123,13 @@ public class GameRenderer implements Renderer {
     public void onDrawFrame(GL10 arg0) {
         GameFlow gameFlow = gameActivity.getGameFlow();
         long newTime = System.nanoTime();
-        float interval = (newTime - lastUpdate) / NANO_SCALE;
+        interval.delta = (newTime - lastUpdate) / NANO_SCALE;
         lastUpdate = newTime;
         boolean isPaused = gameActivity.isPaused(); //Se copia el valor para soltar el lock
 
         if(!isPaused) {
 
-            updateCounter.accum(interval);
+            updateCounter.accum(interval.delta);
 
             if (updateCounter.completed()) {
                 updateCounter.reset();
@@ -188,7 +180,10 @@ public class GameRenderer implements Renderer {
      * @param drawer TextureDrawer al que se le agregara la informacion del personaje.
      */
     private void renderCharacter(Character c, TextureDrawer drawer){
-        drawer.addTexturedSquare(c.spriteContainer, TEXTURE);
+        if(c.baseX.x < 0)
+            drawer.addInvertedTexturedSquare(c.spriteContainer, c.getCurrentTexture());
+        else
+            drawer.addTexturedSquare(c.spriteContainer, c.getCurrentTexture());
     }
 
 
@@ -212,8 +207,8 @@ public class GameRenderer implements Renderer {
         for(int i = 0; i < flow.gameButtons.length; i++)
             basicDrawer.addSquare(flow.gameButtons[i].bounds, flow.gameButtons[i].getCurrentColor(), currentOrigin);
 
-        for(GameObject o : flow.worldObjects)
-            renderEnemy((Character) o, basicDrawer, currentOrigin);
+        //for(GameObject o : flow.worldObjects)
+        //    renderEnemy((Character) o, basicDrawer, currentOrigin);
         basicDrawer.draw(gl10);
 
         mainTextureDrawer.reset();
@@ -290,18 +285,7 @@ public class GameRenderer implements Renderer {
     public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
         gl10 = arg0;
         gl10.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-        proyectileId = loadTexture(R.raw.proyectil);
         alfabetoId = loadTexture(R.raw.alfabeto);
-        enemyId = loadTexture(R.raw.enemigos);
-        mainCharId = loadTexture(R.raw.personaje);
-        shipId = loadTexture(R.raw.nave);
-        decorationId = loadTexture(R.raw.bullseye);
-        gameOverId = loadTexture(R.raw.gover);
-        digitsId = loadTexture(R.raw.digits);
-        specialButtonId = loadTexture(R.raw.special1);
-        mothershipId = loadTexture(R.raw.mothership);
-        personaje2Id = loadTexture(R.raw.personaje2);
-        personajesId = loadTexture(R.raw.personajes);
+        personajesId = loadTexture(R.raw.atlas);
     }
 }

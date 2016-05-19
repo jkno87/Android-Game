@@ -1,6 +1,9 @@
 package com.jgame.elements;
 
 import com.jgame.elements.GameButton.ButtonListener;
+import com.jgame.game.GameFlow;
+import com.jgame.game.LevelSelectFlow;
+import com.jgame.util.TextureDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import java.util.List;
@@ -15,6 +18,9 @@ public class MainCharacter extends Character {
         IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B
     }
 
+    public final static TextureDrawer.TextureData IDLE_TEXTURE = new TextureDrawer.TextureData(0,0,0.03125f,0.0625f);
+    public final static TextureDrawer.TextureData INIT_MOV_A = new TextureDrawer.TextureData(0,0.0625f, 0.03125f,0.125f);
+    public final static TextureDrawer.TextureData ACTIVE_MOV_A = new TextureDrawer.TextureData(0,0.125f,0.03125f, 0.1875f);
     public static final int CHARACTER_LENGTH = 40;
     public static final int CHARACTER_HEIGHT = 80;
     private final Vector2 CHARACTER_OFFSET = new Vector2(-CHARACTER_LENGTH/2,0);
@@ -35,8 +41,8 @@ public class MainCharacter extends Character {
         super(CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id, 0);
         this.state = GameState.IDLE;
         this.id = id;
-        baseX.set(-1, 0);
-        moveA = new AttackData(0.2f,0.15f,0.26f);
+        //baseX.set(-1, 0);
+        moveA = new AttackData(0.12f,0.15f,0.1f);
         initializeCollisionBoxes();
         this.inputLeft = inputLeft;
         this.inputRight = inputRight;
@@ -136,7 +142,18 @@ public class MainCharacter extends Character {
     }
 
     @Override
-    public void update(List<? extends GameObject> others, float timeDifference) {
+    public TextureDrawer.TextureData getCurrentTexture(){
+        if(state != GameState.INPUT_A)
+            return IDLE_TEXTURE;
+
+        if(moveA.currentState == CollisionState.ACTIVE)
+            return ACTIVE_MOV_A;
+        else
+            return INIT_MOV_A;
+    }
+
+    @Override
+    public void update(List<? extends GameObject> others, GameFlow.UpdateInterval timeDifference) {
         synchronized (this) {
             if (state == GameState.IDLE)
                 return;
@@ -162,7 +179,7 @@ public class MainCharacter extends Character {
             }
 
             if(state == GameState.INPUT_B){
-                MOVE_B_COUNTER.accum(timeDifference);
+                MOVE_B_COUNTER.accum(timeDifference.delta);
                 if(MOVE_B_COUNTER.completed()){
                     this.state = GameState.IDLE;
                     if(inputLeft.pressed())

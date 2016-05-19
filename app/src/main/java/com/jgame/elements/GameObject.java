@@ -2,6 +2,7 @@ package com.jgame.elements;
 
 import com.jgame.util.Vector2;
 import java.util.List;
+import com.jgame.game.GameFlow.UpdateInterval;
 
 /**
  * Objeto que representa el elemento mas basico dentro del juego.
@@ -43,7 +44,7 @@ public class GameObject {
         updatePosition();
     }
 
-    public void update(List<? extends GameObject> others, float timeDifference){
+    public void update(List<? extends GameObject> others, UpdateInterval timeDifference){
         updatePosition();
     }
 

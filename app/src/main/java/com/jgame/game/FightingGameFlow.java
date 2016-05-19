@@ -9,7 +9,7 @@ import com.jgame.elements.MainCharacter;
 import com.jgame.util.IdGenerator;
 import com.jgame.util.Square;
 import com.jgame.util.Vector2;
-
+import com.jgame.game.GameFlow.UpdateInterval;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,8 +130,7 @@ public class FightingGameFlow extends GameFlow {
     }
 
     @Override
-    public void update(float interval) {
-        //mainCharacter.update(null, interval);
+    public void update(UpdateInterval interval) {
         for(Character e : worldObjects)
             e.update(worldObjects, interval);
     }

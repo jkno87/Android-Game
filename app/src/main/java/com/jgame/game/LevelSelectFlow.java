@@ -47,7 +47,7 @@ public class LevelSelectFlow extends GameFlow {
     }
 
     @Override
-    public void update(float interval) {
+    public void update(UpdateInterval interval) {
 
     }
 

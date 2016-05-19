@@ -1,6 +1,8 @@
 package com.jgame.elements;
 
+import com.jgame.game.GameFlow;
 import com.jgame.util.Square;
+import com.jgame.util.TextureDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import java.util.List;
@@ -15,6 +17,7 @@ public class Character extends GameObject {
         IDLE, ATTACKING
     }
 
+    public final static TextureDrawer.TextureData TEXTURE = new TextureDrawer.TextureData(0,0,0.03125f,0.0625f);
     public final CollisionObject[] idleCollisionBoxes;
     private final Vector2 positionOffset;
     public AttackData activeAttack;
@@ -67,6 +70,10 @@ public class Character extends GameObject {
         baseX.set(baseX.x * -1, 0);
     }
 
+    public TextureDrawer.TextureData getCurrentTexture(){
+        return TEXTURE;
+    }
+
     /**
      * Se agrega la funcionalidad de actualizar la posicion del spriteContainer
      */
@@ -77,9 +84,9 @@ public class Character extends GameObject {
     }
 
     @Override
-    public void update(List<? extends GameObject> objects, float timeDifference){
+    public void update(List<? extends GameObject> objects, GameFlow.UpdateInterval interval){
         if(currentState == State.IDLE) {
-            idleTimer.accum(timeDifference);
+            idleTimer.accum(interval.delta);
             if (idleTimer.completed()) {
                 currentState = State.ATTACKING;
                 activeAttack = attacks[0];
@@ -88,7 +95,7 @@ public class Character extends GameObject {
         }
 
         if(currentState == State.ATTACKING) {
-            activeAttack.update(timeDifference);
+            activeAttack.update(interval);
             if(activeAttack.completed()){
                 currentState = State.IDLE;
                 idleTimer.reset();
