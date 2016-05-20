@@ -129,7 +129,7 @@ public class GameRenderer implements Renderer {
 
         if(!isPaused) {
 
-            updateCounter.accum(interval.delta);
+            updateCounter.accum(interval);
 
             if (updateCounter.completed()) {
                 updateCounter.reset();
@@ -180,6 +180,9 @@ public class GameRenderer implements Renderer {
      * @param drawer TextureDrawer al que se le agregara la informacion del personaje.
      */
     private void renderCharacter(Character c, TextureDrawer drawer){
+        if(c == null)
+            return;
+
         if(c.baseX.x < 0)
             drawer.addInvertedTexturedSquare(c.spriteContainer, c.getCurrentTexture());
         else
@@ -286,6 +289,6 @@ public class GameRenderer implements Renderer {
         gl10 = arg0;
         gl10.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         alfabetoId = loadTexture(R.raw.alfabeto);
-        personajesId = loadTexture(R.raw.atlas);
+        personajesId = loadTexture(R.raw.enemigos);
     }
 }

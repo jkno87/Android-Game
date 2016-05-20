@@ -11,34 +11,26 @@ import com.jgame.util.Vector2;
  */
 public class AttackData {
 
-    enum CollisionState {
+    public enum CollisionState {
         STARTUP, ACTIVE, RECOVERY, FINISHED
     }
 
-    public CollisionObject [] startup;
-    public CollisionObject [] active;
-    public CollisionObject [] recovery;
+    public final CollisionObject [] startup;
+    public final CollisionObject [] active;
+    public final CollisionObject [] recovery;
     private final TimeCounter startupCounter;
     private final TimeCounter activeCounter;
     private final TimeCounter recoveryCounter;
     public CollisionState currentState;
 
-    public AttackData(float startup, float active, float recovery){
-        startupCounter = new TimeCounter(startup);
-        activeCounter = new TimeCounter(active);
-        recoveryCounter = new TimeCounter(recovery);
+    public AttackData(float startupTime, float activeTime, float recoveryTime,
+                      CollisionObject[] startup, CollisionObject[] active, CollisionObject [] recovery){
+        startupCounter = new TimeCounter(startupTime);
+        activeCounter = new TimeCounter(activeTime);
+        recoveryCounter = new TimeCounter(recoveryTime);
         currentState = CollisionState.STARTUP;
-    }
-
-    public void setStartupBoxes(CollisionObject [] startup){
         this.startup = startup;
-    }
-
-    public void setActiveBoxes(CollisionObject [] active){
         this.active = active;
-    }
-
-    public void setRecoveryBoxes(CollisionObject [] recovery){
         this.recovery = recovery;
     }
 
@@ -73,19 +65,19 @@ public class AttackData {
 
     public void update(GameFlow.UpdateInterval timeDifference){
         if(currentState == CollisionState.STARTUP){
-            startupCounter.accum(timeDifference.delta);
+            startupCounter.accum(timeDifference);
             for(CollisionObject o : startup)
                 o.update(null, timeDifference);
             if(startupCounter.completed())
                 currentState = CollisionState.ACTIVE;
         } else if (currentState == CollisionState.ACTIVE){
-            activeCounter.accum(timeDifference.delta);
+            activeCounter.accum(timeDifference);
             for(CollisionObject o : active)
                 o.update(null, timeDifference);
             if(activeCounter.completed())
                 currentState = CollisionState.RECOVERY;
         } else if (currentState == CollisionState.RECOVERY){
-            recoveryCounter.accum(timeDifference.delta);
+            recoveryCounter.accum(timeDifference);
             for(CollisionObject o : recovery)
                 o.update(null, timeDifference);
             if(recoveryCounter.completed())

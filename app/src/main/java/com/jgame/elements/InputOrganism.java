@@ -21,7 +21,7 @@ public class InputOrganism extends Organism {
         OrganismBehavior behavior = new OrganismBehavior(timeToLive, new Circle(position, interactionDistance), HP, FOOD_POINTS, true) {
             @Override
             public void age(float timeDifference) {
-                timeRemaining.accum(timeDifference);
+                timeRemaining.accum(null);
                 position.add(direction);
             }
 

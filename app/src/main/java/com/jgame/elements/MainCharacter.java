@@ -38,12 +38,23 @@ public class MainCharacter extends Character {
 
     public MainCharacter(int id, Vector2 position, final GameButton inputLeft, final GameButton inputRight,
                          final GameButton inputA, final GameButton inputB){
-        super(CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id, 0);
+        super(CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id);
         this.state = GameState.IDLE;
         this.id = id;
         //baseX.set(-1, 0);
-        moveA = new AttackData(0.12f,0.15f,0.1f);
-        initializeCollisionBoxes();
+        CollisionObject [] startupA = new CollisionObject[1];
+        startupA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A,
+                HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
+        CollisionObject [] activeA = new CollisionObject[2];
+        activeA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
+                LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
+        activeA[1] = new CollisionObject(new Vector2(CHARACTER_OFFSET).add(LENGTH_MOVE_A, HEIGHT_MOVE_A),
+                id, 15, 10, this, CollisionObject.TYPE_ATTACK);
+        CollisionObject [] recoveryA = new CollisionObject[1];
+        recoveryA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
+                LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
+
+        moveA = new AttackData(0.12f,0.15f,0.1f, startupA, activeA, recoveryA);
         this.inputLeft = inputLeft;
         this.inputRight = inputRight;
         this.inputLeft.setButtonListener(new ButtonListener() {
@@ -93,23 +104,6 @@ public class MainCharacter extends Character {
         });
     }
 
-    private void initializeCollisionBoxes(){
-        CollisionObject [] startupA = new CollisionObject[1];
-        startupA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A,
-                HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
-        CollisionObject [] activeA = new CollisionObject[2];
-        activeA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
-                LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
-        activeA[1] = new CollisionObject(new Vector2(CHARACTER_OFFSET).add(LENGTH_MOVE_A, HEIGHT_MOVE_A),
-                id, 15, 10, this, CollisionObject.TYPE_ATTACK);
-        CollisionObject [] recoveryA = new CollisionObject[1];
-        recoveryA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
-                LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
-        moveA.setStartupBoxes(startupA);
-        moveA.setActiveBoxes(activeA);
-        moveA.setRecoveryBoxes(recoveryA);
-    }
-
     @Override
     public synchronized CollisionObject[] getActiveCollisionBoxes(){
         if(state == GameState.INPUT_A){
@@ -153,7 +147,7 @@ public class MainCharacter extends Character {
     }
 
     @Override
-    public void update(List<? extends GameObject> others, GameFlow.UpdateInterval timeDifference) {
+    public void update(GameObject[] others, GameFlow.UpdateInterval timeDifference) {
         synchronized (this) {
             if (state == GameState.IDLE)
                 return;
@@ -179,7 +173,7 @@ public class MainCharacter extends Character {
             }
 
             if(state == GameState.INPUT_B){
-                MOVE_B_COUNTER.accum(timeDifference.delta);
+                MOVE_B_COUNTER.accum(timeDifference);
                 if(MOVE_B_COUNTER.completed()){
                     this.state = GameState.IDLE;
                     if(inputLeft.pressed())

@@ -1,6 +1,9 @@
 package com.jgame.util;
 
+import com.jgame.game.GameFlow;
+
 /**
+ * Objeto que sirve como timer para realizar ciertas operaciones de accum
  * Created by jose on 29/01/15.
  */
 public class TimeCounter {
@@ -21,8 +24,8 @@ public class TimeCounter {
         accumTime = 0;
     }
 
-    public void accum(float timeDiff){
-        accumTime += timeDiff;
+    public void accum(GameFlow.UpdateInterval interval){
+        accumTime += interval.delta;
     }
 
     public boolean completed(){

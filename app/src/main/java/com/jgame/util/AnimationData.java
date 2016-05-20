@@ -23,7 +23,7 @@ public class AnimationData extends TextureData {
 
     public synchronized void updateFrame(float interval){
 
-        frameTimer.accum(interval);
+        frameTimer.accum(null);
         if(!frameTimer.completed())
             return;
 

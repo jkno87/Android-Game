@@ -38,7 +38,7 @@ public class RunningOrganism extends Organism {
                 if(position.y <= 0 || position.y >= GameLevels.MAX_PLAYING_HEIGHT)
                     direction.y *= -1;*/
 
-                timeRemaining.accum(timeDifference);
+                timeRemaining.accum(null);
             }
 
             @Override

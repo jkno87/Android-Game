@@ -29,7 +29,7 @@ public class Trap extends Organism {
         timerBehavior = new OrganismBehavior(TIME_TO_EXPLODE, organismBounds, HP,FOOD_POINTS, false) {
             @Override
             public void age(float timeDifference) {
-                timeRemaining.accum(timeDifference);
+                timeRemaining.accum(null);
                 if(timeRemaining.completed())
                     setBehavior(explodingBehavior);
             }
@@ -44,7 +44,7 @@ public class Trap extends Organism {
 
             @Override
             public void age(float timeDifference) {
-                timeRemaining.accum(timeDifference);
+                timeRemaining.accum(null);
                 organismBounds.radius *= EXPLOSION_GROWTH_RATE;
             }
 

@@ -107,7 +107,7 @@ public class GameLevels {
                 @Override
                 public List<GameElement> generate(float interval){
                     generatedElements.clear();
-                    spawnTimer.accum(interval);
+                    spawnTimer.accum(null);
 
                     if(!spawnTimer.completed())
                         return generatedElements;
