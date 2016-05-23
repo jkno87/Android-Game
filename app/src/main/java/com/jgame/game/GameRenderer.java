@@ -180,7 +180,7 @@ public class GameRenderer implements Renderer {
      * @param drawer TextureDrawer al que se le agregara la informacion del personaje.
      */
     private void renderCharacter(Character c, TextureDrawer drawer){
-        if(c == null)
+        if(c == null || !c.alive())
             return;
 
         if(c.baseX.x < 0)

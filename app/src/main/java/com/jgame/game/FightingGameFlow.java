@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class FightingGameFlow extends GameFlow {
 
+    private final int NUMBER_OF_INPUTS = 4;
     private final int MAX_WORLD_OBJECTS = 6;
     private final int INPUT_LEFT = 0;
     private final int INPUT_RIGHT = 1;
@@ -39,12 +40,11 @@ public class FightingGameFlow extends GameFlow {
     private int mainButtonPressed;
     public final MainCharacter mainCharacter;
     public final Character[] worldObjects;
-    //public final List<Character> worldObjects;
 
 
     public FightingGameFlow(){
         gameFloor = new Square(0, 0, PLAYING_WIDTH, CONTROLS_HEIGHT);
-        gameButtons = new GameButton[4];
+        gameButtons = new GameButton[NUMBER_OF_INPUTS];
         mainButtonPressed = INPUT_NONE;
         gameButtons[INPUT_LEFT] = new GameButton(new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
         gameButtons[INPUT_RIGHT] = new GameButton(new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
@@ -52,7 +52,6 @@ public class FightingGameFlow extends GameFlow {
         gameButtons[INPUT_B] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
         mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(15,ELEMENTS_HEIGHT), gameButtons[INPUT_LEFT],
                 gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B]);
-        //worldObjects = new ArrayList<>(MAX_WORLD_OBJECTS);
         worldObjects = new Character[MAX_WORLD_OBJECTS];
         worldObjects[0] = mainCharacter;
 
@@ -68,6 +67,9 @@ public class FightingGameFlow extends GameFlow {
 
             @Override
             public void update(GameObject[] objects, UpdateInterval interval) {
+                if(currentState == CharacterState.DEAD)
+                    return;
+
                 if(currentState == CharacterState.IDLE) {
                     idleTimer.accum(interval);
                     if (idleTimer.completed()) {
@@ -87,12 +89,16 @@ public class FightingGameFlow extends GameFlow {
             }
 
             @Override
+            public void hit(){
+                currentState = CharacterState.DEAD;
+            }
+
+            @Override
             public TextureDrawer.TextureData getCurrentTexture() {
                 return Character.TEXTURE;
             }
         };
         worldObjects[1] = basicEnemy;
-        //worldObjects.add(basicEnemy);
     }
 
     private void calculateMainInput(float gameX, float gameY){
@@ -143,7 +149,7 @@ public class FightingGameFlow extends GameFlow {
     @Override
     public void update(UpdateInterval interval) {
         for(Character e : worldObjects)
-            if(e != null)
+            if(e != null && e.alive())
                 e.update(worldObjects, interval);
     }
 

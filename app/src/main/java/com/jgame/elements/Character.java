@@ -12,7 +12,7 @@ import com.jgame.util.Vector2;
 public abstract class Character extends GameObject {
 
     public enum CharacterState {
-        IDLE, ATTACKING
+        IDLE, ATTACKING, DEAD
     }
 
     public final static TextureData TEXTURE = new TextureData(0,0,0.03125f,0.0625f);
@@ -72,6 +72,15 @@ public abstract class Character extends GameObject {
         spriteContainer.position.set(position).add(positionOffset);
     }
 
+    /**
+     * Determina si el Character tiene un estado diferente a CharacterState.DEAD
+     * @return boolean
+     */
+    public boolean alive(){
+        return currentState != CharacterState.DEAD;
+    }
+
     public abstract void update(GameObject[] objects, GameFlow.UpdateInterval interval);
     public abstract TextureData getCurrentTexture();
+    public abstract void hit();
 }

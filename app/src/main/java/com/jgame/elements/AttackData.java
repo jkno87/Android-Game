@@ -51,35 +51,17 @@ public class AttackData {
         return currentState == CollisionState.FINISHED;
     }
 
-    /*public synchronized void fillDrawer(SimpleDrawer d, Vector2 origin, Vector2 baseX){
-        if(currentState == CollisionState.STARTUP)
-            for(CollisionObject o : startup)
-                d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, baseX);
-        else if(currentState == CollisionState.ACTIVE)
-            for(CollisionObject o : active)
-                d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, baseX);
-        else if(currentState == CollisionState.RECOVERY)
-            for(CollisionObject o : recovery)
-                d.addSquare(o.bounds, MainCharacter.INPUT_A_COLOR, origin, baseX);
-    }*/
-
     public void update(GameFlow.UpdateInterval timeDifference){
         if(currentState == CollisionState.STARTUP){
             startupCounter.accum(timeDifference);
-            for(CollisionObject o : startup)
-                o.update(null, timeDifference);
             if(startupCounter.completed())
                 currentState = CollisionState.ACTIVE;
         } else if (currentState == CollisionState.ACTIVE){
             activeCounter.accum(timeDifference);
-            for(CollisionObject o : active)
-                o.update(null, timeDifference);
             if(activeCounter.completed())
                 currentState = CollisionState.RECOVERY;
         } else if (currentState == CollisionState.RECOVERY){
             recoveryCounter.accum(timeDifference);
-            for(CollisionObject o : recovery)
-                o.update(null, timeDifference);
             if(recoveryCounter.completed())
                 currentState = CollisionState.FINISHED;
         }

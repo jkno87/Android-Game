@@ -185,11 +185,17 @@ public class MainCharacter extends Character {
 
             for(GameObject o : others){
                 if(o instanceof Character && o.id != id){
+                    Character c = (Character) o;
                     for(CollisionObject co : getActiveCollisionBoxes())
-                        co.checkCollision((Character)o);
+                        if(co.checkCollision(c))
+                            c.hit();
                 }
             }
-
         }
+    }
+
+    @Override
+    public void hit(){
+
     }
 }

@@ -44,10 +44,6 @@ public class GameObject {
         updatePosition();
     }
 
-    public void update(List<? extends GameObject> others, UpdateInterval timeDifference){
-        updatePosition();
-    }
-
     public int getId(){
         return id;
     }
