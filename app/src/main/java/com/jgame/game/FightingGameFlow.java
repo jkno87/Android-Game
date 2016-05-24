@@ -43,6 +43,7 @@ public class FightingGameFlow extends GameFlow {
     public Enemy currentEnemy;
     public final EmptyEnemy enemySpawnInterval;
     public final Enemy[] availableEnemies;
+    public int score;
 
     public FightingGameFlow(){
         gameFloor = new Square(0, 0, PLAYING_WIDTH, CONTROLS_HEIGHT);
@@ -114,8 +115,10 @@ public class FightingGameFlow extends GameFlow {
         if(!currentEnemy.alive()){
             if(currentEnemy instanceof EmptyEnemy)
                 currentEnemy = availableEnemies[0];
-            else
+            else {
                 currentEnemy = enemySpawnInterval;
+                score++;
+            }
             currentEnemy.reset();
         }
     }

@@ -26,6 +26,7 @@ public class GameRenderer implements Renderer {
     private static final int NO_TEXTURE = 0;
     //private final float FRUSTUM_HEIGHT = 480f;
     //private final float FRUSTUM_WIDTH = 320f;
+    private final boolean RENDER_HITBOXES = true;
     private final float FRAME_INTERVAL = 0.015384615f;
     private final float NANO_SCALE = 1000000000.0f;
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
@@ -210,8 +211,10 @@ public class GameRenderer implements Renderer {
         for(int i = 0; i < flow.gameButtons.length; i++)
             basicDrawer.addSquare(flow.gameButtons[i].bounds, flow.gameButtons[i].getCurrentColor(), currentOrigin);
 
-        //for(GameObject o : flow.worldObjects)
-        //    renderEnemy((Character) o, basicDrawer, currentOrigin);
+        if(RENDER_HITBOXES) {
+            renderEnemy(flow.mainCharacter, basicDrawer, currentOrigin);
+            renderEnemy(flow.currentEnemy, basicDrawer, currentOrigin);
+        }
         basicDrawer.draw(gl10);
 
         mainTextureDrawer.reset();
