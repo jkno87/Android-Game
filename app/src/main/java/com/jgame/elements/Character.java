@@ -80,7 +80,7 @@ public abstract class Character extends GameObject {
         return currentState != CharacterState.DEAD;
     }
 
-    public abstract void update(GameObject[] objects, GameFlow.UpdateInterval interval);
+    public abstract void update(Character foe, GameFlow.UpdateInterval interval);
     public abstract TextureData getCurrentTexture();
     public abstract void hit();
 }

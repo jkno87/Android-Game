@@ -147,7 +147,7 @@ public class MainCharacter extends Character {
     }
 
     @Override
-    public void update(GameObject[] others, GameFlow.UpdateInterval timeDifference) {
+    public void update(Character foe, GameFlow.UpdateInterval timeDifference) {
         synchronized (this) {
             if (state == GameState.IDLE)
                 return;
@@ -183,19 +183,14 @@ public class MainCharacter extends Character {
                 }
             }
 
-            for(GameObject o : others){
-                if(o instanceof Character && o.id != id){
-                    Character c = (Character) o;
-                    for(CollisionObject co : getActiveCollisionBoxes())
-                        if(co.checkCollision(c))
-                            c.hit();
-                }
-            }
+            for(CollisionObject co : getActiveCollisionBoxes())
+                if(co.checkCollision(foe))
+                    foe.hit();
         }
     }
 
     @Override
     public void hit(){
-
+        currentState = CharacterState.DEAD;
     }
 }

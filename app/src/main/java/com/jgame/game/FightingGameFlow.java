@@ -4,6 +4,8 @@ import com.jgame.definitions.GameLevels;
 import com.jgame.elements.AttackData;
 import com.jgame.elements.CollisionObject;
 import com.jgame.elements.Character;
+import com.jgame.elements.EmptyEnemy;
+import com.jgame.elements.Enemy;
 import com.jgame.elements.GameButton;
 import com.jgame.elements.GameObject;
 import com.jgame.elements.MainCharacter;
@@ -12,14 +14,13 @@ import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by jose on 7/04/16.
  */
 public class FightingGameFlow extends GameFlow {
 
+    private final float SPAWN_TIME = 1.5f;
     private final int NUMBER_OF_INPUTS = 4;
     private final int MAX_WORLD_OBJECTS = 6;
     private final int INPUT_LEFT = 0;
@@ -39,8 +40,9 @@ public class FightingGameFlow extends GameFlow {
     public final GameButton[] gameButtons;
     private int mainButtonPressed;
     public final MainCharacter mainCharacter;
-    public final Character[] worldObjects;
-
+    public Enemy currentEnemy;
+    public final EmptyEnemy enemySpawnInterval;
+    public final Enemy[] availableEnemies;
 
     public FightingGameFlow(){
         gameFloor = new Square(0, 0, PLAYING_WIDTH, CONTROLS_HEIGHT);
@@ -52,53 +54,10 @@ public class FightingGameFlow extends GameFlow {
         gameButtons[INPUT_B] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
         mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(15,ELEMENTS_HEIGHT), gameButtons[INPUT_LEFT],
                 gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B]);
-        worldObjects = new Character[MAX_WORLD_OBJECTS];
-        worldObjects[0] = mainCharacter;
-
-        Character basicEnemy = new Character(30,100, new Vector2(150, ELEMENTS_HEIGHT), ID_GEN.getId(), mainCharacter){
-
-            private TimeCounter idleTimer = new TimeCounter(1.5f);
-            private CollisionObject[] startupBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
-            private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
-                    new CollisionObject(new Vector2(15,25),0,10,5,this, CollisionObject.TYPE_ATTACK)};
-            private CollisionObject[] recoveryBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
-            private AttackData [] attacks =
-                    new AttackData[] {new AttackData(0.33f,0.1f,0.45f, startupBoxes, activeBoxes, recoveryBoxes)};
-
-            @Override
-            public void update(GameObject[] objects, UpdateInterval interval) {
-                if(currentState == CharacterState.DEAD)
-                    return;
-
-                if(currentState == CharacterState.IDLE) {
-                    idleTimer.accum(interval);
-                    if (idleTimer.completed()) {
-                        currentState = CharacterState.ATTACKING;
-                        activeAttack = attacks[0];
-                        activeAttack.reset();
-                    }
-                }
-
-                if(currentState == CharacterState.ATTACKING) {
-                    activeAttack.update(interval);
-                    if(activeAttack.completed()){
-                        currentState = CharacterState.IDLE;
-                        idleTimer.reset();
-                    }
-                }
-            }
-
-            @Override
-            public void hit(){
-                currentState = CharacterState.DEAD;
-            }
-
-            @Override
-            public TextureDrawer.TextureData getCurrentTexture() {
-                return Character.TEXTURE;
-            }
-        };
-        worldObjects[1] = basicEnemy;
+        availableEnemies = new Enemy[MAX_WORLD_OBJECTS];
+        enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
+        availableEnemies[0] = new Enemy(30,100,new Vector2(150, ELEMENTS_HEIGHT), ID_GEN.getId());
+        currentEnemy = availableEnemies[0];
     }
 
     private void calculateMainInput(float gameX, float gameY){
@@ -148,9 +107,17 @@ public class FightingGameFlow extends GameFlow {
 
     @Override
     public void update(UpdateInterval interval) {
-        for(Character e : worldObjects)
-            if(e != null && e.alive())
-                e.update(worldObjects, interval);
+        if(mainCharacter.alive())
+            mainCharacter.update(currentEnemy, interval);
+
+        currentEnemy.update(mainCharacter, interval);
+        if(!currentEnemy.alive()){
+            if(currentEnemy instanceof EmptyEnemy)
+                currentEnemy = availableEnemies[0];
+            else
+                currentEnemy = enemySpawnInterval;
+            currentEnemy.reset();
+        }
     }
 
     @Override

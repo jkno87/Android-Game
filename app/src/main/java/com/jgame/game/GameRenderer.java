@@ -180,7 +180,7 @@ public class GameRenderer implements Renderer {
      * @param drawer TextureDrawer al que se le agregara la informacion del personaje.
      */
     private void renderCharacter(Character c, TextureDrawer drawer){
-        if(c == null || !c.alive())
+        if(!c.alive())
             return;
 
         if(c.baseX.x < 0)
@@ -216,8 +216,8 @@ public class GameRenderer implements Renderer {
 
         mainTextureDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
-        for(GameObject o : flow.worldObjects)
-            renderCharacter((Character)o, mainTextureDrawer);
+        renderCharacter(flow.mainCharacter, mainTextureDrawer);
+        renderCharacter(flow.currentEnemy, mainTextureDrawer);
         mainTextureDrawer.draw(gl10);
 
     }
@@ -289,6 +289,6 @@ public class GameRenderer implements Renderer {
         gl10 = arg0;
         gl10.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         alfabetoId = loadTexture(R.raw.alfabeto);
-        personajesId = loadTexture(R.raw.enemigos);
+        personajesId = loadTexture(R.raw.atlas);
     }
 }
