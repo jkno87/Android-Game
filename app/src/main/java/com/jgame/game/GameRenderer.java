@@ -1,38 +1,39 @@
 package com.jgame.game;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.GLUtils;
 import com.jgame.definitions.GameLevels;
-import com.jgame.elements.CollisionObject;
 import com.jgame.elements.Character;
-import com.jgame.elements.GameObject;
+import com.jgame.elements.CollisionObject;
 import com.jgame.elements.Player;
+import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.SimpleDrawer.ColorData;
-import com.jgame.util.TextureData;
-import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.TextureDrawer;
+import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.opengl.GLUtils;
-import android.opengl.GLSurfaceView.Renderer;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 public class GameRenderer implements Renderer {
 
     private static final int NO_TEXTURE = 0;
     //private final float FRUSTUM_HEIGHT = 480f;
     //private final float FRUSTUM_WIDTH = 320f;
+    private final int SCORE_SIZE = 15;
     private final boolean RENDER_HITBOXES = true;
     private final float FRAME_INTERVAL = 0.015384615f;
     private final float NANO_SCALE = 1000000000.0f;
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
-    private final TextureDrawer.TextureData TEXTURE = new TextureDrawer.TextureData(0,0,1,0.5f);
+    private final TextureData[] DIGITS = new TextureData[]{new TextureData(0,0,0.0625f,1),new TextureData(0.0625f,0,0.125f,1),new TextureData(0.125f,0,0.1825f,1),
+            new TextureData(0.1825f,0,0.25f,1),new TextureData(0.25f,0,0.3125f,1),new TextureData(0.3125f,0,0.375f,1),new TextureData(0.375f,0,0.4375f,1),
+            new TextureData(0.4375f,0,0.5f,1),new TextureData(0.5f,0,0.5625f,1),new TextureData(0.5625f,0,0.625f,1)};
     /*private final float OBJECTIVES_X_DRAW = FRUSTUM_WIDTH - 65;
     private final float OBJECTIVES_AMOUNT_X = FRUSTUM_WIDTH - 35;
     private final float OBJECTIVES_Y_DRAW = FRUSTUM_HEIGHT - 15;
@@ -40,7 +41,7 @@ public class GameRenderer implements Renderer {
     private final float ENDGAME_LABELS_X = FRUSTUM_WIDTH / 2 - 35;
     private final float ENDGAME_NUMBERS_X = FRUSTUM_WIDTH / 2 + 20;
     private final Vector2 TIMER_POSITION = new Vector2(15, FRUSTUM_HEIGHT - 15);*/
-    public static float[][] TEXTURE_DIGITS = TextureData.createTextureArray(0.0625f, 10);
+    //public static float[][] TEXTURE_DIGITS = TextureData.createTextureArray(0.0625f, 10);
     private GameSurfaceView surfaceView;
     private long lastUpdate;
     private final TimeCounter updateCounter;
@@ -48,6 +49,7 @@ public class GameRenderer implements Renderer {
     private GL10 gl10;
     int personajesId;
     int alfabetoId;
+    private int digitsId;
     private TextureDrawer mainTextureDrawer;
     private TextureDrawer levelSelectDrawer;
     private TextureDrawer pauseTextureDrawer;
@@ -94,30 +96,19 @@ public class GameRenderer implements Renderer {
      * @param y cooordenada y en la que se dibuja el numero
      * @param number numero que se dibujara en pantalla
      */
-    private void drawDigits(float x, float y, int number){
+    private void addDigitsTexture(float x, float y, int number, TextureDrawer tdrawer){
         //TODO: no utilizar ese tama;o arbitrario de los numeros
-        /*gl10.glLoadIdentity();
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
-        ArrayList <float[]> textures = new ArrayList<float[]>();
+        float currentX = x - SCORE_SIZE;
 
         while(true){
             int nVal = number / 10;
             int rem = number % 10;
             number = nVal;
-            textures.add(TEXTURE_DIGITS[rem]);
+            tdrawer.addTexturedSquare(currentX, y, SCORE_SIZE, SCORE_SIZE, DIGITS[rem]);
+            currentX -= SCORE_SIZE;
             if(number == 0)
                 break;
         }
-
-        Drawer digitsDrawer = new Drawer(true, true);
-        float currentX = x;
-
-        for(int i = textures.size() - 1; i >= 0; i--) {
-            digitsDrawer.addTexturedSquare(currentX, y, 10, textures.get(i), GameElement.DEFAULT_COLOR);
-            currentX += 22;
-        }
-
-        digitsDrawer.draw(gl10);*/
     }
 
     @Override
@@ -223,6 +214,11 @@ public class GameRenderer implements Renderer {
         renderCharacter(flow.currentEnemy, mainTextureDrawer);
         mainTextureDrawer.draw(gl10);
 
+        mainTextureDrawer.reset();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
+        addDigitsTexture(150, GameLevels.FRUSTUM_HEIGHT - 35, flow.score, mainTextureDrawer);
+        mainTextureDrawer.draw(gl10);
+
     }
 
     private void drawPauseMenu(){
@@ -293,5 +289,6 @@ public class GameRenderer implements Renderer {
         gl10.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         alfabetoId = loadTexture(R.raw.alfabeto);
         personajesId = loadTexture(R.raw.atlas);
+        digitsId = loadTexture(R.raw.digits);
     }
 }

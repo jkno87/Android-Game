@@ -18,7 +18,7 @@ public class Enemy extends Character {
     private TimeCounter idleTimer = new TimeCounter(1.5f);
     private CollisionObject[] startupBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
-            new CollisionObject(new Vector2(15,25),0,10,5,this, CollisionObject.TYPE_ATTACK)};
+            new CollisionObject(new Vector2(15,55),0,10,5,this, CollisionObject.TYPE_ATTACK)};
     private CollisionObject[] recoveryBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
     private AttackData [] attacks =
             new AttackData[] {new AttackData(0.33f,0.1f,0.45f, startupBoxes, activeBoxes, recoveryBoxes)};
