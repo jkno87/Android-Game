@@ -1,24 +1,23 @@
 package com.jgame.game;
 
 import com.jgame.definitions.GameLevels;
-import com.jgame.elements.AttackData;
-import com.jgame.elements.CollisionObject;
-import com.jgame.elements.Character;
 import com.jgame.elements.EmptyEnemy;
 import com.jgame.elements.Enemy;
 import com.jgame.elements.GameButton;
-import com.jgame.elements.GameObject;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.IdGenerator;
+import com.jgame.util.LabelButton;
 import com.jgame.util.Square;
-import com.jgame.util.TextureDrawer;
-import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
 /**
  * Created by jose on 7/04/16.
  */
 public class FightingGameFlow extends GameFlow {
+
+    public enum GameState {
+        PLAYING, GAME_OVER
+    }
 
     private final float SPAWN_TIME = 1.5f;
     private final int NUMBER_OF_INPUTS = 4;
@@ -30,12 +29,14 @@ public class FightingGameFlow extends GameFlow {
     private final int INPUT_NONE = -1;
     public static float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH;
     public static float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT;
-    private final float CONTROLS_HEIGHT = PLAYING_HEIGHT * 0.25f;
+    public final float CONTROLS_HEIGHT = PLAYING_HEIGHT * 0.25f;
     private final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 20;
     private final float DIRECTION_WIDTH = 45;
     private final float BUTTONS_WIDTH = 50;
     private final float INPUTS_HEIGHT = 15;
+    private final float INITIAL_CHARACTER_POSITION = 15;
     private final IdGenerator ID_GEN = new IdGenerator();
+    public final LabelButton restartButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2 - 75, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "restart");
     public final Square gameFloor;
     public final GameButton[] gameButtons;
     private int mainButtonPressed;
@@ -44,6 +45,7 @@ public class FightingGameFlow extends GameFlow {
     public final EmptyEnemy enemySpawnInterval;
     public final Enemy[] availableEnemies;
     public int score;
+    public GameState currentState;
 
     public FightingGameFlow(){
         gameFloor = new Square(0, 0, PLAYING_WIDTH, CONTROLS_HEIGHT);
@@ -53,12 +55,20 @@ public class FightingGameFlow extends GameFlow {
         gameButtons[INPUT_RIGHT] = new GameButton(new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
         gameButtons[INPUT_A] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
         gameButtons[INPUT_B] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
-        mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(15,ELEMENTS_HEIGHT), gameButtons[INPUT_LEFT],
+        mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), gameButtons[INPUT_LEFT],
                 gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B]);
         availableEnemies = new Enemy[MAX_WORLD_OBJECTS];
         enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
         availableEnemies[0] = new Enemy(30,100,new Vector2(150, ELEMENTS_HEIGHT), ID_GEN.getId());
+        reset();
+    }
+
+    private void reset(){
+        score = 0;
         currentEnemy = availableEnemies[0];
+        currentEnemy.reset();
+        mainCharacter.reset(INITIAL_CHARACTER_POSITION, ELEMENTS_HEIGHT);
+        currentState = GameState.PLAYING;
     }
 
     private void calculateMainInput(float gameX, float gameY){
@@ -97,7 +107,14 @@ public class FightingGameFlow extends GameFlow {
     public void handleDown(float x, float y) {
         float gameX = GameLevels.FRUSTUM_WIDTH * x;
         float gameY = GameLevels.FRUSTUM_HEIGHT * y;
+        //Se calcula independientemente del estado del juego para poder hacer inputs una vez que termino el juego
         calculateMainInput(gameX, gameY);
+
+        if(currentState == GameState.GAME_OVER) {
+            if(restartButton.bounds.contains(gameX, gameY))
+                reset();
+        }
+
     }
 
     @Override
@@ -110,6 +127,8 @@ public class FightingGameFlow extends GameFlow {
     public void update(UpdateInterval interval) {
         if(mainCharacter.alive())
             mainCharacter.update(currentEnemy, interval);
+        else
+            currentState = GameState.GAME_OVER;
 
         currentEnemy.update(mainCharacter, interval);
         if(!currentEnemy.alive()){

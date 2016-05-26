@@ -135,7 +135,6 @@ public class GameRenderer implements Renderer {
             drawLevelSelect((LevelSelectFlow) gameFlow);
         else if (gameFlow instanceof FightingGameFlow)
             drawFightingGameFlow((FightingGameFlow) gameFlow);
-
         if(isPaused)
             drawPauseMenu();
 
@@ -214,10 +213,30 @@ public class GameRenderer implements Renderer {
         renderCharacter(flow.currentEnemy, mainTextureDrawer);
         mainTextureDrawer.draw(gl10);
 
-        mainTextureDrawer.reset();
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
-        addDigitsTexture(150, GameLevels.FRUSTUM_HEIGHT - 35, flow.score, mainTextureDrawer);
-        mainTextureDrawer.draw(gl10);
+        if(flow.mainCharacter.alive()) {
+            mainTextureDrawer.reset();
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
+            addDigitsTexture(150, GameLevels.FRUSTUM_HEIGHT - 35, flow.score, mainTextureDrawer);
+            mainTextureDrawer.draw(gl10);
+        }
+
+        if(flow.currentState == FightingGameFlow.GameState.GAME_OVER){
+            gl10.glLoadIdentity();
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+
+            basicDrawer.reset();
+            basicDrawer.addColoredRectangle(0, flow.CONTROLS_HEIGHT, GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT, pauseOverlay);
+            basicDrawer.draw(gl10);
+
+            gl10.glLoadIdentity();
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
+
+            mainTextureDrawer.reset();
+            flow.restartButton.label.addLetterTexture(mainTextureDrawer);
+            mainTextureDrawer.draw(gl10);
+        }
+
+
 
     }
 

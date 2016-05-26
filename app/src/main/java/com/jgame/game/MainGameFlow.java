@@ -1,27 +1,17 @@
 package com.jgame.game;
 
-import android.util.Log;
-
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.DecorationElement;
-import com.jgame.elements.FoodOrganism;
-import com.jgame.elements.GameObject;
-import com.jgame.elements.MovingOrganism;
 import com.jgame.elements.OrganismBehavior;
 import com.jgame.elements.Particle;
 import com.jgame.elements.Player;
 import com.jgame.game.LevelInformation.LevelObjective;
 import com.jgame.elements.ElementCreator;
 import com.jgame.elements.GameElement;
-import com.jgame.elements.Organism;
-import com.jgame.elements.Trap;
-import com.jgame.util.Circle;
-import com.jgame.util.GameButton;
 import com.jgame.util.Grid;
 import com.jgame.util.IdGenerator;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
-import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import com.jgame.util.Pool.ObjectFactory;
 import com.jgame.util.Pool;
@@ -29,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
 
 /**
  * Created by ej-jose on 12/08/15.
@@ -68,8 +57,6 @@ public class MainGameFlow extends GameFlow {
     public BaitSelected currentBait;
     public Square dragElement;
     public boolean stageCleared;
-    //public final GameButton retryButton;
-    //public final GameButton quitButton;
     //private final GameActivity gameActivity;
     private final LevelInformation levelInfo;
     public final static int NUMBER_OF_ROWS = 4;
@@ -97,8 +84,6 @@ public class MainGameFlow extends GameFlow {
         elementCreator.start();
         currentBait = BaitSelected.NONE;
         levelObjectives = levelInfo.getObjectives();
-        //retryButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 100, 60, 25), "retry");
-        //quitButton = new GameButton(new Square(FRUSTUM_WIDTH / 2, 50, 60, 25), "return");
         dragElement = new Square(0,0,0,0);
         player = new Player(new Vector2(PLAYING_WIDTH/2, PLAYING_HEIGHT/2), PLAYER_SIZE,
                 GameLevels.FRUSTUM_WIDTH, GameLevels.FRUSTUM_HEIGHT);

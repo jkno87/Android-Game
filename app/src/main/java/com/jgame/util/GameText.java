@@ -53,9 +53,7 @@ public class GameText {
      */
     public void addLetterTexture(TextureDrawer textureDrawer) {
         float currentX = bounds.position.x;
-        //float offset = texto.length * 0.2f;
 
-        //textureDrawer.addTexturedSquare(bounds, LETTERS[0]);
         for (int i = 0; i < texto.length; i++) {
             textureDrawer.addTexturedSquare(currentX, bounds.position.y + margin,
                     letterSize, bounds.lenY, LETTERS[(int) texto[i] - 97]);

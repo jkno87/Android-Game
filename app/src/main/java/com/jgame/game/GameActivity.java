@@ -1,7 +1,6 @@
 package com.jgame.game;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -9,9 +8,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
-
 import com.jgame.definitions.GameLevels;
-import com.jgame.util.GameButton;
+import com.jgame.util.LabelButton;
 import com.jgame.util.Square;
 
 /**
@@ -23,8 +21,8 @@ public class GameActivity extends Activity {
     private SoundManager soundManager;
     private GameFlow gameFlow;
     private Boolean paused;
-    public final GameButton continueButton = new GameButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
-    public final GameButton quitButton = new GameButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40), "quit");
+    public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
+    public final LabelButton quitButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40), "quit");
 
     @Override
     public void onCreate(Bundle savedInstanceState){

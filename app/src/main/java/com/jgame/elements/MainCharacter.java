@@ -29,7 +29,6 @@ public class MainCharacter extends Character {
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
     public final int LENGTH_MOVE_A = 35;
     public final int HEIGHT_MOVE_A = 85;
-    private int id;
     private final TimeCounter MOVE_B_COUNTER = new TimeCounter(0.64f);
     public final AttackData moveA;
     private final GameButton inputLeft;
@@ -40,7 +39,6 @@ public class MainCharacter extends Character {
                          final GameButton inputA, final GameButton inputB){
         super(CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id);
         this.state = GameState.IDLE;
-        this.id = id;
         //baseX.set(-1, 0);
         CollisionObject [] startupA = new CollisionObject[1];
         startupA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A,
@@ -124,7 +122,7 @@ public class MainCharacter extends Character {
      * @param state state en el que se encontrara el personaje.
      */
     private synchronized void setStateFromButton(GameState state){
-        if(this.state == GameState.INPUT_A || this.state == GameState.INPUT_B)
+        if(currentState == CharacterState.DEAD || this.state == GameState.INPUT_A || this.state == GameState.INPUT_B)
             return;
 
         if(state == GameState.INPUT_A) {
@@ -187,6 +185,13 @@ public class MainCharacter extends Character {
                 if(co.checkCollision(foe))
                     foe.hit();
         }
+    }
+
+    public void reset(float x, float y){
+        relativePosition.set(x,y);
+        updatePosition();
+        idleCollisionBoxes[0].updatePosition();
+        currentState = CharacterState.IDLE;
     }
 
     @Override
