@@ -19,6 +19,20 @@ public class FightingGameFlow extends GameFlow {
         PLAYING, GAME_OVER
     }
 
+    public static class WorldData {
+        public float minX;
+        public float maxX;
+
+        public WorldData(float minX, float maxX){
+            this.minX = minX;
+            this.maxX = maxX;
+        }
+
+    }
+
+
+    private final float MIN_X = 20;
+    private final float MAX_X = GameLevels.FRUSTUM_WIDTH - MIN_X;
     private final float SPAWN_TIME = 1.5f;
     private final int NUMBER_OF_INPUTS = 4;
     private final int MAX_WORLD_OBJECTS = 6;
@@ -34,7 +48,7 @@ public class FightingGameFlow extends GameFlow {
     private final float DIRECTION_WIDTH = 45;
     private final float BUTTONS_WIDTH = 50;
     private final float INPUTS_HEIGHT = 15;
-    private final float INITIAL_CHARACTER_POSITION = 15;
+    private final float INITIAL_CHARACTER_POSITION = 40;
     private final IdGenerator ID_GEN = new IdGenerator();
     public final LabelButton restartButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2 - 75, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "restart");
     public final Square gameFloor;
@@ -46,6 +60,7 @@ public class FightingGameFlow extends GameFlow {
     public final Enemy[] availableEnemies;
     public int score;
     public GameState currentState;
+    private final WorldData worldData;
 
     public FightingGameFlow(){
         gameFloor = new Square(0, 0, PLAYING_WIDTH, CONTROLS_HEIGHT);
@@ -60,6 +75,7 @@ public class FightingGameFlow extends GameFlow {
         availableEnemies = new Enemy[MAX_WORLD_OBJECTS];
         enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
         availableEnemies[0] = new Enemy(30,100,new Vector2(150, ELEMENTS_HEIGHT), ID_GEN.getId());
+        worldData = new WorldData(MIN_X, MAX_X);
         reset();
     }
 
@@ -126,11 +142,11 @@ public class FightingGameFlow extends GameFlow {
     @Override
     public void update(UpdateInterval interval) {
         if(mainCharacter.alive())
-            mainCharacter.update(currentEnemy, interval);
+            mainCharacter.update(currentEnemy, interval, worldData);
         else
             currentState = GameState.GAME_OVER;
 
-        currentEnemy.update(mainCharacter, interval);
+        currentEnemy.update(mainCharacter, interval, worldData);
         if(!currentEnemy.alive()){
             if(currentEnemy instanceof EmptyEnemy)
                 currentEnemy = availableEnemies[0];

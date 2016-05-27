@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.game.FightingGameFlow;
 import com.jgame.game.GameFlow;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer.TextureData;
@@ -17,7 +18,7 @@ public abstract class Character extends GameObject {
 
     public final static TextureData TEXTURE = new TextureData(0,0,0.03125f,0.0625f);
     public final CollisionObject[] idleCollisionBoxes;
-    private final Vector2 positionOffset;
+    protected final Vector2 positionOffset;
     public AttackData activeAttack;
     public CharacterState currentState;
     public final Square spriteContainer;
@@ -80,7 +81,7 @@ public abstract class Character extends GameObject {
         return currentState != CharacterState.DEAD;
     }
 
-    public abstract void update(Character foe, GameFlow.UpdateInterval interval);
+    public abstract void update(Character foe, GameFlow.UpdateInterval interval, FightingGameFlow.WorldData worldData);
     public abstract TextureData getCurrentTexture();
     public abstract void hit();
 }

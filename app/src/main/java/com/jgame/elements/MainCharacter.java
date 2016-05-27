@@ -1,6 +1,7 @@
 package com.jgame.elements;
 
 import com.jgame.elements.GameButton.ButtonListener;
+import com.jgame.game.FightingGameFlow;
 import com.jgame.game.GameFlow;
 import com.jgame.game.LevelSelectFlow;
 import com.jgame.util.TextureDrawer;
@@ -145,20 +146,24 @@ public class MainCharacter extends Character {
     }
 
     @Override
-    public void update(Character foe, GameFlow.UpdateInterval timeDifference) {
+    public void update(Character foe, GameFlow.UpdateInterval timeDifference, FightingGameFlow.WorldData worldData) {
         synchronized (this) {
             if (state == GameState.IDLE)
                 return;
             if (state == GameState.MOVING_FORWARD) {
-                move(RIGHT_MOVE_SPEED);
-                updatePosition();
-                //Esto esta horripilante, esto se va al diablo con cualquier cambio
-                idleCollisionBoxes[0].updatePosition();
+                if(position.x + MOVING_SPEED < worldData.maxX) {
+                    move(RIGHT_MOVE_SPEED);
+                    updatePosition();
+                    //Esto esta horripilante, esto se va al diablo con cualquier cambio
+                    idleCollisionBoxes[0].updatePosition();
+                }
             } if (state == GameState.MOVING_BACKWARDS) {
-                move(LEFT_MOVE_SPEED);
-                updatePosition();
-                //Esto esta horripilante, esto se va al diablo con cualquier cambio
-                idleCollisionBoxes[0].updatePosition();
+                if(position.x - MOVING_SPEED > worldData.minX) {
+                    move(LEFT_MOVE_SPEED);
+                    updatePosition();
+                    //Esto esta horripilante, esto se va al diablo con cualquier cambio
+                    idleCollisionBoxes[0].updatePosition();
+                }
             } if(state == GameState.INPUT_A){
                 moveA.update(timeDifference);
                 if(moveA.completed()){

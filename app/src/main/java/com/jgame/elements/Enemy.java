@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.game.FightingGameFlow;
 import com.jgame.game.GameFlow;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TimeCounter;
@@ -29,7 +30,7 @@ public class Enemy extends Character {
     }
 
     @Override
-    public void update(Character foe, GameFlow.UpdateInterval interval) {
+    public void update(Character foe, GameFlow.UpdateInterval interval, FightingGameFlow.WorldData worldData) {
         if(currentState == CharacterState.DEAD)
             return;
 
