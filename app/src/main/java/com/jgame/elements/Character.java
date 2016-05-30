@@ -74,6 +74,24 @@ public abstract class Character extends GameObject {
     }
 
     /**
+     * Sirve para checar la posicion en la que se encuentra el objeto foe y determina si es necesario realizar un cambio de direccion.
+     * @param foe
+     */
+    public void adjustToFoePosition(Character foe){
+        if(foe instanceof EmptyEnemy)
+            return;
+
+        if(baseX.x > 0) {
+            if (position.x > foe.position.x)
+                changeDirection();
+        } else {
+            if (position.x < foe.position.x)
+                changeDirection();
+        }
+    }
+
+
+    /**
      * Determina si el Character tiene un estado diferente a CharacterState.DEAD
      * @return boolean
      */

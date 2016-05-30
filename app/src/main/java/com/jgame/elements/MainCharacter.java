@@ -1,5 +1,7 @@
 package com.jgame.elements;
 
+import android.util.Log;
+
 import com.jgame.elements.GameButton.ButtonListener;
 import com.jgame.game.FightingGameFlow;
 import com.jgame.game.GameFlow;
@@ -40,7 +42,6 @@ public class MainCharacter extends Character {
                          final GameButton inputA, final GameButton inputB){
         super(CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id);
         this.state = GameState.IDLE;
-        //baseX.set(-1, 0);
         CollisionObject [] startupA = new CollisionObject[1];
         startupA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A,
                 HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
@@ -148,6 +149,9 @@ public class MainCharacter extends Character {
     @Override
     public void update(Character foe, GameFlow.UpdateInterval timeDifference, FightingGameFlow.WorldData worldData) {
         synchronized (this) {
+
+            adjustToFoePosition(foe);
+
             if (state == GameState.IDLE)
                 return;
             if (state == GameState.MOVING_FORWARD) {
@@ -197,6 +201,7 @@ public class MainCharacter extends Character {
         updatePosition();
         idleCollisionBoxes[0].updatePosition();
         currentState = CharacterState.IDLE;
+        state = GameState.IDLE;
     }
 
     @Override

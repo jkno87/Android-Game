@@ -31,6 +31,9 @@ public class Enemy extends Character {
 
     @Override
     public void update(Character foe, GameFlow.UpdateInterval interval, FightingGameFlow.WorldData worldData) {
+
+        adjustToFoePosition(foe);
+
         if(currentState == CharacterState.DEAD)
             return;
 
