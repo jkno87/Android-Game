@@ -21,11 +21,11 @@ public class MainCharacter extends Character {
         IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B
     }
 
-    public final static TextureDrawer.TextureData IDLE_TEXTURE = new TextureDrawer.TextureData(0,0,0.03125f,0.0625f);
+    public final static TextureDrawer.TextureData IDLE_TEXTURE = new TextureDrawer.TextureData(0,0,0.125f,0.125f);
     public final static TextureDrawer.TextureData INIT_MOV_A = new TextureDrawer.TextureData(0,0.0625f, 0.03125f,0.125f);
     public final static TextureDrawer.TextureData ACTIVE_MOV_A = new TextureDrawer.TextureData(0,0.125f,0.03125f, 0.1875f);
-    public static final int CHARACTER_LENGTH = 40;
-    public static final int CHARACTER_HEIGHT = 80;
+    public static final int CHARACTER_LENGTH = 80;
+    public static final int CHARACTER_HEIGHT = 160;
     private final Vector2 CHARACTER_OFFSET = new Vector2(-CHARACTER_LENGTH/2,0);
     private final float MOVING_SPEED = 0.75f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
