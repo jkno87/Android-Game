@@ -22,15 +22,11 @@ public class CollisionObject extends GameObject {
         setParent(parent);
     }
 
-    /**
-     * Se agrega esta funcion para que en caso de tener una base X negativa, ajustar la posicion en la que se dibuja.
-     */
+    @Override
     public void updatePosition(){
         super.updatePosition();
-        //Se supone que este tipo de objeto necesita un parent. Esta parte no me gusta nada
-        //Esto funciona asumiendo que solo cambiara este vector base
         if(parent.baseX.x < 0)
-            position.sub(bounds.lenX, 0);
+            position.add(parent.baseX.x * bounds.lenX, 0);
     }
 
     /**

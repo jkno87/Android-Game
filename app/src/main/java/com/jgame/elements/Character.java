@@ -18,17 +18,15 @@ public abstract class Character extends GameObject {
 
     public final static TextureData TEXTURE = new TextureData(0,0,0.03125f,0.0625f);
     public final CollisionObject[] idleCollisionBoxes;
-    protected final Vector2 positionOffset;
     public AttackData activeAttack;
     public CharacterState currentState;
     public final Square spriteContainer;
 
     public Character(float sizeX, float sizeY, Vector2 position, int id) {
         super(position, id);
-        positionOffset = new Vector2(-sizeX/2,0);
         spriteContainer = new Square(new Vector2(), sizeX, sizeY, 0);
         idleCollisionBoxes = new CollisionObject[]{
-                new CollisionObject(new Vector2(positionOffset), id, sizeX, sizeY, this, CollisionObject.TYPE_HITTABLE)
+                new CollisionObject(new Vector2(), id, sizeX, sizeY, this, CollisionObject.TYPE_HITTABLE)
         };
         currentState = CharacterState.IDLE;
         updatePosition();
@@ -62,6 +60,8 @@ public abstract class Character extends GameObject {
 
     public synchronized void changeDirection(){
         baseX.set(baseX.x * -1, 0);
+        moveX(baseX.x * -1 * spriteContainer.lenX);
+        updatePosition();
     }
 
     /**
@@ -70,7 +70,7 @@ public abstract class Character extends GameObject {
     @Override
     public void updatePosition(){
         super.updatePosition();
-        spriteContainer.position.set(position).add(positionOffset);
+        spriteContainer.position.set(position);
     }
 
     /**

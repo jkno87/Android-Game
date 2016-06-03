@@ -57,6 +57,14 @@ public class GameObject {
     }
 
     /**
+     * Suma el vector direction a position.
+     * @param diffX direccion X en la que se movera el GameObject
+     */
+    public void moveX(float diffX){
+        relativePosition.add(diffX,0);
+    }
+
+    /**
      * Funcion que determina si el GameObject puede ser dibujado en el renderer.
      * @return
      */

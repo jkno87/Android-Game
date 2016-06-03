@@ -1,15 +1,11 @@
 package com.jgame.elements;
 
-import android.util.Log;
-
 import com.jgame.elements.GameButton.ButtonListener;
 import com.jgame.game.FightingGameFlow;
 import com.jgame.game.GameFlow;
-import com.jgame.game.LevelSelectFlow;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
-import java.util.List;
 import com.jgame.elements.AttackData.CollisionState;
 
 /**
@@ -21,12 +17,13 @@ public class MainCharacter extends Character {
         IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B
     }
 
-    public final static TextureDrawer.TextureData IDLE_TEXTURE = new TextureDrawer.TextureData(0,0,0.125f,0.125f);
-    public final static TextureDrawer.TextureData INIT_MOV_A = new TextureDrawer.TextureData(0,0.0625f, 0.03125f,0.125f);
-    public final static TextureDrawer.TextureData ACTIVE_MOV_A = new TextureDrawer.TextureData(0,0.125f,0.03125f, 0.1875f);
-    public static final int CHARACTER_LENGTH = 80;
+    public final static TextureDrawer.TextureData IDLE_TEXTURE = new TextureDrawer.TextureData(0,0.250f,0.125f,0.375f);
+    public final static TextureDrawer.TextureData INIT_MOV_A = new TextureDrawer.TextureData(0,0,0.125f,0.125f);
+    public final static TextureDrawer.TextureData ACTIVE_MOV_A = new TextureDrawer.TextureData(0,0.125f,0.125f, 0.250f);
+    public final static TextureDrawer.TextureData MOVING_A = new TextureDrawer.TextureData(0,0.375f,0.125f, 0.5f);
+    public final static TextureDrawer.TextureData MOVING_B = new TextureDrawer.TextureData(0,0.5f,0.125f, 0.625f);
+    public static final int CHARACTER_LENGTH = 75;
     public static final int CHARACTER_HEIGHT = 160;
-    private final Vector2 CHARACTER_OFFSET = new Vector2(-CHARACTER_LENGTH/2,0);
     private final float MOVING_SPEED = 0.75f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
@@ -43,15 +40,15 @@ public class MainCharacter extends Character {
         super(CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id);
         this.state = GameState.IDLE;
         CollisionObject [] startupA = new CollisionObject[1];
-        startupA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id, LENGTH_MOVE_A,
+        startupA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A,
                 HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
         CollisionObject [] activeA = new CollisionObject[2];
-        activeA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
+        activeA[0] = new CollisionObject(new Vector2(), id,
                 LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
-        activeA[1] = new CollisionObject(new Vector2(CHARACTER_OFFSET).add(LENGTH_MOVE_A, HEIGHT_MOVE_A),
+        activeA[1] = new CollisionObject(new Vector2().add(LENGTH_MOVE_A, HEIGHT_MOVE_A),
                 id, 15, 10, this, CollisionObject.TYPE_ATTACK);
         CollisionObject [] recoveryA = new CollisionObject[1];
-        recoveryA[0] = new CollisionObject(new Vector2(CHARACTER_OFFSET), id,
+        recoveryA[0] = new CollisionObject(new Vector2(), id,
                 LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
 
         moveA = new AttackData(0.12f,0.15f,0.1f, startupA, activeA, recoveryA);
