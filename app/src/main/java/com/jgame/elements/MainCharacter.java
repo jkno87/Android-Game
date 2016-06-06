@@ -3,7 +3,9 @@ package com.jgame.elements;
 import com.jgame.elements.GameButton.ButtonListener;
 import com.jgame.game.FightingGameFlow;
 import com.jgame.game.GameFlow;
+import com.jgame.util.AnimationData;
 import com.jgame.util.TextureDrawer;
+import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import com.jgame.elements.AttackData.CollisionState;
@@ -17,13 +19,14 @@ public class MainCharacter extends Character {
         IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B
     }
 
-    public final static TextureDrawer.TextureData IDLE_TEXTURE = new TextureDrawer.TextureData(0,0.250f,0.125f,0.375f);
-    public final static TextureDrawer.TextureData INIT_MOV_A = new TextureDrawer.TextureData(0,0,0.125f,0.125f);
-    public final static TextureDrawer.TextureData ACTIVE_MOV_A = new TextureDrawer.TextureData(0,0.125f,0.125f, 0.250f);
-    public final static TextureDrawer.TextureData MOVING_A = new TextureDrawer.TextureData(0,0.375f,0.125f, 0.5f);
-    public final static TextureDrawer.TextureData MOVING_B = new TextureDrawer.TextureData(0,0.5f,0.125f, 0.625f);
+    public final static TextureData IDLE_TEXTURE = new TextureData(0,0.250f,0.125f,0.375f);
+    public final static TextureData INIT_MOV_A = new TextureData(0,0,0.125f,0.125f);
+    public final static TextureData ACTIVE_MOV_A = new TextureData(0,0.125f,0.125f, 0.250f);
+    public final static TextureData MOVING_A = new TextureData(0,0.375f,0.125f, 0.5f);
+    public final static TextureData MOVING_B = new TextureData(0,0.5f,0.125f, 0.625f);
     public static final int CHARACTER_LENGTH = 75;
     public static final int CHARACTER_HEIGHT = 160;
+    private final AnimationData WALKING_ANIMATION = new AnimationData(0.55f, new TextureData[]{MOVING_A, MOVING_B});
     private final float MOVING_SPEED = 0.75f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
@@ -134,6 +137,9 @@ public class MainCharacter extends Character {
 
     @Override
     public TextureDrawer.TextureData getCurrentTexture(){
+        if(state == GameState.MOVING_FORWARD || state == GameState.MOVING_BACKWARDS)
+            return WALKING_ANIMATION.getCurrentTexture();
+
         if(state != GameState.INPUT_A)
             return IDLE_TEXTURE;
 
@@ -149,12 +155,14 @@ public class MainCharacter extends Character {
 
             adjustToFoePosition(foe);
 
-            if (state == GameState.IDLE)
+            if (state == GameState.IDLE) {
+                WALKING_ANIMATION.reset();
                 return;
-            if (state == GameState.MOVING_FORWARD) {
+            } if (state == GameState.MOVING_FORWARD) {
                 if(position.x + MOVING_SPEED < worldData.maxX) {
                     move(RIGHT_MOVE_SPEED);
                     updatePosition();
+                    WALKING_ANIMATION.update(timeDifference);
                     //Esto esta horripilante, esto se va al diablo con cualquier cambio
                     idleCollisionBoxes[0].updatePosition();
                 }
@@ -162,6 +170,7 @@ public class MainCharacter extends Character {
                 if(position.x - MOVING_SPEED > worldData.minX) {
                     move(LEFT_MOVE_SPEED);
                     updatePosition();
+                    WALKING_ANIMATION.update(timeDifference);
                     //Esto esta horripilante, esto se va al diablo con cualquier cambio
                     idleCollisionBoxes[0].updatePosition();
                 }

@@ -1,45 +1,50 @@
 package com.jgame.util;
 
+import com.jgame.util.TextureDrawer.TextureData;
+import com.jgame.game.GameFlow.UpdateInterval;
+
 /**
+ * Objeto creado para realizar mejor las transiciones de texturas y representar una animacion.
  * Created by jose on 29/01/15.
  */
-public class AnimationData extends TextureData {
+public class AnimationData {
 
-    private final int animationFrames;
-    private int currentFrame;
-    private float offsetX;
-    private float offsetY;
-    private float lengthX;
-    private final TimeCounter frameTimer;
+    private final TextureData[] animationSprites;
+    private final TimeCounter frameDuration;
+    private int currentSprite;
 
-    public AnimationData(int animationFrames, float lengthX, float offsetX, float offsetY, float frameInterval){
-        this.animationFrames = animationFrames;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-        this.lengthX = lengthX;
-        currentFrame = 0;
-        frameTimer = new TimeCounter(frameInterval);
+    public AnimationData(float frameDuration, TextureData[] animationSprites){
+        this.animationSprites = animationSprites;
+        this.frameDuration = new TimeCounter(frameDuration);
     }
 
-    public synchronized void updateFrame(float interval){
-
-        frameTimer.accum(null);
-        if(!frameTimer.completed())
-            return;
-
-        currentFrame++;
-        if(currentFrame >= animationFrames)
-            currentFrame = 0;
-
-        frameTimer.reset();
+    /**
+     * Regresa la animacion al estado inicial
+     */
+    public void reset(){
+        this.frameDuration.reset();
+        currentSprite = 0;
     }
 
-    @Override
-    public synchronized float[] getTextCoords() {
-
-        return new float[]{offsetX + lengthX * currentFrame, offsetY + lengthX,
-                           offsetX + lengthX * (currentFrame + 1), offsetY + lengthX,
-                           offsetX + lengthX * (currentFrame + 1), offsetY,
-                           offsetX + lengthX * currentFrame, offsetY};
+    /**
+     * Actualiza el estado de la animacion
+     * @param interval intervalo de tiempo transcurrido desde la ultima actualizacion
+     */
+    public void update(UpdateInterval interval){
+        frameDuration.accum(interval);
+        if(frameDuration.completed()){
+            currentSprite = (currentSprite < animationSprites.length - 1)
+                    ? currentSprite + 1 : 0;
+            frameDuration.reset();
+        }
     }
+
+    /**
+     * Regresa el sprite actual en la animacion
+     * @return
+     */
+    public TextureData getCurrentTexture(){
+        return animationSprites[currentSprite];
+    }
+
 }
