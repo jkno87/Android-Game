@@ -16,21 +16,21 @@ public class EmptyEnemy extends Enemy {
     private final TimeCounter timeToLive;
 
     public EmptyEnemy(int id, float time) {
-        super(0, 0, new Vector2(), id);
-        currentState = CharacterState.IDLE;
+        super(0, 0, 0, 0, new Vector2(), id);
+        currentState = EnemyState.IDLE;
         this.timeToLive = new TimeCounter(time);
     }
 
     @Override
     public void reset(){
         timeToLive.reset();
-        currentState = CharacterState.IDLE;
+        currentState = EnemyState.IDLE;
     }
 
     @Override
     public void update(Character foe, GameFlow.UpdateInterval interval, FightingGameFlow.WorldData wData) {
         timeToLive.accum(interval);
         if(timeToLive.completed())
-            currentState = CharacterState.DEAD;
+            currentState = EnemyState.DEAD;
     }
 }

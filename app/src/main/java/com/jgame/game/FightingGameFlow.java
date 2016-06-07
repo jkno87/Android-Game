@@ -74,14 +74,15 @@ public class FightingGameFlow extends GameFlow {
                 gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B]);
         availableEnemies = new Enemy[MAX_WORLD_OBJECTS];
         enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
-        availableEnemies[0] = new Enemy(30,100,new Vector2(150, ELEMENTS_HEIGHT), ID_GEN.getId());
+        availableEnemies[0] = new Enemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,
+                MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,new Vector2(350, ELEMENTS_HEIGHT), ID_GEN.getId());
         worldData = new WorldData(MIN_X, MAX_X);
         reset();
     }
 
     private void reset(){
         score = 0;
-        currentEnemy = availableEnemies[0];
+        currentEnemy = enemySpawnInterval;
         currentEnemy.reset();
         mainCharacter.reset(INITIAL_CHARACTER_POSITION, ELEMENTS_HEIGHT);
         currentState = GameState.PLAYING;
