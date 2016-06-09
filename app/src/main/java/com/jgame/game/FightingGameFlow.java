@@ -75,7 +75,7 @@ public class FightingGameFlow extends GameFlow {
         availableEnemies = new Enemy[MAX_WORLD_OBJECTS];
         enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
         availableEnemies[0] = new Enemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,
-                MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,new Vector2(350, ELEMENTS_HEIGHT), ID_GEN.getId());
+                MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
         worldData = new WorldData(MIN_X, MAX_X);
         reset();
     }

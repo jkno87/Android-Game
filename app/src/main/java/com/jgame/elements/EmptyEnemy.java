@@ -16,7 +16,7 @@ public class EmptyEnemy extends Enemy {
     private final TimeCounter timeToLive;
 
     public EmptyEnemy(int id, float time) {
-        super(0, 0, 0, 0, new Vector2(), id);
+        super(0, 0, 0, 0, 0, id, null);
         currentState = EnemyState.IDLE;
         this.timeToLive = new TimeCounter(time);
     }

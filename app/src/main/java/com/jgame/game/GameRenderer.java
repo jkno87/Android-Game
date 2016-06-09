@@ -155,6 +155,9 @@ public class GameRenderer implements Renderer {
      * @param currentOrigin
      */
     private void renderEnemy(Character c, SimpleDrawer drawer, Vector2 currentOrigin){
+        if(!c.hittable())
+            return;
+
         for(CollisionObject o : c.getActiveCollisionBoxes())
             if(o.type == CollisionObject.TYPE_ATTACK)
                 drawer.addSquare(o.bounds, ATTACK_COLOR, currentOrigin);

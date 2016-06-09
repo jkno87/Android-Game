@@ -15,9 +15,11 @@ public abstract class Character extends GameObject {
     public final CollisionObject[] idleCollisionBoxes;
     public AttackData activeAttack;
     public final Square spriteContainer;
+    private float idleSizeX;
 
     public Character(float sizeX, float sizeY, float idleSizeX, float idleSizeY, Vector2 position, int id) {
         super(position, id);
+        this.idleSizeX = idleSizeX;
         spriteContainer = new Square(new Vector2(), sizeX, sizeY, 0);
         idleCollisionBoxes = new CollisionObject[]{
                 new CollisionObject(new Vector2(), id, idleSizeX, idleSizeY, this, CollisionObject.TYPE_HITTABLE)
@@ -40,8 +42,7 @@ public abstract class Character extends GameObject {
 
     public synchronized void changeDirection(){
         baseX.set(baseX.x * -1, 0);
-        moveX(baseX.x * -1 * spriteContainer.lenX);
-        updatePosition();
+        moveX(baseX.x * -1 * idleSizeX);
     }
 
     /**
@@ -51,6 +52,7 @@ public abstract class Character extends GameObject {
     public void updatePosition(){
         super.updatePosition();
         spriteContainer.position.set(position);
+        idleCollisionBoxes[0].updatePosition();
     }
 
     /**
@@ -70,6 +72,7 @@ public abstract class Character extends GameObject {
         }
     }
 
+    public abstract boolean hittable();
     public abstract boolean alive();
     public abstract boolean attacking();
     public abstract void update(Character foe, GameFlow.UpdateInterval interval, FightingGameFlow.WorldData worldData);

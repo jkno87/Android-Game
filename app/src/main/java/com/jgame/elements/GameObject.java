@@ -54,6 +54,7 @@ public class GameObject {
      */
     public void move(Vector2 direction){
         relativePosition.add(direction);
+        updatePosition();
     }
 
     /**
@@ -62,6 +63,17 @@ public class GameObject {
      */
     public void moveX(float diffX){
         relativePosition.add(diffX,0);
+        updatePosition();
+    }
+
+    /**
+     * Mueve la posicion actual a position
+     * @param x  nueva posicion x
+     * @param y nueva posicion y
+     */
+    public void moveTo(float x, float y){
+        relativePosition.set(x,y);
+        updatePosition();
     }
 
     /**

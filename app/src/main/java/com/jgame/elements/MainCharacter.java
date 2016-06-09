@@ -154,26 +154,21 @@ public class MainCharacter extends Character {
     public void update(Character foe, GameFlow.UpdateInterval timeDifference, FightingGameFlow.WorldData worldData) {
         synchronized (this) {
 
-            adjustToFoePosition(foe);
-
             if (state == CharacterState.IDLE) {
+                adjustToFoePosition(foe);
                 WALKING_ANIMATION.reset();
                 return;
             } if (state == CharacterState.MOVING_FORWARD) {
+                adjustToFoePosition(foe);
                 if(position.x + MOVING_SPEED < worldData.maxX) {
                     move(RIGHT_MOVE_SPEED);
-                    updatePosition();
                     WALKING_ANIMATION.update(timeDifference);
-                    //Esto esta horripilante, esto se va al diablo con cualquier cambio
-                    idleCollisionBoxes[0].updatePosition();
                 }
             } if (state == CharacterState.MOVING_BACKWARDS) {
+                adjustToFoePosition(foe);
                 if(position.x - MOVING_SPEED > worldData.minX) {
                     move(LEFT_MOVE_SPEED);
-                    updatePosition();
                     WALKING_ANIMATION.update(timeDifference);
-                    //Esto esta horripilante, esto se va al diablo con cualquier cambio
-                    idleCollisionBoxes[0].updatePosition();
                 }
             } if(state == CharacterState.INPUT_A){
                 moveA.update(timeDifference);
@@ -197,9 +192,11 @@ public class MainCharacter extends Character {
                 }
             }
 
-            for(CollisionObject co : getActiveCollisionBoxes())
-                if(co.checkCollision(foe))
-                    foe.hit();
+            if(foe.hittable()) {
+                for (CollisionObject co : getActiveCollisionBoxes())
+                    if (co.checkCollision(foe))
+                        foe.hit();
+            }
         }
     }
 
@@ -208,6 +205,12 @@ public class MainCharacter extends Character {
         updatePosition();
         idleCollisionBoxes[0].updatePosition();
         state = CharacterState.IDLE;
+    }
+
+    @Override
+    public boolean hittable(){
+        //en este momento el personaje principal siempre puede ser golpeado
+        return true;
     }
 
     @Override
