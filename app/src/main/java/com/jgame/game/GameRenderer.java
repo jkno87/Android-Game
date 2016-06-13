@@ -28,6 +28,10 @@ public class GameRenderer implements Renderer {
     private final boolean RENDER_HITBOXES = true;
     private final float FRAME_INTERVAL = 0.015384615f;
     private final float NANO_SCALE = 1000000000.0f;
+    public final ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
+    public final static TextureData BUTTON_TEXTURE = new TextureData(0,0.75f,0.125f,0.875f);
+    public final static TextureData ARROW_TEXTURE = new TextureData(0,0.875f,0.125f,1f);
+    public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.125f,1,0,0.875f);
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
@@ -200,9 +204,7 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
 
         basicDrawer.reset();
-        basicDrawer.addSquare(flow.gameFloor, Player.REGULAR_COLOR, currentOrigin);
-        for(int i = 0; i < flow.gameButtons.length; i++)
-            basicDrawer.addSquare(flow.gameButtons[i].bounds, flow.gameButtons[i].getCurrentColor(), currentOrigin);
+        basicDrawer.addSquare(flow.gameFloor, DASHBOARD_COLOR, currentOrigin);
 
         if(RENDER_HITBOXES) {
             renderEnemy(flow.mainCharacter, basicDrawer, currentOrigin);
@@ -214,6 +216,9 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
         renderCharacter(flow.mainCharacter, mainTextureDrawer);
         renderCharacter(flow.currentEnemy, mainTextureDrawer);
+        mainTextureDrawer.addTexturedSquare(flow.gameButtons[FightingGameFlow.INPUT_LEFT].bounds, LEFT_ARROW_TEXTURE);
+        mainTextureDrawer.addTexturedSquare(flow.gameButtons[FightingGameFlow.INPUT_RIGHT].bounds, ARROW_TEXTURE);
+        mainTextureDrawer.addTexturedSquare(flow.gameButtons[FightingGameFlow.INPUT_A].bounds, BUTTON_TEXTURE);
         mainTextureDrawer.draw(gl10);
 
         if(flow.mainCharacter.alive()) {

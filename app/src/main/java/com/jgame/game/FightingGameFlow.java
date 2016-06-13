@@ -36,9 +36,9 @@ public class FightingGameFlow extends GameFlow {
     private final float SPAWN_TIME = 1.5f;
     private final int NUMBER_OF_INPUTS = 4;
     private final int MAX_WORLD_OBJECTS = 6;
-    private final int INPUT_LEFT = 0;
-    private final int INPUT_RIGHT = 1;
-    private final int INPUT_A = 2;
+    public static final int INPUT_LEFT = 0;
+    public static final int INPUT_RIGHT = 1;
+    public static final int INPUT_A = 2;
     private final int INPUT_B = 3;
     private final int INPUT_NONE = -1;
     public static float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH;

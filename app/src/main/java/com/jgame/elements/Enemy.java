@@ -18,7 +18,11 @@ public class Enemy extends Character {
         IDLE, DEAD, ATTACKING, TELEPORTING
     }
 
-    public final static TextureData TELEPORT_TEXTURE = new TextureData(0,0,0.06f,0.35f);
+    abstract class EnemyAction {
+        public abstract void act();
+    }
+
+    public final static TextureData TELEPORT_TEXTURE = new TextureData(0,0.625f,0.125f,0.75f);
     private final int DISTANCE_FROM_CHARACTER = 35;
     private TimeCounter idleTimer = new TimeCounter(1.5f);
     private CollisionObject[] startupBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
@@ -28,24 +32,39 @@ public class Enemy extends Character {
     private AttackData [] attacks =
             new AttackData[] {new AttackData(0.33f,0.1f,0.45f, startupBoxes, activeBoxes, recoveryBoxes)};
     protected EnemyState currentState;
-    private final MainCharacter mainCharacter;
     private final TimeCounter teleportInterval;
+    private int currentAction;
+    private final EnemyAction[] actions;
 
-    public Enemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition,int id, MainCharacter mainCharacter) {
+    public Enemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition,int id, final MainCharacter mainCharacter) {
         super(sizeX, sizeY, idleSizeX, idleSizeY, new Vector2(0, yPosition), id);
-        this.mainCharacter = mainCharacter;
         teleportInterval = new TimeCounter(0.5f);
         currentState = EnemyState.TELEPORTING;
+        EnemyAction move  = new EnemyAction() {
+            @Override
+            public void act() {
+                moveTo(mainCharacter.position.x + mainCharacter.baseX.x* -1 * DISTANCE_FROM_CHARACTER, position.y);
+                adjustToFoePosition(mainCharacter);
+            }
+        };
+        EnemyAction attack = new EnemyAction(){
+            @Override
+            public void act(){
+                currentState = EnemyState.IDLE;
+            }
+        };
+        actions = new EnemyAction[]{move, attack};
+        currentAction = 0;
+    }
+
+    private void toggleCurrentAction(){
+        currentAction = currentAction + 1 < actions.length ? currentAction + 1 : 0;
     }
 
     public void reset(){
         idleTimer.reset();
         baseX.x = 1;
         currentState = EnemyState.TELEPORTING;
-    }
-
-    private void calculateAttackingPosition(){
-        moveTo(mainCharacter.position.x + mainCharacter.baseX.x* -1 * DISTANCE_FROM_CHARACTER, position.y);
     }
 
     @Override
@@ -61,8 +80,8 @@ public class Enemy extends Character {
             if(!teleportInterval.completed())
                 return;
             teleportInterval.reset();
-            currentState = EnemyState.IDLE;
-            calculateAttackingPosition();
+            actions[currentAction].act();
+            toggleCurrentAction();
 
             return;
         }
@@ -74,6 +93,7 @@ public class Enemy extends Character {
                 activeAttack = attacks[0];
                 activeAttack.reset();
             }
+            return;
         }
 
         if(currentState == EnemyState.ATTACKING) {
