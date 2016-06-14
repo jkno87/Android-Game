@@ -25,7 +25,7 @@ public class GameRenderer implements Renderer {
     //private final float FRUSTUM_HEIGHT = 480f;
     //private final float FRUSTUM_WIDTH = 320f;
     private final int SCORE_SIZE = 15;
-    private final boolean RENDER_HITBOXES = true;
+    private final boolean RENDER_HITBOXES = false;
     private final float FRAME_INTERVAL = 0.015384615f;
     private final float NANO_SCALE = 1000000000.0f;
     public final ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
@@ -224,7 +224,7 @@ public class GameRenderer implements Renderer {
         if(flow.mainCharacter.alive()) {
             mainTextureDrawer.reset();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
-            addDigitsTexture(150, GameLevels.FRUSTUM_HEIGHT - 35, flow.score, mainTextureDrawer);
+            addDigitsTexture(250, 35, flow.score, mainTextureDrawer);
             mainTextureDrawer.draw(gl10);
         }
 
@@ -243,9 +243,6 @@ public class GameRenderer implements Renderer {
             flow.restartButton.label.addLetterTexture(mainTextureDrawer);
             mainTextureDrawer.draw(gl10);
         }
-
-
-
     }
 
     private void drawPauseMenu(){

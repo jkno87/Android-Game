@@ -48,7 +48,7 @@ public class FightingGameFlow extends GameFlow {
     private final float DIRECTION_WIDTH = 45;
     private final float BUTTONS_WIDTH = 50;
     private final float INPUTS_HEIGHT = 15;
-    private final float INITIAL_CHARACTER_POSITION = 40;
+    private final float INITIAL_CHARACTER_POSITION = GameLevels.FRUSTUM_WIDTH / 2;
     private final IdGenerator ID_GEN = new IdGenerator();
     public final LabelButton restartButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2 - 75, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "restart");
     public final Square gameFloor;
@@ -156,6 +156,9 @@ public class FightingGameFlow extends GameFlow {
                 score++;
             }
             currentEnemy.reset();
+
+            if(score > 5)
+                currentEnemy.increaseDifficulty();
         }
     }
 

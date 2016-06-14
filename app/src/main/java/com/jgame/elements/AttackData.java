@@ -18,10 +18,17 @@ public class AttackData {
     public final CollisionObject [] startup;
     public final CollisionObject [] active;
     public final CollisionObject [] recovery;
-    private final TimeCounter startupCounter;
-    private final TimeCounter activeCounter;
-    private final TimeCounter recoveryCounter;
+    public TimeCounter startupCounter;
+    public TimeCounter activeCounter;
+    public TimeCounter recoveryCounter;
     public CollisionState currentState;
+
+    public AttackData(CollisionObject[] startup, CollisionObject[] active, CollisionObject [] recovery){
+        currentState = CollisionState.STARTUP;
+        this.startup = startup;
+        this.active = active;
+        this.recovery = recovery;
+    }
 
     public AttackData(float startupTime, float activeTime, float recoveryTime,
                       CollisionObject[] startup, CollisionObject[] active, CollisionObject [] recovery){
