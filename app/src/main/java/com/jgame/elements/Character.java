@@ -15,7 +15,7 @@ public abstract class Character extends GameObject {
     public final CollisionObject[] idleCollisionBoxes;
     public AttackData activeAttack;
     public final Square spriteContainer;
-    private float idleSizeX;
+    public float idleSizeX;
 
     public Character(float sizeX, float sizeY, float idleSizeX, float idleSizeY, Vector2 position, int id) {
         super(position, id);

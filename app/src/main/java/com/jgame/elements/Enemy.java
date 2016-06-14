@@ -6,7 +6,7 @@ import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
-import java.sql.Time;
+import java.util.Random;
 
 /**
  * Clase que representa un enemigo basico que se mantiene en su lugar y ataca
@@ -45,6 +45,7 @@ public class Enemy extends Character {
     private final EnemyParameters[] parameters;
     private int currentDifficulty;
     private EnemyParameters currentParameters;
+    private final Random random = new Random();
 
     public Enemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition,int id, final MainCharacter mainCharacter) {
         super(sizeX, sizeY, idleSizeX, idleSizeY, new Vector2(0, yPosition), id);
@@ -117,13 +118,19 @@ public class Enemy extends Character {
     }
 
     private void setPosition(){
-        moveTo(mainCharacter.position.x + mainCharacter.baseX.x* -1 * currentParameters.distanceFromCharacter, position.y);
+        baseX.x = mainCharacter.baseX.x * -1;
+
+        if(random.nextInt(2) == 0)
+            moveTo(mainCharacter.position.x + baseX.x * currentParameters.distanceFromCharacter, position.y);
+        else
+            moveTo(mainCharacter.position.x + mainCharacter.baseX.x *
+                    (currentParameters.distanceFromCharacter + mainCharacter.idleSizeX + idleSizeX), position.y);
+
         adjustToFoePosition(mainCharacter);
     }
 
     public void reset(){
         currentParameters.teleportInterval.reset();
-        baseX.x = 1;
         currentState = EnemyState.TELEPORTING;
         currentAction = 0;
         setPosition();
