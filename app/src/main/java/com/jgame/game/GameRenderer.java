@@ -4,10 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
+import android.view.Menu;
+
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.Character;
 import com.jgame.elements.CollisionObject;
-import com.jgame.elements.Player;
 import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.SimpleDrawer.ColorData;
@@ -15,15 +16,12 @@ import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class GameRenderer implements Renderer {
 
     private static final int NO_TEXTURE = 0;
-    //private final float FRUSTUM_HEIGHT = 480f;
-    //private final float FRUSTUM_WIDTH = 320f;
     private final int SCORE_SIZE = 15;
     private final boolean RENDER_HITBOXES = false;
     private final float FRAME_INTERVAL = 0.015384615f;
@@ -38,14 +36,6 @@ public class GameRenderer implements Renderer {
     private final TextureData[] DIGITS = new TextureData[]{new TextureData(0,0,0.0625f,1),new TextureData(0.0625f,0,0.125f,1),new TextureData(0.125f,0,0.1825f,1),
             new TextureData(0.1825f,0,0.25f,1),new TextureData(0.25f,0,0.3125f,1),new TextureData(0.3125f,0,0.375f,1),new TextureData(0.375f,0,0.4375f,1),
             new TextureData(0.4375f,0,0.5f,1),new TextureData(0.5f,0,0.5625f,1),new TextureData(0.5625f,0,0.625f,1)};
-    /*private final float OBJECTIVES_X_DRAW = FRUSTUM_WIDTH - 65;
-    private final float OBJECTIVES_AMOUNT_X = FRUSTUM_WIDTH - 35;
-    private final float OBJECTIVES_Y_DRAW = FRUSTUM_HEIGHT - 15;
-    private final float OBJECTIVES_SIZE = 10f;
-    private final float ENDGAME_LABELS_X = FRUSTUM_WIDTH / 2 - 35;
-    private final float ENDGAME_NUMBERS_X = FRUSTUM_WIDTH / 2 + 20;
-    private final Vector2 TIMER_POSITION = new Vector2(15, FRUSTUM_HEIGHT - 15);*/
-    //public static float[][] TEXTURE_DIGITS = TextureData.createTextureArray(0.0625f, 10);
     private GameSurfaceView surfaceView;
     private long lastUpdate;
     private final TimeCounter updateCounter;
@@ -55,7 +45,6 @@ public class GameRenderer implements Renderer {
     int alfabetoId;
     private int digitsId;
     private TextureDrawer mainTextureDrawer;
-    private TextureDrawer levelSelectDrawer;
     private TextureDrawer pauseTextureDrawer;
     private SimpleDrawer basicDrawer;
     SimpleDrawer.ColorData pauseOverlay;
@@ -67,7 +56,6 @@ public class GameRenderer implements Renderer {
         updateCounter = new TimeCounter(FRAME_INTERVAL);
         lastUpdate = System.nanoTime();
         this.gameActivity = gameActivity;
-        levelSelectDrawer = new TextureDrawer(false);
         pauseTextureDrawer = new TextureDrawer(false);
         mainTextureDrawer = new TextureDrawer(false);
         basicDrawer = new SimpleDrawer(true);
@@ -133,23 +121,13 @@ public class GameRenderer implements Renderer {
             }
         }
 
-        if (gameFlow instanceof MainGameFlow)
-            drawMainGameFlow(gameFlow);
-        else if (gameFlow instanceof LevelSelectFlow)
-            drawLevelSelect((LevelSelectFlow) gameFlow);
+        if (gameFlow instanceof MenuFlow)
+            drawMenu((MenuFlow)gameFlow);
         else if (gameFlow instanceof FightingGameFlow)
             drawFightingGameFlow((FightingGameFlow) gameFlow);
         if(isPaused)
             drawPauseMenu();
 
-    }
-
-    private void drawMainGameFlow(GameFlow flow){
-        MainGameFlow mainGameFlow = (MainGameFlow) flow;
-        if(mainGameFlow.currentState == GameState.PLAYING)
-            drawPlayingGame(mainGameFlow);
-        /*else if(gameFlow.currentState == GameState.FINISHED)
-            drawGameFinished(gameFlow);*/
     }
 
     /**
@@ -185,6 +163,30 @@ public class GameRenderer implements Renderer {
             drawer.addInvertedTexturedSquare(c.spriteContainer, c.getCurrentTexture());
         else
             drawer.addTexturedSquare(c.spriteContainer, c.getCurrentTexture());
+    }
+
+    private void drawMenu(MenuFlow flow){
+        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
+        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+        gl10.glMatrixMode(GL10.GL_PROJECTION);
+        gl10.glLoadIdentity();
+        gl10.glOrthof(0, GameLevels.FRUSTUM_WIDTH, 0, GameLevels.FRUSTUM_HEIGHT, 1, -1);
+
+        gl10.glMatrixMode(GL10.GL_MODELVIEW);
+        gl10.glEnable(GL10.GL_BLEND);
+        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+
+
+        if(flow.renderMessage) {
+            mainTextureDrawer.reset();
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
+            flow.message.addLetterTexture(mainTextureDrawer);
+            mainTextureDrawer.draw(gl10);
+        }
     }
 
 
@@ -225,6 +227,7 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.reset();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
             addDigitsTexture(250, 35, flow.score, mainTextureDrawer);
+            addDigitsTexture(250, GameLevels.FRUSTUM_HEIGHT - 35, gameActivity.highScore, mainTextureDrawer);
             mainTextureDrawer.draw(gl10);
         }
 
@@ -261,30 +264,6 @@ public class GameRenderer implements Renderer {
         gameActivity.continueButton.label.addLetterTexture(pauseTextureDrawer);
         gameActivity.quitButton.label.addLetterTexture(pauseTextureDrawer);
         pauseTextureDrawer.draw(gl10);
-    }
-
-    private void drawLevelSelect(LevelSelectFlow flow){
-        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
-        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-        gl10.glMatrixMode(GL10.GL_PROJECTION);
-        gl10.glLoadIdentity();
-        gl10.glOrthof(0, GameLevels.FRUSTUM_WIDTH, 0, GameLevels.FRUSTUM_HEIGHT, 1, -1);
-
-        gl10.glMatrixMode(GL10.GL_MODELVIEW);
-        gl10.glEnable(GL10.GL_BLEND);
-        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-
-        gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glLoadIdentity();
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
-
-        levelSelectDrawer.reset();
-
-        for(int i=0;i<flow.levels.size();i++)
-            flow.levels.get(i).label.addLetterTexture(levelSelectDrawer);
-
-        levelSelectDrawer.draw(gl10);
     }
 
     private void drawPlayingGame(MainGameFlow gameFlow){

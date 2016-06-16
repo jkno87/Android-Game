@@ -2,6 +2,7 @@ package com.jgame.game;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,22 +18,38 @@ import com.jgame.util.Square;
  */
 public class GameActivity extends Activity {
 
+    public static final String HIGH_SCORE = "highScore";
     private GLSurfaceView gameSurfaceView;
     private SoundManager soundManager;
     private GameFlow gameFlow;
     private Boolean paused;
     public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
     public final LabelButton quitButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40), "quit");
+    public int highScore;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         soundManager = GameResources.soundManager;
-        gameFlow = new FightingGameFlow();
+        gameFlow = new MenuFlow(this);
         gameSurfaceView = new GameSurfaceView(this);
         setContentView(gameSurfaceView);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         paused = false;
+        SharedPreferences settings = getPreferences(MODE_PRIVATE);
+        highScore = settings.getInt(HIGH_SCORE, 0);
+    }
+
+    public void triggerGameOver(int score){
+        if(score <= highScore)
+            return;
+
+        highScore = score;
+        SharedPreferences settings = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(HIGH_SCORE, highScore);
+
+        editor.commit();
     }
 
     /**

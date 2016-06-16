@@ -30,7 +30,6 @@ public class FightingGameFlow extends GameFlow {
 
     }
 
-
     private final float MIN_X = 20;
     private final float MAX_X = GameLevels.FRUSTUM_WIDTH - MIN_X;
     private final float SPAWN_TIME = 1.5f;
@@ -61,8 +60,10 @@ public class FightingGameFlow extends GameFlow {
     public int score;
     public GameState currentState;
     private final WorldData worldData;
+    private final GameActivity gameActivity;
 
-    public FightingGameFlow(){
+    public FightingGameFlow(GameActivity activity){
+        this.gameActivity = activity;
         gameFloor = new Square(0, 0, PLAYING_WIDTH, CONTROLS_HEIGHT);
         gameButtons = new GameButton[NUMBER_OF_INPUTS];
         mainButtonPressed = INPUT_NONE;
@@ -144,8 +145,10 @@ public class FightingGameFlow extends GameFlow {
     public void update(UpdateInterval interval) {
         if(mainCharacter.alive())
             mainCharacter.update(currentEnemy, interval, worldData);
-        else
+        else {
             currentState = GameState.GAME_OVER;
+            gameActivity.triggerGameOver(score);
+        }
 
         currentEnemy.update(mainCharacter, interval, worldData);
         if(!currentEnemy.alive()){
