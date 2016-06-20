@@ -94,9 +94,10 @@ public class FightingGameFlow extends GameFlow {
             mainButtonPressed = INPUT_LEFT;
         else if(gameButtons[INPUT_RIGHT].bounds.contains(gameX, gameY))
             mainButtonPressed = INPUT_RIGHT;
-        else if(gameButtons[INPUT_A].bounds.contains(gameX, gameY))
+        else if(gameButtons[INPUT_A].bounds.contains(gameX, gameY)) {
             mainButtonPressed = INPUT_A;
-        else if(gameButtons[INPUT_B].bounds.contains(gameX, gameY))
+            gameActivity.triggerSound();
+        } else if(gameButtons[INPUT_B].bounds.contains(gameX, gameY))
             mainButtonPressed = INPUT_B;
         else
             mainButtonPressed = INPUT_NONE;

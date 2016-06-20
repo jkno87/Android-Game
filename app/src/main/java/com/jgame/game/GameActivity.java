@@ -52,6 +52,11 @@ public class GameActivity extends Activity {
         editor.commit();
     }
 
+    public void triggerSound(){
+        soundManager.testSonido();
+    }
+
+
     /**
      * Regresa el GameFlow actual de la actividad.
      * @return
