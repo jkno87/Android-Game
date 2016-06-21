@@ -20,7 +20,7 @@ public class GameActivity extends Activity {
 
     public static final String HIGH_SCORE = "highScore";
     private GLSurfaceView gameSurfaceView;
-    private SoundManager soundManager;
+    public SoundManager soundManager;
     private GameFlow gameFlow;
     private Boolean paused;
     public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
@@ -51,11 +51,6 @@ public class GameActivity extends Activity {
 
         editor.commit();
     }
-
-    public void triggerSound(){
-        soundManager.testSonido();
-    }
-
 
     /**
      * Regresa el GameFlow actual de la actividad.

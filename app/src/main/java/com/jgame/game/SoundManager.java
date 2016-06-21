@@ -4,6 +4,7 @@ import java.util.PriorityQueue;
 
 import android.content.Context;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
 import android.util.Log;
@@ -11,18 +12,21 @@ import android.util.Log;
 public class SoundManager implements Runnable {
 
     private SoundPool soundPool;
-    private int soundId;
+    private MediaPlayer mediaPlayer;
     private PriorityQueue<Integer> sonidosQueue;
     private volatile Boolean vivo;
 
     public SoundManager(Context context){
-        sonidosQueue = new PriorityQueue<Integer>();
+        sonidosQueue = new PriorityQueue<Integer>(10);
         this.soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
-        this.soundId = soundPool.load(context, R.raw.eat, 0);
         vivo = true;
     }
 
-    public void testSonido(){
+    public int loadSound(Context context, int resId){
+        return soundPool.load(context, resId, 0);
+    }
+
+    public void playSound(int soundId){
         sonidosQueue.add(soundId);
     }
 

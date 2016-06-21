@@ -61,6 +61,8 @@ public class FightingGameFlow extends GameFlow {
     public GameState currentState;
     private final WorldData worldData;
     private final GameActivity gameActivity;
+    private final int punchSoundId;
+    private final int hitSoundId;
 
     public FightingGameFlow(GameActivity activity){
         this.gameActivity = activity;
@@ -72,12 +74,14 @@ public class FightingGameFlow extends GameFlow {
         gameButtons[INPUT_A] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
         gameButtons[INPUT_B] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
         mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), gameButtons[INPUT_LEFT],
-                gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B]);
+                gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B], this);
         availableEnemies = new Enemy[MAX_WORLD_OBJECTS];
         enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
         availableEnemies[0] = new Enemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,
                 MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
         worldData = new WorldData(MIN_X, MAX_X);
+        punchSoundId = activity.soundManager.loadSound(activity, R.raw.punch);
+        hitSoundId = activity.soundManager.loadSound(activity, R.raw.sound);
         reset();
     }
 
@@ -96,7 +100,6 @@ public class FightingGameFlow extends GameFlow {
             mainButtonPressed = INPUT_RIGHT;
         else if(gameButtons[INPUT_A].bounds.contains(gameX, gameY)) {
             mainButtonPressed = INPUT_A;
-            gameActivity.triggerSound();
         } else if(gameButtons[INPUT_B].bounds.contains(gameX, gameY))
             mainButtonPressed = INPUT_B;
         else
@@ -104,6 +107,14 @@ public class FightingGameFlow extends GameFlow {
 
         if(mainButtonPressed != INPUT_NONE)
             gameButtons[mainButtonPressed].press();
+    }
+
+    public void triggerPunchSound(){
+        gameActivity.soundManager.playSound(punchSoundId);
+    }
+
+    public void triggerHitSound(){
+        gameActivity.soundManager.playSound(hitSoundId);
     }
 
     @Override
@@ -144,9 +155,9 @@ public class FightingGameFlow extends GameFlow {
 
     @Override
     public void update(UpdateInterval interval) {
-        if(mainCharacter.alive())
+        if(mainCharacter.alive()) {
             mainCharacter.update(currentEnemy, interval, worldData);
-        else {
+        } else {
             currentState = GameState.GAME_OVER;
             gameActivity.triggerGameOver(score);
         }
@@ -158,6 +169,7 @@ public class FightingGameFlow extends GameFlow {
             else {
                 currentEnemy = enemySpawnInterval;
                 score++;
+                triggerHitSound();
             }
             currentEnemy.reset();
 

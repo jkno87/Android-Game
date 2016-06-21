@@ -38,10 +38,12 @@ public class MainCharacter extends Character {
     private final GameButton inputLeft;
     private final GameButton inputRight;
     public CharacterState state;
+    private final FightingGameFlow flow;
 
     public MainCharacter(int id, Vector2 position, final GameButton inputLeft, final GameButton inputRight,
-                         final GameButton inputA, final GameButton inputB){
+                         final GameButton inputA, final GameButton inputB, FightingGameFlow flow){
         super(SPRITE_LENGTH, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id);
+        this.flow = flow;
         this.state = CharacterState.IDLE;
         CollisionObject [] startupA = new CollisionObject[1];
         startupA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A,
@@ -130,6 +132,7 @@ public class MainCharacter extends Character {
 
         if(state == CharacterState.INPUT_A) {
             moveA.reset();
+            flow.triggerPunchSound();
         } else if(state == CharacterState.INPUT_B)
             MOVE_B_COUNTER.reset();
 
