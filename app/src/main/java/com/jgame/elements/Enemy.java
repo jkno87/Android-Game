@@ -37,6 +37,8 @@ public class Enemy extends Character {
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
             new CollisionObject(new Vector2(55,55),0,10,5,this, CollisionObject.TYPE_ATTACK)};
     private CollisionObject[] recoveryBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
+    private final int LEFT_TELEPORT = -1;
+    private final int RIGHT_TELEPORT = 1;
     private final AttackData attack;
     protected EnemyState currentState;
     private int currentAction;
@@ -117,16 +119,29 @@ public class Enemy extends Character {
 
     }
 
-    private void setPosition(){
+    /**
+     * Mueve al personaje en la direccion especificada por modifier.(MOVE_LEFT, MOVE_RIGHT)
+     * @param modifier
+     */
+    private void adjustPosition(int modifier){
         baseX.x = mainCharacter.baseX.x * -1;
-
-        if(random.nextInt(2) == 0)
-            moveTo(mainCharacter.position.x + baseX.x * currentParameters.distanceFromCharacter, position.y);
-        else
-            moveTo(mainCharacter.position.x + mainCharacter.baseX.x *
-                    (currentParameters.distanceFromCharacter + mainCharacter.idleSizeX + idleSizeX), position.y);
-
+        moveTo(modifier != mainCharacter.baseX.x ? mainCharacter.position.x + modifier * (currentParameters.distanceFromCharacter) :
+                mainCharacter.position.x + modifier * (currentParameters.distanceFromCharacter + idleSizeX + mainCharacter.idleSizeX), position.y);
         adjustToFoePosition(mainCharacter);
+    }
+
+    /**
+     * Reinicia la posicion del objeto tomando en cuenta la posicion de mainCharacter
+     */
+    private void setPosition(){
+        float characterMid = mainCharacter.position.x + mainCharacter.idleSizeX * mainCharacter.baseX.x;
+
+        if(characterMid + currentParameters.distanceFromCharacter + idleSizeX> FightingGameFlow.MAX_X)
+            adjustPosition(LEFT_TELEPORT);
+        else if (characterMid - currentParameters.distanceFromCharacter - idleSizeX < FightingGameFlow.MIN_X)
+            adjustPosition(RIGHT_TELEPORT);
+        else
+            adjustPosition(1 - 2*random.nextInt(2));
     }
 
     public void reset(){

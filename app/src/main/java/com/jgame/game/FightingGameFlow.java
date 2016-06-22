@@ -30,8 +30,8 @@ public class FightingGameFlow extends GameFlow {
 
     }
 
-    private final float MIN_X = 20;
-    private final float MAX_X = GameLevels.FRUSTUM_WIDTH - MIN_X;
+    public static final float MIN_X = 20;
+    public static final float MAX_X = GameLevels.FRUSTUM_WIDTH - MIN_X;
     private final float SPAWN_TIME = 1.5f;
     private final int NUMBER_OF_INPUTS = 4;
     private final int MAX_WORLD_OBJECTS = 6;
