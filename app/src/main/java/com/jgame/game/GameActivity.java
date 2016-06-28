@@ -22,7 +22,7 @@ public class GameActivity extends Activity {
     private GLSurfaceView gameSurfaceView;
     public SoundManager soundManager;
     private GameFlow gameFlow;
-    private Boolean paused;
+    public Boolean paused;
     public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
     public final LabelButton quitButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40), "quit");
     public int highScore;
@@ -68,47 +68,20 @@ public class GameActivity extends Activity {
         this.gameFlow = gameFlow;
     }
 
-    /**
-     * Regresa un boolean con el estado de pausa.
-     * @return boolean con el estado de pause
-     */
-    public boolean isPaused(){
-        synchronized (paused){
-            return paused;
-        }
-    }
-
-    /**
-     * Cambia el estado de pausa.
-     */
-    public void togglePause(){
-        synchronized (paused){
-            paused = !paused;
-        }
-    }
-
-    /**
-     * Regresa a la actividad de LoadActivity y le manda la senal de terminar la aplicacion
-     */
-    private void quitGame(){
-        Intent intent = new Intent(this, LoadActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("EXIT", true);
-        startActivity(intent);
-    }
-
     @Override
     public boolean onTouchEvent(MotionEvent e){
-        if(!isPaused())
+        if(!paused)
             return false;
 
         float x = (e.getX() / (float) gameSurfaceView.getWidth()) * GameLevels.FRUSTUM_WIDTH;
         float y = (((float) gameSurfaceView.getHeight() - e.getY()) / (float) gameSurfaceView.getHeight()) * GameLevels.FRUSTUM_HEIGHT;
 
-        if(continueButton.bounds.contains(x, y))
-            togglePause();
-        else if(quitButton.bounds.contains(x, y))
-            quitGame();
+        if(continueButton.bounds.contains(x, y)) {
+            synchronized (paused) {
+                paused = false;
+            }
+        } else if(quitButton.bounds.contains(x, y))
+            finish();
 
         return true;
     }
@@ -129,13 +102,16 @@ public class GameActivity extends Activity {
         soundManager.terminar();
         gameSurfaceView.onPause();
         gameFlow.pause();
+        paused = true;
     }
 
     @Override
     public boolean onKeyDown(int keycode, KeyEvent event){
         if(KeyEvent.KEYCODE_BACK == keycode){
             gameFlow.pause();
-            togglePause();
+            synchronized (paused){
+                paused = !paused;
+            }
             return true;
         }
 

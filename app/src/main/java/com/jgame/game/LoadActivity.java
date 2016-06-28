@@ -22,7 +22,10 @@ public class LoadActivity extends Activity {
         } else {
 
             GameResources.soundManager = new SoundManager(this);
-            startActivity(new Intent(this, GameActivity.class));
+            Intent intent = new Intent(this, GameActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
         }
     }
 }

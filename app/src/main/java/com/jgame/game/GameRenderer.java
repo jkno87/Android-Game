@@ -109,7 +109,7 @@ public class GameRenderer implements Renderer {
         long newTime = System.nanoTime();
         interval.delta = (newTime - lastUpdate) / NANO_SCALE;
         lastUpdate = newTime;
-        boolean isPaused = gameActivity.isPaused(); //Se copia el valor para soltar el lock
+        boolean isPaused = gameActivity.paused == true; //Se copia el valor para soltar el lock
 
         if(!isPaused) {
 
