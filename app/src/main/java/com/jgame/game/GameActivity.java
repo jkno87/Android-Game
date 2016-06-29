@@ -19,6 +19,10 @@ import com.jgame.util.LabelButton;
 import com.jgame.util.Square;
 import com.jgame.util.Vector2;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
+
 /**
  * Created by jose on 27/01/15.
  */
@@ -64,9 +68,11 @@ public class GameActivity extends Activity {
         public void run() {
             try {
                 while(true){
-                    Thread.sleep(16L);
+                    Thread. sleep(16L);
 
                     synchronized (criticalLock) {
+                        mainCharacter.receiveInput(inputQueue.poll());
+
                         if (mainCharacter.alive()) {
                             mainCharacter.update(currentEnemy, updateInterval, worldData);
                         } else {
@@ -107,7 +113,7 @@ public class GameActivity extends Activity {
     public static final int INPUT_LEFT = 0;
     public static final int INPUT_RIGHT = 1;
     public static final int INPUT_A = 2;
-    private static final int INPUT_B = 3;
+    public static final int INPUT_B = 3;
     private static final int INPUT_NONE = -1;
 
     public static float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH;
@@ -132,6 +138,9 @@ public class GameActivity extends Activity {
     public MainCharacter mainCharacter;
     public Enemy currentEnemy;
     public final Object criticalLock = new Object();
+    public final GameButton[] gameButtons = new GameButton[NUMBER_OF_INPUTS];
+    public final BlockingQueue<ControllerTask.GameInput> inputQueue = new LinkedBlockingQueue<>(5);
+    public final ControllerTask controllerTask = new ControllerTask(gameButtons, inputQueue);
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -145,14 +154,11 @@ public class GameActivity extends Activity {
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
         highScore = settings.getInt(HIGH_SCORE, 0);
 
-        GameButton[] gameButtons = new GameButton[NUMBER_OF_INPUTS];
-
         gameButtons[INPUT_LEFT] = new GameButton(new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
         gameButtons[INPUT_RIGHT] = new GameButton(new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
         gameButtons[INPUT_A] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
         gameButtons[INPUT_B] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
-        this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), gameButtons[INPUT_LEFT],
-                gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B]);
+        this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2());
 
         new Thread(new GameRunnable(this, new GameFlow.UpdateInterval(0.015384615f), mainCharacter)).start();
 

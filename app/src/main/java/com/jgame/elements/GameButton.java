@@ -41,16 +41,16 @@ public class GameButton {
     /**
      * Cambia el estado del boton a PRESSED
      */
-    public synchronized void press(){
-        buttonListener.pressAction();
+    public void press(){
+        //buttonListener.pressAction();
         this.state = State.PRESSED;
     }
 
     /**
      * Cambia el estado del boton a FREE
      */
-    public synchronized void release(){
-        buttonListener.releaseAction();
+    public void release(){
+        //buttonListener.releaseAction();
         this.state = State.FREE;
     }
 
@@ -58,7 +58,7 @@ public class GameButton {
      *
      * @return boolean que representa true si el boton esta presionado.
      */
-    public synchronized boolean pressed(){
+    public boolean pressed(){
        return this.state == State.PRESSED;
     }
 

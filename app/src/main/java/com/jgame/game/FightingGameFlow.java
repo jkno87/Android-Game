@@ -38,7 +38,7 @@ public class FightingGameFlow extends GameFlow {
     public static final int INPUT_LEFT = 0;
     public static final int INPUT_RIGHT = 1;
     public static final int INPUT_A = 2;
-    private final int INPUT_B = 3;
+    public static final int INPUT_B = 3;
     private final int INPUT_NONE = -1;
     public static float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH;
     public static float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT;
@@ -73,8 +73,7 @@ public class FightingGameFlow extends GameFlow {
         gameButtons[INPUT_RIGHT] = new GameButton(new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
         gameButtons[INPUT_A] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
         gameButtons[INPUT_B] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
-        mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), gameButtons[INPUT_LEFT],
-                gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B]);
+        mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2());
         availableEnemies = new Enemy[MAX_WORLD_OBJECTS];
         enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
         availableEnemies[0] = new Enemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,

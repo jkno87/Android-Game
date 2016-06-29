@@ -31,27 +31,27 @@ public class GameSurfaceView extends GLSurfaceView {
         float x = (MotionEventCompat.getX(event, index) / (float) getWidth());
         float y = (((float) getHeight() - MotionEventCompat.getY(event, index)) / (float) getHeight());
 
-        /*switch (action) {
+        switch (action) {
             case MotionEvent.ACTION_DOWN:
-                gameActivity.getGameFlow().handleDown(x, y);
+                gameActivity.controllerTask.handleDown(x, y);
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                gameActivity.getGameFlow().handleDrag(x, y);
+                gameActivity.controllerTask.handleDrag(x, y);
                 break;
             case MotionEvent.ACTION_UP:
-                gameActivity.getGameFlow().handleUp(x, y);
+                gameActivity.controllerTask.handleUp(x, y);
                 break;
 
             case MotionEvent.ACTION_POINTER_DOWN:
-                gameActivity.getGameFlow().handlePointerDown(x,y);
+                gameActivity.controllerTask.handlePointerDown(x,y);
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
-                gameActivity.getGameFlow().handlePointerUp(x,y);
+                gameActivity.controllerTask.handlePointerUp(x,y);
                 break;
 
-        }*/
+        }
 
         return true;
     }

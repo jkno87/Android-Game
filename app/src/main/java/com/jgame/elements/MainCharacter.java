@@ -1,6 +1,7 @@
 package com.jgame.elements;
 
 import com.jgame.elements.GameButton.ButtonListener;
+import com.jgame.game.ControllerTask;
 import com.jgame.game.FightingGameFlow;
 import com.jgame.game.GameFlow;
 import com.jgame.util.AnimationData;
@@ -9,6 +10,8 @@ import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import com.jgame.elements.AttackData.CollisionState;
+
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by jose on 14/01/16.
@@ -35,12 +38,9 @@ public class MainCharacter extends Character {
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
     private final TimeCounter MOVE_B_COUNTER = new TimeCounter(0.64f);
     public final AttackData moveA;
-    private final GameButton inputLeft;
-    private final GameButton inputRight;
     public CharacterState state;
 
-    public MainCharacter(int id, Vector2 position, final GameButton inputLeft, final GameButton inputRight,
-                         final GameButton inputA, final GameButton inputB){
+    public MainCharacter(int id, Vector2 position){
         super(SPRITE_LENGTH, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id);
         this.state = CharacterState.IDLE;
         CollisionObject [] startupA = new CollisionObject[1];
@@ -56,53 +56,6 @@ public class MainCharacter extends Character {
                 LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
 
         moveA = new AttackData(0.12f,0.15f,0.1f, startupA, activeA, recoveryA);
-        this.inputLeft = inputLeft;
-        this.inputRight = inputRight;
-        this.inputLeft.setButtonListener(new ButtonListener() {
-            @Override
-            public void pressAction() {
-                setStateFromButton(CharacterState.MOVING_BACKWARDS);
-            }
-
-            @Override
-            public void releaseAction() {
-                setStateFromButton(CharacterState.IDLE);
-            }
-        });
-
-        this.inputRight.setButtonListener(new ButtonListener() {
-            @Override
-            public void pressAction() {
-                setStateFromButton(CharacterState.MOVING_FORWARD);
-            }
-
-            @Override
-            public void releaseAction() {
-                setStateFromButton(CharacterState.IDLE);
-            }
-        });
-
-        inputA.setButtonListener(new ButtonListener() {
-            @Override
-            public void pressAction() {
-                setStateFromButton(CharacterState.INPUT_A);
-            }
-
-            @Override
-            public void releaseAction() {
-            }
-        });
-
-        inputB.setButtonListener(new ButtonListener() {
-            @Override
-            public void pressAction() {
-                setStateFromButton(CharacterState.INPUT_B);
-            }
-
-            @Override
-            public void releaseAction() {
-            }
-        });
     }
 
     @Override
@@ -117,6 +70,16 @@ public class MainCharacter extends Character {
         }
 
         return idleCollisionBoxes;
+    }
+
+    public void receiveInput(ControllerTask.GameInput input){
+        if(input == ControllerTask.GameInput.INPUT_OFF)
+            this.state = CharacterState.IDLE;
+        else if(input == ControllerTask.GameInput.RIGHT)
+            this.state = CharacterState.MOVING_FORWARD;
+        else if(input == ControllerTask.GameInput.LEFT)
+            this.state = CharacterState.MOVING_BACKWARDS;
+
     }
 
     /**
@@ -174,10 +137,10 @@ public class MainCharacter extends Character {
                 moveA.update(timeDifference);
                 if(moveA.completed()){
                     this.state = CharacterState.IDLE;
-                    if(inputLeft.pressed())
+                    /*if(inputLeft.pressed())
                         this.state = CharacterState.MOVING_BACKWARDS;
                     if(inputRight.pressed())
-                        this.state = CharacterState.MOVING_FORWARD;
+                        this.state = CharacterState.MOVING_FORWARD;*/
                 }
             }
 
@@ -185,10 +148,10 @@ public class MainCharacter extends Character {
                 MOVE_B_COUNTER.accum(timeDifference);
                 if(MOVE_B_COUNTER.completed()){
                     this.state = CharacterState.IDLE;
-                    if(inputLeft.pressed())
+                    /*if(inputLeft.pressed())
                         this.state = CharacterState.MOVING_BACKWARDS;
                     if(inputRight.pressed())
-                        this.state = CharacterState.MOVING_FORWARD;
+                        this.state = CharacterState.MOVING_FORWARD;*/
                 }
             }
 

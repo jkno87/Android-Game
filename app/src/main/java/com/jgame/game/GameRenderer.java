@@ -143,9 +143,9 @@ public class GameRenderer implements Renderer {
             renderCharacter(gameActivity.mainCharacter, mainTextureDrawer);
             renderCharacter(gameActivity.currentEnemy, mainTextureDrawer);
         }
-        //mainTextureDrawer.addTexturedSquare(flow.gameButtons[FightingGameFlow.INPUT_LEFT].bounds, LEFT_ARROW_TEXTURE);
-        //mainTextureDrawer.addTexturedSquare(flow.gameButtons[FightingGameFlow.INPUT_RIGHT].bounds, ARROW_TEXTURE);
-        //mainTextureDrawer.addTexturedSquare(flow.gameButtons[FightingGameFlow.INPUT_A].bounds, BUTTON_TEXTURE);
+        mainTextureDrawer.addTexturedSquare(gameActivity.gameButtons[FightingGameFlow.INPUT_LEFT].bounds, LEFT_ARROW_TEXTURE);
+        mainTextureDrawer.addTexturedSquare(gameActivity.gameButtons[FightingGameFlow.INPUT_RIGHT].bounds, ARROW_TEXTURE);
+        mainTextureDrawer.addTexturedSquare(gameActivity.gameButtons[FightingGameFlow.INPUT_A].bounds, BUTTON_TEXTURE);
         mainTextureDrawer.draw(gl10);
 
         //if(flow.mainCharacter.alive()) {
