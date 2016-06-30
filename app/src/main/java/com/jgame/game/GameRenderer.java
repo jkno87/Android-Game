@@ -12,6 +12,7 @@ import com.jgame.elements.CollisionObject;
 import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.SimpleDrawer.ColorData;
+import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
@@ -24,8 +25,8 @@ public class GameRenderer implements Renderer {
     private static final int NO_TEXTURE = 0;
     private final int SCORE_SIZE = 15;
     private final boolean RENDER_HITBOXES = false;
-    private final float FRAME_INTERVAL = 0.015384615f;
-    private final float NANO_SCALE = 1000000000.0f;
+    //private final float FRAME_INTERVAL = 0.015384615f;
+    //private final float NANO_SCALE = 1000000000.0f;
     public final ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static TextureData BUTTON_TEXTURE = new TextureData(0,0.75f,0.125f,0.875f);
     public final static TextureData ARROW_TEXTURE = new TextureData(0,0.875f,0.125f,1f);
@@ -36,9 +37,10 @@ public class GameRenderer implements Renderer {
     private final TextureData[] DIGITS = new TextureData[]{new TextureData(0,0,0.0625f,1),new TextureData(0.0625f,0,0.125f,1),new TextureData(0.125f,0,0.1825f,1),
             new TextureData(0.1825f,0,0.25f,1),new TextureData(0.25f,0,0.3125f,1),new TextureData(0.3125f,0,0.375f,1),new TextureData(0.375f,0,0.4375f,1),
             new TextureData(0.4375f,0,0.5f,1),new TextureData(0.5f,0,0.5625f,1),new TextureData(0.5625f,0,0.625f,1)};
+    public static final Square GAME_FLOOR = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
     private GameSurfaceView surfaceView;
-    private long lastUpdate;
-    private final TimeCounter updateCounter;
+    //private long lastUpdate;
+    //private final TimeCounter updateCounter;
     private GameActivity gameActivity;
     private GL10 gl10;
     int personajesId;
@@ -50,11 +52,11 @@ public class GameRenderer implements Renderer {
     SimpleDrawer.ColorData pauseOverlay;
     SimpleDrawer.ColorData menuBase;
     private Vector2 currentOrigin;
-    private final GameFlow.UpdateInterval interval;
+    //private final GameFlow.UpdateInterval interval;
 
     public GameRenderer(GameActivity gameActivity){
-        updateCounter = new TimeCounter(FRAME_INTERVAL);
-        lastUpdate = System.nanoTime();
+        //updateCounter = new TimeCounter(FRAME_INTERVAL);
+        //lastUpdate = System.nanoTime();
         this.gameActivity = gameActivity;
         pauseTextureDrawer = new TextureDrawer(false);
         mainTextureDrawer = new TextureDrawer(false);
@@ -62,7 +64,7 @@ public class GameRenderer implements Renderer {
         pauseOverlay = new SimpleDrawer.ColorData(0,0,0,0.5f);
         menuBase = new SimpleDrawer.ColorData(0,0.75f,0.5f,1);
         currentOrigin = new Vector2();
-        interval = new GameFlow.UpdateInterval();
+        //interval = new GameFlow.UpdateInterval();
     }
 
     public void setSurfaceView(GameSurfaceView surfaceView){
@@ -105,28 +107,72 @@ public class GameRenderer implements Renderer {
 
     @Override
     public void onDrawFrame(GL10 arg0) {
-        GameFlow gameFlow = gameActivity.getGameFlow();
-        long newTime = System.nanoTime();
-        interval.delta = (newTime - lastUpdate) / NANO_SCALE;
-        lastUpdate = newTime;
+        //GameFlow gameFlow = gameActivity.getGameFlow();
+        //long newTime = System.nanoTime();
+        //interval.delta = (newTime - lastUpdate) / NANO_SCALE;
+        //lastUpdate = newTime;
         boolean isPaused = gameActivity.paused == true; //Se copia el valor para soltar el lock
+        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
+        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-        if(!isPaused) {
+        gl10.glMatrixMode(GL10.GL_PROJECTION);
+        gl10.glLoadIdentity();
+        gl10.glOrthof(0, GameLevels.FRUSTUM_WIDTH, 0, GameLevels.FRUSTUM_HEIGHT, 1, -1);
 
-            updateCounter.accum(interval);
+        gl10.glMatrixMode(GL10.GL_MODELVIEW);
+        gl10.glEnable(GL10.GL_BLEND);
+        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
-            if (updateCounter.completed()) {
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
+
+        basicDrawer.reset();
+        basicDrawer.addSquare(GAME_FLOOR, DASHBOARD_COLOR, currentOrigin);
+
+        if(RENDER_HITBOXES) {
+            synchronized (gameActivity.criticalLock) {
+                renderEnemy(gameActivity.mainCharacter, basicDrawer, currentOrigin);
+                renderEnemy(gameActivity.currentEnemy, basicDrawer, currentOrigin);
+            }
+        }
+        basicDrawer.draw(gl10);
+
+        mainTextureDrawer.reset();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
+        synchronized (gameActivity.criticalLock) {
+            renderCharacter(gameActivity.mainCharacter, mainTextureDrawer);
+            renderCharacter(gameActivity.currentEnemy, mainTextureDrawer);
+        }
+        //mainTextureDrawer.addTexturedSquare(flow.gameButtons[FightingGameFlow.INPUT_LEFT].bounds, LEFT_ARROW_TEXTURE);
+        //mainTextureDrawer.addTexturedSquare(flow.gameButtons[FightingGameFlow.INPUT_RIGHT].bounds, ARROW_TEXTURE);
+        //mainTextureDrawer.addTexturedSquare(flow.gameButtons[FightingGameFlow.INPUT_A].bounds, BUTTON_TEXTURE);
+        mainTextureDrawer.draw(gl10);
+
+        //if(flow.mainCharacter.alive()) {
+            mainTextureDrawer.reset();
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
+            //addDigitsTexture(250, 35, gameActivity.score, mainTextureDrawer);
+            addDigitsTexture(250, GameLevels.FRUSTUM_HEIGHT - 35, gameActivity.highScore, mainTextureDrawer);
+            mainTextureDrawer.draw(gl10);
+        //}
+
+
+        /*if(!isPaused) {
+
+            //updateCounter.accum(interval);
+
+            //if (updateCounter.completed()) {
                 updateCounter.reset();
                 gameFlow.update(interval);
             }
-        }
+        }*/
 
-        if (gameFlow instanceof MenuFlow)
+        /*if (gameFlow instanceof MenuFlow)
             drawMenu((MenuFlow)gameFlow);
         else if (gameFlow instanceof FightingGameFlow)
             drawFightingGameFlow((FightingGameFlow) gameFlow);
         if(isPaused)
-            drawPauseMenu();
+            drawPauseMenu();*/
 
     }
 

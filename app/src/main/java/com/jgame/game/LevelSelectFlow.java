@@ -41,7 +41,7 @@ public class LevelSelectFlow extends GameFlow {
         for(LabelButton gb : levels)
             if(gb.bounds.contains(gameX, gameY)){
                 float sampleTime = 60;//TODO: Esto solo se hace para que se entienda el codigo. Quitar tan pronto como se definan los niveles del juego final.
-                gameActivity.setGameFlow(new MainGameFlow(GameLevels.TUTORIAL_CREATOR.create(), GameLevels.TEST_CREATOR, sampleTime, gameActivity));
+                //gameActivity.setGameFlow(new MainGameFlow(GameLevels.TUTORIAL_CREATOR.create(), GameLevels.TEST_CREATOR, sampleTime, gameActivity));
                 break;
             }
     }

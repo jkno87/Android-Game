@@ -74,7 +74,7 @@ public class FightingGameFlow extends GameFlow {
         gameButtons[INPUT_A] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
         gameButtons[INPUT_B] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
         mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), gameButtons[INPUT_LEFT],
-                gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B], this);
+                gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B]);
         availableEnemies = new Enemy[MAX_WORLD_OBJECTS];
         enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
         availableEnemies[0] = new Enemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,

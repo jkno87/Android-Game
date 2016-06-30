@@ -29,7 +29,7 @@ public class MenuFlow extends GameFlow {
 
     @Override
     public void handleDown(float x, float y) {
-        gameActivity.setGameFlow(new FightingGameFlow(gameActivity));
+        //gameActivity.setGameFlow(new FightingGameFlow(gameActivity));
     }
 
     @Override

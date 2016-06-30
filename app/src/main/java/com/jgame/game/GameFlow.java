@@ -7,6 +7,14 @@ public abstract class GameFlow {
 
     public static class UpdateInterval {
         public float delta;
+
+        public UpdateInterval(){
+
+        }
+
+        public UpdateInterval(float delta){
+            this.delta = delta;
+        }
     }
 
     public abstract void handleDrag(float x, float y);

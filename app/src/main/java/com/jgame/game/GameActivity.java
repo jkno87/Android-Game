@@ -24,32 +24,30 @@ import com.jgame.util.Vector2;
  */
 public class GameActivity extends Activity {
 
+    public enum GameState {
+        PLAYING, GAME_OVER
+    }
+
     class GameRunnable implements Runnable {
 
-        private final IdGenerator ID_GEN = new IdGenerator();
         public final GameButton[] gameButtons;
         private int mainButtonPressed;
         public final MainCharacter mainCharacter;
-        public Enemy currentEnemy;
         public final EmptyEnemy enemySpawnInterval;
         public final Enemy[] availableEnemies;
         public int score;
-        public FightingGameFlow.GameState currentState;
+        public GameState currentState;
         private final FightingGameFlow.WorldData worldData;
         private final GameActivity gameActivity;
         private final int punchSoundId;
         private final int hitSoundId;
+        private final GameFlow.UpdateInterval updateInterval;
 
-        public GameRunnable(GameActivity activity){
+        public GameRunnable(GameActivity activity, GameFlow.UpdateInterval updateInterval, MainCharacter mainCharacter){
             this.gameActivity = activity;
             gameButtons = new GameButton[NUMBER_OF_INPUTS];
             mainButtonPressed = INPUT_NONE;
-            gameButtons[INPUT_LEFT] = new GameButton(new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
-            gameButtons[INPUT_RIGHT] = new GameButton(new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
-            gameButtons[INPUT_A] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
-            gameButtons[INPUT_B] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
-            mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), gameButtons[INPUT_LEFT],
-                    gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B], this);
+            this.mainCharacter = mainCharacter;
             availableEnemies = new Enemy[MAX_WORLD_OBJECTS];
             enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
             availableEnemies[0] = new Enemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,
@@ -57,6 +55,8 @@ public class GameActivity extends Activity {
             worldData = new FightingGameFlow.WorldData(MIN_X, MAX_X);
             punchSoundId = activity.soundManager.loadSound(activity, R.raw.punch);
             hitSoundId = activity.soundManager.loadSound(activity, R.raw.sound);
+            this.updateInterval = updateInterval;
+            currentEnemy = enemySpawnInterval;
         }
 
 
@@ -65,26 +65,29 @@ public class GameActivity extends Activity {
             try {
                 while(true){
                     Thread.sleep(16L);
-                    if(mainCharacter.alive()) {
-                        mainCharacter.update(currentEnemy, interval, worldData);
-                    } else {
-                        currentState = GameState.GAME_OVER;
-                        gameActivity.triggerGameOver(score);
-                    }
 
-                    currentEnemy.update(mainCharacter, interval, worldData);
-                    if(!currentEnemy.alive()){
-                        if(currentEnemy instanceof EmptyEnemy)
-                            currentEnemy = availableEnemies[0];
-                        else {
-                            currentEnemy = enemySpawnInterval;
-                            score++;
-                            triggerHitSound();
+                    synchronized (criticalLock) {
+                        if (mainCharacter.alive()) {
+                            mainCharacter.update(currentEnemy, updateInterval, worldData);
+                        } else {
+                            currentState = GameState.GAME_OVER;
+                            gameActivity.triggerGameOver(score);
                         }
-                        currentEnemy.reset();
 
-                        if(score > 5)
-                            currentEnemy.increaseDifficulty();
+                        currentEnemy.update(mainCharacter, updateInterval, worldData);
+
+                        if (!currentEnemy.alive()) {
+                            if (currentEnemy instanceof EmptyEnemy)
+                                currentEnemy = availableEnemies[0];
+                            else {
+                                currentEnemy = enemySpawnInterval;
+                                score++;
+                            }
+                            currentEnemy.reset();
+
+                            if (score > 5)
+                                currentEnemy.increaseDifficulty();
+                        }
                     }
 
                 }
@@ -115,29 +118,44 @@ public class GameActivity extends Activity {
     private static final float BUTTONS_WIDTH = 50;
     private static final float INPUTS_HEIGHT = 15;
     private static final float INITIAL_CHARACTER_POSITION = GameLevels.FRUSTUM_WIDTH / 2;
-
+    private static final IdGenerator ID_GEN = new IdGenerator();
 
 
     public static final String HIGH_SCORE = "highScore";
     private GLSurfaceView gameSurfaceView;
     public SoundManager soundManager;
-    private GameFlow gameFlow;
+    //private GameFlow gameFlow;
     public Boolean paused;
     public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
     public final LabelButton quitButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40), "quit");
     public int highScore;
+    public MainCharacter mainCharacter;
+    public Enemy currentEnemy;
+    public final Object criticalLock = new Object();
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         soundManager = GameResources.soundManager;
-        gameFlow = new MenuFlow(this);
+        //gameFlow = new MenuFlow(this);
         gameSurfaceView = new GameSurfaceView(this);
         setContentView(gameSurfaceView);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         paused = false;
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
         highScore = settings.getInt(HIGH_SCORE, 0);
+
+        GameButton[] gameButtons = new GameButton[NUMBER_OF_INPUTS];
+
+        gameButtons[INPUT_LEFT] = new GameButton(new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
+        gameButtons[INPUT_RIGHT] = new GameButton(new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH));
+        gameButtons[INPUT_A] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
+        gameButtons[INPUT_B] = new GameButton(new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH));
+        this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), gameButtons[INPUT_LEFT],
+                gameButtons[INPUT_RIGHT], gameButtons[INPUT_A], gameButtons[INPUT_B]);
+
+        new Thread(new GameRunnable(this, new GameFlow.UpdateInterval(0.015384615f), mainCharacter)).start();
+
     }
 
     public void triggerGameOver(int score){
@@ -156,17 +174,17 @@ public class GameActivity extends Activity {
      * Regresa el GameFlow actual de la actividad.
      * @return
      */
-    public GameFlow getGameFlow(){
+   /* public GameFlow getGameFlow(){
         return gameFlow;
-    }
+    }*/
 
     /**
      * Asigna un nuevo GameFlow a la actividad
      * @param gameFlow
      */
-    public void setGameFlow(GameFlow gameFlow){
+    /*public void setGameFlow(GameFlow gameFlow){
         this.gameFlow = gameFlow;
-    }
+    }*/
 
     @Override
     public boolean onTouchEvent(MotionEvent e){
@@ -192,7 +210,7 @@ public class GameActivity extends Activity {
         soundManager.iniciar();
         new Thread(soundManager).start();
         gameSurfaceView.onResume();
-        gameFlow.resume();
+        //gameFlow.resume();
     }
 
     @Override
@@ -201,14 +219,14 @@ public class GameActivity extends Activity {
         Log.d("Game", "onPause");
         soundManager.terminar();
         gameSurfaceView.onPause();
-        gameFlow.pause();
+        //gameFlow.pause();
         paused = true;
     }
 
     @Override
     public boolean onKeyDown(int keycode, KeyEvent event){
         if(KeyEvent.KEYCODE_BACK == keycode){
-            gameFlow.pause();
+            //gameFlow.pause();
             synchronized (paused){
                 paused = !paused;
             }
