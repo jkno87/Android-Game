@@ -1,7 +1,8 @@
 package com.jgame.elements;
 
-import com.jgame.elements.GameButton.ButtonListener;
-import com.jgame.game.ControllerTask;
+import android.util.Log;
+
+import com.jgame.game.ControllerManager;
 import com.jgame.game.FightingGameFlow;
 import com.jgame.game.GameFlow;
 import com.jgame.util.AnimationData;
@@ -10,8 +11,6 @@ import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import com.jgame.elements.AttackData.CollisionState;
-
-import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by jose on 14/01/16.
@@ -72,13 +71,21 @@ public class MainCharacter extends Character {
         return idleCollisionBoxes;
     }
 
-    public void receiveInput(ControllerTask.GameInput input){
-        if(input == ControllerTask.GameInput.INPUT_OFF)
+    public void receiveInput(ControllerManager.GameInput input){
+        if(input == null || state == CharacterState.INPUT_A)
+            return;
+        Log.d("game", "" + input);
+
+        if(input == ControllerManager.GameInput.INPUT_OFF)
             this.state = CharacterState.IDLE;
-        else if(input == ControllerTask.GameInput.RIGHT)
+        else if(input == ControllerManager.GameInput.RIGHT)
             this.state = CharacterState.MOVING_FORWARD;
-        else if(input == ControllerTask.GameInput.LEFT)
+        else if(input == ControllerManager.GameInput.LEFT)
             this.state = CharacterState.MOVING_BACKWARDS;
+        else if(input == ControllerManager.GameInput.INPUT_A) {
+            moveA.reset();
+            this.state = CharacterState.INPUT_A;
+        }
 
     }
 
@@ -115,7 +122,6 @@ public class MainCharacter extends Character {
 
     @Override
     public void update(Character foe, GameFlow.UpdateInterval timeDifference, FightingGameFlow.WorldData worldData) {
-        synchronized (this) {
 
             if (state == CharacterState.IDLE) {
                 adjustToFoePosition(foe);
@@ -137,10 +143,6 @@ public class MainCharacter extends Character {
                 moveA.update(timeDifference);
                 if(moveA.completed()){
                     this.state = CharacterState.IDLE;
-                    /*if(inputLeft.pressed())
-                        this.state = CharacterState.MOVING_BACKWARDS;
-                    if(inputRight.pressed())
-                        this.state = CharacterState.MOVING_FORWARD;*/
                 }
             }
 
@@ -148,10 +150,6 @@ public class MainCharacter extends Character {
                 MOVE_B_COUNTER.accum(timeDifference);
                 if(MOVE_B_COUNTER.completed()){
                     this.state = CharacterState.IDLE;
-                    /*if(inputLeft.pressed())
-                        this.state = CharacterState.MOVING_BACKWARDS;
-                    if(inputRight.pressed())
-                        this.state = CharacterState.MOVING_FORWARD;*/
                 }
             }
 
@@ -160,7 +158,6 @@ public class MainCharacter extends Character {
                     if (co.checkCollision(foe))
                         foe.hit();
             }
-        }
     }
 
     public void reset(float x, float y){

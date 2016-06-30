@@ -1,16 +1,14 @@
 package com.jgame.game;
 
-import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.support.v4.view.MotionEventCompat;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 public class GameSurfaceView extends GLSurfaceView {
 
     private GameActivity gameActivity;
     private final GameRenderer gameRenderer;
+    private final ControllerManager controllerManager;
 
     public GameSurfaceView(GameActivity context){
         super(context);
@@ -18,6 +16,7 @@ public class GameSurfaceView extends GLSurfaceView {
         gameRenderer = new GameRenderer(gameActivity);
         setRenderer(gameRenderer);
         gameRenderer.setSurfaceView(this);
+        this.controllerManager = gameActivity.controllerManager;
     }
 
     @Override
@@ -33,22 +32,22 @@ public class GameSurfaceView extends GLSurfaceView {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                gameActivity.controllerTask.handleDown(x, y);
+                controllerManager.handleDown(x, y);
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                gameActivity.controllerTask.handleDrag(x, y);
+                controllerManager.handleDrag(x, y);
                 break;
             case MotionEvent.ACTION_UP:
-                gameActivity.controllerTask.handleUp(x, y);
+                controllerManager.handleUp(x, y);
                 break;
 
             case MotionEvent.ACTION_POINTER_DOWN:
-                gameActivity.controllerTask.handlePointerDown(x,y);
+                controllerManager.handlePointerDown(x,y);
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
-                gameActivity.controllerTask.handlePointerUp(x,y);
+                controllerManager.handlePointerUp(x,y);
                 break;
 
         }
