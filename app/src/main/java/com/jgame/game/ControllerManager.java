@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.GameButton;
+import com.jgame.util.Square;
+
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -22,7 +24,7 @@ public class ControllerManager {
     public static final int INPUT_RIGHT = 1;
     public static final int INPUT_A = 2;
     public static final int INPUT_B = 3;
-    private final GameButton[] gameButtons;
+    private final Square[] gameButtons;
     private int mainButtonPressed;
     private float inputX;
     private float inputY;
@@ -30,12 +32,12 @@ public class ControllerManager {
     public ControllerManager(BlockingQueue<GameInput> inputQueue){
         mainButtonPressed = INPUT_NONE;
         mainButtonPressed = INPUT_NONE;
-        this.gameButtons = new GameButton[NUMBER_OF_INPUTS];
+        this.gameButtons = new Square[NUMBER_OF_INPUTS];
         this.inputs = inputQueue;
-        gameButtons[INPUT_LEFT] = new GameButton(GameActivity.INPUT_LEFT_BOUNDS);
-        gameButtons[INPUT_RIGHT] = new GameButton(GameActivity.INPUT_RIGHT_BOUNDS);
-        gameButtons[INPUT_A] = new GameButton(GameActivity.INPUT_A_BOUNDS);
-        gameButtons[INPUT_B] = new GameButton(GameActivity.INPUT_B_BOUNDS);
+        gameButtons[INPUT_LEFT] = GameActivity.INPUT_LEFT_BOUNDS;
+        gameButtons[INPUT_RIGHT] = GameActivity.INPUT_RIGHT_BOUNDS;
+        gameButtons[INPUT_A] = GameActivity.INPUT_A_BOUNDS;
+        gameButtons[INPUT_B] = GameActivity.INPUT_B_BOUNDS;
     }
 
     public void handleDown(float x, float y){
@@ -43,13 +45,13 @@ public class ControllerManager {
             inputX = GameLevels.FRUSTUM_WIDTH * x;
             inputY = GameLevels.FRUSTUM_HEIGHT * y;
 
-            if (gameButtons[INPUT_LEFT].bounds.contains(inputX, inputY)) {
+            if (gameButtons[INPUT_LEFT].contains(inputX, inputY)) {
                 inputs.put(GameInput.LEFT);
                 mainButtonPressed = INPUT_LEFT;
-            } else if (gameButtons[INPUT_RIGHT].bounds.contains(inputX, inputY)) {
+            } else if (gameButtons[INPUT_RIGHT].contains(inputX, inputY)) {
                 inputs.add(GameInput.RIGHT);
                 mainButtonPressed = INPUT_RIGHT;
-            } else if (gameButtons[INPUT_A].bounds.contains(inputX, inputY)) {
+            } else if (gameButtons[INPUT_A].contains(inputX, inputY)) {
                 inputs.add(GameInput.INPUT_A);
             }
         } catch (InterruptedException e){
@@ -62,16 +64,16 @@ public class ControllerManager {
             inputX = GameLevels.FRUSTUM_WIDTH * x;
             inputY = GameLevels.FRUSTUM_HEIGHT * y;
 
-            if(mainButtonPressed != INPUT_NONE && gameButtons[mainButtonPressed].bounds.contains(inputX, inputY))
+            if(mainButtonPressed != INPUT_NONE && gameButtons[mainButtonPressed].contains(inputX, inputY))
                 return;
 
-            if (gameButtons[INPUT_LEFT].bounds.contains(inputX, inputY)) {
+            if (gameButtons[INPUT_LEFT].contains(inputX, inputY)) {
                 inputs.put(GameInput.LEFT);
                 mainButtonPressed = INPUT_LEFT;
-            } else if (gameButtons[INPUT_RIGHT].bounds.contains(inputX, inputY)) {
+            } else if (gameButtons[INPUT_RIGHT].contains(inputX, inputY)) {
                 inputs.put(GameInput.RIGHT);
                 mainButtonPressed = INPUT_RIGHT;
-            } else if (gameButtons[INPUT_A].bounds.contains(inputX, inputY))
+            } else if (gameButtons[INPUT_A].contains(inputX, inputY))
                 inputs.put(GameInput.INPUT_A);
             else {
                 if(mainButtonPressed != INPUT_NONE)
@@ -98,11 +100,11 @@ public class ControllerManager {
             inputX = GameLevels.FRUSTUM_WIDTH * x;
             inputY = GameLevels.FRUSTUM_HEIGHT * y;
 
-            if (gameButtons[INPUT_LEFT].bounds.contains(inputX, inputY))
+            if (gameButtons[INPUT_LEFT].contains(inputX, inputY))
                 inputs.put(GameInput.LEFT);
-            else if (gameButtons[INPUT_RIGHT].bounds.contains(inputX, inputY))
+            else if (gameButtons[INPUT_RIGHT].contains(inputX, inputY))
                 inputs.put(GameInput.RIGHT);
-            else if (gameButtons[INPUT_A].bounds.contains(inputX, inputY)) {
+            else if (gameButtons[INPUT_A].contains(inputX, inputY)) {
                 inputs.put(GameInput.INPUT_A);
             }
         } catch (InterruptedException e){

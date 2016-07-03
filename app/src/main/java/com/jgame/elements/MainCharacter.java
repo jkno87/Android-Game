@@ -74,7 +74,6 @@ public class MainCharacter extends Character {
     public void receiveInput(ControllerManager.GameInput input){
         if(state == CharacterState.INPUT_A || input == ControllerManager.GameInput.NO_INPUT)
             return;
-        Log.d("game", "" + input);
 
         if(input == ControllerManager.GameInput.INPUT_OFF)
             this.state = CharacterState.IDLE;

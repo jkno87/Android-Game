@@ -21,7 +21,7 @@ public class GameSurfaceView extends GLSurfaceView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        if(gameActivity.paused == true)
+        if(gameActivity.gameData.paused == true || gameActivity.gameData.gameOver == true)
             return false;
 
         int action = MotionEventCompat.getActionMasked(event);

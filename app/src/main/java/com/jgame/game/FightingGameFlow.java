@@ -158,7 +158,7 @@ public class FightingGameFlow extends GameFlow {
             mainCharacter.update(currentEnemy, interval, worldData);
         } else {
             currentState = GameState.GAME_OVER;
-            gameActivity.triggerGameOver(score);
+            //gameActivity.triggerGameOver(score);
         }
 
         currentEnemy.update(mainCharacter, interval, worldData);

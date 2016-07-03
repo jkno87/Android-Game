@@ -27,7 +27,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class GameActivity extends Activity {
 
     public enum GameState {
-        PLAYING, GAME_OVER
+        PLAYING, GAME_OVER, RESTART_SCREEN
     }
 
     class GameRunnable implements Runnable {
@@ -70,6 +70,17 @@ public class GameActivity extends Activity {
                 while(true){
                     Thread. sleep(16L);
 
+                    synchronized (gameData){
+                        if(currentState == GameState.GAME_OVER) {
+                            triggerGameOver(score);
+                            currentState = GameState.RESTART_SCREEN;
+                        } else
+                            gameData.score = score;
+
+                        if(gameData.paused || currentState == GameState.RESTART_SCREEN)
+                            continue;
+                    }
+
                     synchronized (criticalLock) {
 
                         ControllerManager.GameInput lastInput = inputQueue.poll();
@@ -82,7 +93,6 @@ public class GameActivity extends Activity {
                             mainCharacter.update(currentEnemy, updateInterval, worldData);
                         } else {
                             currentState = GameState.GAME_OVER;
-                            gameActivity.triggerGameOver(score);
                         }
 
                         currentEnemy.update(mainCharacter, updateInterval, worldData);
@@ -132,10 +142,9 @@ public class GameActivity extends Activity {
     public static final String HIGH_SCORE = "highScore";
     private GLSurfaceView gameSurfaceView;
     public SoundManager soundManager;
-    public Boolean paused;
+    public final GameData gameData = new GameData();
     public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
     public final LabelButton quitButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40), "quit");
-    public int highScore;
     public MainCharacter mainCharacter;
     public Enemy currentEnemy;
     public final Object criticalLock = new Object();
@@ -150,38 +159,38 @@ public class GameActivity extends Activity {
         gameSurfaceView = new GameSurfaceView(this);
         setContentView(gameSurfaceView);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        paused = false;
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
-        highScore = settings.getInt(HIGH_SCORE, 0);
+        gameData.highScore = settings.getInt(HIGH_SCORE, 0);
         this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2());
         gameTask = new GameRunnable(this, new GameFlow.UpdateInterval(0.015384615f), mainCharacter);
         new Thread(gameTask).start();
         gameTask.reset();
     }
 
-    public void triggerGameOver(int score){
-        if(score <= highScore)
+    private void triggerGameOver(int score){
+        if (score <= gameData.highScore)
             return;
 
-        highScore = score;
+        gameData.highScore = score;
+        gameData.gameOver = true;
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(HIGH_SCORE, highScore);
+        editor.putInt(HIGH_SCORE, gameData.highScore);
 
         editor.commit();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent e){
-        if(!paused)
+        if(!gameData.paused)
             return false;
 
         float x = (e.getX() / (float) gameSurfaceView.getWidth()) * GameLevels.FRUSTUM_WIDTH;
         float y = (((float) gameSurfaceView.getHeight() - e.getY()) / (float) gameSurfaceView.getHeight()) * GameLevels.FRUSTUM_HEIGHT;
 
         if(continueButton.bounds.contains(x, y)) {
-            synchronized (paused) {
-                paused = false;
+            synchronized (gameData) {
+                gameData.paused = false;
             }
         } else if(quitButton.bounds.contains(x, y))
             finish();
@@ -203,14 +212,14 @@ public class GameActivity extends Activity {
         Log.d("Game", "onPause");
         soundManager.terminar();
         gameSurfaceView.onPause();
-        paused = true;
+        gameData.paused = true;
     }
 
     @Override
     public boolean onKeyDown(int keycode, KeyEvent event){
         if(KeyEvent.KEYCODE_BACK == keycode){
-            synchronized (paused){
-                paused = !paused;
+            synchronized (gameData){
+                gameData.paused = !gameData.paused;
             }
             return true;
         }
