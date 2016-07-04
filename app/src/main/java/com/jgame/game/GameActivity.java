@@ -71,7 +71,12 @@ public class GameActivity extends Activity {
                     Thread. sleep(16L);
 
                     synchronized (criticalLock) {
-                        mainCharacter.receiveInput(inputQueue.poll());
+
+                        ControllerManager.GameInput lastInput = inputQueue.poll();
+                        if(lastInput == null)
+                            mainCharacter.receiveInput(controllerManager.checkPressedButtons());
+                        else
+                            mainCharacter.receiveInput(lastInput);
 
                         if (mainCharacter.alive()) {
                             mainCharacter.update(currentEnemy, updateInterval, worldData);

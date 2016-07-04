@@ -72,7 +72,7 @@ public class MainCharacter extends Character {
     }
 
     public void receiveInput(ControllerManager.GameInput input){
-        if(input == null || state == CharacterState.INPUT_A)
+        if(state == CharacterState.INPUT_A || input == ControllerManager.GameInput.NO_INPUT)
             return;
         Log.d("game", "" + input);
 

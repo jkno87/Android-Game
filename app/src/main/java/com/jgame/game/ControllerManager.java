@@ -12,7 +12,7 @@ import java.util.concurrent.BlockingQueue;
 public class ControllerManager {
 
     public enum GameInput {
-        LEFT, RIGHT, INPUT_A, INPUT_OFF
+        LEFT, RIGHT, INPUT_A, INPUT_OFF,NO_INPUT
     }
 
     private final BlockingQueue<GameInput> inputs;
@@ -28,6 +28,7 @@ public class ControllerManager {
     private float inputY;
 
     public ControllerManager(BlockingQueue<GameInput> inputQueue){
+        mainButtonPressed = INPUT_NONE;
         mainButtonPressed = INPUT_NONE;
         this.gameButtons = new GameButton[NUMBER_OF_INPUTS];
         this.inputs = inputQueue;
@@ -61,6 +62,9 @@ public class ControllerManager {
             inputX = GameLevels.FRUSTUM_WIDTH * x;
             inputY = GameLevels.FRUSTUM_HEIGHT * y;
 
+            if(mainButtonPressed != INPUT_NONE && gameButtons[mainButtonPressed].bounds.contains(inputX, inputY))
+                return;
+
             if (gameButtons[INPUT_LEFT].bounds.contains(inputX, inputY)) {
                 inputs.put(GameInput.LEFT);
                 mainButtonPressed = INPUT_LEFT;
@@ -70,8 +74,9 @@ public class ControllerManager {
             } else if (gameButtons[INPUT_A].bounds.contains(inputX, inputY))
                 inputs.put(GameInput.INPUT_A);
             else {
+                if(mainButtonPressed != INPUT_NONE)
+                    inputs.put(GameInput.INPUT_OFF);
                 mainButtonPressed = INPUT_NONE;
-                inputs.put(GameInput.INPUT_OFF);
             }
         } catch (InterruptedException e){
             Thread.interrupted();
@@ -80,8 +85,12 @@ public class ControllerManager {
     }
 
     public void handleUp(float x, float y){
+        inputX = x;
+        inputY = y;
+
+        if(mainButtonPressed != INPUT_NONE)
+            inputs.add(GameInput.INPUT_OFF);
         mainButtonPressed = INPUT_NONE;
-        inputs.add(GameInput.INPUT_OFF);
     }
 
     public void handlePointerDown(float x, float y){
@@ -93,29 +102,32 @@ public class ControllerManager {
                 inputs.put(GameInput.LEFT);
             else if (gameButtons[INPUT_RIGHT].bounds.contains(inputX, inputY))
                 inputs.put(GameInput.RIGHT);
-            else if (gameButtons[INPUT_A].bounds.contains(inputX, inputY))
+            else if (gameButtons[INPUT_A].bounds.contains(inputX, inputY)) {
                 inputs.put(GameInput.INPUT_A);
+            }
         } catch (InterruptedException e){
             Thread.interrupted();
         }
     }
 
     public void handlePointerUp(float x, float y){
-        try {
-            inputX = GameLevels.FRUSTUM_HEIGHT * x;
-            inputY = GameLevels.FRUSTUM_HEIGHT * y;
+        inputX = x;
+        inputY = y;
 
-            if (mainButtonPressed == INPUT_NONE)
-                return;
-            else if (mainButtonPressed == INPUT_LEFT)
-                inputs.put(GameInput.LEFT);
-            else if (mainButtonPressed == INPUT_RIGHT)
-                inputs.put(GameInput.RIGHT);
-
-
-        } catch (InterruptedException e){
-            Thread.interrupted();
-        }
-
+        if(mainButtonPressed != INPUT_NONE)
+            inputs.add(GameInput.INPUT_OFF);
     }
+
+    /**
+     * Este metodo regresa el input disponible si no se recibio otro input adicional durante el update.
+     */
+    public GameInput checkPressedButtons(){
+        if(mainButtonPressed == INPUT_LEFT)
+            return GameInput.LEFT;
+        else if (mainButtonPressed == INPUT_RIGHT)
+            return GameInput.RIGHT;
+        else
+            return GameInput.NO_INPUT;
+    }
+
 }
