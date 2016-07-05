@@ -17,7 +17,7 @@ import com.jgame.util.IdGenerator;
 import com.jgame.util.LabelButton;
 import com.jgame.util.Square;
 import com.jgame.util.Vector2;
-
+import com.jgame.game.GameData.GameState;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -26,23 +26,16 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class GameActivity extends Activity {
 
-    public enum GameState {
-        PLAYING, GAME_OVER, RESTART_SCREEN
-    }
-
     class GameRunnable implements Runnable {
 
         public final MainCharacter mainCharacter;
         public final EmptyEnemy enemySpawnInterval;
         public final Enemy[] availableEnemies;
         public int score;
-        public GameState currentState;
         private final FightingGameFlow.WorldData worldData;
-        private final GameActivity gameActivity;
         private final GameFlow.UpdateInterval updateInterval;
 
-        public GameRunnable(GameActivity activity, GameFlow.UpdateInterval updateInterval, MainCharacter mainCharacter){
-            this.gameActivity = activity;
+        public GameRunnable(GameFlow.UpdateInterval updateInterval, MainCharacter mainCharacter){
             this.mainCharacter = mainCharacter;
             availableEnemies = new Enemy[MAX_WORLD_OBJECTS];
             enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
@@ -59,10 +52,9 @@ public class GameActivity extends Activity {
                 currentEnemy = enemySpawnInterval;
                 currentEnemy.reset();
                 mainCharacter.reset(INITIAL_CHARACTER_POSITION, ELEMENTS_HEIGHT);
-                currentState = GameState.PLAYING;
+                gameData.state = GameState.PLAYING;
             }
         }
-
 
         @Override
         public void run() {
@@ -71,14 +63,18 @@ public class GameActivity extends Activity {
                     Thread. sleep(16L);
 
                     synchronized (gameData){
-                        if(currentState == GameState.GAME_OVER) {
+                        if(gameData.state == GameState.GAME_OVER){
                             triggerGameOver(score);
-                            currentState = GameState.RESTART_SCREEN;
-                        } else
-                            gameData.score = score;
-
-                        if(gameData.paused || currentState == GameState.RESTART_SCREEN)
+                            gameData.state = GameState.RESTART_SCREEN;
+                        } else if(gameData.state != GameState.PLAYING)
                             continue;
+                        else {
+                            gameData.score = score;
+                            if(!mainCharacter.alive()) {
+                                gameData.state = GameState.GAME_OVER;
+                                continue;
+                            }
+                        }
                     }
 
                     synchronized (criticalLock) {
@@ -89,12 +85,7 @@ public class GameActivity extends Activity {
                         else
                             mainCharacter.receiveInput(lastInput);
 
-                        if (mainCharacter.alive()) {
-                            mainCharacter.update(currentEnemy, updateInterval, worldData);
-                        } else {
-                            currentState = GameState.GAME_OVER;
-                        }
-
+                        mainCharacter.update(currentEnemy, updateInterval, worldData);
                         currentEnemy.update(mainCharacter, updateInterval, worldData);
 
                         if (!currentEnemy.alive()) {
@@ -162,7 +153,7 @@ public class GameActivity extends Activity {
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
         gameData.highScore = settings.getInt(HIGH_SCORE, 0);
         this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2());
-        gameTask = new GameRunnable(this, new GameFlow.UpdateInterval(0.015384615f), mainCharacter);
+        gameTask = new GameRunnable(new GameFlow.UpdateInterval(0.015384615f), mainCharacter);
         new Thread(gameTask).start();
         gameTask.reset();
     }
@@ -172,7 +163,6 @@ public class GameActivity extends Activity {
             return;
 
         gameData.highScore = score;
-        gameData.gameOver = true;
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt(HIGH_SCORE, gameData.highScore);
@@ -182,7 +172,7 @@ public class GameActivity extends Activity {
 
     @Override
     public boolean onTouchEvent(MotionEvent e){
-        if(!gameData.paused)
+        if(gameData.state == GameState.PLAYING)
             return false;
 
         float x = (e.getX() / (float) gameSurfaceView.getWidth()) * GameLevels.FRUSTUM_WIDTH;
@@ -190,7 +180,7 @@ public class GameActivity extends Activity {
 
         if(continueButton.bounds.contains(x, y)) {
             synchronized (gameData) {
-                gameData.paused = false;
+                gameData.state = GameState.PLAYING;
             }
         } else if(quitButton.bounds.contains(x, y))
             finish();
@@ -212,14 +202,17 @@ public class GameActivity extends Activity {
         Log.d("Game", "onPause");
         soundManager.terminar();
         gameSurfaceView.onPause();
-        gameData.paused = true;
+        gameData.state = GameState.PAUSED;
     }
 
     @Override
     public boolean onKeyDown(int keycode, KeyEvent event){
         if(KeyEvent.KEYCODE_BACK == keycode){
             synchronized (gameData){
-                gameData.paused = !gameData.paused;
+                if(gameData.state == GameState.PAUSED)
+                    gameData.state = GameState.PLAYING;
+                else
+                    gameData.state = GameState.PAUSED;
             }
             return true;
         }

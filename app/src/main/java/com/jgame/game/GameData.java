@@ -6,17 +6,21 @@ package com.jgame.game;
  */
 public class GameData {
 
-    public boolean gameOver;
-    public boolean paused;
+    public enum GameState {
+        PAUSED, GAME_OVER, PLAYING, RESTART_SCREEN
+    }
+
     public int score;
     public int highScore;
+    public GameState state;
+    public boolean paused;
 
     public void copy(GameData other){
         synchronized (other){
-            gameOver = other.gameOver;
-            paused = other.paused;
+            state = other.state;
             score = other.score;
             highScore = other.highScore;
+            paused = other.paused;
         }
     }
 

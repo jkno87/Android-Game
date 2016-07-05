@@ -148,7 +148,7 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.draw(gl10);
         }
 
-        if(gameData.paused) {
+        if(gameData.state == GameData.GameState.PAUSED) {
             gl10.glLoadIdentity();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
 
