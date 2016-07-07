@@ -28,8 +28,9 @@ public class ControllerManager {
     private int mainButtonPressed;
     private float inputX;
     private float inputY;
+    private final GameData gameData;
 
-    public ControllerManager(BlockingQueue<GameInput> inputQueue){
+    public ControllerManager(BlockingQueue<GameInput> inputQueue, GameData gameData){
         mainButtonPressed = INPUT_NONE;
         mainButtonPressed = INPUT_NONE;
         this.gameButtons = new Square[NUMBER_OF_INPUTS];
@@ -38,10 +39,14 @@ public class ControllerManager {
         gameButtons[INPUT_RIGHT] = GameActivity.INPUT_RIGHT_BOUNDS;
         gameButtons[INPUT_A] = GameActivity.INPUT_A_BOUNDS;
         gameButtons[INPUT_B] = GameActivity.INPUT_B_BOUNDS;
+        this.gameData = gameData;
     }
 
     public void handleDown(float x, float y){
         try {
+            if(gameData.state != GameData.GameState.PLAYING)
+                return;
+
             inputX = GameLevels.FRUSTUM_WIDTH * x;
             inputY = GameLevels.FRUSTUM_HEIGHT * y;
 
@@ -61,6 +66,9 @@ public class ControllerManager {
 
     public void handleDrag(float x, float y){
         try {
+            if(gameData.state != GameData.GameState.PLAYING)
+                return;
+
             inputX = GameLevels.FRUSTUM_WIDTH * x;
             inputY = GameLevels.FRUSTUM_HEIGHT * y;
 
@@ -87,6 +95,9 @@ public class ControllerManager {
     }
 
     public void handleUp(float x, float y){
+        if(gameData.state != GameData.GameState.PLAYING)
+            return;
+
         inputX = x;
         inputY = y;
 
@@ -97,6 +108,9 @@ public class ControllerManager {
 
     public void handlePointerDown(float x, float y){
         try {
+            if(gameData.state != GameData.GameState.PLAYING)
+                return;
+
             inputX = GameLevels.FRUSTUM_WIDTH * x;
             inputY = GameLevels.FRUSTUM_HEIGHT * y;
 
@@ -113,6 +127,9 @@ public class ControllerManager {
     }
 
     public void handlePointerUp(float x, float y){
+        if(gameData.state != GameData.GameState.PLAYING)
+            return;
+
         inputX = x;
         inputY = y;
 
@@ -124,6 +141,9 @@ public class ControllerManager {
      * Este metodo regresa el input disponible si no se recibio otro input adicional durante el update.
      */
     public GameInput checkPressedButtons(){
+        if(gameData.state != GameData.GameState.PLAYING)
+            return GameInput.NO_INPUT;
+
         if(mainButtonPressed == INPUT_LEFT)
             return GameInput.LEFT;
         else if (mainButtonPressed == INPUT_RIGHT)
@@ -131,5 +151,4 @@ public class ControllerManager {
         else
             return GameInput.NO_INPUT;
     }
-
 }
