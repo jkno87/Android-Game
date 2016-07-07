@@ -1,7 +1,5 @@
 package com.jgame.elements;
 
-import android.util.Log;
-
 import com.jgame.game.ControllerManager;
 import com.jgame.game.FightingGameFlow;
 import com.jgame.game.GameFlow;
@@ -161,6 +159,7 @@ public class MainCharacter extends Character {
 
     public void reset(float x, float y){
         relativePosition.set(x, y);
+        baseX.set(1,0);
         updatePosition();
         idleCollisionBoxes[0].updatePosition();
         state = CharacterState.IDLE;

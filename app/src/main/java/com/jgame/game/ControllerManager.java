@@ -1,9 +1,7 @@
 package com.jgame.game;
 
-import android.util.Log;
-
 import com.jgame.definitions.GameLevels;
-import com.jgame.elements.GameButton;
+import com.jgame.game.GameData.GameState;
 import com.jgame.util.Square;
 
 import java.util.concurrent.BlockingQueue;
@@ -14,7 +12,7 @@ import java.util.concurrent.BlockingQueue;
 public class ControllerManager {
 
     public enum GameInput {
-        LEFT, RIGHT, INPUT_A, INPUT_OFF,NO_INPUT
+        LEFT, RIGHT, INPUT_A, INPUT_OFF,NO_INPUT, QUIT_GAME, RESTART_GAME
     }
 
     private final BlockingQueue<GameInput> inputs;
@@ -44,21 +42,28 @@ public class ControllerManager {
 
     public void handleDown(float x, float y){
         try {
-            if(gameData.state != GameData.GameState.PLAYING)
-                return;
+            if(gameData.state == GameState.RESTART_SCREEN){
+                inputX = GameLevels.FRUSTUM_WIDTH * x;
+                inputY = GameLevels.FRUSTUM_HEIGHT * y;
+                if(GameActivity.QUIT_BOUNDS.contains(inputX, inputY))
+                    inputs.put(GameInput.QUIT_GAME);
+                else if(GameActivity.RESTART_BOUNDS.contains(inputX, inputY))
+                    inputs.put(GameInput.RESTART_GAME);
+            } else if(gameData.state == GameState.PLAYING){
+                inputX = GameLevels.FRUSTUM_WIDTH * x;
+                inputY = GameLevels.FRUSTUM_HEIGHT * y;
 
-            inputX = GameLevels.FRUSTUM_WIDTH * x;
-            inputY = GameLevels.FRUSTUM_HEIGHT * y;
-
-            if (gameButtons[INPUT_LEFT].contains(inputX, inputY)) {
-                inputs.put(GameInput.LEFT);
-                mainButtonPressed = INPUT_LEFT;
-            } else if (gameButtons[INPUT_RIGHT].contains(inputX, inputY)) {
-                inputs.add(GameInput.RIGHT);
-                mainButtonPressed = INPUT_RIGHT;
-            } else if (gameButtons[INPUT_A].contains(inputX, inputY)) {
-                inputs.add(GameInput.INPUT_A);
+                if (gameButtons[INPUT_LEFT].contains(inputX, inputY)) {
+                    inputs.put(GameInput.LEFT);
+                    mainButtonPressed = INPUT_LEFT;
+                } else if (gameButtons[INPUT_RIGHT].contains(inputX, inputY)) {
+                    inputs.add(GameInput.RIGHT);
+                    mainButtonPressed = INPUT_RIGHT;
+                } else if (gameButtons[INPUT_A].contains(inputX, inputY)) {
+                    inputs.add(GameInput.INPUT_A);
+                }
             }
+
         } catch (InterruptedException e){
             Thread.interrupted();
         }
@@ -66,7 +71,7 @@ public class ControllerManager {
 
     public void handleDrag(float x, float y){
         try {
-            if(gameData.state != GameData.GameState.PLAYING)
+            if(gameData.state != GameState.PLAYING)
                 return;
 
             inputX = GameLevels.FRUSTUM_WIDTH * x;

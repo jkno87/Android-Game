@@ -11,7 +11,6 @@ import android.view.WindowManager;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.EmptyEnemy;
 import com.jgame.elements.Enemy;
-import com.jgame.elements.GameButton;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.IdGenerator;
 import com.jgame.util.LabelButton;
@@ -34,7 +33,7 @@ public class GameActivity extends Activity {
         public int score;
         private final FightingGameFlow.WorldData worldData;
         private final GameFlow.UpdateInterval updateInterval;
-        private GameState currentState;
+        private ControllerManager.GameInput lastInput;
 
         public GameRunnable(GameFlow.UpdateInterval updateInterval, MainCharacter mainCharacter){
             this.mainCharacter = mainCharacter;
@@ -52,12 +51,12 @@ public class GameActivity extends Activity {
             try {
                 while(true){
                     Thread. sleep(16L);
+                    lastInput = inputQueue.poll();
 
                     synchronized (gameData){
                         if(gameData.paused)
                             continue;
 
-                        currentState = gameData.state;
 
                         if(gameData.state == GameState.STARTING) {
                             synchronized (criticalLock) {
@@ -77,12 +76,15 @@ public class GameActivity extends Activity {
                                 gameData.state = GameState.GAME_OVER;
                                 continue;
                             }
+                        } else if (gameData.state == GameState.RESTART_SCREEN) {
+                            if(lastInput == ControllerManager.GameInput.RESTART_GAME)
+                                gameData.state = GameState.STARTING;
+                            else if(lastInput == ControllerManager.GameInput.QUIT_GAME)
+                                finish();
                         }
                     }
 
                     synchronized (criticalLock) {
-
-                        ControllerManager.GameInput lastInput = inputQueue.poll();
                         if(lastInput == null)
                             mainCharacter.receiveInput(controllerManager.checkPressedButtons());
                         else
@@ -131,12 +133,15 @@ public class GameActivity extends Activity {
     public static final Square INPUT_RIGHT_BOUNDS = new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
     public static final Square INPUT_A_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
     public static final Square INPUT_B_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
+    public static final Square QUIT_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40);
+    public static final Square RESTART_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT / 2, 150, 40);
     public static final String HIGH_SCORE = "highScore";
     private GLSurfaceView gameSurfaceView;
     public SoundManager soundManager;
     public final GameData gameData = new GameData();
     public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
-    public final LabelButton quitButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40), "quit");
+    public final LabelButton quitButton = new LabelButton(QUIT_BOUNDS, "quit");
+    public final LabelButton restartButton = new LabelButton(RESTART_BOUNDS, "restart");
     public MainCharacter mainCharacter;
     public Enemy currentEnemy;
     public final Object criticalLock = new Object();

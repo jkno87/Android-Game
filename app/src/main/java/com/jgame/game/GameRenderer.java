@@ -4,19 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
-import android.view.Menu;
-
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.Character;
 import com.jgame.elements.CollisionObject;
-import com.jgame.game.MainGameFlow.GameState;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.SimpleDrawer.ColorData;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
-import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
+import com.jgame.game.GameData.GameState;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -145,6 +142,15 @@ public class GameRenderer implements Renderer {
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
             addDigitsTexture(250, 35, gameData.score, mainTextureDrawer);
             addDigitsTexture(250, GameLevels.FRUSTUM_HEIGHT - 35, gameData.highScore, mainTextureDrawer);
+            mainTextureDrawer.draw(gl10);
+        }
+
+        if(gameData.state == GameState.RESTART_SCREEN){
+            gl10.glLoadIdentity();
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
+            mainTextureDrawer.reset();
+            gameActivity.restartButton.label.addLetterTexture(mainTextureDrawer);
+            gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
             mainTextureDrawer.draw(gl10);
         }
 
