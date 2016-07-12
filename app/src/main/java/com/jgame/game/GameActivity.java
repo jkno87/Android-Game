@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.EmptyEnemy;
 import com.jgame.elements.Enemy;
+import com.jgame.elements.GameCharacter;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.IdGenerator;
 import com.jgame.util.LabelButton;
@@ -25,13 +26,24 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class GameActivity extends Activity {
 
+    public static class WorldData {
+        public float minX;
+        public float maxX;
+
+        public WorldData(float minX, float maxX){
+            this.minX = minX;
+            this.maxX = maxX;
+        }
+
+    }
+
     class GameRunnable implements Runnable {
 
         public final MainCharacter mainCharacter;
-        public final EmptyEnemy enemySpawnInterval;
-        public final Enemy[] availableEnemies;
+        public final GameCharacter enemySpawnInterval;
+        public final GameCharacter[] availableEnemies;
         public int score;
-        private final FightingGameFlow.WorldData worldData;
+        private final WorldData worldData;
         private final GameFlow.UpdateInterval updateInterval;
         private ControllerManager.GameInput lastInput;
 
@@ -41,7 +53,7 @@ public class GameActivity extends Activity {
             enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
             availableEnemies[0] = new Enemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,
                     MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
-            worldData = new FightingGameFlow.WorldData(MIN_X, MAX_X);
+            worldData = new WorldData(MIN_X, MAX_X);
             this.updateInterval = updateInterval;
             currentEnemy = enemySpawnInterval;
         }
@@ -62,7 +74,7 @@ public class GameActivity extends Activity {
                             synchronized (criticalLock) {
                                 score = 0;
                                 currentEnemy = enemySpawnInterval;
-                                currentEnemy.reset();
+                                currentEnemy.reset(0,0);
                                 mainCharacter.reset(INITIAL_CHARACTER_POSITION, ELEMENTS_HEIGHT);
                             }
                             gameData.state = GameState.PLAYING;
@@ -100,10 +112,7 @@ public class GameActivity extends Activity {
                                 currentEnemy = enemySpawnInterval;
                                 score++;
                             }
-                            currentEnemy.reset();
-
-                            if (score > 5)
-                                currentEnemy.increaseDifficulty();
+                            currentEnemy.reset(0,0);
                         }
                     }
 
@@ -143,7 +152,7 @@ public class GameActivity extends Activity {
     public final LabelButton quitButton = new LabelButton(QUIT_BOUNDS, "quit");
     public final LabelButton restartButton = new LabelButton(RESTART_BOUNDS, "restart");
     public MainCharacter mainCharacter;
-    public Enemy currentEnemy;
+    public GameCharacter currentEnemy;
     public final Object criticalLock = new Object();
     public final BlockingQueue<ControllerManager.GameInput> inputQueue = new LinkedBlockingQueue<>(5);
     public final ControllerManager controllerManager = new ControllerManager(inputQueue, gameData);

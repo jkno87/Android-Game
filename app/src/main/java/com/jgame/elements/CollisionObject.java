@@ -31,10 +31,10 @@ public class CollisionObject extends GameObject {
 
     /**
      * Checa si el otro enemigo colisiona con el objeto en caso de que sea del tipo TYPE_ATTACK
-     * @param other otro objeto Character que puede colisionar
+     * @param other otro objeto GameCharacter que puede colisionar
      * @return boolean que determina si existio una colision con el otro personaje.
      */
-    public boolean checkCollision(Character other){
+    public boolean checkCollision(GameCharacter other){
         if(type != TYPE_ATTACK)
             return false;
 

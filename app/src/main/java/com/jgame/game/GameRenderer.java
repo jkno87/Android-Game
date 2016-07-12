@@ -5,7 +5,7 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
 import com.jgame.definitions.GameLevels;
-import com.jgame.elements.Character;
+import com.jgame.elements.GameCharacter;
 import com.jgame.elements.CollisionObject;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.SimpleDrawer.ColorData;
@@ -178,7 +178,7 @@ public class GameRenderer implements Renderer {
      * @param drawer
      * @param currentOrigin
      */
-    private void renderEnemy(Character c, SimpleDrawer drawer, Vector2 currentOrigin){
+    private void renderEnemy(GameCharacter c, SimpleDrawer drawer, Vector2 currentOrigin){
         if(!c.hittable())
             return;
 
@@ -192,12 +192,12 @@ public class GameRenderer implements Renderer {
     }
 
     /**
-     * Asigna el sprite que se debe de dibujar para Character c. Requiere que al menos uno de los
+     * Asigna el sprite que se debe de dibujar para GameCharacter c. Requiere que al menos uno de los
      * activeCollisionBoxes sea del tipo TYPE_SPRITE_CONTAINER
-     * @param c Character que se va a dibujar
+     * @param c GameCharacter que se va a dibujar
      * @param drawer TextureDrawer al que se le agregara la informacion del personaje.
      */
-    private void renderCharacter(Character c, TextureDrawer drawer){
+    private void renderCharacter(GameCharacter c, TextureDrawer drawer){
         if(!c.alive())
             return;
 

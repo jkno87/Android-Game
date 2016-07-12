@@ -1,18 +1,18 @@
 package com.jgame.elements;
 
-import com.jgame.game.FightingGameFlow;
+import com.jgame.game.GameActivity;
 import com.jgame.game.GameFlow;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
-
+import com.jgame.game.GameActivity.WorldData;
 import java.util.Random;
 
 /**
  * Clase que representa un enemigo basico que se mantiene en su lugar y ataca
  * Created by jose on 24/05/16.
  */
-public class Enemy extends Character {
+public class Enemy extends GameCharacter {
 
     enum EnemyState {
         IDLE, DEAD, ATTACKING, TELEPORTING
@@ -22,23 +22,11 @@ public class Enemy extends Character {
         public abstract void act();
     }
 
-    class EnemyParameters {
-        float distanceFromCharacter;
-        float startInterval;
-        float activeInterval;
-        float recoveryInterval;
-        TimeCounter teleportInterval;
-        TimeCounter idleTimer;
-    }
-
-
     public final static TextureData TELEPORT_TEXTURE = new TextureData(0,0.625f,0.125f,0.75f);
     private CollisionObject[] startupBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
             new CollisionObject(new Vector2(55,55),0,10,5,this, CollisionObject.TYPE_ATTACK)};
     private CollisionObject[] recoveryBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
-    private final int LEFT_TELEPORT = -1;
-    private final int RIGHT_TELEPORT = 1;
     private final AttackData attack;
     protected EnemyState currentState;
     private int currentAction;
@@ -56,7 +44,7 @@ public class Enemy extends Character {
         EnemyAction move  = new EnemyAction() {
             @Override
             public void act() {
-                setPosition();
+                setPosition(mainCharacter, currentParameters);
             }
         };
         EnemyAction attack = new EnemyAction(){
@@ -119,40 +107,16 @@ public class Enemy extends Character {
 
     }
 
-    /**
-     * Mueve al personaje en la direccion especificada por modifier.(MOVE_LEFT, MOVE_RIGHT)
-     * @param modifier
-     */
-    private void adjustPosition(int modifier){
-        baseX.x = mainCharacter.baseX.x * -1;
-        moveTo(modifier != mainCharacter.baseX.x ? mainCharacter.position.x + modifier * (currentParameters.distanceFromCharacter) :
-                mainCharacter.position.x + modifier * (currentParameters.distanceFromCharacter + idleSizeX + mainCharacter.idleSizeX), position.y);
-        adjustToFoePosition(mainCharacter);
-    }
-
-    /**
-     * Reinicia la posicion del objeto tomando en cuenta la posicion de mainCharacter
-     */
-    private void setPosition(){
-        float characterMid = mainCharacter.position.x + mainCharacter.idleSizeX * mainCharacter.baseX.x;
-
-        if(characterMid + currentParameters.distanceFromCharacter + idleSizeX> FightingGameFlow.MAX_X)
-            adjustPosition(LEFT_TELEPORT);
-        else if (characterMid - currentParameters.distanceFromCharacter - idleSizeX < FightingGameFlow.MIN_X)
-            adjustPosition(RIGHT_TELEPORT);
-        else
-            adjustPosition(1 - 2*random.nextInt(2));
-    }
-
-    public void reset(){
+    @Override
+    public void reset(float x, float y){
         currentParameters.teleportInterval.reset();
         currentState = EnemyState.TELEPORTING;
         currentAction = 0;
-        setPosition();
+        setPosition(mainCharacter, currentParameters);
     }
 
     @Override
-    public void update(Character foe, GameFlow.UpdateInterval interval, FightingGameFlow.WorldData worldData) {
+    public void update(GameCharacter foe, GameFlow.UpdateInterval interval, WorldData worldData) {
 
         adjustToFoePosition(foe);
 

@@ -1,7 +1,6 @@
 package com.jgame.elements;
 
 import com.jgame.game.ControllerManager;
-import com.jgame.game.FightingGameFlow;
 import com.jgame.game.GameFlow;
 import com.jgame.util.AnimationData;
 import com.jgame.util.TextureDrawer;
@@ -9,11 +8,12 @@ import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import com.jgame.elements.AttackData.CollisionState;
+import com.jgame.game.GameActivity.WorldData;
 
 /**
  * Created by jose on 14/01/16.
  */
-public class MainCharacter extends Character {
+public class MainCharacter extends GameCharacter {
 
     public enum CharacterState {
         IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B, DEAD
@@ -118,7 +118,7 @@ public class MainCharacter extends Character {
     }
 
     @Override
-    public void update(Character foe, GameFlow.UpdateInterval timeDifference, FightingGameFlow.WorldData worldData) {
+    public void update(GameCharacter foe, GameFlow.UpdateInterval timeDifference, WorldData worldData) {
 
             if (state == CharacterState.IDLE) {
                 adjustToFoePosition(foe);
