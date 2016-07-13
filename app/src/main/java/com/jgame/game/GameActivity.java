@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.EmptyEnemy;
-import com.jgame.elements.Enemy;
+import com.jgame.elements.TeleportEnemy;
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.IdGenerator;
@@ -49,9 +49,9 @@ public class GameActivity extends Activity {
 
         public GameRunnable(GameFlow.UpdateInterval updateInterval, MainCharacter mainCharacter){
             this.mainCharacter = mainCharacter;
-            availableEnemies = new Enemy[MAX_WORLD_OBJECTS];
+            availableEnemies = new TeleportEnemy[MAX_WORLD_OBJECTS];
             enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
-            availableEnemies[0] = new Enemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,
+            availableEnemies[0] = new TeleportEnemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,
                     MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             worldData = new WorldData(MIN_X, MAX_X);
             this.updateInterval = updateInterval;

@@ -16,13 +16,17 @@ import java.util.Random;
  */
 public abstract class GameCharacter extends GameObject {
 
+    abstract class EnemyAction {
+        public abstract void act();
+    }
+
     class EnemyParameters {
         float distanceFromCharacter;
-        float startInterval;
+        /*float startInterval;
         float activeInterval;
         float recoveryInterval;
         TimeCounter teleportInterval;
-        TimeCounter idleTimer;
+        TimeCounter idleTimer;*/
     }
 
     private static final int LEFT_TELEPORT = -1;
