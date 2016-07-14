@@ -11,6 +11,7 @@ import com.jgame.elements.AttackData.CollisionState;
 import com.jgame.game.GameActivity.WorldData;
 
 /**
+ * Objeto que representa al personaje del jugador.
  * Created by jose on 14/01/16.
  */
 public class MainCharacter extends GameCharacter {
@@ -119,42 +120,36 @@ public class MainCharacter extends GameCharacter {
 
     @Override
     public void update(GameCharacter foe, GameFlow.UpdateInterval timeDifference, WorldData worldData) {
-
-            if (state == CharacterState.IDLE) {
-                adjustToFoePosition(foe);
-                WALKING_ANIMATION.reset();
-                return;
-            } if (state == CharacterState.MOVING_FORWARD) {
-                adjustToFoePosition(foe);
-                if(position.x + MOVING_SPEED < worldData.maxX) {
-                    move(RIGHT_MOVE_SPEED);
-                    WALKING_ANIMATION.update(timeDifference);
-                }
-            } if (state == CharacterState.MOVING_BACKWARDS) {
-                adjustToFoePosition(foe);
-                if(position.x - MOVING_SPEED > worldData.minX) {
-                    move(LEFT_MOVE_SPEED);
-                    WALKING_ANIMATION.update(timeDifference);
-                }
-            } if(state == CharacterState.INPUT_A){
-                moveA.update(timeDifference);
-                if(moveA.completed()){
-                    this.state = CharacterState.IDLE;
-                }
+        super.update(foe, timeDifference, worldData);
+        if (state == CharacterState.IDLE) {
+            adjustToFoePosition(foe);
+            WALKING_ANIMATION.reset();
+            return;
+        } if (state == CharacterState.MOVING_FORWARD) {
+            adjustToFoePosition(foe);
+            if(position.x + MOVING_SPEED < worldData.maxX) {
+                move(RIGHT_MOVE_SPEED);
+                WALKING_ANIMATION.update(timeDifference);
             }
-
-            if(state == CharacterState.INPUT_B){
-                MOVE_B_COUNTER.accum(timeDifference);
-                if(MOVE_B_COUNTER.completed()){
-                    this.state = CharacterState.IDLE;
-                }
+        } if (state == CharacterState.MOVING_BACKWARDS) {
+            adjustToFoePosition(foe);
+            if(position.x - MOVING_SPEED > worldData.minX) {
+                move(LEFT_MOVE_SPEED);
+                WALKING_ANIMATION.update(timeDifference);
             }
-
-            if(foe.hittable()) {
-                for (CollisionObject co : getActiveCollisionBoxes())
-                    if (co.checkCollision(foe))
-                        foe.hit();
+        } if(state == CharacterState.INPUT_A){
+            moveA.update(timeDifference);
+            if(moveA.completed()){
+                this.state = CharacterState.IDLE;
             }
+        }
+
+        if(state == CharacterState.INPUT_B){
+            MOVE_B_COUNTER.accum(timeDifference);
+            if(MOVE_B_COUNTER.completed()){
+                this.state = CharacterState.IDLE;
+            }
+        }
     }
 
     public void reset(float x, float y){

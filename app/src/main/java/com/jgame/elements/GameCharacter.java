@@ -20,15 +20,6 @@ public abstract class GameCharacter extends GameObject {
         public abstract void act();
     }
 
-    class EnemyParameters {
-        float distanceFromCharacter;
-        /*float startInterval;
-        float activeInterval;
-        float recoveryInterval;
-        TimeCounter teleportInterval;
-        TimeCounter idleTimer;*/
-    }
-
     private static final int LEFT_TELEPORT = -1;
     private static final int RIGHT_TELEPORT = 1;
     private static final Random RANDOM_POSITION = new Random();
@@ -95,29 +86,42 @@ public abstract class GameCharacter extends GameObject {
     /**
      * Reinicia la posicion del objeto tomando en cuenta la posicion de mainCharacter
      */
-    public void setPosition(GameCharacter other, EnemyParameters currentParameters){
+    public void setPosition(GameCharacter other, float distanceFromCharacter){
         float characterMid = other.position.x + other.idleSizeX * other.baseX.x;
         int modifier = 0;
 
-        if(characterMid + currentParameters.distanceFromCharacter + idleSizeX> GameActivity.MAX_X)
+        if(characterMid + distanceFromCharacter + idleSizeX> GameActivity.MAX_X)
             modifier = LEFT_TELEPORT;
-        else if (characterMid - currentParameters.distanceFromCharacter - idleSizeX < GameActivity.MIN_X)
+        else if (characterMid - distanceFromCharacter - idleSizeX < GameActivity.MIN_X)
             modifier = RIGHT_TELEPORT;
         else
             modifier = 1 - 2*RANDOM_POSITION.nextInt(2);
 
         baseX.x = other.baseX.x * -1;
-        moveTo(modifier != other.baseX.x ? other.position.x + modifier * (currentParameters.distanceFromCharacter) :
-                other.position.x + modifier * (currentParameters.distanceFromCharacter + idleSizeX + other.idleSizeX), position.y);
+        moveTo(modifier != other.baseX.x ? other.position.x + modifier * distanceFromCharacter:
+                other.position.x + modifier * (distanceFromCharacter + idleSizeX + other.idleSizeX), position.y);
         adjustToFoePosition(other);
 
+    }
+
+    /**
+     * Realiza la unica accion en comun de todos los objetos GameCharacter, checar que colisione contra el objeto foe.
+     * @param foe GameCharacter contra el que se podria provocar una colision.
+     * @param interval intervalo del update (nota: este dato podria irse)
+     * @param worldData Estado actual de WorldData.
+     */
+    public void update(GameCharacter foe, GameFlow.UpdateInterval interval, WorldData worldData){
+        if(foe.hittable()) {
+            for (CollisionObject co : getActiveCollisionBoxes())
+                if (co.checkCollision(foe))
+                    foe.hit();
+        }
     }
 
     public abstract void reset(float x, float y);
     public abstract boolean hittable();
     public abstract boolean alive();
     public abstract boolean attacking();
-    public abstract void update(GameCharacter foe, GameFlow.UpdateInterval interval, WorldData worldData);
     public abstract TextureData getCurrentTexture();
     public abstract void hit();
 }

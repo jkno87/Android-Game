@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 import com.jgame.definitions.GameLevels;
+import com.jgame.elements.ChargingEnemy;
 import com.jgame.elements.EmptyEnemy;
 import com.jgame.elements.TeleportEnemy;
 import com.jgame.elements.GameCharacter;
@@ -22,6 +23,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
+ * Actividad que se encarga de manejar todo lo referente al gameplay.
  * Created by jose on 27/01/15.
  */
 public class GameActivity extends Activity {
@@ -46,12 +48,15 @@ public class GameActivity extends Activity {
         private final WorldData worldData;
         private final GameFlow.UpdateInterval updateInterval;
         private ControllerManager.GameInput lastInput;
+        private int currentEnemyCounter;
 
         public GameRunnable(GameFlow.UpdateInterval updateInterval, MainCharacter mainCharacter){
             this.mainCharacter = mainCharacter;
-            availableEnemies = new TeleportEnemy[MAX_WORLD_OBJECTS];
+            availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
             enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
             availableEnemies[0] = new TeleportEnemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,
+                    MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
+            availableEnemies[1] = new ChargingEnemy(MainCharacter.SPRITE_LENGTH, MainCharacter.CHARACTER_HEIGHT,
                     MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             worldData = new WorldData(MIN_X, MAX_X);
             this.updateInterval = updateInterval;
@@ -73,6 +78,7 @@ public class GameActivity extends Activity {
                         if(gameData.state == GameState.STARTING) {
                             synchronized (criticalLock) {
                                 score = 0;
+                                currentEnemyCounter = 0;
                                 currentEnemy = enemySpawnInterval;
                                 currentEnemy.reset(0,0);
                                 mainCharacter.reset(INITIAL_CHARACTER_POSITION, ELEMENTS_HEIGHT);
@@ -106,9 +112,12 @@ public class GameActivity extends Activity {
                         currentEnemy.update(mainCharacter, updateInterval, worldData);
 
                         if (!currentEnemy.alive()) {
-                            if (currentEnemy instanceof EmptyEnemy)
-                                currentEnemy = availableEnemies[0];
-                            else {
+                            if (currentEnemy instanceof EmptyEnemy) {
+                                if(currentEnemyCounter == availableEnemies.length)
+                                    currentEnemyCounter = 0;
+                                currentEnemy = availableEnemies[currentEnemyCounter];
+                                currentEnemyCounter++;
+                            } else {
                                 currentEnemy = enemySpawnInterval;
                                 score++;
                             }
@@ -128,7 +137,7 @@ public class GameActivity extends Activity {
     public static final float MIN_X = 20;
     public static final float MAX_X = GameLevels.FRUSTUM_WIDTH - MIN_X;
     private final float SPAWN_TIME = 1.5f;
-    private final int MAX_WORLD_OBJECTS = 6;
+    private final int MAX_WORLD_OBJECTS = 2;
     public static final float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH;
     public static final float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT;
     private static final float DIRECTION_WIDTH = 45;
