@@ -97,6 +97,7 @@ public class GameRenderer implements Renderer {
     @Override
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
+        boolean characterAlive = gameActivity.mainCharacter.alive();
 
         gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
@@ -114,17 +115,14 @@ public class GameRenderer implements Renderer {
 
         mainTextureDrawer.reset();
         basicDrawer.reset();
-        boolean characterAlive;
 
-        synchronized (gameActivity.criticalLock) {
-            renderCharacter(gameActivity.mainCharacter, mainTextureDrawer);
-            if(RENDER_HITBOXES)
-                renderEnemy(gameActivity.mainCharacter, basicDrawer, currentOrigin);
+        renderCharacter(gameActivity.mainCharacter, mainTextureDrawer);
+        if(RENDER_HITBOXES)
+            renderEnemy(gameActivity.mainCharacter, basicDrawer, currentOrigin);
+        synchronized (gameActivity.enemyLock) {
             renderCharacter(gameActivity.currentEnemy, mainTextureDrawer);
-            if(RENDER_HITBOXES)
+            if (RENDER_HITBOXES)
                 renderEnemy(gameActivity.currentEnemy, basicDrawer, currentOrigin);
-            characterAlive = gameActivity.mainCharacter.alive();
-
         }
 
         basicDrawer.addSquare(GAME_FLOOR, DASHBOARD_COLOR, currentOrigin);

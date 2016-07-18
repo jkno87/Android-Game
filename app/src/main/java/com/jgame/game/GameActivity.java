@@ -49,6 +49,7 @@ public class GameActivity extends Activity {
         private final GameFlow.UpdateInterval updateInterval;
         private ControllerManager.GameInput lastInput;
         private int currentEnemyCounter;
+        private GameData.GameState currentState;
 
         public GameRunnable(GameFlow.UpdateInterval updateInterval, MainCharacter mainCharacter){
             this.mainCharacter = mainCharacter;
@@ -69,62 +70,71 @@ public class GameActivity extends Activity {
                 while(true){
                     Thread. sleep(16L);
                     lastInput = inputQueue.poll();
-
                     synchronized (gameData){
                         if(gameData.paused)
                             continue;
 
+                        currentState = gameData.state;
+                    }
 
-                        if(gameData.state == GameState.STARTING) {
-                            synchronized (criticalLock) {
-                                score = 0;
+                    if(currentState == GameState.STARTING) {
+                        synchronized (enemyLock) {
+                            currentEnemy = enemySpawnInterval;
+                        }
+                        score = 0;
+                        currentEnemyCounter = 0;
+                        currentEnemy.reset(0,0);
+                        mainCharacter.reset(INITIAL_CHARACTER_POSITION, ELEMENTS_HEIGHT);
+
+                        currentState = GameState.PLAYING;
+
+                    } else if(currentState == GameState.GAME_OVER){
+                        triggerGameOver(score);
+                        currentState = GameState.RESTART_SCREEN;
+                    } else if (currentState == GameState.PLAYING){
+                        gameData.score = score;
+                        if(!mainCharacter.alive()) {
+                            currentState = GameState.GAME_OVER;
+                        }
+                    } else if (currentState == GameState.RESTART_SCREEN) {
+                        if(lastInput == ControllerManager.GameInput.RESTART_GAME)
+                            currentState = GameState.STARTING;
+                        else if(lastInput == ControllerManager.GameInput.QUIT_GAME)
+                            finish();
+                    }
+
+                    synchronized (gameData){
+                        gameData.state = currentState;
+                    }
+
+                    if(currentState == GameState.GAME_OVER)
+                        continue;
+
+                    if(lastInput == null)
+                        mainCharacter.receiveInput(controllerManager.checkPressedButtons());
+                    else
+                        mainCharacter.receiveInput(lastInput);
+
+                    mainCharacter.update(currentEnemy, updateInterval, worldData);
+                    currentEnemy.update(mainCharacter, updateInterval, worldData);
+
+
+                    if (!currentEnemy.alive()) {
+                        if (currentEnemy instanceof EmptyEnemy) {
+                            if(currentEnemyCounter == availableEnemies.length)
                                 currentEnemyCounter = 0;
-                                currentEnemy = enemySpawnInterval;
-                                currentEnemy.reset(0,0);
-                                mainCharacter.reset(INITIAL_CHARACTER_POSITION, ELEMENTS_HEIGHT);
-                            }
-                            gameData.state = GameState.PLAYING;
-
-                        } else if(gameData.state == GameState.GAME_OVER){
-                            triggerGameOver(score);
-                            gameData.state = GameState.RESTART_SCREEN;
-                        } else if (gameData.state == GameState.PLAYING){
-                            gameData.score = score;
-                            if(!mainCharacter.alive()) {
-                                gameData.state = GameState.GAME_OVER;
-                                continue;
-                            }
-                        } else if (gameData.state == GameState.RESTART_SCREEN) {
-                            if(lastInput == ControllerManager.GameInput.RESTART_GAME)
-                                gameData.state = GameState.STARTING;
-                            else if(lastInput == ControllerManager.GameInput.QUIT_GAME)
-                                finish();
-                        }
-                    }
-
-                    synchronized (criticalLock) {
-                        if(lastInput == null)
-                            mainCharacter.receiveInput(controllerManager.checkPressedButtons());
-                        else
-                            mainCharacter.receiveInput(lastInput);
-
-                        mainCharacter.update(currentEnemy, updateInterval, worldData);
-                        currentEnemy.update(mainCharacter, updateInterval, worldData);
-
-                        if (!currentEnemy.alive()) {
-                            if (currentEnemy instanceof EmptyEnemy) {
-                                if(currentEnemyCounter == availableEnemies.length)
-                                    currentEnemyCounter = 0;
+                            synchronized (enemyLock) {
                                 currentEnemy = availableEnemies[currentEnemyCounter];
-                                currentEnemyCounter++;
-                            } else {
-                                currentEnemy = enemySpawnInterval;
-                                score++;
                             }
-                            currentEnemy.reset(0,0);
+                            currentEnemyCounter++;
+                        } else {
+                            synchronized (enemyLock) {
+                                currentEnemy = enemySpawnInterval;
+                            }
+                            score++;
                         }
+                        currentEnemy.reset(0,0);
                     }
-
                 }
             } catch (InterruptedException e){
 
@@ -162,7 +172,7 @@ public class GameActivity extends Activity {
     public final LabelButton restartButton = new LabelButton(RESTART_BOUNDS, "restart");
     public MainCharacter mainCharacter;
     public GameCharacter currentEnemy;
-    public final Object criticalLock = new Object();
+    public final Object enemyLock = new Object();
     public final BlockingQueue<ControllerManager.GameInput> inputQueue = new LinkedBlockingQueue<>(5);
     public final ControllerManager controllerManager = new ControllerManager(inputQueue, gameData);
     public GameRunnable gameTask;
