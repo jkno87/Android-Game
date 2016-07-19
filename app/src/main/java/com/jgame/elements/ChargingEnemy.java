@@ -16,7 +16,7 @@ public class ChargingEnemy extends GameCharacter {
         ATTACKING, CHARGING, DEAD
     }
 
-    public final static TextureData CHARGING_TEXTURE = new TextureData(0,0.625f,0.125f,0.75f);
+    public final static TextureData CHARGING_TEXTURE = new TextureData(0.25f,0,0.5f,0.25f);
     public final static float ATTACK_SPEED = 2;
     public final static float DISTANCE_FROM_CHARACTER = 150;
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
