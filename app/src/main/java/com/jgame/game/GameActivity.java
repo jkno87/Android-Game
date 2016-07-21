@@ -57,7 +57,7 @@ public class GameActivity extends Activity {
             enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
             availableEnemies[0] = new TeleportEnemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,
                     MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
-            availableEnemies[1] = new ChargingEnemy(MainCharacter.SPRITE_LENGTH, MainCharacter.CHARACTER_HEIGHT,
+            availableEnemies[1] = new ChargingEnemy(CHARGING_SPRITE_LENGTH, MainCharacter.CHARACTER_HEIGHT,
                     MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             worldData = new WorldData(MIN_X, MAX_X);
             this.updateInterval = updateInterval;
@@ -157,6 +157,7 @@ public class GameActivity extends Activity {
     private static final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 20;
     private static final float INITIAL_CHARACTER_POSITION = GameLevels.FRUSTUM_WIDTH / 2;
     private static final IdGenerator ID_GEN = new IdGenerator();
+    public static final int CHARGING_SPRITE_LENGTH = 115;
     public static final Square INPUT_LEFT_BOUNDS = new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
     public static final Square INPUT_RIGHT_BOUNDS = new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
     public static final Square INPUT_A_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
