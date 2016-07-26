@@ -13,23 +13,28 @@ import com.jgame.util.Vector2;
 public class ChargingEnemy extends GameCharacter {
 
     enum State {
-        ATTACKING, CHARGING, DEAD
+        IDLE, ATTACKING, CHARGING, DEAD
     }
 
-    public final static TextureData CHARGING_TEXTURE = new TextureData(0.25f,0,0.5f,0.25f);
+    public final static TextureData IDLE_TEXTURE = new TextureData(0.25f,0,0.5f,0.25f);
+    public final static TextureData CHARGING_TEXTURE = new TextureData(0.25f,0.25f,0.5f,0.5f);
+    public final static TextureData ATTACKING_TEXTURE = new TextureData(0.25f,0.5f,0.5f,0.75f);
     public final static float ATTACK_SPEED = 2;
     public final static float DISTANCE_FROM_CHARACTER = 150;
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
             new CollisionObject(new Vector2(30,55),0,10,5,this, CollisionObject.TYPE_ATTACK)};
-    private final float CHARGE_TIME = 1.25f;
+    private final float CHARGE_TIME = 0.25f;
+    private static final float IDLE_TIME = 0.35f;
     private final MainCharacter mainCharacter;
     private State currentState;
     private TimeCounter chargeTimer;
+    private TimeCounter idleTimer;
 
     public ChargingEnemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition, int id, final MainCharacter mainCharacter){
         super(sizeX, sizeY, idleSizeX, idleSizeY, new Vector2(0, yPosition), id);
-        currentState = State.CHARGING;
+        currentState = State.IDLE;
         chargeTimer = new TimeCounter(CHARGE_TIME);
+        idleTimer = new TimeCounter(IDLE_TIME);
         this.mainCharacter = mainCharacter;
         activeAttack = new AttackData(activeBoxes, activeBoxes, activeBoxes);
         activeAttack.currentState = AttackData.CollisionState.ACTIVE;
@@ -38,7 +43,8 @@ public class ChargingEnemy extends GameCharacter {
     @Override
     public void reset(float x, float y) {
         chargeTimer.reset();
-        currentState = State.CHARGING;
+        idleTimer.reset();
+        currentState = State.IDLE;
         setPosition(mainCharacter, DISTANCE_FROM_CHARACTER);
     }
 
@@ -59,7 +65,11 @@ public class ChargingEnemy extends GameCharacter {
 
     @Override
     public void update(GameCharacter foe, GameFlow.UpdateInterval interval, GameActivity.WorldData worldData) {
-        if(currentState == State.CHARGING){
+        if(currentState == State.IDLE){
+            idleTimer.accum(interval);
+            if(idleTimer.completed())
+                currentState = State.CHARGING;
+        } else if(currentState == State.CHARGING){
             chargeTimer.accum(interval);
             if(chargeTimer.completed())
                 currentState = State.ATTACKING;
@@ -75,7 +85,13 @@ public class ChargingEnemy extends GameCharacter {
 
     @Override
     public TextureData getCurrentTexture() {
-        return CHARGING_TEXTURE;
+        if(currentState == State.CHARGING)
+            return CHARGING_TEXTURE;
+
+        if(currentState == State.ATTACKING)
+            return ATTACKING_TEXTURE;
+
+        return IDLE_TEXTURE;
     }
 
     @Override
