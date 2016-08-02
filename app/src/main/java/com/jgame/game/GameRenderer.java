@@ -29,16 +29,15 @@ public class GameRenderer implements Renderer {
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
-    private final TextureData[] DIGITS = new TextureData[]{new TextureData(0,0,0.0625f,1),new TextureData(0.0625f,0,0.125f,1),new TextureData(0.125f,0,0.1825f,1),
-            new TextureData(0.1825f,0,0.25f,1),new TextureData(0.25f,0,0.3125f,1),new TextureData(0.3125f,0,0.375f,1),new TextureData(0.375f,0,0.4375f,1),
-            new TextureData(0.4375f,0,0.5f,1),new TextureData(0.5f,0,0.5625f,1),new TextureData(0.5625f,0,0.625f,1)};
+    private final TextureData[] DIGITS = new TextureData[]{new TextureData(0.125f,0.9375f,0.1875f,1),new TextureData(0.1875f,0.9375f,0.25f,1),new TextureData(0.25f,0.9375f,0.3125f,1),
+            new TextureData(0.3125f,0.9375f,0.375f,1),new TextureData(0.375f,0.9375f,0.4375f,1),new TextureData(0.4375f,0.9375f,0.5f,1),new TextureData(0.5f,0.9375f,0.5625f,1),
+            new TextureData(0.5625f,0.9375f,0.625f,1),new TextureData(0.625f,0.9375f,0.6875f,1),new TextureData(0.6875f,0.9375f,0.75f,1)};
     public static final Square GAME_FLOOR = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
     private GL10 gl10;
     int personajesId;
     int alfabetoId;
-    private int digitsId;
     private TextureDrawer mainTextureDrawer;
     private SimpleDrawer basicDrawer;
     SimpleDrawer.ColorData pauseOverlay;
@@ -133,15 +132,13 @@ public class GameRenderer implements Renderer {
         mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_LEFT_BOUNDS, LEFT_ARROW_TEXTURE);
         mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_RIGHT_BOUNDS, ARROW_TEXTURE);
         mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_A_BOUNDS, BUTTON_TEXTURE);
-        mainTextureDrawer.draw(gl10);
 
         if(characterAlive) {
-            mainTextureDrawer.reset();
-            gl10.glBindTexture(GL10.GL_TEXTURE_2D, digitsId);
             addDigitsTexture(250, 35, gameData.score, mainTextureDrawer);
             addDigitsTexture(250, GameLevels.FRUSTUM_HEIGHT - 35, gameData.highScore, mainTextureDrawer);
-            mainTextureDrawer.draw(gl10);
         }
+
+        mainTextureDrawer.draw(gl10);
 
         if(gameData.state == GameState.RESTART_SCREEN){
             gl10.glLoadIdentity();
@@ -243,6 +240,5 @@ public class GameRenderer implements Renderer {
         gl10.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         alfabetoId = loadTexture(R.raw.alfabeto);
         personajesId = loadTexture(R.raw.atlas);
-        digitsId = loadTexture(R.raw.digits);
     }
 }
