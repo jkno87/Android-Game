@@ -37,7 +37,7 @@ public class GameRenderer implements Renderer {
     private GameActivity gameActivity;
     private GL10 gl10;
     int personajesId;
-    int alfabetoId;
+    //int alfabetoId;
     private TextureDrawer mainTextureDrawer;
     private SimpleDrawer basicDrawer;
     SimpleDrawer.ColorData pauseOverlay;
@@ -138,16 +138,11 @@ public class GameRenderer implements Renderer {
             addDigitsTexture(250, GameLevels.FRUSTUM_HEIGHT - 35, gameData.highScore, mainTextureDrawer);
         }
 
-        mainTextureDrawer.draw(gl10);
-
         if(gameData.state == GameState.RESTART_SCREEN){
-            gl10.glLoadIdentity();
-            gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
-            mainTextureDrawer.reset();
             gameActivity.restartButton.label.addLetterTexture(mainTextureDrawer);
             gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
-            mainTextureDrawer.draw(gl10);
         }
+        mainTextureDrawer.draw(gl10);
 
         if(gameData.paused) {
             gl10.glLoadIdentity();
@@ -158,7 +153,7 @@ public class GameRenderer implements Renderer {
             basicDrawer.draw(gl10);
 
             gl10.glLoadIdentity();
-            gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
 
             mainTextureDrawer.reset();
             gameActivity.continueButton.label.addLetterTexture(mainTextureDrawer);
@@ -218,12 +213,12 @@ public class GameRenderer implements Renderer {
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
 
 
-        if(flow.renderMessage) {
+        /*if(flow.renderMessage) {
             mainTextureDrawer.reset();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
             flow.message.addLetterTexture(mainTextureDrawer);
             mainTextureDrawer.draw(gl10);
-        }
+        }*/
     }
 
 
@@ -238,7 +233,6 @@ public class GameRenderer implements Renderer {
     public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
         gl10 = arg0;
         gl10.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        alfabetoId = loadTexture(R.raw.alfabeto);
         personajesId = loadTexture(R.raw.atlas);
     }
 }
