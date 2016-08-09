@@ -20,6 +20,7 @@ public class TeleportEnemy extends GameCharacter {
 
     public final static TextureData TELEPORT_TEXTURE = new TextureData(0,0.625f,0.125f,0.75f);
     public final static TextureData IDLE_TEXTURE = new TextureData(0.5f,0,0.75f,0.25f);
+    public final static TextureData STARTUP_ATTACK = new TextureData(0.5f,0.25f,0.75f,0.5f);
     public final static float DISTANCE_FROM_ENEMY = 35;
     private CollisionObject[] startupBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
@@ -135,7 +136,7 @@ public class TeleportEnemy extends GameCharacter {
         if(activeAttack.currentState == AttackData.CollisionState.ACTIVE)
             return MainCharacter.ACTIVE_MOV_A;
         else
-            return MainCharacter.INIT_MOV_A;
+            return STARTUP_ATTACK;
     }
 
     @Override
