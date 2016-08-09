@@ -1,7 +1,5 @@
 package com.jgame.elements;
 
-import android.util.Log;
-
 import com.jgame.game.GameFlow;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
@@ -21,6 +19,7 @@ public class TeleportEnemy extends GameCharacter {
     public final static TextureData TELEPORT_TEXTURE = new TextureData(0,0.625f,0.125f,0.75f);
     public final static TextureData IDLE_TEXTURE = new TextureData(0.5f,0,0.75f,0.25f);
     public final static TextureData STARTUP_ATTACK = new TextureData(0.5f,0.25f,0.75f,0.5f);
+    public final static TextureData ATTACK_TEXTURE = new TextureData(0.5f,0.5f,0.75f,0.75f);
     public final static float DISTANCE_FROM_ENEMY = 35;
     private CollisionObject[] startupBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
@@ -56,7 +55,7 @@ public class TeleportEnemy extends GameCharacter {
         currentDifficulty = 0;
         this.attack = new AttackData(startupBoxes, activeBoxes, recoveryBoxes);
         this.attack.startupCounter = new TimeCounter(0.33f);
-        this.attack.activeCounter = new TimeCounter(0.1f);
+        this.attack.activeCounter = new TimeCounter(0.25f);
         this.attack.recoveryCounter = new TimeCounter(0.45f);
         activeAttack = this.attack;
         teleportInterval = new TimeCounter(0.5f);
@@ -134,7 +133,7 @@ public class TeleportEnemy extends GameCharacter {
             return IDLE_TEXTURE;
 
         if(activeAttack.currentState == AttackData.CollisionState.ACTIVE)
-            return MainCharacter.ACTIVE_MOV_A;
+            return ATTACK_TEXTURE;
         else
             return STARTUP_ATTACK;
     }
