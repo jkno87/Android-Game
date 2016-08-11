@@ -20,10 +20,10 @@ public class TeleportEnemy extends GameCharacter {
     public final static TextureData IDLE_TEXTURE = new TextureData(0.5f,0,0.75f,0.25f);
     public final static TextureData STARTUP_ATTACK = new TextureData(0.5f,0.25f,0.75f,0.5f);
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.5f,0.5f,0.75f,0.75f);
-    public final static float DISTANCE_FROM_ENEMY = 35;
+    public final static float DISTANCE_FROM_MAIN_CHARACTER = 15;
     private CollisionObject[] startupBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
-            new CollisionObject(new Vector2(55,55),0,10,5,this, CollisionObject.TYPE_ATTACK)};
+            new CollisionObject(new Vector2(60,55),0,35,20,this, CollisionObject.TYPE_ATTACK)};
     private CollisionObject[] recoveryBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
     private final AttackData attack;
     protected EnemyState currentState;
@@ -41,7 +41,7 @@ public class TeleportEnemy extends GameCharacter {
         EnemyAction move  = new EnemyAction() {
             @Override
             public void act() {
-                setPosition(mainCharacter, DISTANCE_FROM_ENEMY);
+                setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
             }
         };
         EnemyAction attack = new EnemyAction(){
@@ -55,11 +55,11 @@ public class TeleportEnemy extends GameCharacter {
         currentDifficulty = 0;
         this.attack = new AttackData(startupBoxes, activeBoxes, recoveryBoxes);
         this.attack.startupCounter = new TimeCounter(0.33f);
-        this.attack.activeCounter = new TimeCounter(0.25f);
+        this.attack.activeCounter = new TimeCounter(0.5f);
         this.attack.recoveryCounter = new TimeCounter(0.45f);
         activeAttack = this.attack;
-        teleportInterval = new TimeCounter(0.5f);
-        idleInterval = new TimeCounter(1.5f);
+        teleportInterval = new TimeCounter(0.33f);
+        idleInterval = new TimeCounter(0.025f);
     }
 
     private void toggleCurrentAction(){
@@ -72,7 +72,7 @@ public class TeleportEnemy extends GameCharacter {
         currentState = EnemyState.TELEPORTING;
         currentAction = 0;
         idleInterval.reset();
-        setPosition(mainCharacter, DISTANCE_FROM_ENEMY);
+        setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
     }
 
     @Override

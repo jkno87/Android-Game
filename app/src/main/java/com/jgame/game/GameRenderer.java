@@ -7,6 +7,7 @@ import android.opengl.GLUtils;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.CollisionObject;
+import com.jgame.util.GameText;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.SimpleDrawer.ColorData;
 import com.jgame.util.Square;
@@ -21,7 +22,7 @@ public class GameRenderer implements Renderer {
 
     private static final int NO_TEXTURE = 0;
     private final int SCORE_SIZE = 15;
-    private final boolean RENDER_HITBOXES = false;
+    private final static boolean RENDER_HITBOXES = false;
     public final ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static TextureData BUTTON_TEXTURE = new TextureData(0,0.75f,0.125f,0.875f);
     public final static TextureData ARROW_TEXTURE = new TextureData(0,0.875f,0.125f,1f);
@@ -33,6 +34,7 @@ public class GameRenderer implements Renderer {
             new TextureData(0.3125f,0.9375f,0.375f,1),new TextureData(0.375f,0.9375f,0.4375f,1),new TextureData(0.4375f,0.9375f,0.5f,1),new TextureData(0.5f,0.9375f,0.5625f,1),
             new TextureData(0.5625f,0.9375f,0.625f,1),new TextureData(0.625f,0.9375f,0.6875f,1),new TextureData(0.6875f,0.9375f,0.75f,1)};
     public static final Square GAME_FLOOR = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
+    public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameLevels.FRUSTUM_HEIGHT - 35, 50, 18), 2);
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
     private GL10 gl10;
@@ -136,6 +138,7 @@ public class GameRenderer implements Renderer {
         if(characterAlive) {
             addDigitsTexture(250, 35, gameData.score, mainTextureDrawer);
             addDigitsTexture(250, GameLevels.FRUSTUM_HEIGHT - 35, gameData.highScore, mainTextureDrawer);
+            HIGHSCORE_TEXT.addLetterTexture(mainTextureDrawer);
         }
 
         if(gameData.state == GameState.RESTART_SCREEN){

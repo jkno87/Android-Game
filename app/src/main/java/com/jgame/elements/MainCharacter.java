@@ -53,7 +53,7 @@ public class MainCharacter extends GameCharacter {
         recoveryA[0] = new CollisionObject(new Vector2(), id,
                 LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
 
-        moveA = new AttackData(0.12f,0.15f,0.1f, startupA, activeA, recoveryA);
+        moveA = new AttackData(0.06f,0.05f,0.2f, startupA, activeA, recoveryA);
     }
 
     @Override

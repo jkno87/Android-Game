@@ -41,6 +41,7 @@ public class GameActivity extends Activity {
 
     class GameRunnable implements Runnable {
 
+        private static final long UPDATE_INTERVAL = 16L;
         public final MainCharacter mainCharacter;
         public final GameCharacter enemySpawnInterval;
         public final GameCharacter[] availableEnemies;
@@ -55,9 +56,9 @@ public class GameActivity extends Activity {
             this.mainCharacter = mainCharacter;
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
             enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
-            availableEnemies[0] = new TeleportEnemy(MainCharacter.SPRITE_LENGTH,MainCharacter.CHARACTER_HEIGHT,
-                    MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
-            availableEnemies[1] = new ChargingEnemy(CHARGING_SPRITE_LENGTH, MainCharacter.CHARACTER_HEIGHT,
+            availableEnemies[1] = new TeleportEnemy(TELEPORT_SPRITE_LENGTH, TELEPORT_SPRITE_HEIGHT,
+                    TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
+            availableEnemies[0] = new ChargingEnemy(CHARGING_SPRITE_LENGTH, MainCharacter.CHARACTER_HEIGHT,
                     MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             worldData = new WorldData(MIN_X, MAX_X);
             this.updateInterval = updateInterval;
@@ -68,7 +69,7 @@ public class GameActivity extends Activity {
         public void run() {
             try {
                 while(true){
-                    Thread. sleep(16L);
+                    Thread. sleep(UPDATE_INTERVAL);
                     lastInput = inputQueue.poll();
                     synchronized (gameData){
                         if(gameData.paused)
@@ -157,18 +158,20 @@ public class GameActivity extends Activity {
     private static final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 20;
     private static final float INITIAL_CHARACTER_POSITION = GameLevels.FRUSTUM_WIDTH / 2;
     private static final IdGenerator ID_GEN = new IdGenerator();
+    public static final int TELEPORT_SPRITE_LENGTH = 115;
+    public static final int TELEPORT_SPRITE_HEIGHT = 145;
     public static final int CHARGING_SPRITE_LENGTH = 115;
     public static final Square INPUT_LEFT_BOUNDS = new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
     public static final Square INPUT_RIGHT_BOUNDS = new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
     public static final Square INPUT_A_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
     public static final Square INPUT_B_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
-    public static final Square QUIT_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40);
-    public static final Square RESTART_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT / 2, 150, 40);
+    public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
+    public static final Square QUIT_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40);
+    public static final Square RESTART_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT / 2, 150, 40);
     public static final String HIGH_SCORE = "highScore";
     private GLSurfaceView gameSurfaceView;
     public SoundManager soundManager;
     public final GameData gameData = new GameData();
-    public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
     public final LabelButton quitButton = new LabelButton(QUIT_BOUNDS, "quit");
     public final LabelButton restartButton = new LabelButton(RESTART_BOUNDS, "restart");
     public MainCharacter mainCharacter;

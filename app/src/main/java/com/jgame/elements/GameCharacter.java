@@ -28,10 +28,10 @@ public abstract class GameCharacter extends GameObject {
     public final Square spriteContainer;
     public float idleSizeX;
 
-    public GameCharacter(float sizeX, float sizeY, float idleSizeX, float idleSizeY, Vector2 position, int id) {
+    public GameCharacter(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, Vector2 position, int id) {
         super(position, id);
         this.idleSizeX = idleSizeX;
-        spriteContainer = new Square(new Vector2(), sizeX, sizeY, 0);
+        spriteContainer = new Square(new Vector2(), spriteSizeX, spriteSizeY, 0);
         idleCollisionBoxes = new CollisionObject[]{
                 new CollisionObject(new Vector2(), id, idleSizeX, idleSizeY, this, CollisionObject.TYPE_HITTABLE)
         };

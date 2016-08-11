@@ -21,8 +21,7 @@ public class ChargingEnemy extends GameCharacter {
     public final static TextureData ATTACKING_TEXTURE = new TextureData(0.25f,0.5f,0.5f,0.75f);
     public final static float ATTACK_SPEED = 2;
     public final static float DISTANCE_FROM_CHARACTER = 150;
-    private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
-            new CollisionObject(new Vector2(30,55),0,10,5,this, CollisionObject.TYPE_ATTACK)};
+    private final CollisionObject[] activeBoxes;
     private final float CHARGE_TIME = 0.25f;
     private static final float IDLE_TIME = 0.35f;
     private final MainCharacter mainCharacter;
@@ -32,6 +31,8 @@ public class ChargingEnemy extends GameCharacter {
 
     public ChargingEnemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition, int id, final MainCharacter mainCharacter){
         super(sizeX, sizeY, idleSizeX, idleSizeY, new Vector2(0, yPosition), id);
+        activeBoxes = new CollisionObject[]{new CollisionObject(new Vector2(),0, idleSizeX + 25, idleSizeY,this, CollisionObject.TYPE_HITTABLE),
+                new CollisionObject(new Vector2(57,55),0,10,15,this, CollisionObject.TYPE_ATTACK)};
         currentState = State.IDLE;
         chargeTimer = new TimeCounter(CHARGE_TIME);
         idleTimer = new TimeCounter(IDLE_TIME);
