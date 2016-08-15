@@ -24,6 +24,8 @@ public class GameRenderer implements Renderer {
     private final int SCORE_SIZE = 15;
     private final static boolean RENDER_HITBOXES = false;
     public final ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
+    public final static TextureData SPEAKER_TEXTURE = new TextureData(0.75f,0.875f,0.875f,1);
+    public final static TextureData SOUND_TEXTURE = new TextureData(0.875f, 0.875f, 1, 1);
     public final static TextureData BUTTON_TEXTURE = new TextureData(0,0.75f,0.125f,0.875f);
     public final static TextureData ARROW_TEXTURE = new TextureData(0,0.875f,0.125f,1f);
     public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.125f,1,0,0.875f);
@@ -145,6 +147,10 @@ public class GameRenderer implements Renderer {
             gameActivity.restartButton.label.addLetterTexture(mainTextureDrawer);
             gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
         }
+
+        mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_BOUNDS, SPEAKER_TEXTURE);
+        mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_BOUNDS, SOUND_TEXTURE);
+
         mainTextureDrawer.draw(gl10);
 
         if(gameData.paused) {

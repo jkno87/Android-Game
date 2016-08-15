@@ -161,6 +161,7 @@ public class GameActivity extends Activity {
     public static final int TELEPORT_SPRITE_LENGTH = 115;
     public static final int TELEPORT_SPRITE_HEIGHT = 145;
     public static final int CHARGING_SPRITE_LENGTH = 115;
+    public static final Square INPUT_SOUND_BOUNDS = new Square(PLAYING_WIDTH - 85, PLAYING_HEIGHT - 40, DIRECTION_WIDTH, DIRECTION_WIDTH);
     public static final Square INPUT_LEFT_BOUNDS = new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
     public static final Square INPUT_RIGHT_BOUNDS = new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
     public static final Square INPUT_A_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
