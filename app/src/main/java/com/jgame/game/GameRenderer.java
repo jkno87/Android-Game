@@ -148,8 +148,9 @@ public class GameRenderer implements Renderer {
             gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
         }
 
-        mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_BOUNDS, SPEAKER_TEXTURE);
-        mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_BOUNDS, SOUND_TEXTURE);
+        /*mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_BOUNDS, SPEAKER_TEXTURE);
+        if(gameData.soundEnabled)
+            mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_BOUNDS, SOUND_TEXTURE);*/
 
         mainTextureDrawer.draw(gl10);
 
@@ -167,6 +168,9 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.reset();
             gameActivity.continueButton.label.addLetterTexture(mainTextureDrawer);
             gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
+            mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SPEAKER_TEXTURE);
+            if(gameData.soundEnabled)
+                mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_TEXTURE);
             mainTextureDrawer.draw(gl10);
         }
     }

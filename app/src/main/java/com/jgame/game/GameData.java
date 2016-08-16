@@ -12,6 +12,7 @@ public class GameData {
 
     public int score;
     public int highScore;
+    public boolean soundEnabled;
     public GameState state;
     public boolean paused;
 
@@ -21,6 +22,7 @@ public class GameData {
             score = other.score;
             highScore = other.highScore;
             paused = other.paused;
+            soundEnabled = other.soundEnabled;
         }
     }
 

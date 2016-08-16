@@ -133,6 +133,8 @@ public class GameActivity extends Activity {
                                 currentEnemy = enemySpawnInterval;
                             }
                             score++;
+                            if(gameData.soundEnabled)
+                                soundManager.playSound(ID_PUNCH);
                         }
                         currentEnemy.reset(0,0);
                     }
@@ -152,6 +154,7 @@ public class GameActivity extends Activity {
     public static final float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH;
     public static final float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT;
     private static final float DIRECTION_WIDTH = 45;
+    private static final float INPUT_SOUND_WIDTH = 55;
     private static final float BUTTONS_WIDTH = 50;
     private static final float INPUTS_HEIGHT = 15;
     public static final float CONTROLS_HEIGHT = PLAYING_HEIGHT * 0.25f;
@@ -161,7 +164,8 @@ public class GameActivity extends Activity {
     public static final int TELEPORT_SPRITE_LENGTH = 115;
     public static final int TELEPORT_SPRITE_HEIGHT = 145;
     public static final int CHARGING_SPRITE_LENGTH = 115;
-    public static final Square INPUT_SOUND_BOUNDS = new Square(PLAYING_WIDTH - 85, PLAYING_HEIGHT - 40, DIRECTION_WIDTH, DIRECTION_WIDTH);
+    public static final Square INPUT_SOUND_SPRITE = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 100, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH);
+    public static final Square INPUT_SOUND_BOUNDS = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 130, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH + 40);
     public static final Square INPUT_LEFT_BOUNDS = new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
     public static final Square INPUT_RIGHT_BOUNDS = new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
     public static final Square INPUT_A_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
@@ -170,6 +174,7 @@ public class GameActivity extends Activity {
     public static final Square QUIT_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40);
     public static final Square RESTART_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT / 2, 150, 40);
     public static final String HIGH_SCORE = "highScore";
+    public static int ID_PUNCH;
     private GLSurfaceView gameSurfaceView;
     public SoundManager soundManager;
     public final GameData gameData = new GameData();
@@ -186,6 +191,7 @@ public class GameActivity extends Activity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         soundManager = GameResources.soundManager;
+        ID_PUNCH = soundManager.loadSound(this, R.raw.punch);
         gameSurfaceView = new GameSurfaceView(this);
         setContentView(gameSurfaceView);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -195,6 +201,7 @@ public class GameActivity extends Activity {
         this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2());
         gameTask = new GameRunnable(new GameFlow.UpdateInterval(0.015384615f), mainCharacter);
         new Thread(gameTask).start();
+        new Thread(soundManager).start();
     }
 
     private void triggerGameOver(int score){
@@ -217,12 +224,25 @@ public class GameActivity extends Activity {
         float x = (e.getX() / (float) gameSurfaceView.getWidth()) * GameLevels.FRUSTUM_WIDTH;
         float y = (((float) gameSurfaceView.getHeight() - e.getY()) / (float) gameSurfaceView.getHeight()) * GameLevels.FRUSTUM_HEIGHT;
 
-        if(continueButton.bounds.contains(x, y)) {
-            synchronized (gameData) {
-                gameData.paused = false;
-            }
-        } else if(quitButton.bounds.contains(x, y))
-            finish();
+        switch(e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (continueButton.bounds.contains(x, y)) {
+                    synchronized (gameData) {
+                        gameData.paused = false;
+                    }
+                } else if (quitButton.bounds.contains(x, y))
+                    finish();
+
+                break;
+
+            case MotionEvent.ACTION_UP:
+                if (INPUT_SOUND_BOUNDS.contains(x, y)) {
+                    synchronized (gameData) {
+                        gameData.soundEnabled = !gameData.soundEnabled;
+                    }
+                }
+                break;
+        }
 
         return true;
     }
