@@ -108,7 +108,7 @@ public class GameActivity extends Activity {
                         gameData.state = currentState;
                     }
 
-                    if(currentState == GameState.GAME_OVER)
+                    if(currentState != GameState.PLAYING && currentState != GameState.RESTART_SCREEN)
                         continue;
 
                     if(lastInput == null)
@@ -173,6 +173,7 @@ public class GameActivity extends Activity {
     public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
     public static final Square QUIT_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40);
     public static final Square RESTART_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT / 2, 150, 40);
+    public static final Square START_BUTTON_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT - 100, 150, 80);
     public static final String HIGH_SCORE = "highScore";
     public static int ID_PUNCH;
     private GLSurfaceView gameSurfaceView;
@@ -197,7 +198,7 @@ public class GameActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
         gameData.highScore = settings.getInt(HIGH_SCORE, 0);
-        gameData.state = GameState.STARTING;
+        gameData.state = GameState.MENU;
         this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2());
         gameTask = new GameRunnable(new GameFlow.UpdateInterval(0.015384615f), mainCharacter);
         new Thread(gameTask).start();

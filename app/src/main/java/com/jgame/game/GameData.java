@@ -7,7 +7,7 @@ package com.jgame.game;
 public class GameData {
 
     public enum GameState {
-        GAME_OVER, PLAYING, RESTART_SCREEN, STARTING
+        GAME_OVER, PLAYING, RESTART_SCREEN, STARTING, MENU
     }
 
     public int score;

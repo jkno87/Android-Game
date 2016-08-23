@@ -21,7 +21,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class GameRenderer implements Renderer {
 
     private final int SCORE_SIZE = 15;
-    private final static boolean RENDER_HITBOXES = false;
+    private final static boolean RENDER_HITBOXES = true;
     public final ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.546875f,0.625f,0.5859375f,0.6640625f);
     public final static TextureData SPEAKER_TEXTURE = new TextureData(0.75f,0.875f,0.875f,1);
@@ -38,6 +38,7 @@ public class GameRenderer implements Renderer {
     public static final Square GAME_FLOOR = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
     private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
     public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameLevels.FRUSTUM_HEIGHT - 35, 50, 18), 2);
+    public static final GameText TITLE_TEXT = new GameText("menu", new Square(160, GameLevels.FRUSTUM_HEIGHT - 150, 150, 50), 5);
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
     private GL10 gl10;
@@ -96,57 +97,62 @@ public class GameRenderer implements Renderer {
     @Override
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
-        boolean characterAlive = gameActivity.mainCharacter.alive();
+        if(gameData.state == GameState.MENU)
+            drawMenu();
+        else {
 
-        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
-        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
-        gl10.glMatrixMode(GL10.GL_PROJECTION);
-        gl10.glLoadIdentity();
-        gl10.glOrthof(0, GameLevels.FRUSTUM_WIDTH, 0, GameLevels.FRUSTUM_HEIGHT, 1, -1);
-        gl10.glMatrixMode(GL10.GL_MODELVIEW);
-        gl10.glEnable(GL10.GL_BLEND);
-        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        gl10.glEnable(GL10.GL_TEXTURE_2D);
+            boolean characterAlive = gameActivity.mainCharacter.alive();
 
-        mainTextureDrawer.reset();
+            gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
+            gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
+            gl10.glMatrixMode(GL10.GL_PROJECTION);
+            gl10.glLoadIdentity();
+            gl10.glOrthof(0, GameLevels.FRUSTUM_WIDTH, 0, GameLevels.FRUSTUM_HEIGHT, 1, -1);
+            gl10.glMatrixMode(GL10.GL_MODELVIEW);
+            gl10.glEnable(GL10.GL_BLEND);
+            gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+            gl10.glEnable(GL10.GL_TEXTURE_2D);
 
-        renderCharacter(gameActivity.mainCharacter, mainTextureDrawer);
-        if(RENDER_HITBOXES)
-            renderEnemy(gameActivity.mainCharacter, mainTextureDrawer);
-        synchronized (gameActivity.enemyLock) {
-            renderCharacter(gameActivity.currentEnemy, mainTextureDrawer);
+            mainTextureDrawer.reset();
+
+            renderCharacter(gameActivity.mainCharacter, mainTextureDrawer);
             if (RENDER_HITBOXES)
-                renderEnemy(gameActivity.currentEnemy, mainTextureDrawer);
+                renderEnemy(gameActivity.mainCharacter, mainTextureDrawer);
+            synchronized (gameActivity.enemyLock) {
+                renderCharacter(gameActivity.currentEnemy, mainTextureDrawer);
+                if (RENDER_HITBOXES)
+                    renderEnemy(gameActivity.currentEnemy, mainTextureDrawer);
+            }
+
+            mainTextureDrawer.addColoredSquare(GAME_FLOOR, NO_TEXTURE_COORDS, DASHBOARD_COLOR);
+            gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
+
+            mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_LEFT_BOUNDS, LEFT_ARROW_TEXTURE);
+            mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_RIGHT_BOUNDS, ARROW_TEXTURE);
+            mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_A_BOUNDS, BUTTON_TEXTURE);
+
+            if (characterAlive) {
+                addDigitsTexture(250, 35, gameData.score, mainTextureDrawer);
+                addDigitsTexture(250, GameLevels.FRUSTUM_HEIGHT - 35, gameData.highScore, mainTextureDrawer);
+                HIGHSCORE_TEXT.addLetterTexture(mainTextureDrawer);
+            }
+
+            if (gameData.state == GameState.RESTART_SCREEN) {
+                gameActivity.restartButton.label.addLetterTexture(mainTextureDrawer);
+                gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
+            }
+
+            if (gameData.paused) {
+                mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
+                gameActivity.continueButton.label.addLetterTexture(mainTextureDrawer);
+                gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
+                mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SPEAKER_TEXTURE);
+                if (gameData.soundEnabled)
+                    mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_TEXTURE);
+            }
+
+            mainTextureDrawer.draw(gl10);
         }
-
-        mainTextureDrawer.addColoredSquare(GAME_FLOOR, NO_TEXTURE_COORDS, DASHBOARD_COLOR);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
-
-        mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_LEFT_BOUNDS, LEFT_ARROW_TEXTURE);
-        mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_RIGHT_BOUNDS, ARROW_TEXTURE);
-        mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_A_BOUNDS, BUTTON_TEXTURE);
-
-        if(characterAlive) {
-            addDigitsTexture(250, 35, gameData.score, mainTextureDrawer);
-            addDigitsTexture(250, GameLevels.FRUSTUM_HEIGHT - 35, gameData.highScore, mainTextureDrawer);
-            HIGHSCORE_TEXT.addLetterTexture(mainTextureDrawer);
-        }
-
-        if(gameData.state == GameState.RESTART_SCREEN){
-            gameActivity.restartButton.label.addLetterTexture(mainTextureDrawer);
-            gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
-        }
-
-        if(gameData.paused) {
-            mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
-            gameActivity.continueButton.label.addLetterTexture(mainTextureDrawer);
-            gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
-            mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SPEAKER_TEXTURE);
-            if(gameData.soundEnabled)
-                mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_TEXTURE);
-        }
-
-        mainTextureDrawer.draw(gl10);
 
     }
 
@@ -184,28 +190,33 @@ public class GameRenderer implements Renderer {
             drawer.addTexturedSquare(c.spriteContainer, c.getCurrentTexture());
     }
 
-    private void drawMenu(MenuFlow flow){
-        /*gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
+    private void drawMenu(){
+        gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
         gl10.glMatrixMode(GL10.GL_PROJECTION);
         gl10.glLoadIdentity();
         gl10.glOrthof(0, GameLevels.FRUSTUM_WIDTH, 0, GameLevels.FRUSTUM_HEIGHT, 1, -1);
-
         gl10.glMatrixMode(GL10.GL_MODELVIEW);
         gl10.glEnable(GL10.GL_BLEND);
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-
         gl10.glEnable(GL10.GL_TEXTURE_2D);
-        gl10.glBindTexture(GL10.GL_TEXTURE_2D, NO_TEXTURE);
 
+        mainTextureDrawer.reset();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
+        if(RENDER_HITBOXES)
+            mainTextureDrawer.addColoredSquare(GameActivity.START_BUTTON_BOUNDS, NO_TEXTURE_COORDS, HITTABLE_COLOR);
+        TITLE_TEXT.addLetterTexture(mainTextureDrawer);
 
-        /*if(flow.renderMessage) {
-            mainTextureDrawer.reset();
-            gl10.glBindTexture(GL10.GL_TEXTURE_2D, alfabetoId);
-            flow.message.addLetterTexture(mainTextureDrawer);
-            mainTextureDrawer.draw(gl10);
-        }*/
+        if(gameData.paused) {
+            mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
+            gameActivity.continueButton.label.addLetterTexture(mainTextureDrawer);
+            gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
+            mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SPEAKER_TEXTURE);
+            if(gameData.soundEnabled)
+                mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_TEXTURE);
+        }
+
+        mainTextureDrawer.draw(gl10);
     }
 
 

@@ -1,5 +1,7 @@
 package com.jgame.game;
 
+import android.util.Log;
+
 import com.jgame.definitions.GameLevels;
 import com.jgame.game.GameData.GameState;
 import com.jgame.util.Square;
@@ -42,14 +44,7 @@ public class ControllerManager {
 
     public void handleDown(float x, float y){
         try {
-            if(gameData.state == GameState.RESTART_SCREEN){
-                inputX = GameLevels.FRUSTUM_WIDTH * x;
-                inputY = GameLevels.FRUSTUM_HEIGHT * y;
-                if(GameActivity.QUIT_BOUNDS.contains(inputX, inputY))
-                    inputs.put(GameInput.QUIT_GAME);
-                else if(GameActivity.RESTART_BOUNDS.contains(inputX, inputY))
-                    inputs.put(GameInput.RESTART_GAME);
-            } else if(gameData.state == GameState.PLAYING){
+            if(gameData.state == GameState.PLAYING){
                 inputX = GameLevels.FRUSTUM_WIDTH * x;
                 inputY = GameLevels.FRUSTUM_HEIGHT * y;
 
@@ -62,6 +57,13 @@ public class ControllerManager {
                 } else if (gameButtons[INPUT_A].contains(inputX, inputY)) {
                     inputs.add(GameInput.INPUT_A);
                 }
+            } else if(gameData.state == GameState.RESTART_SCREEN){
+                inputX = GameLevels.FRUSTUM_WIDTH * x;
+                inputY = GameLevels.FRUSTUM_HEIGHT * y;
+                if(GameActivity.QUIT_BOUNDS.contains(inputX, inputY))
+                    inputs.put(GameInput.QUIT_GAME);
+                else if(GameActivity.RESTART_BOUNDS.contains(inputX, inputY))
+                    inputs.put(GameInput.RESTART_GAME);
             }
 
         } catch (InterruptedException e){
@@ -100,15 +102,25 @@ public class ControllerManager {
     }
 
     public void handleUp(float x, float y){
-        if(gameData.state != GameData.GameState.PLAYING)
-            return;
-
         inputX = x;
         inputY = y;
 
-        if(mainButtonPressed != INPUT_NONE)
-            inputs.add(GameInput.INPUT_OFF);
-        mainButtonPressed = INPUT_NONE;
+        try {
+            if (gameData.state == GameState.PLAYING) {
+                if (mainButtonPressed != INPUT_NONE)
+                    inputs.put(GameInput.INPUT_OFF);
+                mainButtonPressed = INPUT_NONE;
+            }
+
+            if (gameData.state == GameState.MENU) {
+                if (GameActivity.START_BUTTON_BOUNDS.contains(inputX, inputY)) {
+                    inputs.put(GameInput.QUIT_GAME);
+                }
+            }
+        } catch (InterruptedException e){
+            Thread.interrupted();
+        }
+
     }
 
     public void handlePointerDown(float x, float y){
@@ -144,6 +156,8 @@ public class ControllerManager {
 
     /**
      * Este metodo regresa el input disponible si no se recibio otro input adicional durante el update.
+     * El proposito de este metodo es para manejar casos de botones que se quedan presionados.
+     * (ej. cuando un jugador deja presionado el input left y el personaje se debe de seguir moviendo hasta que se levanta el input)
      */
     public GameInput checkPressedButtons(){
         if(gameData.state != GameData.GameState.PLAYING)
