@@ -14,7 +14,7 @@ import java.util.concurrent.BlockingQueue;
 public class ControllerManager {
 
     public enum GameInput {
-        LEFT, RIGHT, INPUT_A, INPUT_OFF,NO_INPUT, QUIT_GAME, RESTART_GAME
+        LEFT, RIGHT, INPUT_A, INPUT_OFF,NO_INPUT, QUIT_GAME, START_GAME
     }
 
     private final BlockingQueue<GameInput> inputs;
@@ -63,7 +63,7 @@ public class ControllerManager {
                 if(GameActivity.QUIT_BOUNDS.contains(inputX, inputY))
                     inputs.put(GameInput.QUIT_GAME);
                 else if(GameActivity.RESTART_BOUNDS.contains(inputX, inputY))
-                    inputs.put(GameInput.RESTART_GAME);
+                    inputs.put(GameInput.START_GAME);
             }
 
         } catch (InterruptedException e){
@@ -102,8 +102,8 @@ public class ControllerManager {
     }
 
     public void handleUp(float x, float y){
-        inputX = x;
-        inputY = y;
+        inputX = GameLevels.FRUSTUM_WIDTH * x;
+        inputY = GameLevels.FRUSTUM_HEIGHT * y;
 
         try {
             if (gameData.state == GameState.PLAYING) {
@@ -114,7 +114,7 @@ public class ControllerManager {
 
             if (gameData.state == GameState.MENU) {
                 if (GameActivity.START_BUTTON_BOUNDS.contains(inputX, inputY)) {
-                    inputs.put(GameInput.QUIT_GAME);
+                    inputs.put(GameInput.START_GAME);
                 }
             }
         } catch (InterruptedException e){

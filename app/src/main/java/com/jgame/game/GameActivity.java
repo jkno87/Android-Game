@@ -78,7 +78,10 @@ public class GameActivity extends Activity {
                         currentState = gameData.state;
                     }
 
-                    if(currentState == GameState.STARTING) {
+                    if(currentState == GameState.MENU) {
+                        if(lastInput == ControllerManager.GameInput.START_GAME)
+                            currentState = GameState.STARTING;
+                    } else if(currentState == GameState.STARTING) {
                         synchronized (enemyLock) {
                             currentEnemy = enemySpawnInterval;
                         }
@@ -98,7 +101,7 @@ public class GameActivity extends Activity {
                             currentState = GameState.GAME_OVER;
                         }
                     } else if (currentState == GameState.RESTART_SCREEN) {
-                        if(lastInput == ControllerManager.GameInput.RESTART_GAME)
+                        if(lastInput == ControllerManager.GameInput.START_GAME)
                             currentState = GameState.STARTING;
                         else if(lastInput == ControllerManager.GameInput.QUIT_GAME)
                             finish();
@@ -173,7 +176,7 @@ public class GameActivity extends Activity {
     public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT/2, 150, 40), "continue");
     public static final Square QUIT_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT/2 - 100, 150, 40);
     public static final Square RESTART_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT / 2, 150, 40);
-    public static final Square START_BUTTON_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 50, GameLevels.FRUSTUM_HEIGHT - 100, 150, 80);
+    public static final Square START_BUTTON_BOUNDS = new Square(120, GameLevels.FRUSTUM_HEIGHT - 160, 200, 80);
     public static final String HIGH_SCORE = "highScore";
     public static int ID_PUNCH;
     private GLSurfaceView gameSurfaceView;

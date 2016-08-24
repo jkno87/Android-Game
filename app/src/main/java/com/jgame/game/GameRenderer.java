@@ -38,7 +38,7 @@ public class GameRenderer implements Renderer {
     public static final Square GAME_FLOOR = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
     private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
     public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameLevels.FRUSTUM_HEIGHT - 35, 50, 18), 2);
-    public static final GameText TITLE_TEXT = new GameText("menu", new Square(160, GameLevels.FRUSTUM_HEIGHT - 150, 150, 50), 5);
+    public static final GameText TITLE_TEXT = new GameText("start", new Square(160, GameLevels.FRUSTUM_HEIGHT - 150, 150, 50), 5);
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
     private GL10 gl10;
