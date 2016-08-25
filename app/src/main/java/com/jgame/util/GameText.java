@@ -7,13 +7,13 @@ import com.jgame.util.TextureDrawer.TextureData;
  */
 public class GameText {
 
-    private final byte[] texto;
-    private Square bounds;
-    private float letterSize;
+    private final int[] lettersId;
+    public Square bounds;
     private float margin;
     private static int LETTERS_COLUMN = 10;
     private static int LETTERS_ROW = 3;
     public static final TextureData[] LETTERS = generateAlphabet(0.625f, 0.1875f, 0.125f, 0.75f,LETTERS_COLUMN, LETTERS_ROW);
+    private final Square currentLetter;
 
     /**
      * Genera la informacion de las texturas dependiendo del numero de columnas y filas que se proporcionan
@@ -45,10 +45,14 @@ public class GameText {
 
 
     public GameText(String texto, Square bounds, float margin){
-        this.texto = texto.getBytes();
+        this.lettersId = new int[texto.length()];
         this.bounds = bounds;
         this.margin = margin;
-        this.letterSize = (bounds.lenX - margin*2) / this.texto.length;
+        this.currentLetter = new Square(0,0,(bounds.lenX - margin*2)/this.lettersId.length,
+                bounds.lenY - margin);
+
+        for(int i = 0; i < lettersId.length; i++)
+            lettersId[i] = (int) texto.charAt(i) - 97;
     }
 
     /**
@@ -56,14 +60,27 @@ public class GameText {
      * @param textureDrawer Drawer al que se agregaran los vertices
      */
     public void addLetterTexture(TextureDrawer textureDrawer) {
-        float currentX = bounds.position.x;
+        currentLetter.position.x = bounds.position.x + margin;
+        currentLetter.position.y = bounds.position.y + margin;
 
-        for (int i = 0; i < texto.length; i++) {
-            textureDrawer.addTexturedSquare(currentX, bounds.position.y + margin,
-                    letterSize, bounds.lenY, LETTERS[(int) texto[i] - 97]);
-            currentX += letterSize;
+        for (int i = 0; i < lettersId.length; i++) {
+            textureDrawer.addTexturedSquare(currentLetter, LETTERS[lettersId[i]]);
+            currentLetter.position.x += currentLetter.lenX;
         }
-
     }
 
+    /**
+     * Dibuja las letras utilizando el color colorData
+     * @param textureDrawer drawer al que se le asignara la informacion de dibujo
+     * @param colorData informacion de color
+     */
+    public void addLetterTexture(TextureDrawer textureDrawer, SimpleDrawer.ColorData colorData){
+        currentLetter.position.x = bounds.position.x + margin;
+        currentLetter.position.y = bounds.position.y + margin;
+
+        for (int i = 0; i < lettersId.length; i++) {
+            textureDrawer.addColoredSquare(currentLetter, LETTERS[lettersId[i]], colorData);
+            currentLetter.position.x += currentLetter.lenX;
+        }
+    }
 }

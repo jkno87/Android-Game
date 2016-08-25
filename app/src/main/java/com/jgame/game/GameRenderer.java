@@ -13,7 +13,6 @@ import com.jgame.util.SimpleDrawer.ColorData;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
-import com.jgame.util.Vector2;
 import com.jgame.game.GameData.GameState;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -23,12 +22,14 @@ public class GameRenderer implements Renderer {
     private final int SCORE_SIZE = 15;
     private final static boolean RENDER_HITBOXES = true;
     public final ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
+    public final ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.546875f,0.625f,0.5859375f,0.6640625f);
     public final static TextureData SPEAKER_TEXTURE = new TextureData(0.75f,0.875f,0.875f,1);
     public final static TextureData SOUND_TEXTURE = new TextureData(0.875f, 0.875f, 1, 1);
     public final static TextureData BUTTON_TEXTURE = new TextureData(0,0.75f,0.125f,0.875f);
     public final static TextureData ARROW_TEXTURE = new TextureData(0,0.875f,0.125f,1f);
     public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.125f,1,0,0.875f);
+    public final static TextureData SOUND_SWITCH_TEXTURE = new TextureData(0.75f,0.75f,0.875f,0.875f);
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
@@ -39,6 +40,10 @@ public class GameRenderer implements Renderer {
     private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
     public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameLevels.FRUSTUM_HEIGHT - 35, 50, 18), 2);
     public static final GameText TITLE_TEXT = new GameText("start", new Square(160, GameLevels.FRUSTUM_HEIGHT - 150, 150, 50), 5);
+    public static final GameText SOUND_LABEL = new GameText("sound", new Square(160, 85, 150, 35), 0);
+    public static final GameText ON_LABEL = new GameText("on", new Square(160, 50, 50, 20), 1);
+    public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 1);
+    public static final Square SOUND_SWITCH_SPRITE = new Square(210, 40, 50, 50);
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
     private GL10 gl10;
@@ -203,9 +208,23 @@ public class GameRenderer implements Renderer {
 
         mainTextureDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
-        if(RENDER_HITBOXES)
+
+        if(RENDER_HITBOXES) {
             mainTextureDrawer.addColoredSquare(GameActivity.START_BUTTON_BOUNDS, NO_TEXTURE_COORDS, HITTABLE_COLOR);
+            mainTextureDrawer.addColoredSquare(GameActivity.SOUND_SWITCH, NO_TEXTURE_COORDS, HITTABLE_COLOR);
+        }
+
         TITLE_TEXT.addLetterTexture(mainTextureDrawer);
+        SOUND_LABEL.addLetterTexture(mainTextureDrawer);
+        if(gameData.soundEnabled) {
+            ON_LABEL.addLetterTexture(mainTextureDrawer);
+            OFF_LABEL.addLetterTexture(mainTextureDrawer, NON_HIGHLIGHT);
+            mainTextureDrawer.addInvertedTexturedSquare(SOUND_SWITCH_SPRITE, SOUND_SWITCH_TEXTURE);
+        } else {
+            ON_LABEL.addLetterTexture(mainTextureDrawer, NON_HIGHLIGHT);
+            OFF_LABEL.addLetterTexture(mainTextureDrawer);
+            mainTextureDrawer.addTexturedSquare(SOUND_SWITCH_SPRITE, SOUND_SWITCH_TEXTURE);
+        }
 
         if(gameData.paused) {
             mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);

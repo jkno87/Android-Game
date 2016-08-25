@@ -1,7 +1,5 @@
 package com.jgame.game;
 
-import android.util.Log;
-
 import com.jgame.definitions.GameLevels;
 import com.jgame.game.GameData.GameState;
 import com.jgame.util.Square;
@@ -14,7 +12,7 @@ import java.util.concurrent.BlockingQueue;
 public class ControllerManager {
 
     public enum GameInput {
-        LEFT, RIGHT, INPUT_A, INPUT_OFF,NO_INPUT, QUIT_GAME, START_GAME
+        LEFT, RIGHT, INPUT_A, INPUT_OFF,NO_INPUT, QUIT_GAME, START_GAME, CHANGE_SOUND_STATE
     }
 
     private final BlockingQueue<GameInput> inputs;
@@ -115,7 +113,9 @@ public class ControllerManager {
             if (gameData.state == GameState.MENU) {
                 if (GameActivity.START_BUTTON_BOUNDS.contains(inputX, inputY)) {
                     inputs.put(GameInput.START_GAME);
-                }
+                } else if (GameActivity.SOUND_SWITCH.contains(inputX, inputY))
+                    inputs.put(GameInput.CHANGE_SOUND_STATE);
+
             }
         } catch (InterruptedException e){
             Thread.interrupted();
