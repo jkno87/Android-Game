@@ -21,9 +21,9 @@ public class GameRenderer implements Renderer {
 
     private final int SCORE_SIZE = 15;
     private final static boolean RENDER_HITBOXES = false;
-    public final ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
-    public final ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
-    public final ColorData BACKGROUND_MODIFIER = new ColorData(1f,0f,0f,1);
+    public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
+    public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
+    public final static ColorData BACKGROUND_MODIFIER = new ColorData(1f,0.1f,0f,1);
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.546875f,0.625f,0.5859375f,0.6640625f);
     public final static TextureData SPEAKER_TEXTURE = new TextureData(0.75f,0.875f,0.875f,1);
     public final static TextureData SOUND_TEXTURE = new TextureData(0.875f, 0.875f, 1, 1);
@@ -32,7 +32,8 @@ public class GameRenderer implements Renderer {
     public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.125f,1,0,0.875f);
     public final static TextureData SOUND_SWITCH_ON_TEXTURE = new TextureData(0.75f,0.75f,0.875f,0.875f);
     public final static TextureData SOUND_SWITCH_OFF_TEXTURE = new TextureData(0.875f,0.875f,0.75f,0.75f);
-    public final static TextureData BACKGROUND_TEXTURE = new TextureData(0,0,1,1);
+    public final static TextureData BACKGROUND_TEXTURE = new TextureData(0,0.5f,1,1);
+    public final static TextureData BACKGROUND_DETAILS = new TextureData(0,0,1,0.5f);
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
@@ -122,15 +123,14 @@ public class GameRenderer implements Renderer {
             gl10.glEnable(GL10.GL_BLEND);
             gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
             gl10.glEnable(GL10.GL_TEXTURE_2D);
-            gl10.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_BLEND);
 
             mainTextureDrawer.reset();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, backgroundId);
-            mainTextureDrawer.addColoredSquare(BACKGROUND_SIZE, BACKGROUND_TEXTURE, BACKGROUND_MODIFIER);
+            mainTextureDrawer.addTexturedSquare(BACKGROUND_SIZE, BACKGROUND_TEXTURE);
+            mainTextureDrawer.addColoredSquare(BACKGROUND_SIZE, BACKGROUND_DETAILS, BACKGROUND_MODIFIER);
             mainTextureDrawer.draw(gl10);
 
 
-            
             mainTextureDrawer.reset();
 
             renderCharacter(gameActivity.mainCharacter, mainTextureDrawer);

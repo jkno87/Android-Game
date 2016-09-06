@@ -51,6 +51,7 @@ public class GameActivity extends Activity {
         private ControllerManager.GameInput lastInput;
         private int currentEnemyCounter;
         private GameData.GameState currentState;
+        private float colorModifier = 0.01f;
 
         public GameRunnable(GameFlow.UpdateInterval updateInterval, MainCharacter mainCharacter){
             this.mainCharacter = mainCharacter;
@@ -71,6 +72,12 @@ public class GameActivity extends Activity {
                 while(true){
                     Thread. sleep(UPDATE_INTERVAL);
                     lastInput = inputQueue.poll();
+
+                    GameRenderer.BACKGROUND_MODIFIER.b += colorModifier;
+                    if(GameRenderer.BACKGROUND_MODIFIER.b > 1 || GameRenderer.BACKGROUND_MODIFIER.b < 0)
+                        colorModifier *= -1;
+
+
                     synchronized (gameData){
                         if(gameData.paused)
                             continue;

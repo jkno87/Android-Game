@@ -6,10 +6,10 @@ package com.jgame.util;
 public class SimpleDrawer extends Drawer {
 
     public static class ColorData {
-        public final float r;
-        public final float g;
-        public final float b;
-        public final float a;
+        public float r;
+        public float g;
+        public float b;
+        public float a;
 
         public ColorData(float r, float g, float b, float a){
             this.r = r;

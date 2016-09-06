@@ -16,6 +16,7 @@ public class GameSurfaceView extends GLSurfaceView {
         gameRenderer = new GameRenderer(gameActivity);
         setRenderer(gameRenderer);
         gameRenderer.setSurfaceView(this);
+        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         this.controllerManager = gameActivity.controllerManager;
     }
 
