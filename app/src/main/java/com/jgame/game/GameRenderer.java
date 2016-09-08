@@ -23,7 +23,8 @@ public class GameRenderer implements Renderer {
     private final static boolean RENDER_HITBOXES = false;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
-    public final static ColorData BACKGROUND_MODIFIER = new ColorData(1f,0.1f,0f,1);
+    public final static ColorData BACKGROUND_MODIFIER_2 = new ColorData(1,0.5f,0f,1);
+    public final static ColorData BACKGROUND_MODIFIER = new ColorData(1,1,0,0.5f);
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.546875f,0.625f,0.5859375f,0.6640625f);
     public final static TextureData SPEAKER_TEXTURE = new TextureData(0.75f,0.875f,0.875f,1);
     public final static TextureData SOUND_TEXTURE = new TextureData(0.875f, 0.875f, 1, 1);

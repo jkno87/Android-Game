@@ -73,9 +73,9 @@ public class GameActivity extends Activity {
                     Thread. sleep(UPDATE_INTERVAL);
                     lastInput = inputQueue.poll();
 
-                    GameRenderer.BACKGROUND_MODIFIER.b += colorModifier;
+                    /*GameRenderer.BACKGROUND_MODIFIER.b += colorModifier;
                     if(GameRenderer.BACKGROUND_MODIFIER.b > 1 || GameRenderer.BACKGROUND_MODIFIER.b < 0)
-                        colorModifier *= -1;
+                        colorModifier *= -1;*/
 
 
                     synchronized (gameData){
