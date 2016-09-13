@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.game.GameActivity;
 import com.jgame.game.GameFlow;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
@@ -25,17 +26,20 @@ public class TeleportEnemy extends GameCharacter {
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
             new CollisionObject(new Vector2(60,55),0,35,20,this, CollisionObject.TYPE_ATTACK)};
     private CollisionObject[] recoveryBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
-    private final AttackData attack;
+    private final TimeCounter[][] attackFrames;
     protected EnemyState currentState;
     private int currentAction;
     private final EnemyAction[] actions;
     private final MainCharacter mainCharacter;
-    private int currentDifficulty;
     private final TimeCounter teleportInterval;
     private final TimeCounter idleInterval;
 
     public TeleportEnemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition, int id, final MainCharacter mainCharacter) {
         super(sizeX, sizeY, idleSizeX, idleSizeY, new Vector2(0, yPosition), id);
+        attackFrames = new TimeCounter[][] {
+                new TimeCounter[]{new TimeCounter(0.65f), new TimeCounter(0.5f), new TimeCounter(0.45f)},
+                new TimeCounter[]{new TimeCounter(0.33f), new TimeCounter(0.5f), new TimeCounter(0.45f)}
+        };
         currentState = EnemyState.TELEPORTING;
         this.mainCharacter = mainCharacter;
         EnemyAction move  = new EnemyAction() {
@@ -53,11 +57,8 @@ public class TeleportEnemy extends GameCharacter {
         actions = new EnemyAction[]{attack, move};
         currentAction = 0;
         currentDifficulty = 0;
-        this.attack = new AttackData(startupBoxes, activeBoxes, recoveryBoxes);
-        this.attack.startupCounter = new TimeCounter(0.33f);
-        this.attack.activeCounter = new TimeCounter(0.5f);
-        this.attack.recoveryCounter = new TimeCounter(0.45f);
-        activeAttack = this.attack;
+        activeAttack = new AttackData(startupBoxes, activeBoxes, recoveryBoxes);
+        activeAttack.attackDuration = attackFrames[currentDifficulty];
         teleportInterval = new TimeCounter(0.33f);
         idleInterval = new TimeCounter(0.025f);
     }
@@ -71,6 +72,7 @@ public class TeleportEnemy extends GameCharacter {
         teleportInterval.reset();
         currentState = EnemyState.TELEPORTING;
         currentAction = 0;
+        activeAttack.attackDuration = attackFrames[currentDifficulty];
         idleInterval.reset();
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
     }

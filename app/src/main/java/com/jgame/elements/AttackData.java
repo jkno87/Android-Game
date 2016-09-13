@@ -15,12 +15,14 @@ public class AttackData {
         STARTUP, ACTIVE, RECOVERY, FINISHED
     }
 
+
+    public static final int STARTUP_TIMER = 0;
+    public static final int ACTIVE_TIMER = 1;
+    public static final int RECOVERY_TIMER = 2;
     public final CollisionObject [] startup;
     public final CollisionObject [] active;
     public final CollisionObject [] recovery;
-    public TimeCounter startupCounter;
-    public TimeCounter activeCounter;
-    public TimeCounter recoveryCounter;
+    public TimeCounter[] attackDuration = new TimeCounter[3];
     public CollisionState currentState;
 
     public AttackData(CollisionObject[] startup, CollisionObject[] active, CollisionObject [] recovery){
@@ -32,9 +34,10 @@ public class AttackData {
 
     public AttackData(float startupTime, float activeTime, float recoveryTime,
                       CollisionObject[] startup, CollisionObject[] active, CollisionObject [] recovery){
-        startupCounter = new TimeCounter(startupTime);
-        activeCounter = new TimeCounter(activeTime);
-        recoveryCounter = new TimeCounter(recoveryTime);
+        attackDuration[STARTUP_TIMER] = new TimeCounter(startupTime);
+        attackDuration[ACTIVE_TIMER] = new TimeCounter(activeTime);
+        attackDuration[RECOVERY_TIMER] = new TimeCounter(recoveryTime);
+
         currentState = CollisionState.STARTUP;
         this.startup = startup;
         this.active = active;
@@ -42,9 +45,9 @@ public class AttackData {
     }
 
     public void reset(){
-        startupCounter.reset();
-        activeCounter.reset();
-        recoveryCounter.reset();
+        attackDuration[STARTUP_TIMER].reset();
+        attackDuration[ACTIVE_TIMER].reset();
+        attackDuration[RECOVERY_TIMER].reset();
         currentState = CollisionState.STARTUP;
         for(CollisionObject o : startup)
             o.updatePosition();
@@ -60,16 +63,16 @@ public class AttackData {
 
     public void update(GameFlow.UpdateInterval timeDifference){
         if(currentState == CollisionState.STARTUP){
-            startupCounter.accum(timeDifference);
-            if(startupCounter.completed())
+            attackDuration[STARTUP_TIMER].accum(timeDifference);
+            if(attackDuration[STARTUP_TIMER].completed())
                 currentState = CollisionState.ACTIVE;
         } else if (currentState == CollisionState.ACTIVE){
-            activeCounter.accum(timeDifference);
-            if(activeCounter.completed())
+            attackDuration[ACTIVE_TIMER].accum(timeDifference);
+            if(attackDuration[ACTIVE_TIMER].completed())
                 currentState = CollisionState.RECOVERY;
         } else if (currentState == CollisionState.RECOVERY){
-            recoveryCounter.accum(timeDifference);
-            if(recoveryCounter.completed())
+            attackDuration[RECOVERY_TIMER].accum(timeDifference);
+            if(attackDuration[RECOVERY_TIMER].completed())
                 currentState = CollisionState.FINISHED;
         }
     }

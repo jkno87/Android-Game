@@ -27,6 +27,7 @@ public abstract class GameCharacter extends GameObject {
     public AttackData activeAttack;
     public final Square spriteContainer;
     public float idleSizeX;
+    public int currentDifficulty;
 
     public GameCharacter(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, Vector2 position, int id) {
         super(position, id);
@@ -116,6 +117,24 @@ public abstract class GameCharacter extends GameObject {
                 if (co.checkCollision(foe))
                     foe.hit();
         }
+    }
+
+    /**
+     * Actualiza la dificultad actual dependiendo del score del jugador.
+     * @param score
+     */
+    public void increaseDifficulty(int score){
+        if(currentDifficulty == GameActivity.EASY_DIFFICULTY && score > GameActivity.EASY_DIFFICULTY_POINTS) {
+            currentDifficulty = GameActivity.MEDIUM_DIFFICULTY;
+        }
+    }
+
+    /**
+     * Actualiza la dificultad del juego a difficulty
+     * @param difficulty
+     */
+    public void resetDifficulty(int difficulty){
+        currentDifficulty = difficulty;
     }
 
     public abstract void reset(float x, float y);

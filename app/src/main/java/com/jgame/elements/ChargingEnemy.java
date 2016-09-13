@@ -1,5 +1,7 @@
 package com.jgame.elements;
 
+import android.util.Log;
+
 import com.jgame.game.GameActivity;
 import com.jgame.game.GameFlow;
 import com.jgame.util.TextureDrawer.TextureData;
@@ -19,7 +21,7 @@ public class ChargingEnemy extends GameCharacter {
     public final static TextureData IDLE_TEXTURE = new TextureData(0.25f,0,0.5f,0.25f);
     public final static TextureData CHARGING_TEXTURE = new TextureData(0.25f,0.25f,0.5f,0.5f);
     public final static TextureData ATTACKING_TEXTURE = new TextureData(0.25f,0.5f,0.5f,0.75f);
-    public final static float ATTACK_SPEED = 2;
+    public final static float[] ATTACK_SPEED = new float[]{2, 5f};
     public final static float DISTANCE_FROM_CHARACTER = 150;
     private final CollisionObject[] activeBoxes;
     private final float CHARGE_TIME = 0.25f;
@@ -77,7 +79,7 @@ public class ChargingEnemy extends GameCharacter {
         } else if (currentState == State.ATTACKING){
             if(foe.hittable())
                 super.update(foe, interval, worldData);
-            moveX(baseX.x * ATTACK_SPEED);
+            moveX(baseX.x * ATTACK_SPEED[currentDifficulty]);
         }
 
         for(CollisionObject co : activeAttack.active)

@@ -51,7 +51,6 @@ public class GameActivity extends Activity {
         private ControllerManager.GameInput lastInput;
         private int currentEnemyCounter;
         private GameData.GameState currentState;
-        private float colorModifier = 0.01f;
 
         public GameRunnable(GameFlow.UpdateInterval updateInterval, MainCharacter mainCharacter){
             this.mainCharacter = mainCharacter;
@@ -73,11 +72,6 @@ public class GameActivity extends Activity {
                     Thread. sleep(UPDATE_INTERVAL);
                     lastInput = inputQueue.poll();
 
-                    /*GameRenderer.BACKGROUND_MODIFIER.b += colorModifier;
-                    if(GameRenderer.BACKGROUND_MODIFIER.b > 1 || GameRenderer.BACKGROUND_MODIFIER.b < 0)
-                        colorModifier *= -1;*/
-
-
                     synchronized (gameData){
                         if(gameData.paused)
                             continue;
@@ -96,11 +90,13 @@ public class GameActivity extends Activity {
                         synchronized (enemyLock) {
                             currentEnemy = enemySpawnInterval;
                         }
+
+                        for(GameCharacter gc : availableEnemies)
+                            gc.resetDifficulty(GameActivity.EASY_DIFFICULTY);
                         score = 0;
                         currentEnemyCounter = 0;
                         currentEnemy.reset(0,0);
                         mainCharacter.reset(INITIAL_CHARACTER_POSITION, ELEMENTS_HEIGHT);
-
                         currentState = GameState.PLAYING;
 
                     } else if(currentState == GameState.GAME_OVER){
@@ -150,6 +146,7 @@ public class GameActivity extends Activity {
                             if(gameData.soundEnabled)
                                 soundManager.playSound(ID_PUNCH);
                         }
+                        currentEnemy.increaseDifficulty(score);
                         currentEnemy.reset(0,0);
                     }
                 }
@@ -161,6 +158,9 @@ public class GameActivity extends Activity {
     }
 
 
+    public static final int EASY_DIFFICULTY = 0;
+    public static final int MEDIUM_DIFFICULTY = 1;
+    public static final int EASY_DIFFICULTY_POINTS = 4;
     public static final float MIN_X = 20;
     public static final float MAX_X = GameLevels.FRUSTUM_WIDTH - MIN_X;
     private final float SPAWN_TIME = 1.5f;
