@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.ChargingEnemy;
 import com.jgame.elements.EmptyEnemy;
+import com.jgame.elements.RobotEnemy;
 import com.jgame.elements.TeleportEnemy;
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.MainCharacter;
@@ -56,10 +57,12 @@ public class GameActivity extends Activity {
             this.mainCharacter = mainCharacter;
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
             enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
-            availableEnemies[1] = new TeleportEnemy(TELEPORT_SPRITE_LENGTH, TELEPORT_SPRITE_HEIGHT,
-                    TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
-            availableEnemies[0] = new ChargingEnemy(CHARGING_SPRITE_LENGTH, MainCharacter.CHARACTER_HEIGHT,
-                    MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
+            //availableEnemies[1] = new TeleportEnemy(TELEPORT_SPRITE_LENGTH, TELEPORT_SPRITE_HEIGHT,
+            //        TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
+            //availableEnemies[0] = new ChargingEnemy(CHARGING_SPRITE_LENGTH, MainCharacter.CHARACTER_HEIGHT,
+            //        MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
+            availableEnemies[0] = new RobotEnemy(TELEPORT_SPRITE_HEIGHT, TELEPORT_SPRITE_HEIGHT,
+                    TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT, ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             worldData = new WorldData(MIN_X, MAX_X);
             this.updateInterval = updateInterval;
             currentEnemy = enemySpawnInterval;
@@ -164,7 +167,7 @@ public class GameActivity extends Activity {
     public static final float MIN_X = 20;
     public static final float MAX_X = GameLevels.FRUSTUM_WIDTH - MIN_X;
     private final float SPAWN_TIME = 1.5f;
-    private final int MAX_WORLD_OBJECTS = 2;
+    private final int MAX_WORLD_OBJECTS = 1;
     public static final float PLAYING_WIDTH = GameLevels.FRUSTUM_WIDTH;
     public static final float PLAYING_HEIGHT = GameLevels.FRUSTUM_HEIGHT;
     private static final float DIRECTION_WIDTH = 45;
