@@ -1,8 +1,5 @@
 package com.jgame.elements;
 
-import android.app.WallpaperInfo;
-import android.util.Log;
-
 import com.jgame.game.GameActivity;
 import com.jgame.game.GameFlow;
 import com.jgame.util.TextureDrawer.TextureData;
@@ -25,34 +22,41 @@ public class RobotEnemy extends GameCharacter {
     public final static TextureData ATTACK_TEXTURE = new TextureDrawer.TextureData(0.5f,0.5f,0.75f,0.75f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 150;
     public final static float ATTACK_DISTANCE = 90;
-    private final EnemyAction[] actions;
+    public final static float TIME_TO_SELF_DESTRUCT = 5;
+    //private final EnemyAction[] actions;
     private final MainCharacter mainCharacter;
-    private final TimeCounter timeToSelfDesctruct;
+    private final TimeCounter timeToSelfDestruct;
     private EnemyState currentState;
     private float attackRange;
+    private final AttackData explosionAttack;
+    private final AttackData regularAttack;
 
 
     public RobotEnemy(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, float positionY, int id, final MainCharacter mainCharacter) {
         super(spriteSizeX, spriteSizeY, idleSizeX, idleSizeY, new Vector2(0, positionY), id);
-        EnemyAction checkAttackDistance = new EnemyAction() {
-            @Override
-            public void act() {
+        //EnemyAction checkAttackDistance = new EnemyAction() {
+         //   @Override
+        //    public void act() {
 
-            }
-        };
+        //    }
+        //};
 
-        actions = new EnemyAction[]{checkAttackDistance};
+        //actions = new EnemyAction[]{checkAttackDistance};
         this.mainCharacter = mainCharacter;
-        timeToSelfDesctruct = new TimeCounter(0);
+        timeToSelfDestruct = new TimeCounter(TIME_TO_SELF_DESTRUCT);
         attackRange = ATTACK_DISTANCE + idleSizeX;
-
+        CollisionObject[] explosionBoxes = new CollisionObject[]{new CollisionObject(new Vector2(57,55),0,GameActivity.PLAYING_WIDTH,35,this, CollisionObject.TYPE_ATTACK)};
+        explosionAttack = new AttackData(explosionBoxes, explosionBoxes, explosionBoxes);
+        CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,55),0,50,55,this, CollisionObject.TYPE_HITTABLE)};
+        regularAttack = new AttackData(attackBoxes, attackBoxes, attackBoxes);
     }
 
     @Override
     public void reset(float x, float y) {
-        timeToSelfDesctruct.reset();
+        timeToSelfDestruct.reset();
         currentState = EnemyState.WAITING;
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
+
     }
 
     @Override
@@ -67,7 +71,7 @@ public class RobotEnemy extends GameCharacter {
 
     @Override
     public boolean attacking() {
-        return currentState == EnemyState.ATTACKING;
+        return currentState != EnemyState.WAITING;
     }
 
     @Override
@@ -87,11 +91,29 @@ public class RobotEnemy extends GameCharacter {
     public void update(GameCharacter foe, GameFlow.UpdateInterval interval, GameActivity.WorldData worldData) {
         adjustToFoePosition(foe);
         if(currentState == EnemyState.WAITING) {
-            if (position.x > foe.position.x && (position.x - foe.position.x) < attackRange)
-                currentState = EnemyState.DEAD;
-            else if(position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange)
-                currentState = EnemyState.DEAD;
+            if (position.x > foe.position.x && (position.x - foe.position.x) < attackRange) {
+                currentState = EnemyState.ATTACKING;
+                activeAttack = regularAttack;
+                for(CollisionObject co : activeAttack.active)
+                    co.updatePosition();
+            } else if(position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange) {
+                currentState = EnemyState.ATTACKING;
+                activeAttack = regularAttack;
+                for(CollisionObject co : activeAttack.active)
+                    co.updatePosition();
+            } else
+                timeToSelfDestruct.accum(interval);
+
+            if(timeToSelfDestruct.completed()) {
+                currentState = EnemyState.EXPLODING;
+                activeAttack = explosionAttack;
+            }
         }
+
+        if(currentState == EnemyState.EXPLODING){
+            super.update(foe, interval, worldData);
+        }
+
     }
 
 }
