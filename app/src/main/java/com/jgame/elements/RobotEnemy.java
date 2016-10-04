@@ -47,13 +47,16 @@ public class RobotEnemy extends GameCharacter {
         attackRange = ATTACK_DISTANCE + idleSizeX;
         CollisionObject[] explosionBoxes = new CollisionObject[]{new CollisionObject(new Vector2(57,55),0,GameActivity.PLAYING_WIDTH,35,this, CollisionObject.TYPE_ATTACK)};
         explosionAttack = new AttackData(explosionBoxes, explosionBoxes, explosionBoxes);
-        CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,55),0,50,55,this, CollisionObject.TYPE_HITTABLE)};
-        regularAttack = new AttackData(attackBoxes, attackBoxes, attackBoxes);
+        CollisionObject[] startupBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,125,55,this, CollisionObject.TYPE_HITTABLE)};
+        CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,125,55,this, CollisionObject.TYPE_HITTABLE),
+        new CollisionObject(new Vector2(100, 50),0,20,20, this, CollisionObject.TYPE_ATTACK)};
+        regularAttack = new AttackData(1f, 0.1f, 0.5f, startupBoxes, attackBoxes, attackBoxes);
     }
 
     @Override
     public void reset(float x, float y) {
         timeToSelfDestruct.reset();
+        regularAttack.reset();
         currentState = EnemyState.WAITING;
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
 
@@ -76,10 +79,13 @@ public class RobotEnemy extends GameCharacter {
 
     @Override
     public TextureDrawer.TextureData getCurrentTexture() {
-        if(currentState == EnemyState.ATTACKING)
-            return ATTACK_TEXTURE;
-        else
-            return STARTUP_ATTACK;
+        if(currentState == EnemyState.ATTACKING) {
+            if(activeAttack.currentState == AttackData.CollisionState.ACTIVE)
+                return ATTACK_TEXTURE;
+            else
+                return STARTUP_ATTACK;
+        } else
+            return IDLE_TEXTURE;
     }
 
     @Override
@@ -110,7 +116,11 @@ public class RobotEnemy extends GameCharacter {
             }
         }
 
-        if(currentState == EnemyState.EXPLODING){
+        if(currentState == EnemyState.ATTACKING){
+            activeAttack.update(interval);
+        }
+
+        if(currentState != EnemyState.WAITING){
             super.update(foe, interval, worldData);
         }
 
