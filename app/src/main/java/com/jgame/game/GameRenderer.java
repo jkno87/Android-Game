@@ -20,7 +20,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class GameRenderer implements Renderer {
 
     private final int SCORE_SIZE = 15;
-    private final static boolean RENDER_HITBOXES = true;
+    private final static boolean RENDER_HITBOXES = false;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_MODIFIER_2 = new ColorData(0,0.5f,1f,0.55f);
