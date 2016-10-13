@@ -17,9 +17,9 @@ public class RobotEnemy extends GameCharacter {
     }
 
     public final static TextureData TELEPORT_TEXTURE = new TextureDrawer.TextureData(0,0.625f,0.125f,0.75f);
-    public final static TextureData IDLE_TEXTURE = new TextureDrawer.TextureData(0.75f,0,1f,0.25f);
-    public final static TextureData STARTUP_ATTACK = new TextureDrawer.TextureData(0.5f,0.25f,0.75f,0.5f);
-    public final static TextureData ATTACK_TEXTURE = new TextureDrawer.TextureData(0.5f,0.5f,0.75f,0.75f);
+    public final static TextureData IDLE_TEXTURE = new TextureDrawer.TextureData(0.75f,0.25f,1f,0.5f);
+    public final static TextureData STARTUP_ATTACK = new TextureDrawer.TextureData(0.75f,0,1f,0.25f);
+    public final static TextureData ATTACK_TEXTURE = new TextureDrawer.TextureData(0.75f,0.5f,1f,0.75f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 150;
     public final static float ATTACK_DISTANCE = 100;
     public final static float TIME_TO_SELF_DESTRUCT = 5;
