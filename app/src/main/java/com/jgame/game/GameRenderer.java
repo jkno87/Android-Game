@@ -206,7 +206,7 @@ public class GameRenderer implements Renderer {
         if(!c.alive())
             return;
 
-        if(c.baseX.x < 0)
+       if(c.baseX.x < 0)
             drawer.addInvertedTexturedSquare(c.spriteContainer, c.getCurrentTexture());
         else
             drawer.addTexturedSquare(c.spriteContainer, c.getCurrentTexture());

@@ -45,7 +45,7 @@ public class EmptyEnemy extends GameCharacter {
         timeToLive.accum(interval);
     }
 
-    @Override
+    //@Override
     public TextureDrawer.TextureData getCurrentTexture() {
         return MainCharacter.IDLE_TEXTURE;
     }

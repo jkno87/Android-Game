@@ -86,7 +86,7 @@ public class ChargingEnemy extends GameCharacter {
             co.updatePosition();
     }
 
-    @Override
+    //@Override
     public TextureData getCurrentTexture() {
         if(currentState == State.CHARGING)
             return CHARGING_TEXTURE;

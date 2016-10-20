@@ -1,6 +1,7 @@
 package com.jgame.elements;
 
 import com.jgame.game.GameFlow;
+import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
@@ -22,32 +23,32 @@ public class AttackData {
     public final CollisionObject [] startup;
     public final CollisionObject [] active;
     public final CollisionObject [] recovery;
-    public TimeCounter[] attackDuration = new TimeCounter[3];
+    public AnimationData[] animationInfo = new AnimationData[3];
     public CollisionState currentState;
 
-    public AttackData(CollisionObject[] startup, CollisionObject[] active, CollisionObject [] recovery){
+    public AttackData(CollisionObject[] startup, CollisionObject[] active, CollisionObject [] recovery) {
         currentState = CollisionState.STARTUP;
         this.startup = startup;
         this.active = active;
         this.recovery = recovery;
     }
 
-    public AttackData(float startupTime, float activeTime, float recoveryTime,
-                      CollisionObject[] startup, CollisionObject[] active, CollisionObject [] recovery){
-        attackDuration[STARTUP_TIMER] = new TimeCounter(startupTime);
-        attackDuration[ACTIVE_TIMER] = new TimeCounter(activeTime);
-        attackDuration[RECOVERY_TIMER] = new TimeCounter(recoveryTime);
+    public void setStartupAnimation(AnimationData data){
+        animationInfo[STARTUP_TIMER] = data;
+    }
 
-        currentState = CollisionState.STARTUP;
-        this.startup = startup;
-        this.active = active;
-        this.recovery = recovery;
+    public void setActiveAnimation(AnimationData data){
+        animationInfo[ACTIVE_TIMER] = data;
+    }
+
+    public void setRecoveryAnimation(AnimationData data){
+        animationInfo[RECOVERY_TIMER] = data;
     }
 
     public void reset(){
-        attackDuration[STARTUP_TIMER].reset();
-        attackDuration[ACTIVE_TIMER].reset();
-        attackDuration[RECOVERY_TIMER].reset();
+        animationInfo[STARTUP_TIMER].reset();
+        animationInfo[ACTIVE_TIMER].reset();
+        animationInfo[RECOVERY_TIMER].reset();
         currentState = CollisionState.STARTUP;
         for(CollisionObject o : startup)
             o.updatePosition();
@@ -63,17 +64,27 @@ public class AttackData {
 
     public void update(GameFlow.UpdateInterval timeDifference){
         if(currentState == CollisionState.STARTUP){
-            attackDuration[STARTUP_TIMER].accum(timeDifference);
-            if(attackDuration[STARTUP_TIMER].completed())
+            animationInfo[STARTUP_TIMER].updateFrame();
+            if(animationInfo[STARTUP_TIMER].completed())
                 currentState = CollisionState.ACTIVE;
         } else if (currentState == CollisionState.ACTIVE){
-            attackDuration[ACTIVE_TIMER].accum(timeDifference);
-            if(attackDuration[ACTIVE_TIMER].completed())
+            animationInfo[ACTIVE_TIMER].updateFrame();
+            if(animationInfo[ACTIVE_TIMER].completed())
                 currentState = CollisionState.RECOVERY;
         } else if (currentState == CollisionState.RECOVERY){
-            attackDuration[RECOVERY_TIMER].accum(timeDifference);
-            if(attackDuration[RECOVERY_TIMER].completed())
+            animationInfo[RECOVERY_TIMER].updateFrame();
+            if(animationInfo[RECOVERY_TIMER].completed())
                 currentState = CollisionState.FINISHED;
         }
     }
+
+    public AnimationData getCurrentAnimation(){
+        if(currentState == CollisionState.STARTUP)
+            return animationInfo[STARTUP_TIMER];
+        else if(currentState == CollisionState.ACTIVE)
+            return animationInfo[ACTIVE_TIMER];
+        else
+            return animationInfo[RECOVERY_TIMER];
+    }
+
 }

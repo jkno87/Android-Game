@@ -58,7 +58,7 @@ public class TeleportEnemy extends GameCharacter {
         currentAction = 0;
         currentDifficulty = 0;
         activeAttack = new AttackData(startupBoxes, activeBoxes, recoveryBoxes);
-        activeAttack.attackDuration = attackFrames[currentDifficulty];
+        //activeAttack.attackDuration = attackFrames[currentDifficulty];
         teleportInterval = new TimeCounter(0.33f);
         idleInterval = new TimeCounter(0.025f);
     }
@@ -72,7 +72,7 @@ public class TeleportEnemy extends GameCharacter {
         teleportInterval.reset();
         currentState = EnemyState.TELEPORTING;
         currentAction = 0;
-        activeAttack.attackDuration = attackFrames[currentDifficulty];
+        //activeAttack.attackDuration = attackFrames[currentDifficulty];
         idleInterval.reset();
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
     }
@@ -126,7 +126,7 @@ public class TeleportEnemy extends GameCharacter {
         currentState = EnemyState.DEAD;
     }
 
-    @Override
+    //@Override
     public TextureData getCurrentTexture() {
         if(currentState == EnemyState.TELEPORTING)
             return TELEPORT_TEXTURE;

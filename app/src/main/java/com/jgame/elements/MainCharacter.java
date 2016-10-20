@@ -2,7 +2,7 @@ package com.jgame.elements;
 
 import com.jgame.game.ControllerManager;
 import com.jgame.game.GameFlow;
-import com.jgame.util.AnimationData;
+import com.jgame.elements.AnimationData;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
@@ -30,7 +30,7 @@ public class MainCharacter extends GameCharacter {
     public static final int CHARACTER_HEIGHT = 160;
     public final int LENGTH_MOVE_A = CHARACTER_LENGTH + 10;
     public final int HEIGHT_MOVE_A = CHARACTER_HEIGHT;
-    private final AnimationData WALKING_ANIMATION = new AnimationData(0.55f, new TextureData[]{MOVING_A, MOVING_B});
+    private final AnimationData WALKING_ANIMATION = new AnimationData(15, true, new TextureData[]{MOVING_A, MOVING_B});
     private final float MOVING_SPEED = 0.75f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
@@ -53,7 +53,10 @@ public class MainCharacter extends GameCharacter {
         recoveryA[0] = new CollisionObject(new Vector2(), id,
                 LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
 
-        moveA = new AttackData(0.06f,0.05f,0.2f, startupA, activeA, recoveryA);
+        moveA = new AttackData(startupA, activeA, recoveryA);
+        moveA.setStartupAnimation(new AnimationData(5, false, INIT_MOV_A));
+        moveA.setActiveAnimation(new AnimationData(10, false, ACTIVE_MOV_A));
+        moveA.setRecoveryAnimation(new AnimationData(10, false, INIT_MOV_A));
     }
 
     @Override
@@ -107,15 +110,12 @@ public class MainCharacter extends GameCharacter {
     @Override
     public TextureDrawer.TextureData getCurrentTexture(){
         if(state == CharacterState.MOVING_FORWARD || state == CharacterState.MOVING_BACKWARDS)
-            return WALKING_ANIMATION.getCurrentTexture();
+            return WALKING_ANIMATION.getCurrentSprite();
 
         if(state != CharacterState.INPUT_A)
             return IDLE_TEXTURE;
 
-        if(moveA.currentState == CollisionState.ACTIVE)
-            return ACTIVE_MOV_A;
-        else
-            return INIT_MOV_A;
+        return moveA.getCurrentAnimation().getCurrentSprite();
     }
 
     @Override
@@ -129,13 +129,13 @@ public class MainCharacter extends GameCharacter {
             adjustToFoePosition(foe);
             if(position.x + MOVING_SPEED < worldData.maxX) {
                 move(RIGHT_MOVE_SPEED);
-                WALKING_ANIMATION.update(timeDifference);
+                WALKING_ANIMATION.updateFrame();
             }
         } if (state == CharacterState.MOVING_BACKWARDS) {
             adjustToFoePosition(foe);
             if(position.x - MOVING_SPEED > worldData.minX) {
                 move(LEFT_MOVE_SPEED);
-                WALKING_ANIMATION.update(timeDifference);
+                WALKING_ANIMATION.updateFrame();
             }
         } if(state == CharacterState.INPUT_A){
             moveA.update(timeDifference);
