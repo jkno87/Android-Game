@@ -29,6 +29,18 @@ public class TextureDrawer extends Drawer {
 
     }
 
+
+    /**
+     * Metodo estatico que sirve para generar una TextureData utilizando coordenadas simples
+     * @param x cuadrante x de la imagen
+     * @param y cuadrante y de la imagen
+     * @param total total de cuadrantes en la imagen
+     * @return TextureData con las coordenadas de textura
+     */
+    public static TextureData genTextureData(float x, float y, float total){
+        return new TextureData((x - 1) / total, (y - 1) / total, x / total, y / total);
+    }
+
     private final static int MAX_TEXTURES = 35;
 
     public TextureDrawer(boolean withColor){

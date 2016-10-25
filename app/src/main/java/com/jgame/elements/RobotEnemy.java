@@ -16,10 +16,11 @@ public class RobotEnemy extends GameCharacter {
         WAITING, EXPLODING, ATTACKING, DEAD
     }
 
-    public final static TextureData TELEPORT_TEXTURE = new TextureData(0,0.625f,0.125f,0.75f);
-    public final static TextureData IDLE_TEXTURE = new TextureData(0.75f,0.25f,1f,0.5f);
-    public final static TextureData STARTUP_ATTACK = new TextureData(0.75f,0,1f,0.25f);
-    public final static TextureData ATTACK_TEXTURE = new TextureData(0.75f,0.5f,1f,0.75f);
+    public final static TextureData IDLE_TEXTURE = new TextureData(0.375f,0.125f,0.5f,0.25f);
+    public final static TextureData[] STARTUP_TEXTURES = {new TextureData(0.375f,0,0.5f,0.125f),
+            new TextureData(0.375f,0.25f,0.5f,0.375f),
+            new TextureData(0.5f,0.25f,0.625f,0.375f)};
+    public final static TextureData ATTACK_TEXTURE = new TextureData(0.5f,0.125f,0.625f,0.25f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 150;
     public final static float ATTACK_DISTANCE = 100;
     public final static float TIME_TO_SELF_DESTRUCT = 5;
@@ -51,9 +52,9 @@ public class RobotEnemy extends GameCharacter {
         CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,125,55,this, CollisionObject.TYPE_HITTABLE),
         new CollisionObject(new Vector2(100, 50),0,20,20, this, CollisionObject.TYPE_ATTACK)};
         regularAttack = new AttackData(startupBoxes, attackBoxes, attackBoxes);
-        regularAttack.setStartupAnimation(new AnimationData(10, false, STARTUP_ATTACK));
-        regularAttack.setActiveAnimation(new AnimationData(10, false, ATTACK_TEXTURE));
-        regularAttack.setRecoveryAnimation(new AnimationData(10, false, STARTUP_ATTACK));
+        regularAttack.setStartupAnimation(new AnimationData(10, false, STARTUP_TEXTURES));
+        regularAttack.setActiveAnimation(new AnimationData(40, false, ATTACK_TEXTURE));
+        regularAttack.setRecoveryAnimation(new AnimationData(10, false, STARTUP_TEXTURES));
     }
 
     @Override

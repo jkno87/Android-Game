@@ -25,22 +25,23 @@ public class GameRenderer implements Renderer {
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_MODIFIER_2 = new ColorData(0,0.5f,1f,0.25f);
     public final static ColorData BACKGROUND_MODIFIER = new ColorData(1,1,0,0.5f);
-    public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.546875f,0.625f,0.5859375f,0.6640625f);
-    public final static TextureData SPEAKER_TEXTURE = new TextureData(0.75f,0.875f,0.875f,1);
-    public final static TextureData SOUND_TEXTURE = new TextureData(0.875f, 0.875f, 1, 1);
-    public final static TextureData BUTTON_TEXTURE = new TextureData(0,0.75f,0.125f,0.875f);
-    public final static TextureData ARROW_TEXTURE = new TextureData(0,0.875f,0.125f,1f);
-    public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.125f,1,0,0.875f);
-    public final static TextureData SOUND_SWITCH_ON_TEXTURE = new TextureData(0.75f,0.75f,0.875f,0.875f);
-    public final static TextureData SOUND_SWITCH_OFF_TEXTURE = new TextureData(0.875f,0.875f,0.75f,0.75f);
+    public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.96875f,0.96875f,1.0f,1.0f);
+    public final static TextureData SPEAKER_TEXTURE = new TextureData(0.4375f, 0.375f, 0.5f, 0.4375f);
+    public final static TextureData SOUND_TEXTURE = new TextureData(0.4375f,0.4375f,0.5f,0.5f);
+    public final static TextureData BUTTON_TEXTURE = TextureDrawer.genTextureData(1.0f,7.05f,16);
+    public final static TextureData ARROW_TEXTURE = TextureDrawer.genTextureData(1.0f,8.05f,16);
+    public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.0625f,0.5f,0,0.4375f);
+    public final static TextureData SOUND_SWITCH_ON_TEXTURE = new TextureData(0.375f,0.375f,0.4375f,0.4375f);
+    public final static TextureData SOUND_SWITCH_OFF_TEXTURE = new TextureData(0.4375f,0.4375f,0.375f,0.375f);
     public final static TextureData BACKGROUND_TEXTURE = new TextureData(0,0.5f,1,1);
     public final static TextureData BACKGROUND_DETAILS = new TextureData(0,0,1,0.5f);
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
-    private final TextureData[] DIGITS = new TextureData[]{new TextureData(0.125f,0.9375f,0.1875f,1),new TextureData(0.1875f,0.9375f,0.25f,1),new TextureData(0.25f,0.9375f,0.3125f,1),
-            new TextureData(0.3125f,0.9375f,0.375f,1),new TextureData(0.375f,0.9375f,0.4375f,1),new TextureData(0.4375f,0.9375f,0.5f,1),new TextureData(0.5f,0.9375f,0.5625f,1),
-            new TextureData(0.5625f,0.9375f,0.625f,1),new TextureData(0.625f,0.9375f,0.6875f,1),new TextureData(0.6875f,0.9375f,0.75f,1)};
+    private final TextureData[] DIGITS = new TextureData[]{new TextureData(0.0625f,0.46875f,0.09375f,0.5f),new TextureData(0.09375f,0.46875f,0.125f,0.5f),
+            new TextureData(0.125f,0.46875f,0.15625f,0.5f), new TextureData(0.15625f,0.46875f,0.1875f,0.5f),new TextureData(0.1875f,0.46875f,0.21875f,0.5f),
+            new TextureData(0.21875f,0.46875f,0.25f,0.5f),new TextureData(0.25f,0.46875f,0.28125f,0.5f), new TextureData(0.28125f,0.46875f,0.3125f,0.5f),
+            new TextureData(0.3125f,0.46875f,0.34375f,0.5f),new TextureData(0.3125f,0.46875f,0.34375f,0.5f)};
     public static final Square GAME_FLOOR = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
     private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
     public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameLevels.FRUSTUM_HEIGHT - 35, 50, 18), 2);

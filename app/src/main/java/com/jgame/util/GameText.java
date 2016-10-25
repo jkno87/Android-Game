@@ -12,7 +12,7 @@ public class GameText {
     private float margin;
     private static int LETTERS_COLUMN = 10;
     private static int LETTERS_ROW = 3;
-    public static final TextureData[] LETTERS = generateAlphabet(0.625f, 0.1875f, 0.125f, 0.75f,LETTERS_COLUMN, LETTERS_ROW);
+    public static final TextureData[] LETTERS = generateAlphabet(0.3125f, 0.09375f, 0.0625f, 0.375f,LETTERS_COLUMN, LETTERS_ROW);
     private final Square currentLetter;
 
     /**

@@ -20,11 +20,11 @@ public class MainCharacter extends GameCharacter {
         IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B, DEAD
     }
 
-    public final static TextureData IDLE_TEXTURE = new TextureData(0,0.250f,0.125f,0.375f);
-    public final static TextureData INIT_MOV_A = new TextureData(0,0,0.125f,0.125f);
-    public final static TextureData ACTIVE_MOV_A = new TextureData(0,0.125f,0.125f, 0.250f);
-    public final static TextureData MOVING_A = new TextureData(0,0.375f,0.125f, 0.5f);
-    public final static TextureData MOVING_B = new TextureData(0,0.5f,0.125f, 0.625f);
+    public final static TextureData IDLE_TEXTURE = TextureDrawer.genTextureData(1,3,16);
+    public final static TextureData INIT_MOV_A = TextureDrawer.genTextureData(1,1,16);
+    public final static TextureData ACTIVE_MOV_A = TextureDrawer.genTextureData(1,2,16);
+    public final static TextureData MOVING_A = TextureDrawer.genTextureData(1,4,16);
+    public final static TextureData MOVING_B = TextureDrawer.genTextureData(1,5,16);
     public static final int SPRITE_LENGTH = 75;
     public static final int CHARACTER_LENGTH = 40;
     public static final int CHARACTER_HEIGHT = 160;
