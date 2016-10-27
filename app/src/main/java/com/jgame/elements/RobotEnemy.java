@@ -13,13 +13,17 @@ import com.jgame.util.Vector2;
 public class RobotEnemy extends GameCharacter {
 
     enum EnemyState {
-        WAITING, EXPLODING, ATTACKING, DEAD
+        WAITING, EXPLODING, ATTACKING, DYING, DEAD
     }
 
     public final static TextureData IDLE_TEXTURE = new TextureData(0.375f,0.125f,0.5f,0.25f);
     public final static TextureData[] STARTUP_TEXTURES = {new TextureData(0.375f,0,0.5f,0.125f),
             new TextureData(0.375f,0.25f,0.5f,0.375f),
             new TextureData(0.5f,0.25f,0.625f,0.375f)};
+    private final static AnimationData DESTROY_ANIMATION = new AnimationData(2, false,
+            new TextureData[] {STARTUP_TEXTURES[2], STARTUP_TEXTURES[1], STARTUP_TEXTURES[0], TextureDrawer.genTextureData(6,2,8)});
+    public final static TextureData[] RECOVERY_TEXTURES = {TextureDrawer.genTextureData(5,1,8),
+    TextureDrawer.genTextureData(6,1,8)};
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.5f,0.125f,0.625f,0.25f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 150;
     public final static float ATTACK_DISTANCE = 100;
@@ -54,7 +58,7 @@ public class RobotEnemy extends GameCharacter {
         regularAttack = new AttackData(startupBoxes, attackBoxes, attackBoxes);
         regularAttack.setStartupAnimation(new AnimationData(10, false, STARTUP_TEXTURES));
         regularAttack.setActiveAnimation(new AnimationData(40, false, ATTACK_TEXTURE));
-        regularAttack.setRecoveryAnimation(new AnimationData(10, false, STARTUP_TEXTURES));
+        regularAttack.setRecoveryAnimation(new AnimationData(10, false, RECOVERY_TEXTURES));
     }
 
     @Override
@@ -63,7 +67,7 @@ public class RobotEnemy extends GameCharacter {
         regularAttack.reset();
         currentState = EnemyState.WAITING;
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
-
+        DESTROY_ANIMATION.reset();
     }
 
     @Override
@@ -85,13 +89,15 @@ public class RobotEnemy extends GameCharacter {
     public TextureData getCurrentTexture() {
         if(currentState == EnemyState.ATTACKING)
             return activeAttack.getCurrentAnimation().getCurrentSprite();
+        else if(currentState == EnemyState.DYING)
+            return DESTROY_ANIMATION.getCurrentSprite();
         else
             return IDLE_TEXTURE;
     }
 
     @Override
     public void hit() {
-        currentState = EnemyState.DEAD;
+        currentState = EnemyState.DYING;
     }
 
     @Override
@@ -125,6 +131,12 @@ public class RobotEnemy extends GameCharacter {
 
         if(currentState != EnemyState.WAITING){
             super.update(foe, interval, worldData);
+        }
+
+        if(currentState == EnemyState.DYING){
+            DESTROY_ANIMATION.updateFrame();
+            if(DESTROY_ANIMATION.completed())
+                currentState = EnemyState.DEAD;
         }
 
     }

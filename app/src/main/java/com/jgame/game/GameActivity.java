@@ -130,7 +130,9 @@ public class GameActivity extends Activity {
                         mainCharacter.receiveInput(lastInput);
 
                     mainCharacter.update(currentEnemy, updateInterval, worldData);
-                    currentEnemy.update(mainCharacter, updateInterval, worldData);
+                    synchronized (enemyLock) {
+                        currentEnemy.update(mainCharacter, updateInterval, worldData);
+                    }
 
 
                     if (!currentEnemy.alive()) {
