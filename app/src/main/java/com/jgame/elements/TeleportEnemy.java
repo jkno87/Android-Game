@@ -22,6 +22,8 @@ public class TeleportEnemy extends GameCharacter {
     public final static TextureData STARTUP_ATTACK = new TextureData(0.5f,0.25f,0.75f,0.5f);
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.5f,0.5f,0.75f,0.75f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 15;
+    private final static int TELEPORT_FRAMES = 15;
+    private final static int IDLE_FRAMES = 3;
     private CollisionObject[] startupBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
             new CollisionObject(new Vector2(60,55),0,35,20,this, CollisionObject.TYPE_ATTACK)};
@@ -31,8 +33,8 @@ public class TeleportEnemy extends GameCharacter {
     private int currentAction;
     private final EnemyAction[] actions;
     private final MainCharacter mainCharacter;
-    private final TimeCounter teleportInterval;
-    private final TimeCounter idleInterval;
+    private int teleportFrame;
+    private int idleFrame;
 
     public TeleportEnemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition, int id, final MainCharacter mainCharacter) {
         super(sizeX, sizeY, idleSizeX, idleSizeY, new Vector2(0, yPosition), id);
@@ -59,8 +61,8 @@ public class TeleportEnemy extends GameCharacter {
         currentDifficulty = 0;
         activeAttack = new AttackData(startupBoxes, activeBoxes, recoveryBoxes);
         //activeAttack.attackDuration = attackFrames[currentDifficulty];
-        teleportInterval = new TimeCounter(0.33f);
-        idleInterval = new TimeCounter(0.025f);
+        teleportFrame = TELEPORT_FRAMES;
+        idleFrame = IDLE_FRAMES;
     }
 
     private void toggleCurrentAction(){
@@ -69,16 +71,15 @@ public class TeleportEnemy extends GameCharacter {
 
     @Override
     public void reset(float x, float y){
-        teleportInterval.reset();
+        teleportFrame = TELEPORT_FRAMES;
         currentState = EnemyState.TELEPORTING;
         currentAction = 0;
         //activeAttack.attackDuration = attackFrames[currentDifficulty];
-        idleInterval.reset();
+        idleFrame = IDLE_FRAMES;
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
     }
 
-    @Override
-    public void update(GameCharacter foe, GameFlow.UpdateInterval interval, WorldData worldData) {
+    public void update(GameCharacter foe, WorldData worldData) {
 
         adjustToFoePosition(foe);
 
@@ -86,10 +87,10 @@ public class TeleportEnemy extends GameCharacter {
             return;
 
         if(currentState == EnemyState.TELEPORTING){
-            teleportInterval.accum(interval);
-            if(!teleportInterval.completed())
+            teleportFrame -= 1;
+            if(teleportFrame > 0)
                 return;
-            teleportInterval.reset();
+            teleportFrame = TELEPORT_FRAMES;
             actions[currentAction].act();
             toggleCurrentAction();
 
@@ -97,8 +98,8 @@ public class TeleportEnemy extends GameCharacter {
         }
 
         if(currentState == EnemyState.IDLE) {
-            idleInterval.accum(interval);
-            if (idleInterval.completed()) {
+            idleFrame -= 1;
+            if (idleFrame <= 0) {
                 currentState = EnemyState.ATTACKING;
                 activeAttack.reset();
             }
@@ -106,13 +107,13 @@ public class TeleportEnemy extends GameCharacter {
         }
 
         if(currentState == EnemyState.ATTACKING) {
-            activeAttack.update(interval);
+            activeAttack.update();
             if(activeAttack.completed()){
                 currentState = EnemyState.TELEPORTING;
-                idleInterval.reset();
+                idleFrame = 0;
             }
 
-            super.update(foe, interval, worldData);
+            super.update(foe, worldData);
         }
     }
 

@@ -25,6 +25,7 @@ public class GameRenderer implements Renderer {
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_MODIFIER_2 = new ColorData(0,0.5f,1f,0.25f);
     public final static ColorData BACKGROUND_MODIFIER = new ColorData(1,1,0,0.5f);
+    public static TextureDrawer.TextureData TEST = new TextureData(0.125f, 0.625f, 0.1875f,0.75f);
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.96875f,0.96875f,1.0f,1.0f);
     public final static TextureData SPEAKER_TEXTURE = new TextureData(0.4375f, 0.375f, 0.5f, 0.4375f);
     public final static TextureData SOUND_TEXTURE = new TextureData(0.4375f,0.4375f,0.5f,0.5f);
@@ -110,6 +111,11 @@ public class GameRenderer implements Renderer {
     @Override
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
+        boolean decoration = false;
+        synchronized (gameActivity.worldData){
+            decoration = gameActivity.worldData.receiveDecoration();
+        }
+
         if(gameData.state == GameState.MENU)
             drawMenu();
         else {
@@ -145,6 +151,10 @@ public class GameRenderer implements Renderer {
                 renderCharacter(gameActivity.currentEnemy, mainTextureDrawer);
                 if (RENDER_HITBOXES)
                     renderEnemy(gameActivity.currentEnemy, mainTextureDrawer);
+            }
+
+            if(decoration){
+                mainTextureDrawer.addTexturedSquare(0,50,200,50,LEFT_ARROW_TEXTURE);
             }
 
             mainTextureDrawer.addColoredSquare(GAME_FLOOR, NO_TEXTURE_COORDS, DASHBOARD_COLOR);

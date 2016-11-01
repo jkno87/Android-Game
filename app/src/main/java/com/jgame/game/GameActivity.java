@@ -32,22 +32,33 @@ public class GameActivity extends Activity {
     public static class WorldData {
         public float minX;
         public float maxX;
+        private boolean decoration;
 
         public WorldData(float minX, float maxX){
             this.minX = minX;
             this.maxX = maxX;
         }
 
+        public void addDecoration(){
+            decoration = true;
+        }
+
+        public boolean receiveDecoration(){
+            if(decoration){
+                decoration = false;
+                return true;
+            } else
+                return false;
+        }
+
     }
 
     class GameRunnable implements Runnable {
 
-        private static final long UPDATE_INTERVAL = 16L;
         public final MainCharacter mainCharacter;
         public final GameCharacter enemySpawnInterval;
         public final GameCharacter[] availableEnemies;
         public int score;
-        private final WorldData worldData;
         private final GameFlow.UpdateInterval updateInterval;
         private ControllerManager.GameInput lastInput;
         private int currentEnemyCounter;
@@ -63,7 +74,6 @@ public class GameActivity extends Activity {
             //        MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             availableEnemies[0] = new RobotEnemy(TELEPORT_SPRITE_HEIGHT, TELEPORT_SPRITE_HEIGHT,
                     TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT, ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
-            worldData = new WorldData(MIN_X, MAX_X);
             this.updateInterval = updateInterval;
             currentEnemy = enemySpawnInterval;
         }
@@ -129,9 +139,9 @@ public class GameActivity extends Activity {
                     else
                         mainCharacter.receiveInput(lastInput);
 
-                    mainCharacter.update(currentEnemy, updateInterval, worldData);
+                    mainCharacter.update(currentEnemy, worldData);
                     synchronized (enemyLock) {
-                        currentEnemy.update(mainCharacter, updateInterval, worldData);
+                        currentEnemy.update(mainCharacter, worldData);
                     }
 
 
@@ -163,6 +173,8 @@ public class GameActivity extends Activity {
     }
 
 
+    public static final long UPDATE_INTERVAL = 16L;
+    public static final float FRAMES_PER_SECOND = UPDATE_INTERVAL / 1000L;
     public static final int EASY_DIFFICULTY = 0;
     public static final int MEDIUM_DIFFICULTY = 1;
     public static final int EASY_DIFFICULTY_POINTS = 4;
@@ -206,6 +218,7 @@ public class GameActivity extends Activity {
     public final Object enemyLock = new Object();
     public final BlockingQueue<ControllerManager.GameInput> inputQueue = new LinkedBlockingQueue<>(5);
     public final ControllerManager controllerManager = new ControllerManager(inputQueue, gameData);
+    public final WorldData worldData = new WorldData(MIN_X, MAX_X);
     public GameRunnable gameTask;
 
     @Override

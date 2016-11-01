@@ -119,8 +119,8 @@ public class MainCharacter extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, GameFlow.UpdateInterval timeDifference, WorldData worldData) {
-        super.update(foe, timeDifference, worldData);
+    public void update(GameCharacter foe, WorldData worldData) {
+        super.update(foe, worldData);
         if (state == CharacterState.IDLE) {
             adjustToFoePosition(foe);
             WALKING_ANIMATION.reset();
@@ -138,17 +138,17 @@ public class MainCharacter extends GameCharacter {
                 WALKING_ANIMATION.updateFrame();
             }
         } if(state == CharacterState.INPUT_A){
-            moveA.update(timeDifference);
+            moveA.update();
             if(moveA.completed()){
                 this.state = CharacterState.IDLE;
             }
         }
 
         if(state == CharacterState.INPUT_B){
-            MOVE_B_COUNTER.accum(timeDifference);
+            /*MOVE_B_COUNTER.accum(timeDifference);
             if(MOVE_B_COUNTER.completed()){
                 this.state = CharacterState.IDLE;
-            }
+            }*/
         }
     }
 

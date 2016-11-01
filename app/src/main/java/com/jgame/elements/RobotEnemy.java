@@ -27,11 +27,11 @@ public class RobotEnemy extends GameCharacter {
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.5f,0.125f,0.625f,0.25f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 150;
     public final static float ATTACK_DISTANCE = 100;
-    public final static float TIME_TO_SELF_DESTRUCT = 5;
     //private final EnemyAction[] actions;
     private final MainCharacter mainCharacter;
-    private final TimeCounter timeToSelfDestruct;
+    private final int FRAMES_TO_SELFDESTRUCT = 200;
     private EnemyState currentState;
+    private int selfDestructFrame;
     private float attackRange;
     private final AttackData explosionAttack;
     private final AttackData regularAttack;
@@ -48,7 +48,6 @@ public class RobotEnemy extends GameCharacter {
 
         //actions = new EnemyAction[]{checkAttackDistance};
         this.mainCharacter = mainCharacter;
-        timeToSelfDestruct = new TimeCounter(TIME_TO_SELF_DESTRUCT);
         attackRange = ATTACK_DISTANCE + idleSizeX;
         CollisionObject[] explosionBoxes = new CollisionObject[]{new CollisionObject(new Vector2(57,55),0,GameActivity.PLAYING_WIDTH,35,this, CollisionObject.TYPE_ATTACK)};
         explosionAttack = new AttackData(explosionBoxes, explosionBoxes, explosionBoxes);
@@ -63,7 +62,7 @@ public class RobotEnemy extends GameCharacter {
 
     @Override
     public void reset(float x, float y) {
-        timeToSelfDestruct.reset();
+        selfDestructFrame = 0;
         regularAttack.reset();
         currentState = EnemyState.WAITING;
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
@@ -101,7 +100,7 @@ public class RobotEnemy extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, GameFlow.UpdateInterval interval, GameActivity.WorldData worldData) {
+    public void update(GameCharacter foe, GameActivity.WorldData worldData) {
         adjustToFoePosition(foe);
         if(currentState == EnemyState.WAITING) {
             if (position.x > foe.position.x && (position.x - foe.position.x) < attackRange) {
@@ -115,22 +114,23 @@ public class RobotEnemy extends GameCharacter {
                 for(CollisionObject co : activeAttack.active)
                     co.updatePosition();
             } else
-                timeToSelfDestruct.accum(interval);
+                selfDestructFrame += 1;
 
-            if(timeToSelfDestruct.completed()) {
+            if(selfDestructFrame >= FRAMES_TO_SELFDESTRUCT) {
                 currentState = EnemyState.EXPLODING;
                 activeAttack = explosionAttack;
+                worldData.addDecoration();
             }
         }
 
         if(currentState == EnemyState.ATTACKING){
-            activeAttack.update(interval);
+            activeAttack.update();
             if(activeAttack.completed())
                 currentState = EnemyState.WAITING;
         }
 
         if(currentState != EnemyState.WAITING){
-            super.update(foe, interval, worldData);
+            super.update(foe, worldData);
         }
 
         if(currentState == EnemyState.DYING){

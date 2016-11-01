@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.game.GameActivity;
 import com.jgame.game.GameFlow;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TimeCounter;
@@ -13,16 +14,17 @@ import com.jgame.util.Vector2;
  */
 public class EmptyEnemy extends GameCharacter {
 
-    private final TimeCounter timeToLive;
+    private final int framesToLive;
+    private int currentFrame;
 
     public EmptyEnemy(int id, float time) {
         super(0, 0, 0, 0, new Vector2(), id);
-        this.timeToLive = new TimeCounter(time);
+        framesToLive = (int)(time * GameActivity.FRAMES_PER_SECOND);
     }
 
     @Override
     public void reset(float x, float y){
-        timeToLive.reset();
+        currentFrame = 0;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class EmptyEnemy extends GameCharacter {
 
     @Override
     public boolean alive() {
-        return !timeToLive.completed();
+        return currentFrame < framesToLive;
     }
 
     @Override
@@ -41,8 +43,8 @@ public class EmptyEnemy extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, GameFlow.UpdateInterval interval, WorldData wData) {
-        timeToLive.accum(interval);
+    public void update(GameCharacter foe, WorldData wData) {
+        currentFrame += 1;
     }
 
     //@Override

@@ -108,10 +108,9 @@ public abstract class GameCharacter extends GameObject {
     /**
      * Realiza la unica accion en comun de todos los objetos GameCharacter, checar que colisione contra el objeto foe.
      * @param foe GameCharacter contra el que se podria provocar una colision.
-     * @param interval intervalo del update (nota: este dato podria irse)
      * @param worldData Estado actual de WorldData.
      */
-    public void update(GameCharacter foe, GameFlow.UpdateInterval interval, WorldData worldData){
+    public void update(GameCharacter foe, WorldData worldData){
         if(foe.hittable()) {
             for (CollisionObject co : getActiveCollisionBoxes())
                 if (co.checkCollision(foe))

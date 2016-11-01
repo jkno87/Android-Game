@@ -23,21 +23,21 @@ public class ChargingEnemy extends GameCharacter {
     public final static TextureData ATTACKING_TEXTURE = new TextureData(0.25f,0.5f,0.5f,0.75f);
     public final static float[] ATTACK_SPEED = new float[]{2, 5f};
     public final static float DISTANCE_FROM_CHARACTER = 150;
+    private final static int IDLE_FRAMES = 21;
+    private final static int CHARGE_FRAMES = 16;
     private final CollisionObject[] activeBoxes;
-    private final float CHARGE_TIME = 0.25f;
-    private static final float IDLE_TIME = 0.35f;
     private final MainCharacter mainCharacter;
     private State currentState;
-    private TimeCounter chargeTimer;
-    private TimeCounter idleTimer;
+    private int idleFrame;
+    private int chargeFrame;
 
     public ChargingEnemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition, int id, final MainCharacter mainCharacter){
         super(sizeX, sizeY, idleSizeX, idleSizeY, new Vector2(0, yPosition), id);
         activeBoxes = new CollisionObject[]{new CollisionObject(new Vector2(),0, idleSizeX + 25, idleSizeY,this, CollisionObject.TYPE_HITTABLE),
                 new CollisionObject(new Vector2(57,55),0,10,15,this, CollisionObject.TYPE_ATTACK)};
         currentState = State.IDLE;
-        chargeTimer = new TimeCounter(CHARGE_TIME);
-        idleTimer = new TimeCounter(IDLE_TIME);
+        idleFrame = IDLE_FRAMES;
+        chargeFrame = CHARGE_FRAMES;
         this.mainCharacter = mainCharacter;
         activeAttack = new AttackData(activeBoxes, activeBoxes, activeBoxes);
         activeAttack.currentState = AttackData.CollisionState.ACTIVE;
@@ -45,8 +45,8 @@ public class ChargingEnemy extends GameCharacter {
 
     @Override
     public void reset(float x, float y) {
-        chargeTimer.reset();
-        idleTimer.reset();
+        idleFrame = IDLE_FRAMES;
+        chargeFrame = CHARGE_FRAMES;
         currentState = State.IDLE;
         setPosition(mainCharacter, DISTANCE_FROM_CHARACTER);
     }
@@ -67,18 +67,18 @@ public class ChargingEnemy extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, GameFlow.UpdateInterval interval, GameActivity.WorldData worldData) {
+    public void update(GameCharacter foe, GameActivity.WorldData worldData) {
         if(currentState == State.IDLE){
-            idleTimer.accum(interval);
-            if(idleTimer.completed())
+            idleFrame -= 1;
+            if(idleFrame <= 0)
                 currentState = State.CHARGING;
         } else if(currentState == State.CHARGING){
-            chargeTimer.accum(interval);
-            if(chargeTimer.completed())
+            chargeFrame -= 1;
+            if(chargeFrame <= 0)
                 currentState = State.ATTACKING;
         } else if (currentState == State.ATTACKING){
             if(foe.hittable())
-                super.update(foe, interval, worldData);
+                super.update(foe, worldData);
             moveX(baseX.x * ATTACK_SPEED[currentDifficulty]);
         }
 

@@ -62,7 +62,7 @@ public class AttackData {
         return currentState == CollisionState.FINISHED;
     }
 
-    public void update(GameFlow.UpdateInterval timeDifference){
+    public void update(){
         if(currentState == CollisionState.STARTUP){
             animationInfo[STARTUP_TIMER].updateFrame();
             if(animationInfo[STARTUP_TIMER].completed())
