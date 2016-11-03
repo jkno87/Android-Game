@@ -9,10 +9,9 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 import com.jgame.definitions.GameLevels;
-import com.jgame.elements.ChargingEnemy;
+import com.jgame.elements.AnimationData;
 import com.jgame.elements.EmptyEnemy;
 import com.jgame.elements.RobotEnemy;
-import com.jgame.elements.TeleportEnemy;
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.IdGenerator;
@@ -20,8 +19,10 @@ import com.jgame.util.LabelButton;
 import com.jgame.util.Square;
 import com.jgame.util.Vector2;
 import com.jgame.game.GameData.GameState;
+import java.util.ArrayDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
 
 /**
  * Actividad que se encarga de manejar todo lo referente al gameplay.
@@ -29,28 +30,26 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class GameActivity extends Activity {
 
+    public static class Decoration {
+        public AnimationData animation;
+        public Square size;
+
+        public Decoration(AnimationData animation, Square size){
+            this.animation = animation;
+            this.size = size;
+        }
+
+    }
+
     public static class WorldData {
         public float minX;
         public float maxX;
-        private boolean decoration;
+        public ArrayDeque<Decoration> dBuffer;
 
         public WorldData(float minX, float maxX){
             this.minX = minX;
             this.maxX = maxX;
         }
-
-        public void addDecoration(){
-            decoration = true;
-        }
-
-        public boolean receiveDecoration(){
-            if(decoration){
-                decoration = false;
-                return true;
-            } else
-                return false;
-        }
-
     }
 
     class GameRunnable implements Runnable {

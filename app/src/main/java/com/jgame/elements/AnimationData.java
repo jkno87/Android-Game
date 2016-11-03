@@ -14,6 +14,14 @@ public class AnimationData {
     private TextureData[] sprites;
     private final boolean loops;
 
+    public AnimationData(AnimationData other){
+        this.framesPerSprite = other.framesPerSprite;
+        currentFrame = 0;
+        currentSprite = 0;
+        this.sprites = other.sprites;
+        this.loops = other.loops;
+    }
+
     public AnimationData(int frames, boolean loops,TextureData[] sprites){
         this.sprites = sprites;
         framesPerSprite = frames;

@@ -1,10 +1,9 @@
 package com.jgame.elements;
 
 import com.jgame.game.GameActivity;
-import com.jgame.game.GameFlow;
+import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TextureDrawer;
-import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 
 /**
@@ -20,6 +19,8 @@ public class RobotEnemy extends GameCharacter {
     public final static TextureData[] STARTUP_TEXTURES = {new TextureData(0.375f,0,0.5f,0.125f),
             new TextureData(0.375f,0.25f,0.5f,0.375f),
             new TextureData(0.5f,0.25f,0.625f,0.375f)};
+    private final static AnimationData DECORATION_SAMPLE = new AnimationData(50, false,
+            new TextureData[]{new TextureData(0.125f, 0.625f, 0.1875f,0.75f)});
     private final static AnimationData DESTROY_ANIMATION = new AnimationData(2, false,
             new TextureData[] {STARTUP_TEXTURES[2], STARTUP_TEXTURES[1], STARTUP_TEXTURES[0], TextureDrawer.genTextureData(6,2,8)});
     public final static TextureData[] RECOVERY_TEXTURES = {TextureDrawer.genTextureData(5,1,8),
@@ -119,7 +120,8 @@ public class RobotEnemy extends GameCharacter {
             if(selfDestructFrame >= FRAMES_TO_SELFDESTRUCT) {
                 currentState = EnemyState.EXPLODING;
                 activeAttack = explosionAttack;
-                worldData.addDecoration();
+                worldData.dBuffer.add(new GameActivity.Decoration(new AnimationData(DECORATION_SAMPLE),
+                        new Square(position, 50,100,0)));
             }
         }
 
