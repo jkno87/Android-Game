@@ -48,10 +48,12 @@ public class AnimationData {
     }
 
     public void updateFrame(){
-        currentFrame += 1;
-        if(currentFrame > framesPerSprite) {
-            currentSprite++;
-            currentFrame = 0;
+        if(!completed()) {
+            currentFrame += 1;
+            if (currentFrame > framesPerSprite) {
+                currentSprite++;
+                currentFrame = 0;
+            }
         }
         if(loops && completed())
             reset();

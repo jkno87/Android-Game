@@ -5,6 +5,7 @@ import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.Vector2;
+import com.jgame.game.GameActivity.Decoration;
 
 /**
  * Created by jose on 27/09/16.
@@ -120,8 +121,13 @@ public class RobotEnemy extends GameCharacter {
             if(selfDestructFrame >= FRAMES_TO_SELFDESTRUCT) {
                 currentState = EnemyState.EXPLODING;
                 activeAttack = explosionAttack;
-                worldData.dBuffer.add(new GameActivity.Decoration(new AnimationData(DECORATION_SAMPLE),
-                        new Square(position, 50,100,0)));
+                worldData.dBuffer.add(new Decoration(new AnimationData(DESTROY_ANIMATION),
+                        new Square(new Vector2(position), 50, 100, 0)){
+                    public void update(){
+                        animation.updateFrame();
+                        size.lenX += 10;
+                    }
+                });
             }
         }
 

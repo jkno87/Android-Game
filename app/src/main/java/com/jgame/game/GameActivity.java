@@ -30,7 +30,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class GameActivity extends Activity {
 
-    public static class Decoration {
+    public static abstract class Decoration {
         public AnimationData animation;
         public Square size;
 
@@ -39,6 +39,7 @@ public class GameActivity extends Activity {
             this.size = size;
         }
 
+        public abstract void update();
     }
 
     public static class WorldData {
@@ -49,6 +50,7 @@ public class GameActivity extends Activity {
         public WorldData(float minX, float maxX){
             this.minX = minX;
             this.maxX = maxX;
+            dBuffer = new ArrayDeque<>();
         }
     }
 

@@ -109,23 +109,17 @@ public class GameRenderer implements Renderer {
         }
     }
 
-    /**
-     * Actualiza la lista de decoraciones que tiene el programa
-     * @param d
-     */
-    private void updateDecorations(Decoration d){
-        for(int i = 0; i < decorations.length; i++){
-            if(decorations[i] == null || decorations[i].animation.completed())
-                decorations[i] = d;
-        }
-    }
-
     @Override
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
         synchronized (gameActivity.worldData){
-            while(!gameActivity.worldData.dBuffer.isEmpty()) {
-                updateDecorations(gameActivity.worldData.dBuffer.removeFirst());
+            for(int i = 0; i < decorations.length; i++){
+                if(decorations[i] == null || decorations[i].animation.completed()) {
+                    if (!gameActivity.worldData.dBuffer.isEmpty())
+                        decorations[i] = gameActivity.worldData.dBuffer.removeFirst();
+                } else
+                    decorations[i].update();
+
             }
         }
 
@@ -167,9 +161,8 @@ public class GameRenderer implements Renderer {
             }
 
             for(Decoration d : decorations) {
-                if(d == null)
+                if(d == null || d.animation.completed())
                     continue;
-                d.animation.updateFrame();
                 mainTextureDrawer.addTexturedSquare(d.size, d.animation.getCurrentSprite());
             }
 
