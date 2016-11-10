@@ -163,7 +163,10 @@ public class GameRenderer implements Renderer {
             for(Decoration d : decorations) {
                 if(d == null || d.animation.completed())
                     continue;
-                mainTextureDrawer.addTexturedSquare(d.size, d.animation.getCurrentSprite());
+                if(d.inverted)
+                    mainTextureDrawer.addInvertedColoredSquare(d.size, d.animation.getCurrentSprite(), d.color);
+                else
+                    mainTextureDrawer.addColoredSquare(d.size, d.animation.getCurrentSprite(), d.color);
             }
 
 

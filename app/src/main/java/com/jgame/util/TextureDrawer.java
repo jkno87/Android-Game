@@ -42,6 +42,7 @@ public class TextureDrawer extends Drawer {
     }
 
     private final static int MAX_TEXTURES = 35;
+    public final static SimpleDrawer.ColorData DEFAULT_COLOR = new SimpleDrawer.ColorData(1,1,1,1);
 
     public TextureDrawer(boolean withColor){
         super(true, withColor, MAX_TEXTURES);
@@ -230,5 +231,49 @@ public class TextureDrawer extends Drawer {
         verticesBuffer[currentIndex++] = 1;
     }
 
+    /**
+     * Agrega los vertices de un cuadrado con textura y color
+     * @param tData Informacion de textura que se utilizara
+     * @return Drawer que contiene los vertices del cuadrado
+     */
+    public void addInvertedColoredSquare(Square s, TextureData tData, SimpleDrawer.ColorData cData){
+        elementsAdded++;
+
+        verticesBuffer[currentIndex++] = s.position.x - s.lenX;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u2;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u2;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u1;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position.x - s.lenX;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u1;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+    }
 
 }

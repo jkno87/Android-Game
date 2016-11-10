@@ -16,7 +16,9 @@ import com.jgame.elements.GameCharacter;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.IdGenerator;
 import com.jgame.util.LabelButton;
+import com.jgame.util.SimpleDrawer;
 import com.jgame.util.Square;
+import com.jgame.util.TextureDrawer;
 import com.jgame.util.Vector2;
 import com.jgame.game.GameData.GameState;
 import java.util.ArrayDeque;
@@ -33,10 +35,20 @@ public class GameActivity extends Activity {
     public static abstract class Decoration {
         public AnimationData animation;
         public Square size;
+        public SimpleDrawer.ColorData color = TextureDrawer.DEFAULT_COLOR;
+        public boolean inverted;
 
-        public Decoration(AnimationData animation, Square size){
+        public Decoration(AnimationData animation, Square size, SimpleDrawer.ColorData color, boolean inverted){
             this.animation = animation;
             this.size = size;
+            this.color = color;
+            this.inverted = inverted;
+        }
+
+        public Decoration(AnimationData animation, Square size, boolean inverted){
+            this.animation = animation;
+            this.size = size;
+            this.inverted = inverted;
         }
 
         public abstract void update();
