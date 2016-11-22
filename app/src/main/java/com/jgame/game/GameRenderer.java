@@ -39,10 +39,10 @@ public class GameRenderer implements Renderer {
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
-    private final TextureData[] DIGITS = new TextureData[]{new TextureData(0.0625f,0.46875f,0.09375f,0.5f),new TextureData(0.09375f,0.46875f,0.125f,0.5f),
-            new TextureData(0.125f,0.46875f,0.15625f,0.5f), new TextureData(0.15625f,0.46875f,0.1875f,0.5f),new TextureData(0.1875f,0.46875f,0.21875f,0.5f),
-            new TextureData(0.21875f,0.46875f,0.25f,0.5f),new TextureData(0.25f,0.46875f,0.28125f,0.5f), new TextureData(0.28125f,0.46875f,0.3125f,0.5f),
-            new TextureData(0.3125f,0.46875f,0.34375f,0.5f),new TextureData(0.3125f,0.46875f,0.34375f,0.5f)};
+    private final TextureData[] DIGITS = new TextureData[]{new TextureData(0.01953f,0.51f,0.0761f,0.5449f),new TextureData(0.077f,0.51f,0.097f,0.5449f),
+            new TextureData(0.09563125f,0.51f,0.1151625f,0.5449f), new TextureData(0.1151625f,0.51f,0.13469375f,0.5449f),new TextureData(0.13469375f,0.51f,0.154225f,0.5449f),
+            new TextureData(0.154225f,0.51f,0.17375625f,0.5449f),new TextureData(0.17375625f,0.51f,0.1932875f,0.5449f), new TextureData(0.1932875f,0.51f,0.21281875f,0.5449f),
+            new TextureData(0.21281875f,0.51f,0.23235f,0.5449f),new TextureData(0.23235f,0.51f,0.25188125f,0.5f)};
     public static final Square GAME_FLOOR = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
     private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
     public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameLevels.FRUSTUM_HEIGHT - 35, 50, 18), 2);
