@@ -7,6 +7,7 @@ import android.opengl.GLUtils;
 import com.jgame.definitions.GameLevels;
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.CollisionObject;
+import com.jgame.util.DigitsDisplay;
 import com.jgame.util.GameText;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.SimpleDrawer.ColorData;
@@ -17,10 +18,12 @@ import com.jgame.game.GameData.GameState;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import com.jgame.game.GameActivity.Decoration;
+import com.jgame.util.Vector2;
 
 public class GameRenderer implements Renderer {
 
-    private final int SCORE_SIZE = 15;
+    private final static int SCORE_SIZE_X = 15;
+    private final static int SCORE_SIZE_Y = 20;
     private final static boolean RENDER_HITBOXES = false;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
@@ -39,10 +42,6 @@ public class GameRenderer implements Renderer {
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
-    private final TextureData[] DIGITS = new TextureData[]{new TextureData(0.01953f,0.51f,0.0761f,0.5449f),new TextureData(0.077f,0.51f,0.097f,0.5449f),
-            new TextureData(0.09563125f,0.51f,0.1151625f,0.5449f), new TextureData(0.1151625f,0.51f,0.13469375f,0.5449f),new TextureData(0.13469375f,0.51f,0.154225f,0.5449f),
-            new TextureData(0.154225f,0.51f,0.17375625f,0.5449f),new TextureData(0.17375625f,0.51f,0.1932875f,0.5449f), new TextureData(0.1932875f,0.51f,0.21281875f,0.5449f),
-            new TextureData(0.21281875f,0.51f,0.23235f,0.5449f),new TextureData(0.23235f,0.51f,0.25188125f,0.5f)};
     public static final Square GAME_FLOOR = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
     private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
     public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameLevels.FRUSTUM_HEIGHT - 35, 50, 18), 2);
@@ -52,6 +51,7 @@ public class GameRenderer implements Renderer {
     public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 1);
     public static final Square SOUND_SWITCH_SPRITE = new Square(210, 40, 50, 50);
     public static final Square BACKGROUND_SIZE = new Square(0,0,GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
+    private static final DigitsDisplay CURRENT_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, 5, new Vector2(250,35));
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
     private GL10 gl10;
@@ -86,27 +86,6 @@ public class GameRenderer implements Renderer {
         bitmap.recycle();
 
         return textureIds[0];
-    }
-
-    /**
-     * Se dibuja en pantalla el numero proporcionado a la funcion
-     * @param x coordenada x en la que se inicia el dibujo
-     * @param y cooordenada y en la que se dibuja el numero
-     * @param number numero que se dibujara en pantalla
-     */
-    private void addDigitsTexture(float x, float y, int number, TextureDrawer tdrawer){
-        //TODO: no utilizar ese tama;o arbitrario de los numeros
-        float currentX = x - SCORE_SIZE;
-
-        while(true){
-            int nVal = number / 10;
-            int rem = number % 10;
-            number = nVal;
-            tdrawer.addTexturedSquare(currentX, y, SCORE_SIZE, SCORE_SIZE, DIGITS[rem]);
-            currentX -= SCORE_SIZE;
-            if(number == 0)
-                break;
-        }
     }
 
     @Override
@@ -178,8 +157,8 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_A_BOUNDS, BUTTON_TEXTURE);
 
             if (characterAlive) {
-                addDigitsTexture(250, 35, gameData.score, mainTextureDrawer);
-                addDigitsTexture(250, GameLevels.FRUSTUM_HEIGHT - 35, gameData.highScore, mainTextureDrawer);
+                CURRENT_SCORE.number = gameData.score;
+                CURRENT_SCORE.addDigitsTexture(mainTextureDrawer);
                 HIGHSCORE_TEXT.addLetterTexture(mainTextureDrawer);
             }
 
