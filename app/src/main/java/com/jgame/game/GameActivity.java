@@ -72,12 +72,11 @@ public class GameActivity extends Activity {
         public final GameCharacter enemySpawnInterval;
         public final GameCharacter[] availableEnemies;
         public int score;
-        private final GameFlow.UpdateInterval updateInterval;
         private ControllerManager.GameInput lastInput;
         private int currentEnemyCounter;
         private GameData.GameState currentState;
 
-        public GameRunnable(GameFlow.UpdateInterval updateInterval, MainCharacter mainCharacter){
+        public GameRunnable(MainCharacter mainCharacter){
             this.mainCharacter = mainCharacter;
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
             enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
@@ -87,7 +86,6 @@ public class GameActivity extends Activity {
             //        MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             availableEnemies[0] = new RobotEnemy(TELEPORT_SPRITE_HEIGHT, TELEPORT_SPRITE_HEIGHT,
                     TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT, ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
-            this.updateInterval = updateInterval;
             currentEnemy = enemySpawnInterval;
         }
 
@@ -202,7 +200,7 @@ public class GameActivity extends Activity {
     private static final float BUTTONS_WIDTH = 50;
     private static final float INPUTS_HEIGHT = 15;
     public static final float CONTROLS_HEIGHT = PLAYING_HEIGHT * 0.25f;
-    private static final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 20;
+    private static final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 10;
     private static final float INITIAL_CHARACTER_POSITION = GameLevels.FRUSTUM_WIDTH / 2;
     private static final IdGenerator ID_GEN = new IdGenerator();
     public static final int TELEPORT_SPRITE_LENGTH = 115;
@@ -246,7 +244,7 @@ public class GameActivity extends Activity {
         gameData.highScore = settings.getInt(HIGH_SCORE, 0);
         gameData.state = GameState.MENU;
         this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2());
-        gameTask = new GameRunnable(new GameFlow.UpdateInterval(0.015384615f), mainCharacter);
+        gameTask = new GameRunnable(mainCharacter);
         new Thread(gameTask).start();
         new Thread(soundManager).start();
     }

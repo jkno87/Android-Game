@@ -27,8 +27,7 @@ public class GameRenderer implements Renderer {
     private final static boolean RENDER_HITBOXES = false;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
-    public final static ColorData BACKGROUND_MODIFIER_2 = new ColorData(0,0.5f,1f,0.25f);
-    public final static ColorData BACKGROUND_MODIFIER = new ColorData(1,1,0,0.5f);
+    public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.96875f,0.96875f,1.0f,1.0f);
     public final static TextureData SPEAKER_TEXTURE = new TextureData(0.4375f, 0.375f, 0.5f, 0.4375f);
     public final static TextureData SOUND_TEXTURE = new TextureData(0.4375f,0.4375f,0.5f,0.5f);
@@ -37,12 +36,13 @@ public class GameRenderer implements Renderer {
     public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.0625f,0.5f,0,0.4375f);
     public final static TextureData SOUND_SWITCH_ON_TEXTURE = new TextureData(0.375f,0.375f,0.4375f,0.4375f);
     public final static TextureData SOUND_SWITCH_OFF_TEXTURE = new TextureData(0.4375f,0.4375f,0.375f,0.375f);
-    public final static TextureData BACKGROUND_TEXTURE = new TextureData(0,0.5f,1,1);
-    public final static TextureData BACKGROUND_DETAILS = new TextureData(0,0,1,0.5f);
+    public final static TextureData BACKGROUND_TEXTURE = new TextureData(0,0,1,0.247f);
+    public final static TextureData LEVEL_2_BACKGROUND = new TextureData(0, 0.2478f, 1, 0.4956f);
+    public final static TextureData LEVEL_3_BACKGROUND = new TextureData(0, 0.499f, 1, 0.7449f);
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
-    public static final Square GAME_FLOOR = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
+    public static final Square CONTROLS_RECT = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
     private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
     public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameLevels.FRUSTUM_HEIGHT - 35, 50, 18), 2);
     public static final GameText TITLE_TEXT = new GameText("start", new Square(160, GameLevels.FRUSTUM_HEIGHT - 150, 150, 50), 5);
@@ -50,7 +50,7 @@ public class GameRenderer implements Renderer {
     public static final GameText ON_LABEL = new GameText("on", new Square(160, 50, 50, 20), 1);
     public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 1);
     public static final Square SOUND_SWITCH_SPRITE = new Square(210, 40, 50, 50);
-    public static final Square BACKGROUND_SIZE = new Square(0,0,GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
+    public static final Square BACKGROUND_SIZE = new Square(0, GameActivity.CONTROLS_HEIGHT,GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT - GameActivity.CONTROLS_HEIGHT);
     private static final DigitsDisplay CURRENT_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, 5, new Vector2(250,35));
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
@@ -122,9 +122,7 @@ public class GameRenderer implements Renderer {
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, backgroundId);
             mainTextureDrawer.addTexturedSquare(BACKGROUND_SIZE, BACKGROUND_TEXTURE);
             if(gameData.score > GameActivity.EASY_DIFFICULTY_POINTS)
-                mainTextureDrawer.addColoredSquare(BACKGROUND_SIZE, BACKGROUND_DETAILS, BACKGROUND_MODIFIER_2);
-            else
-                mainTextureDrawer.addColoredSquare(BACKGROUND_SIZE, BACKGROUND_DETAILS, BACKGROUND_MODIFIER);
+                mainTextureDrawer.addColoredSquare(BACKGROUND_SIZE, LEVEL_3_BACKGROUND, BACKGROUND_OVERLAY);
             mainTextureDrawer.draw(gl10);
 
 
@@ -149,7 +147,7 @@ public class GameRenderer implements Renderer {
             }
 
 
-            mainTextureDrawer.addColoredSquare(GAME_FLOOR, NO_TEXTURE_COORDS, DASHBOARD_COLOR);
+            mainTextureDrawer.addColoredSquare(CONTROLS_RECT, NO_TEXTURE_COORDS, DASHBOARD_COLOR);
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
 
             mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_LEFT_BOUNDS, LEFT_ARROW_TEXTURE);
