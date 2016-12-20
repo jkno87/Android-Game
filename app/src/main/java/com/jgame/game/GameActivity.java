@@ -24,6 +24,7 @@ import com.jgame.game.GameData.GameState;
 import java.util.ArrayDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import com.jgame.util.Decoration;
 
 
 /**
@@ -31,28 +32,6 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Created by jose on 27/01/15.
  */
 public class GameActivity extends Activity {
-
-    public static abstract class Decoration {
-        public AnimationData animation;
-        public Square size;
-        public SimpleDrawer.ColorData color = TextureDrawer.DEFAULT_COLOR;
-        public boolean inverted;
-
-        public Decoration(AnimationData animation, Square size, SimpleDrawer.ColorData color, boolean inverted){
-            this.animation = animation;
-            this.size = size;
-            this.color = color;
-            this.inverted = inverted;
-        }
-
-        public Decoration(AnimationData animation, Square size, boolean inverted){
-            this.animation = animation;
-            this.size = size;
-            this.inverted = inverted;
-        }
-
-        public abstract void update();
-    }
 
     public static class WorldData {
         public float minX;
@@ -156,7 +135,7 @@ public class GameActivity extends Activity {
                     }
 
 
-                    if (!currentEnemy.alive()) {
+                    if (!currentEnemy.alive() && currentState == GameState.PLAYING) {
                         if (currentEnemy instanceof EmptyEnemy) {
                             if(currentEnemyCounter == availableEnemies.length)
                                 currentEnemyCounter = 0;

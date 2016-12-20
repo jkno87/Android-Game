@@ -17,7 +17,7 @@ import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.game.GameData.GameState;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-import com.jgame.game.GameActivity.Decoration;
+import com.jgame.util.Decoration;
 import com.jgame.util.Vector2;
 
 public class GameRenderer implements Renderer {
@@ -93,7 +93,7 @@ public class GameRenderer implements Renderer {
         gameData.copy(gameActivity.gameData);
         synchronized (gameActivity.worldData){
             for(int i = 0; i < decorations.length; i++){
-                if(decorations[i] == null || decorations[i].animation.completed()) {
+                if(decorations[i] == null || decorations[i].completed()) {
                     if (!gameActivity.worldData.dBuffer.isEmpty())
                         decorations[i] = gameActivity.worldData.dBuffer.removeFirst();
                 } else
@@ -138,12 +138,12 @@ public class GameRenderer implements Renderer {
             }
 
             for(Decoration d : decorations) {
-                if(d == null || d.animation.completed())
+                if(d == null || !d.drawable())
                     continue;
                 if(d.inverted)
-                    mainTextureDrawer.addInvertedColoredSquare(d.size, d.animation.getCurrentSprite(), d.color);
+                    mainTextureDrawer.addInvertedColoredSquare(d.size, d.getSprite(), d.color);
                 else
-                    mainTextureDrawer.addColoredSquare(d.size, d.animation.getCurrentSprite(), d.color);
+                    mainTextureDrawer.addColoredSquare(d.size, d.getSprite(), d.color);
             }
 
 

@@ -3,12 +3,14 @@ package com.jgame.elements;
 import android.util.Log;
 
 import com.jgame.game.GameActivity;
+import com.jgame.util.Decoration;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.Vector2;
-import com.jgame.game.GameActivity.Decoration;
+import com.jgame.util.Decoration.AnimatedDecoration;
+import com.jgame.util.Decoration.StaticDecoration;
 
 /**
  * Enemigo que tiene el proposito de ensenar whiff punish al jugador. Esto significa que esta a una distancia lejana al jugador, el jugador
@@ -29,8 +31,9 @@ public class RobotEnemy extends GameCharacter {
             new TextureData(0.5f,0.25f,0.625f,0.375f)};
     private final static AnimationData BEEP_ANIMATION = new AnimationData(15, false,
             new TextureData[]{IDLE_TEXTURE});
+    private final static TextureData EXPLOSION = TextureDrawer.genTextureData(6,2,8);
     private final static AnimationData DESTROY_ANIMATION = new AnimationData(2, false,
-            new TextureData[] {STARTUP_TEXTURES[2], STARTUP_TEXTURES[1], STARTUP_TEXTURES[0], TextureDrawer.genTextureData(6,2,8)});
+            new TextureData[] {STARTUP_TEXTURES[2], STARTUP_TEXTURES[1], STARTUP_TEXTURES[0], EXPLOSION});
     public final static TextureData[] RECOVERY_TEXTURES = {TextureDrawer.genTextureData(5,1,8),
     TextureDrawer.genTextureData(6,1,8)};
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.5f,0.125f,0.625f,0.25f);
@@ -117,13 +120,10 @@ public class RobotEnemy extends GameCharacter {
             if(selfDestructFrame >= FRAMES_TO_SELFDESTRUCT) {
                 currentState = EnemyState.EXPLODING;
                 activeAttack = explosionAttack;
-                worldData.dBuffer.add(new Decoration(new AnimationData(DESTROY_ANIMATION),
-                        new Square(new Vector2(position), 50, 100, 0), baseX.x == -1){
-                    public void update(){
-                        animation.updateFrame();
-                        size.lenX += 10;
-                    }
-                });
+                worldData.dBuffer.add(new StaticDecoration(EXPLOSION, new Square(new Vector2(position), 200, 90, 0),
+                        baseX.x == -1, 0, 15));
+                worldData.dBuffer.add(new StaticDecoration(EXPLOSION, new Square(new Vector2(position), 300, 75, 0),
+                        baseX.x == -1, 13, 10));
             }
 
             if (position.x > foe.position.x && (position.x - foe.position.x) < attackRange) {
@@ -137,13 +137,10 @@ public class RobotEnemy extends GameCharacter {
                 for(CollisionObject co : activeAttack.active)
                     co.updatePosition();
             } else if(beepInterval == INITIAL_BEEP_INTERVAL){
-                worldData.dBuffer.add(new Decoration(new AnimationData(BEEP_ANIMATION),
-                        new Square(new Vector2(position), spriteContainer.lenX, spriteContainer.lenY,0),
-                        new SimpleDrawer.ColorData(1,0,0,0.25f), baseX.x == -1){
-                        public void update(){
-                            animation.updateFrame();
-                        }
-                });
+                worldData.dBuffer.add(new StaticDecoration(IDLE_TEXTURE,
+                        new Square(new Vector2(position), spriteContainer.lenX, spriteContainer.lenY, 0),
+                        new SimpleDrawer.ColorData(1,0,0,0.25f),
+                        baseX.x == -1, 0, 10));
                 beepInterval = 0;
             }
 
@@ -171,6 +168,9 @@ public class RobotEnemy extends GameCharacter {
             if(DESTROY_ANIMATION.completed())
                 currentState = EnemyState.DEAD;
         }
+
+        if(currentState == EnemyState.EXPLODING)
+            currentState = EnemyState.DEAD;
 
     }
 
