@@ -24,6 +24,8 @@ public class GameRenderer implements Renderer {
 
     private final static int SCORE_SIZE_X = 15;
     private final static int SCORE_SIZE_Y = 20;
+    private final static int PAUSE_X_SIZE = 100;
+    private final static int PAUSE_Y_SIZE = 70;
     private final static boolean RENDER_HITBOXES = false;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
@@ -43,23 +45,26 @@ public class GameRenderer implements Renderer {
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
     public static final Square CONTROLS_RECT = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
+    public static final Square PAUSE_RECTANGLE = new Square(GameLevels.FRUSTUM_WIDTH/2 - PAUSE_X_SIZE, GameLevels.FRUSTUM_HEIGHT/2 - PAUSE_Y_SIZE,
+            PAUSE_X_SIZE * 2, PAUSE_Y_SIZE * 2);
     private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
     public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameLevels.FRUSTUM_HEIGHT - 35, 50, 18), 2);
-    public static final GameText TITLE_TEXT = new GameText("start", new Square(160, GameLevels.FRUSTUM_HEIGHT - 150, 150, 50), 5);
+    public static final GameText TITLE_TEXT = new GameText("start", GameActivity.START_BUTTON_BOUNDS, 35);
     public static final GameText SOUND_LABEL = new GameText("sound", new Square(160, 85, 150, 35), 0);
-    public static final GameText ON_LABEL = new GameText("on", new Square(160, 50, 50, 20), 1);
-    public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 1);
+    public static final GameText ON_LABEL = new GameText("on", new Square(160, 50, 50, 20), 20);
+    public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 20);
     public static final Square SOUND_SWITCH_SPRITE = new Square(210, 40, 50, 50);
     public static final Square BACKGROUND_SIZE = new Square(0, GameActivity.CONTROLS_HEIGHT,GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT - GameActivity.CONTROLS_HEIGHT);
     private static final DigitsDisplay CURRENT_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, 5, new Vector2(250,35));
+    private static final ColorData PAUSE_MENU_COLOR = new ColorData(0,1,0,1);
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
     private GL10 gl10;
     int personajesId;
     int backgroundId;
     private TextureDrawer mainTextureDrawer;
-    SimpleDrawer.ColorData pauseOverlay;
-    SimpleDrawer.ColorData menuBase;
+    ColorData pauseOverlay;
+    ColorData menuBase;
     private final GameData gameData;
     private final Decoration[] decorations = new Decoration[5];
 
@@ -167,6 +172,7 @@ public class GameRenderer implements Renderer {
 
             if (gameData.paused) {
                 mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
+                mainTextureDrawer.addColoredSquare(PAUSE_RECTANGLE, NO_TEXTURE_COORDS, PAUSE_MENU_COLOR);
                 gameActivity.continueButton.label.addLetterTexture(mainTextureDrawer);
                 gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
                 mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SPEAKER_TEXTURE);
@@ -246,6 +252,7 @@ public class GameRenderer implements Renderer {
 
         if(gameData.paused) {
             mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
+            mainTextureDrawer.addColoredSquare(PAUSE_RECTANGLE, NO_TEXTURE_COORDS, PAUSE_MENU_COLOR);
             gameActivity.continueButton.label.addLetterTexture(mainTextureDrawer);
             gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
             mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SPEAKER_TEXTURE);

@@ -8,8 +8,8 @@ import com.jgame.util.TextureDrawer.TextureData;
 public class GameText {
 
     private final int[] lettersId;
-    public Square bounds;
-    private float margin;
+    private final float startX;
+    private final float startY;
     private static int LETTERS_COLUMN = 10;
     private static int LETTERS_ROW = 3;
     public static final TextureData[] LETTERS = generateAlphabet(0.3125f, 0.09375f, 0.0625f, 0.375f,LETTERS_COLUMN, LETTERS_ROW);
@@ -44,12 +44,11 @@ public class GameText {
     }
 
 
-    public GameText(String texto, Square bounds, float margin){
+    public GameText(String texto, Square bounds, float letterSize){
         this.lettersId = new int[texto.length()];
-        this.bounds = bounds;
-        this.margin = margin;
-        this.currentLetter = new Square(0,0,(bounds.lenX - margin*2)/this.lettersId.length,
-                bounds.lenY - margin);
+        this.startX = (bounds.position.x + bounds.lenX/2) - lettersId.length * (letterSize/2);
+        this.startY = bounds.position.y + bounds.lenY/2 - letterSize/2;
+        this.currentLetter = new Square(0,0,letterSize, letterSize);
 
         for(int i = 0; i < lettersId.length; i++)
             lettersId[i] = (int) texto.charAt(i) - 97;
@@ -60,8 +59,8 @@ public class GameText {
      * @param textureDrawer Drawer al que se agregaran los vertices
      */
     public void addLetterTexture(TextureDrawer textureDrawer) {
-        currentLetter.position.x = bounds.position.x + margin;
-        currentLetter.position.y = bounds.position.y + margin;
+        currentLetter.position.x = startX;
+        currentLetter.position.y = startY;
 
         for (int i = 0; i < lettersId.length; i++) {
             textureDrawer.addTexturedSquare(currentLetter, LETTERS[lettersId[i]]);
@@ -75,8 +74,8 @@ public class GameText {
      * @param colorData informacion de color
      */
     public void addLetterTexture(TextureDrawer textureDrawer, SimpleDrawer.ColorData colorData){
-        currentLetter.position.x = bounds.position.x + margin;
-        currentLetter.position.y = bounds.position.y + margin;
+        currentLetter.position.x = startX;
+        currentLetter.position.y = startY;
 
         for (int i = 0; i < lettersId.length; i++) {
             textureDrawer.addColoredSquare(currentLetter, LETTERS[lettersId[i]], colorData);
