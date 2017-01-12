@@ -193,7 +193,7 @@ public class GameActivity extends Activity {
     public static final Square INPUT_B_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
     public final LabelButton continueButton = new LabelButton(new Square(GameLevels.FRUSTUM_WIDTH / 2 - 100, GameLevels.FRUSTUM_HEIGHT/2 + 10, 200, 50), "continue");
     public static final Square QUIT_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 100, GameLevels.FRUSTUM_HEIGHT/2 - 60, 200, 50);
-    public static final Square RESTART_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 100, GameLevels.FRUSTUM_HEIGHT/2 - 60, 200, 50);
+    public static final Square RESTART_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH / 2 - 100, GameLevels.FRUSTUM_HEIGHT/2 + 10, 200, 50);
     public static final Square START_BUTTON_BOUNDS = new Square(GameLevels.FRUSTUM_WIDTH/2 - 100, GameLevels.FRUSTUM_HEIGHT - 160, 200, 100);
     public static final Square SOUND_SWITCH = new Square(160, 40, 150, 40);
     public static final String HIGH_SCORE = "highScore";

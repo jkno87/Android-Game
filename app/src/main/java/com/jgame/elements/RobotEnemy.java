@@ -64,11 +64,11 @@ public class RobotEnemy extends GameCharacter {
         attackRange = ATTACK_DISTANCE + idleSizeX;
         CollisionObject[] explosionBoxes = new CollisionObject[]{new CollisionObject(new Vector2(57,55),0,GameActivity.PLAYING_WIDTH,35,this, CollisionObject.TYPE_ATTACK)};
         CollisionObject[] startupBoxes = new CollisionObject[]{};
-        CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,125,55,this, CollisionObject.TYPE_HITTABLE),
+        CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,140,55,this, CollisionObject.TYPE_HITTABLE),
         new CollisionObject(new Vector2(100, 50),0,20,20, this, CollisionObject.TYPE_ATTACK)};
         explosionAttack = new AttackData(explosionBoxes, explosionBoxes, explosionBoxes);
         regularAttack = new AttackData(startupBoxes, attackBoxes, attackBoxes);
-        regularAttack.setStartupAnimation(new AnimationData(10, false, STARTUP_TEXTURES));
+        regularAttack.setStartupAnimation(new AnimationData(11, false, STARTUP_TEXTURES));
         regularAttack.setActiveAnimation(new AnimationData(40, false, ATTACK_TEXTURE));
         regularAttack.setRecoveryAnimation(new AnimationData(10, false, RECOVERY_TEXTURES));
     }

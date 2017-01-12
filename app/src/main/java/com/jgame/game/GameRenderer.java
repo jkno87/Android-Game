@@ -26,7 +26,7 @@ public class GameRenderer implements Renderer {
     private final static int SCORE_SIZE_Y = 20;
     private final static int PAUSE_X_SIZE = 100;
     private final static int PAUSE_Y_SIZE = 70;
-    private final static boolean RENDER_HITBOXES = false;
+    private final static boolean RENDER_HITBOXES = true;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
