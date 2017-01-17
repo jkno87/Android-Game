@@ -38,7 +38,7 @@ public class AnimationData {
         this.loops = loops;
     }
 
-    public void updateFrameData(byte framesPerSprite){
+    public void updateFrameData(int framesPerSprite){
         this.framesPerSprite = framesPerSprite;
     }
 

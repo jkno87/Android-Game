@@ -33,18 +33,6 @@ import com.jgame.util.Decoration;
  */
 public class GameActivity extends Activity {
 
-    public static class WorldData {
-        public float minX;
-        public float maxX;
-        public ArrayDeque<Decoration> dBuffer;
-
-        public WorldData(float minX, float maxX){
-            this.minX = minX;
-            this.maxX = maxX;
-            dBuffer = new ArrayDeque<>();
-        }
-    }
-
     class GameRunnable implements Runnable {
 
         public final MainCharacter mainCharacter;
@@ -54,6 +42,7 @@ public class GameActivity extends Activity {
         private ControllerManager.GameInput lastInput;
         private int currentEnemyCounter;
         private GameData.GameState currentState;
+        private Difficulty currentDifficulty;
 
         public GameRunnable(MainCharacter mainCharacter){
             this.mainCharacter = mainCharacter;
@@ -80,6 +69,7 @@ public class GameActivity extends Activity {
                             continue;
 
                         currentState = gameData.state;
+                        currentDifficulty = gameData.currentDifficulty;
                     }
 
                     if(currentState == GameState.MENU) {
@@ -94,8 +84,11 @@ public class GameActivity extends Activity {
                             currentEnemy = enemySpawnInterval;
                         }
 
+                        currentDifficulty = Difficulty.EASY;
+
                         for(GameCharacter gc : availableEnemies)
-                            gc.resetDifficulty(GameActivity.EASY_DIFFICULTY);
+                            gc.setCurrentDifficulty(currentDifficulty);
+
                         score = 0;
                         currentEnemyCounter = 0;
                         currentEnemy.reset(0,0);
@@ -107,6 +100,9 @@ public class GameActivity extends Activity {
                         currentState = GameState.RESTART_SCREEN;
                     } else if (currentState == GameState.PLAYING){
                         gameData.score = score;
+                        if(score > EASY_DIFFICULTY_POINTS)
+                            currentDifficulty = Difficulty.MEDIUM;
+
                         if(!mainCharacter.alive()) {
                             currentState = GameState.GAME_OVER;
                         }
@@ -119,6 +115,7 @@ public class GameActivity extends Activity {
 
                     synchronized (gameData){
                         gameData.state = currentState;
+                        gameData.currentDifficulty = currentDifficulty;
                     }
 
                     if(currentState != GameState.PLAYING && currentState != GameState.RESTART_SCREEN)
@@ -129,9 +126,9 @@ public class GameActivity extends Activity {
                     else
                         mainCharacter.receiveInput(lastInput);
 
-                    mainCharacter.update(currentEnemy, worldData);
+                    mainCharacter.update(currentEnemy, decorationsBuffer);
                     synchronized (enemyLock) {
-                        currentEnemy.update(mainCharacter, worldData);
+                        currentEnemy.update(mainCharacter, decorationsBuffer);
                     }
 
 
@@ -151,7 +148,7 @@ public class GameActivity extends Activity {
                             if(gameData.soundEnabled)
                                 soundManager.playSound(ID_PUNCH);
                         }
-                        currentEnemy.increaseDifficulty(score);
+                        currentEnemy.setCurrentDifficulty(currentDifficulty);
                         currentEnemy.reset(0,0);
                     }
                 }
@@ -163,10 +160,12 @@ public class GameActivity extends Activity {
     }
 
 
+    public static enum Difficulty {
+        EASY, MEDIUM
+    }
+
     public static final long UPDATE_INTERVAL = 16L;
     public static final float FRAMES_PER_SECOND = UPDATE_INTERVAL / 1000L;
-    public static final int EASY_DIFFICULTY = 0;
-    public static final int MEDIUM_DIFFICULTY = 1;
     public static final int EASY_DIFFICULTY_POINTS = 4;
     public static final float MIN_X = 20;
     public static final float MAX_X = GameLevels.FRUSTUM_WIDTH - MIN_X;
@@ -208,7 +207,8 @@ public class GameActivity extends Activity {
     public final Object enemyLock = new Object();
     public final BlockingQueue<ControllerManager.GameInput> inputQueue = new LinkedBlockingQueue<>(5);
     public final ControllerManager controllerManager = new ControllerManager(inputQueue, gameData);
-    public final WorldData worldData = new WorldData(MIN_X, MAX_X);
+    public final ArrayDeque<Decoration> decorationsBuffer = new ArrayDeque<>();
+    //public final WorldData worldData = new WorldData(MIN_X, MAX_X);
     public GameRunnable gameTask;
 
     @Override
@@ -222,7 +222,7 @@ public class GameActivity extends Activity {
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
         gameData.highScore = settings.getInt(HIGH_SCORE, 0);
         gameData.state = GameState.MENU;
-        this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2());
+        this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), MIN_X, MAX_X);
         gameTask = new GameRunnable(mainCharacter);
         new Thread(gameTask).start();
         new Thread(soundManager).start();

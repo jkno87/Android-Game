@@ -15,6 +15,7 @@ public class GameData {
     public boolean soundEnabled;
     public GameState state;
     public boolean paused;
+    public GameActivity.Difficulty currentDifficulty;
 
     public void copy(GameData other){
         synchronized (other){
@@ -23,6 +24,7 @@ public class GameData {
             highScore = other.highScore;
             paused = other.paused;
             soundEnabled = other.soundEnabled;
+            this.currentDifficulty = other.currentDifficulty;
         }
     }
 

@@ -1,8 +1,7 @@
 package com.jgame.elements;
 
-import android.util.Log;
-
 import com.jgame.game.GameActivity;
+import com.jgame.game.GameActivity.Difficulty;
 import com.jgame.util.Decoration;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.Square;
@@ -11,6 +10,8 @@ import com.jgame.util.TextureDrawer;
 import com.jgame.util.Vector2;
 import com.jgame.util.Decoration.AnimatedDecoration;
 import com.jgame.util.Decoration.StaticDecoration;
+
+import java.util.ArrayDeque;
 
 /**
  * Enemigo que tiene el proposito de ensenar whiff punish al jugador. Esto significa que esta a una distancia lejana al jugador, el jugador
@@ -24,6 +25,8 @@ public class RobotEnemy extends GameCharacter {
         WAITING, EXPLODING, ATTACKING, DYING, DEAD
     }
 
+    private final int[] EASY_FRAME_DATA = new int[]{11,40,11};
+    private final int[] MEDIUM_FRAME_DATA = new int[]{9,20,5};
     private final static int INITIAL_BEEP_INTERVAL = 30;
     public final static TextureData IDLE_TEXTURE = new TextureData(0.375f,0.125f,0.5f,0.25f);
     public final static TextureData[] STARTUP_TEXTURES = {new TextureData(0.375f,0,0.5f,0.125f),
@@ -48,6 +51,7 @@ public class RobotEnemy extends GameCharacter {
     private float attackRange;
     private final AttackData explosionAttack;
     private final AttackData regularAttack;
+    private int[] currentFrameDataSet;
 
 
     public RobotEnemy(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, float positionY, int id, final MainCharacter mainCharacter) {
@@ -61,26 +65,28 @@ public class RobotEnemy extends GameCharacter {
 
         //actions = new EnemyAction[]{checkAttackDistance};
         this.mainCharacter = mainCharacter;
+        currentFrameDataSet = EASY_FRAME_DATA;
         attackRange = ATTACK_DISTANCE + idleSizeX;
         CollisionObject[] explosionBoxes = new CollisionObject[]{new CollisionObject(new Vector2(57,55),0,GameActivity.PLAYING_WIDTH,35,this, CollisionObject.TYPE_ATTACK)};
-        CollisionObject[] startupBoxes = new CollisionObject[]{};
+        CollisionObject[] startupBoxes = new CollisionObject[]{new CollisionObject(new Vector2(120,100), 0, 10, 10, this, CollisionObject.TYPE_HITTABLE)};
         CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,140,55,this, CollisionObject.TYPE_HITTABLE),
-        new CollisionObject(new Vector2(100, 50),0,20,20, this, CollisionObject.TYPE_ATTACK)};
+        new CollisionObject(new Vector2(100, 50),0,15,20, this, CollisionObject.TYPE_ATTACK)};
         explosionAttack = new AttackData(explosionBoxes, explosionBoxes, explosionBoxes);
-        regularAttack = new AttackData(startupBoxes, attackBoxes, attackBoxes);
-        regularAttack.setStartupAnimation(new AnimationData(11, false, STARTUP_TEXTURES));
-        regularAttack.setActiveAnimation(new AnimationData(40, false, ATTACK_TEXTURE));
-        regularAttack.setRecoveryAnimation(new AnimationData(10, false, RECOVERY_TEXTURES));
+        regularAttack = new AttackData(startupBoxes, attackBoxes, startupBoxes);
+        regularAttack.setStartupAnimation(new AnimationData(currentFrameDataSet[0], false, STARTUP_TEXTURES));
+        regularAttack.setActiveAnimation(new AnimationData(currentFrameDataSet[1], false, ATTACK_TEXTURE));
+        regularAttack.setRecoveryAnimation(new AnimationData(currentFrameDataSet[2], false, RECOVERY_TEXTURES));
     }
 
     @Override
     public void reset(float x, float y) {
         beepInterval = 0;
         selfDestructFrame = 0;
-        regularAttack.reset();
         currentState = EnemyState.WAITING;
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
+        regularAttack.reset();
         DESTROY_ANIMATION.reset();
+        regularAttack.updateFrameData(currentFrameDataSet);
     }
 
     @Override
@@ -114,15 +120,15 @@ public class RobotEnemy extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, GameActivity.WorldData worldData) {
+    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         adjustToFoePosition(foe);
         if(currentState == EnemyState.WAITING) {
             if(selfDestructFrame >= FRAMES_TO_SELFDESTRUCT) {
                 currentState = EnemyState.EXPLODING;
                 activeAttack = explosionAttack;
-                worldData.dBuffer.add(new StaticDecoration(EXPLOSION, new Square(new Vector2(position), 200, 90, 0),
+                decorationData.add(new StaticDecoration(EXPLOSION, new Square(new Vector2(position), 200, 90, 0),
                         baseX.x == -1, 0, 15));
-                worldData.dBuffer.add(new StaticDecoration(EXPLOSION, new Square(new Vector2(position), 300, 75, 0),
+                decorationData.add(new StaticDecoration(EXPLOSION, new Square(new Vector2(position), 300, 75, 0),
                         baseX.x == -1, 13, 10));
             }
 
@@ -137,7 +143,7 @@ public class RobotEnemy extends GameCharacter {
                 for(CollisionObject co : activeAttack.active)
                     co.updatePosition();
             } else if(beepInterval == INITIAL_BEEP_INTERVAL){
-                worldData.dBuffer.add(new StaticDecoration(IDLE_TEXTURE,
+                decorationData.add(new StaticDecoration(IDLE_TEXTURE,
                         new Square(new Vector2(position), spriteContainer.lenX, spriteContainer.lenY, 0),
                         new SimpleDrawer.ColorData(1,0,0,0.25f),
                         baseX.x == -1, 0, 10));
@@ -160,7 +166,7 @@ public class RobotEnemy extends GameCharacter {
         }
 
         if(currentState != EnemyState.WAITING){
-            super.update(foe, worldData);
+            super.update(foe, decorationData);
         }
 
         if(currentState == EnemyState.DYING){
@@ -171,6 +177,21 @@ public class RobotEnemy extends GameCharacter {
 
         if(currentState == EnemyState.EXPLODING)
             currentState = EnemyState.DEAD;
+
+    }
+
+    @Override
+    public void setCurrentDifficulty(Difficulty newDifficulty){
+        if(this.currentDifficulty == newDifficulty)
+            return;
+        else {
+            if(newDifficulty == Difficulty.EASY)
+                currentFrameDataSet = EASY_FRAME_DATA;
+            if(newDifficulty == Difficulty.MEDIUM)
+                currentFrameDataSet = MEDIUM_FRAME_DATA;
+
+            currentDifficulty = newDifficulty;
+        }
 
     }
 

@@ -1,11 +1,11 @@
 package com.jgame.elements;
 
 import com.jgame.game.GameActivity;
-import com.jgame.game.GameFlow;
+import com.jgame.util.Decoration;
 import com.jgame.util.TextureDrawer;
-import com.jgame.util.TimeCounter;
-import com.jgame.game.GameActivity.WorldData;
 import com.jgame.util.Vector2;
+
+import java.util.ArrayDeque;
 
 /**
  * Enemigo que sirve nada mas para representar el intervalo de tiempo que existe en el juego cuando se elimina al enemigo principal.
@@ -43,7 +43,7 @@ public class EmptyEnemy extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, WorldData wData) {
+    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         currentFrame += 1;
     }
 

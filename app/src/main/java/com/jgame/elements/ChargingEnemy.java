@@ -4,9 +4,12 @@ import android.util.Log;
 
 import com.jgame.game.GameActivity;
 import com.jgame.game.GameFlow;
+import com.jgame.util.Decoration;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
+
+import java.util.ArrayDeque;
 
 /**
  * Enemigo que tiene el objetivo de lanzarse hacia el personaje principal despues de realizar un periodo de carga.
@@ -67,7 +70,7 @@ public class ChargingEnemy extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, GameActivity.WorldData worldData) {
+    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         if(currentState == State.IDLE){
             idleFrame -= 1;
             if(idleFrame <= 0)
@@ -78,8 +81,8 @@ public class ChargingEnemy extends GameCharacter {
                 currentState = State.ATTACKING;
         } else if (currentState == State.ATTACKING){
             if(foe.hittable())
-                super.update(foe, worldData);
-            moveX(baseX.x * ATTACK_SPEED[currentDifficulty]);
+                super.update(foe, decorationData);
+            moveX(baseX.x * ATTACK_SPEED[0]);
         }
 
         for(CollisionObject co : activeAttack.active)

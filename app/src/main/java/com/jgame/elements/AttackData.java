@@ -45,6 +45,16 @@ public class AttackData {
         animationInfo[RECOVERY_TIMER] = data;
     }
 
+    /**
+     * Actualiza la informacion de las animaciones para que tengan una duracion diferente
+     * @param frameDataSet nueva informacion de frames que se utilizara
+     */
+    public void updateFrameData(int[] frameDataSet){
+        animationInfo[STARTUP_TIMER].updateFrameData(frameDataSet[0]);
+        animationInfo[ACTIVE_TIMER].updateFrameData(frameDataSet[1]);
+        animationInfo[RECOVERY_TIMER].updateFrameData(frameDataSet[2]);
+    }
+
     public void reset(){
         animationInfo[STARTUP_TIMER].reset();
         animationInfo[ACTIVE_TIMER].reset();

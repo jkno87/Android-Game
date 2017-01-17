@@ -96,16 +96,16 @@ public class GameRenderer implements Renderer {
     @Override
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
-        synchronized (gameActivity.worldData){
+        //synchronized (gameActivity.decorationsBuffer){
             for(int i = 0; i < decorations.length; i++){
                 if(decorations[i] == null || decorations[i].completed()) {
-                    if (!gameActivity.worldData.dBuffer.isEmpty())
-                        decorations[i] = gameActivity.worldData.dBuffer.removeFirst();
+                    if (!gameActivity.decorationsBuffer.isEmpty())
+                        decorations[i] = gameActivity.decorationsBuffer.removeFirst();
                 } else
                     decorations[i].update();
 
             }
-        }
+        //}
 
         if(gameData.state == GameState.MENU)
             drawMenu();
@@ -126,7 +126,7 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.reset();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, backgroundId);
             mainTextureDrawer.addTexturedSquare(BACKGROUND_SIZE, BACKGROUND_TEXTURE);
-            if(gameData.score > GameActivity.EASY_DIFFICULTY_POINTS)
+            if(gameData.currentDifficulty == GameActivity.Difficulty.MEDIUM)
                 mainTextureDrawer.addColoredSquare(BACKGROUND_SIZE, LEVEL_3_BACKGROUND, BACKGROUND_OVERLAY);
             mainTextureDrawer.draw(gl10);
 

@@ -3,12 +3,13 @@ package com.jgame.elements;
 import com.jgame.game.ControllerManager;
 import com.jgame.game.GameFlow;
 import com.jgame.elements.AnimationData;
+import com.jgame.util.Decoration;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
 import com.jgame.elements.AttackData.CollisionState;
-import com.jgame.game.GameActivity.WorldData;
+import java.util.ArrayDeque;
 
 /**
  * Objeto que representa al personaje del jugador.
@@ -37,8 +38,10 @@ public class MainCharacter extends GameCharacter {
     private final TimeCounter MOVE_B_COUNTER = new TimeCounter(0.64f);
     public final AttackData moveA;
     public CharacterState state;
+    private final float maxX;
+    private final float minX;
 
-    public MainCharacter(int id, Vector2 position){
+    public MainCharacter(int id, Vector2 position, float minX, float maxX){
         super(SPRITE_LENGTH, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id);
         this.state = CharacterState.IDLE;
         CollisionObject [] startupA = new CollisionObject[1];
@@ -57,6 +60,9 @@ public class MainCharacter extends GameCharacter {
         moveA.setStartupAnimation(new AnimationData(5, false, INIT_MOV_A));
         moveA.setActiveAnimation(new AnimationData(10, false, ACTIVE_MOV_A));
         moveA.setRecoveryAnimation(new AnimationData(10, false, INIT_MOV_A));
+
+        this.maxX = maxX;
+        this.minX = minX;
     }
 
     @Override
@@ -119,21 +125,21 @@ public class MainCharacter extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, WorldData worldData) {
-        super.update(foe, worldData);
+    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+        super.update(foe, decorationData);
         if (state == CharacterState.IDLE) {
             adjustToFoePosition(foe);
             WALKING_ANIMATION.reset();
             return;
         } if (state == CharacterState.MOVING_FORWARD) {
             adjustToFoePosition(foe);
-            if(position.x + MOVING_SPEED < worldData.maxX) {
+            if(position.x + MOVING_SPEED < maxX) {
                 move(RIGHT_MOVE_SPEED);
                 WALKING_ANIMATION.updateFrame();
             }
         } if (state == CharacterState.MOVING_BACKWARDS) {
             adjustToFoePosition(foe);
-            if(position.x - MOVING_SPEED > worldData.minX) {
+            if(position.x - MOVING_SPEED > minX) {
                 move(LEFT_MOVE_SPEED);
                 WALKING_ANIMATION.updateFrame();
             }

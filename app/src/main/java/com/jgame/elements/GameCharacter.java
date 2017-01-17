@@ -1,13 +1,13 @@
 package com.jgame.elements;
 
 import com.jgame.game.GameActivity;
-import com.jgame.game.GameFlow;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer.TextureData;
-import com.jgame.util.TimeCounter;
+import com.jgame.game.GameActivity.Difficulty;
 import com.jgame.util.Vector2;
-import com.jgame.game.GameActivity.WorldData;
+import com.jgame.util.Decoration;
 
+import java.util.ArrayDeque;
 import java.util.Random;
 
 /**
@@ -27,7 +27,7 @@ public abstract class GameCharacter extends GameObject {
     public AttackData activeAttack;
     public final Square spriteContainer;
     public float idleSizeX;
-    public int currentDifficulty;
+    public Difficulty currentDifficulty;
 
     public GameCharacter(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, Vector2 position, int id) {
         super(position, id);
@@ -108,9 +108,9 @@ public abstract class GameCharacter extends GameObject {
     /**
      * Realiza la unica accion en comun de todos los objetos GameCharacter, checar que colisione contra el objeto foe.
      * @param foe GameCharacter contra el que se podria provocar una colision.
-     * @param worldData Estado actual de WorldData.
+     * @param decorationData Decoraciones que se encuentran en el juego actual
      */
-    public void update(GameCharacter foe, WorldData worldData){
+    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData){
         if(foe.hittable()) {
             for (CollisionObject co : getActiveCollisionBoxes())
                 if (co.checkCollision(foe))
@@ -119,21 +119,11 @@ public abstract class GameCharacter extends GameObject {
     }
 
     /**
-     * Actualiza la dificultad actual dependiendo del score del jugador.
-     * @param score
+     * Actualiza la dificultad del personaje
+     * @param diff Dificultad actual
      */
-    public void increaseDifficulty(int score){
-        if(currentDifficulty == GameActivity.EASY_DIFFICULTY && score > GameActivity.EASY_DIFFICULTY_POINTS) {
-            currentDifficulty = GameActivity.MEDIUM_DIFFICULTY;
-        }
-    }
-
-    /**
-     * Actualiza la dificultad del juego a difficulty
-     * @param difficulty
-     */
-    public void resetDifficulty(int difficulty){
-        currentDifficulty = difficulty;
+    public void setCurrentDifficulty(Difficulty diff){
+        this.currentDifficulty = diff;
     }
 
     public abstract void reset(float x, float y);

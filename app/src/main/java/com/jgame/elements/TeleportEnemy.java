@@ -2,10 +2,12 @@ package com.jgame.elements;
 
 import com.jgame.game.GameActivity;
 import com.jgame.game.GameFlow;
+import com.jgame.util.Decoration;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
-import com.jgame.game.GameActivity.WorldData;
+
+import java.util.ArrayDeque;
 
 /**
  * Clase que representa un enemigo basico que se mantiene en su lugar y ataca
@@ -58,7 +60,6 @@ public class TeleportEnemy extends GameCharacter {
         };
         actions = new EnemyAction[]{attack, move};
         currentAction = 0;
-        currentDifficulty = 0;
         activeAttack = new AttackData(startupBoxes, activeBoxes, recoveryBoxes);
         //activeAttack.attackDuration = attackFrames[currentDifficulty];
         teleportFrame = TELEPORT_FRAMES;
@@ -79,7 +80,8 @@ public class TeleportEnemy extends GameCharacter {
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
     }
 
-    public void update(GameCharacter foe, WorldData worldData) {
+    @Override
+    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
 
         adjustToFoePosition(foe);
 
@@ -113,7 +115,7 @@ public class TeleportEnemy extends GameCharacter {
                 idleFrame = 0;
             }
 
-            super.update(foe, worldData);
+            super.update(foe, decorationData);
         }
     }
 
