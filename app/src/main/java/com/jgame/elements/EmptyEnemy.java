@@ -56,4 +56,9 @@ public class EmptyEnemy extends GameCharacter {
     public void hit() {
 
     }
+
+    @Override
+    public void trip(){
+
+    }
 }

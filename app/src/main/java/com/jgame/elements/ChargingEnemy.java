@@ -104,4 +104,9 @@ public class ChargingEnemy extends GameCharacter {
     public void hit() {
         currentState = State.DEAD;
     }
+
+    @Override
+    public void trip(){
+
+    }
 }

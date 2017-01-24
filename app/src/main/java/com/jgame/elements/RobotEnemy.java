@@ -8,7 +8,6 @@ import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.Vector2;
-import com.jgame.util.Decoration.AnimatedDecoration;
 import com.jgame.util.Decoration.StaticDecoration;
 
 import java.util.ArrayDeque;
@@ -22,7 +21,7 @@ import java.util.ArrayDeque;
 public class RobotEnemy extends GameCharacter {
 
     enum EnemyState {
-        WAITING, EXPLODING, ATTACKING, DYING, DEAD
+        WAITING, EXPLODING, ATTACKING, DYING, DEAD, RECOVERING
     }
 
     private final int[] EASY_FRAME_DATA = new int[]{11,40,11};
@@ -37,17 +36,19 @@ public class RobotEnemy extends GameCharacter {
     private final static TextureData EXPLOSION = TextureDrawer.genTextureData(6,2,8);
     private final static AnimationData DESTROY_ANIMATION = new AnimationData(2, false,
             new TextureData[] {STARTUP_TEXTURES[2], STARTUP_TEXTURES[1], STARTUP_TEXTURES[0], EXPLOSION});
+    public final static TextureData CHAIN_ON_GROUND = TextureDrawer.genTextureData(6,1,8);
     public final static TextureData[] RECOVERY_TEXTURES = {TextureDrawer.genTextureData(5,1,8),
-    TextureDrawer.genTextureData(6,1,8)};
+    CHAIN_ON_GROUND};
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.5f,0.125f,0.625f,0.25f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 150;
     public final static float ATTACK_DISTANCE = 100;
     //private final EnemyAction[] actions;
     private final MainCharacter mainCharacter;
     private final int FRAMES_TO_SELFDESTRUCT = 300;
+    private final int FRAMES_TO_RECOVER = 20;
     private EnemyState currentState;
     private int beepInterval;
-    private int selfDestructFrame;
+    private int currentIdleFrame;
     private float attackRange;
     private final AttackData explosionAttack;
     private final AttackData regularAttack;
@@ -79,9 +80,14 @@ public class RobotEnemy extends GameCharacter {
     }
 
     @Override
+    public void trip(){
+
+    }
+
+    @Override
     public void reset(float x, float y) {
         beepInterval = 0;
-        selfDestructFrame = 0;
+        currentIdleFrame = 0;
         currentState = EnemyState.WAITING;
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
         regularAttack.reset();
@@ -110,6 +116,8 @@ public class RobotEnemy extends GameCharacter {
             return activeAttack.getCurrentAnimation().getCurrentSprite();
         else if(currentState == EnemyState.DYING)
             return DESTROY_ANIMATION.getCurrentSprite();
+        else if(currentState == EnemyState.RECOVERING)
+            return CHAIN_ON_GROUND;
         else
             return IDLE_TEXTURE;
     }
@@ -123,7 +131,7 @@ public class RobotEnemy extends GameCharacter {
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         adjustToFoePosition(foe);
         if(currentState == EnemyState.WAITING) {
-            if(selfDestructFrame >= FRAMES_TO_SELFDESTRUCT) {
+            if(currentIdleFrame >= FRAMES_TO_SELFDESTRUCT) {
                 currentState = EnemyState.EXPLODING;
                 activeAttack = explosionAttack;
                 decorationData.add(new StaticDecoration(EXPLOSION, new Square(new Vector2(position), 200, 90, 0),
@@ -150,7 +158,7 @@ public class RobotEnemy extends GameCharacter {
                 beepInterval = 0;
             }
 
-            selfDestructFrame += 1;
+            currentIdleFrame += 1;
             beepInterval += 1;
 
         }
@@ -158,10 +166,19 @@ public class RobotEnemy extends GameCharacter {
         if(currentState == EnemyState.ATTACKING){
             activeAttack.update();
             if(activeAttack.completed()) {
-                selfDestructFrame = 0;
+                currentIdleFrame = 0;
                 beepInterval = 0;
-                currentState = EnemyState.WAITING;
+                currentState = EnemyState.RECOVERING;
                 regularAttack.reset();
+                foe.trip();
+            }
+        }
+
+        if(currentState == EnemyState.RECOVERING){
+            currentIdleFrame += 1;
+            if(currentIdleFrame > FRAMES_TO_RECOVER) {
+                currentState = EnemyState.WAITING;
+                currentIdleFrame = 0;
             }
         }
 

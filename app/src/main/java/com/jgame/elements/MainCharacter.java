@@ -18,7 +18,7 @@ import java.util.ArrayDeque;
 public class MainCharacter extends GameCharacter {
 
     public enum CharacterState {
-        IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B, DEAD
+        IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B, DEAD, KNOCKDOWN
     }
 
     public final static TextureData IDLE_TEXTURE = TextureDrawer.genTextureData(1,3,16);
@@ -31,6 +31,7 @@ public class MainCharacter extends GameCharacter {
     public static final int CHARACTER_HEIGHT = 160;
     public final int LENGTH_MOVE_A = CHARACTER_LENGTH + 10;
     public final int HEIGHT_MOVE_A = CHARACTER_HEIGHT;
+    private final int KNOCKDOWN_FRAMES = 18;
     private final AnimationData WALKING_ANIMATION = new AnimationData(15, true, new TextureData[]{MOVING_A, MOVING_B});
     private final float MOVING_SPEED = 0.75f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
@@ -165,6 +166,15 @@ public class MainCharacter extends GameCharacter {
         idleCollisionBoxes[0].updatePosition();
         state = CharacterState.IDLE;
     }
+
+    /**
+     * Accion que sirve para que el personaje principal se caiga. Esto tiene la funcion de crear espacio entre el jugador y
+     * el enemigo, tambien para controlar el ritmo de juego.
+     */
+    public void trip(){
+        moveBackwards(25);
+    }
+
 
     @Override
     public boolean hittable(){

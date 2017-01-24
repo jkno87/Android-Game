@@ -76,6 +76,12 @@ public class GameObject {
         updatePosition();
     }
 
+    public void moveBackwards(float xDiff){
+        relativePosition.add(-xDiff * baseX.x, 0);
+        updatePosition();
+    }
+
+
     /**
      * Funcion que determina si el GameObject puede ser dibujado en el renderer.
      * @return
