@@ -26,7 +26,7 @@ public class GameRenderer implements Renderer {
     private final static int SCORE_SIZE_Y = 20;
     private final static int PAUSE_X_SIZE = 100;
     private final static int PAUSE_Y_SIZE = 70;
-    private final static boolean RENDER_HITBOXES = true;
+    private final static boolean RENDER_HITBOXES = false;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
@@ -35,6 +35,7 @@ public class GameRenderer implements Renderer {
     public final static TextureData SOUND_TEXTURE = new TextureData(0.4375f,0.4375f,0.5f,0.5f);
     public final static TextureData BUTTON_TEXTURE = TextureDrawer.genTextureData(1.0f,7.05f,16);
     public final static TextureData ARROW_TEXTURE = TextureDrawer.genTextureData(1.0f,8.05f,16);
+    public final static TextureData START_BUTTON_TEXTURE = new TextureData(0, 0.5625f, 0.125f, 0.625f);
     public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.0625f,0.5f,0,0.4375f);
     public final static TextureData SOUND_SWITCH_ON_TEXTURE = new TextureData(0.375f,0.375f,0.4375f,0.4375f);
     public final static TextureData SOUND_SWITCH_OFF_TEXTURE = new TextureData(0.4375f,0.4375f,0.375f,0.375f);
@@ -49,7 +50,6 @@ public class GameRenderer implements Renderer {
             PAUSE_X_SIZE * 2, PAUSE_Y_SIZE * 2);
     private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
     public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameLevels.FRUSTUM_HEIGHT - 35, 50, 18), 2);
-    public static final GameText TITLE_TEXT = new GameText("start", GameActivity.START_BUTTON_BOUNDS, 35);
     public static final GameText SOUND_LABEL = new GameText("sound", new Square(160, 85, 150, 35), 0);
     public static final GameText ON_LABEL = new GameText("on", new Square(160, 50, 50, 20), 20);
     public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 20);
@@ -238,7 +238,7 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.addColoredSquare(GameActivity.SOUND_SWITCH, NO_TEXTURE_COORDS, HITTABLE_COLOR);
         }
 
-        TITLE_TEXT.addLetterTexture(mainTextureDrawer);
+        mainTextureDrawer.addTexturedSquare(GameActivity.START_BUTTON_BOUNDS, START_BUTTON_TEXTURE);
         SOUND_LABEL.addLetterTexture(mainTextureDrawer);
         if(gameData.soundEnabled) {
             ON_LABEL.addLetterTexture(mainTextureDrawer);
