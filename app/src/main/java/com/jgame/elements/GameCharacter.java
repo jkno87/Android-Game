@@ -6,7 +6,7 @@ import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.game.GameActivity.Difficulty;
 import com.jgame.util.Vector2;
 import com.jgame.util.Decoration;
-
+import com.jgame.game.GameData.Event;
 import java.util.ArrayDeque;
 import java.util.Random;
 
@@ -110,12 +110,14 @@ public abstract class GameCharacter extends GameObject {
      * @param foe GameCharacter contra el que se podria provocar una colision.
      * @param decorationData Decoraciones que se encuentran en el juego actual
      */
-    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData){
+    public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData){
         if(foe.hittable()) {
             for (CollisionObject co : getActiveCollisionBoxes())
                 if (co.checkCollision(foe))
                     foe.hit();
         }
+
+        return Event.NONE;
     }
 
     /**

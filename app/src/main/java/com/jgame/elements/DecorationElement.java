@@ -1,13 +1,8 @@
 package com.jgame.elements;
 
-import com.jgame.definitions.GameLevels;
-import com.jgame.game.MainGameFlow;
 import com.jgame.util.GeometricElement;
-import com.jgame.util.Grid;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Este objeto representa Elementos del juego que solo se utilizaran para dibujarse en pantalla pero no afectan el gameplay.

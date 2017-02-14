@@ -1,12 +1,8 @@
 package com.jgame.elements;
 
-import android.util.Log;
-
-import com.jgame.game.GameActivity;
-import com.jgame.game.GameFlow;
 import com.jgame.util.Decoration;
 import com.jgame.util.TextureDrawer.TextureData;
-import com.jgame.util.TimeCounter;
+import com.jgame.game.GameData.Event;
 import com.jgame.util.Vector2;
 
 import java.util.ArrayDeque;
@@ -70,7 +66,7 @@ public class ChargingEnemy extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+    public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         if(currentState == State.IDLE){
             idleFrame -= 1;
             if(idleFrame <= 0)
@@ -87,6 +83,8 @@ public class ChargingEnemy extends GameCharacter {
 
         for(CollisionObject co : activeAttack.active)
             co.updatePosition();
+
+        return Event.NONE;
     }
 
     //@Override

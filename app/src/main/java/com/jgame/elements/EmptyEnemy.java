@@ -4,7 +4,7 @@ import com.jgame.game.GameActivity;
 import com.jgame.util.Decoration;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.Vector2;
-
+import com.jgame.game.GameData.Event;
 import java.util.ArrayDeque;
 
 /**
@@ -43,8 +43,9 @@ public class EmptyEnemy extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+    public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         currentFrame += 1;
+        return Event.NONE;
     }
 
     //@Override

@@ -1,6 +1,5 @@
 package com.jgame.util;
 
-import com.jgame.definitions.GameLevels;
 import com.jgame.elements.GameElement;
 
 import java.util.ArrayList;

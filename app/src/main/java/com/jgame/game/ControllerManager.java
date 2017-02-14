@@ -1,6 +1,5 @@
 package com.jgame.game;
 
-import com.jgame.definitions.GameLevels;
 import com.jgame.game.GameData.GameState;
 import com.jgame.util.Square;
 
@@ -43,8 +42,8 @@ public class ControllerManager {
     public void handleDown(float x, float y){
         try {
             if(gameData.state == GameState.PLAYING){
-                inputX = GameLevels.FRUSTUM_WIDTH * x;
-                inputY = GameLevels.FRUSTUM_HEIGHT * y;
+                inputX = GameActivity.FRUSTUM_WIDTH * x;
+                inputY = GameActivity.FRUSTUM_HEIGHT * y;
 
                 if (gameButtons[INPUT_LEFT].contains(inputX, inputY)) {
                     inputs.put(GameInput.LEFT);
@@ -56,8 +55,8 @@ public class ControllerManager {
                     inputs.add(GameInput.INPUT_A);
                 }
             } else if(gameData.state == GameState.RESTART_SCREEN){
-                inputX = GameLevels.FRUSTUM_WIDTH * x;
-                inputY = GameLevels.FRUSTUM_HEIGHT * y;
+                inputX = GameActivity.FRUSTUM_WIDTH * x;
+                inputY = GameActivity.FRUSTUM_HEIGHT * y;
                 if(GameActivity.QUIT_BOUNDS.contains(inputX, inputY))
                     inputs.put(GameInput.QUIT_GAME);
                 else if(GameActivity.RESTART_BOUNDS.contains(inputX, inputY))
@@ -74,8 +73,8 @@ public class ControllerManager {
             if(gameData.state != GameState.PLAYING)
                 return;
 
-            inputX = GameLevels.FRUSTUM_WIDTH * x;
-            inputY = GameLevels.FRUSTUM_HEIGHT * y;
+            inputX = GameActivity.FRUSTUM_WIDTH * x;
+            inputY = GameActivity.FRUSTUM_HEIGHT * y;
 
             if(mainButtonPressed != INPUT_NONE && gameButtons[mainButtonPressed].contains(inputX, inputY))
                 return;
@@ -100,8 +99,8 @@ public class ControllerManager {
     }
 
     public void handleUp(float x, float y){
-        inputX = GameLevels.FRUSTUM_WIDTH * x;
-        inputY = GameLevels.FRUSTUM_HEIGHT * y;
+        inputX = GameActivity.FRUSTUM_WIDTH * x;
+        inputY = GameActivity.FRUSTUM_HEIGHT * y;
 
         try {
             if (gameData.state == GameState.PLAYING) {
@@ -128,8 +127,8 @@ public class ControllerManager {
             if(gameData.state != GameData.GameState.PLAYING)
                 return;
 
-            inputX = GameLevels.FRUSTUM_WIDTH * x;
-            inputY = GameLevels.FRUSTUM_HEIGHT * y;
+            inputX = GameActivity.FRUSTUM_WIDTH * x;
+            inputY = GameActivity.FRUSTUM_HEIGHT * y;
 
             if (gameButtons[INPUT_LEFT].contains(inputX, inputY))
                 inputs.put(GameInput.LEFT);

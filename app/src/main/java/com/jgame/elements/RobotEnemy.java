@@ -9,7 +9,7 @@ import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.Vector2;
 import com.jgame.util.Decoration.StaticDecoration;
-
+import com.jgame.game.GameData.Event;
 import java.util.ArrayDeque;
 
 /**
@@ -128,7 +128,7 @@ public class RobotEnemy extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+    public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         adjustToFoePosition(foe);
         if(currentState == EnemyState.WAITING) {
             if(currentIdleFrame >= FRAMES_TO_SELFDESTRUCT) {
@@ -171,6 +171,8 @@ public class RobotEnemy extends GameCharacter {
                 currentState = EnemyState.RECOVERING;
                 regularAttack.reset();
                 foe.trip();
+
+                return Event.QUAKE;
             }
         }
 
@@ -195,6 +197,7 @@ public class RobotEnemy extends GameCharacter {
         if(currentState == EnemyState.EXPLODING)
             currentState = EnemyState.DEAD;
 
+        return Event.NONE;
     }
 
     @Override

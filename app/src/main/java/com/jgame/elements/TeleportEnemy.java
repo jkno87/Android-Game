@@ -1,7 +1,6 @@
 package com.jgame.elements;
 
-import com.jgame.game.GameActivity;
-import com.jgame.game.GameFlow;
+import com.jgame.game.GameData.Event;
 import com.jgame.util.Decoration;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
@@ -81,22 +80,22 @@ public class TeleportEnemy extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+    public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
 
         adjustToFoePosition(foe);
 
         if(currentState == EnemyState.DEAD)
-            return;
+            return Event.NONE;
 
         if(currentState == EnemyState.TELEPORTING){
             teleportFrame -= 1;
             if(teleportFrame > 0)
-                return;
+                return Event.NONE;
             teleportFrame = TELEPORT_FRAMES;
             actions[currentAction].act();
             toggleCurrentAction();
 
-            return;
+            return Event.NONE;
         }
 
         if(currentState == EnemyState.IDLE) {
@@ -105,7 +104,7 @@ public class TeleportEnemy extends GameCharacter {
                 currentState = EnemyState.ATTACKING;
                 activeAttack.reset();
             }
-            return;
+            return Event.NONE;
         }
 
         if(currentState == EnemyState.ATTACKING) {
@@ -117,6 +116,8 @@ public class TeleportEnemy extends GameCharacter {
 
             super.update(foe, decorationData);
         }
+
+        return Event.NONE;
     }
 
     @Override

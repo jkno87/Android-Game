@@ -1,8 +1,7 @@
 package com.jgame.elements;
 
 import com.jgame.game.ControllerManager;
-import com.jgame.game.GameFlow;
-import com.jgame.elements.AnimationData;
+import com.jgame.game.GameData.Event;
 import com.jgame.util.Decoration;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
@@ -126,12 +125,12 @@ public class MainCharacter extends GameCharacter {
     }
 
     @Override
-    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+    public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         super.update(foe, decorationData);
         if (state == CharacterState.IDLE) {
             adjustToFoePosition(foe);
             WALKING_ANIMATION.reset();
-            return;
+            return Event.NONE;
         } if (state == CharacterState.MOVING_FORWARD) {
             adjustToFoePosition(foe);
             if(position.x + MOVING_SPEED < maxX) {
@@ -157,6 +156,8 @@ public class MainCharacter extends GameCharacter {
                 this.state = CharacterState.IDLE;
             }*/
         }
+
+        return Event.NONE;
     }
 
     public void reset(float x, float y){

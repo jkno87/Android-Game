@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
-import com.jgame.definitions.GameLevels;
+
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.CollisionObject;
 import com.jgame.util.DigitsDisplay;
@@ -46,19 +46,21 @@ public class GameRenderer implements Renderer {
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
     public static final Square CONTROLS_RECT = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
-    public static final Square PAUSE_RECTANGLE = new Square(GameLevels.FRUSTUM_WIDTH/2 - PAUSE_X_SIZE, GameLevels.FRUSTUM_HEIGHT/2 - PAUSE_Y_SIZE,
+    public static final Square PAUSE_RECTANGLE = new Square(GameActivity.FRUSTUM_WIDTH/2 - PAUSE_X_SIZE, GameActivity.FRUSTUM_HEIGHT/2 - PAUSE_Y_SIZE,
             PAUSE_X_SIZE * 2, PAUSE_Y_SIZE * 2);
     private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
-    public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameLevels.FRUSTUM_HEIGHT - 35, 50, 18), 2);
+    public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameActivity.FRUSTUM_HEIGHT - 35, 50, 18), 2);
     public static final GameText SOUND_LABEL = new GameText("sound", new Square(160, 85, 150, 35), 0);
     public static final GameText ON_LABEL = new GameText("on", new Square(160, 50, 50, 20), 20);
     public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 20);
     public static final Square SOUND_SWITCH_SPRITE = new Square(210, 40, 50, 50);
-    public static final Square BACKGROUND_SIZE = new Square(0, GameActivity.CONTROLS_HEIGHT,GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT - GameActivity.CONTROLS_HEIGHT);
+    public static final Vector2 BACKGROUND_POSITION = new Vector2(0, GameActivity.CONTROLS_HEIGHT);
+    public static final Square BACKGROUND_CONTAINER = new Square(new Vector2(), GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT - GameActivity.CONTROLS_HEIGHT, 0);
     private static final DigitsDisplay CURRENT_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, 5, new Vector2(250,35));
     private static final ColorData PAUSE_MENU_COLOR = new ColorData(0,1,0,1);
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
+    private Vector2 backgroundPosition;
     private GL10 gl10;
     int personajesId;
     int backgroundId;
@@ -74,6 +76,7 @@ public class GameRenderer implements Renderer {
         pauseOverlay = new SimpleDrawer.ColorData(0,0,0,0.5f);
         menuBase = new SimpleDrawer.ColorData(0,0.75f,0.5f,1);
         gameData = new GameData();
+        backgroundPosition = new Vector2();
     }
 
     public void setSurfaceView(GameSurfaceView surfaceView){
@@ -96,16 +99,18 @@ public class GameRenderer implements Renderer {
     @Override
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
-        //synchronized (gameActivity.decorationsBuffer){
-            for(int i = 0; i < decorations.length; i++){
-                if(decorations[i] == null || decorations[i].completed()) {
-                    if (!gameActivity.decorationsBuffer.isEmpty())
-                        decorations[i] = gameActivity.decorationsBuffer.removeFirst();
-                } else
-                    decorations[i].update();
+        //Se suma la posicion original con cualquier cambio nuevo
+        backgroundPosition.set(BACKGROUND_POSITION).add(gameData.backgroundModifier);
+        BACKGROUND_CONTAINER.setPosition(backgroundPosition);
 
-            }
-        //}
+        //Se actualiza la lista de decoraciones
+        for(int i = 0; i < decorations.length; i++){
+            if(decorations[i] == null || decorations[i].completed()) {
+                if (!gameActivity.decorationsBuffer.isEmpty())
+                    decorations[i] = gameActivity.decorationsBuffer.removeFirst();
+            } else
+                decorations[i].update();
+        }
 
         if(gameData.state == GameState.MENU)
             drawMenu();
@@ -117,7 +122,7 @@ public class GameRenderer implements Renderer {
             gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
             gl10.glMatrixMode(GL10.GL_PROJECTION);
             gl10.glLoadIdentity();
-            gl10.glOrthof(0, GameLevels.FRUSTUM_WIDTH, 0, GameLevels.FRUSTUM_HEIGHT, 1, -1);
+            gl10.glOrthof(0, GameActivity.FRUSTUM_WIDTH, 0, GameActivity.FRUSTUM_HEIGHT, 1, -1);
             gl10.glMatrixMode(GL10.GL_MODELVIEW);
             gl10.glEnable(GL10.GL_BLEND);
             gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -125,9 +130,9 @@ public class GameRenderer implements Renderer {
 
             mainTextureDrawer.reset();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, backgroundId);
-            mainTextureDrawer.addTexturedSquare(BACKGROUND_SIZE, BACKGROUND_TEXTURE);
+            mainTextureDrawer.addTexturedSquare(BACKGROUND_CONTAINER, BACKGROUND_TEXTURE);
             if(gameData.currentDifficulty == GameActivity.Difficulty.MEDIUM)
-                mainTextureDrawer.addColoredSquare(BACKGROUND_SIZE, LEVEL_3_BACKGROUND, BACKGROUND_OVERLAY);
+                mainTextureDrawer.addColoredSquare(BACKGROUND_CONTAINER, LEVEL_3_BACKGROUND, BACKGROUND_OVERLAY);
             mainTextureDrawer.draw(gl10);
 
 
@@ -224,7 +229,7 @@ public class GameRenderer implements Renderer {
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
         gl10.glMatrixMode(GL10.GL_PROJECTION);
         gl10.glLoadIdentity();
-        gl10.glOrthof(0, GameLevels.FRUSTUM_WIDTH, 0, GameLevels.FRUSTUM_HEIGHT, 1, -1);
+        gl10.glOrthof(0, GameActivity.FRUSTUM_WIDTH, 0, GameActivity.FRUSTUM_HEIGHT, 1, -1);
         gl10.glMatrixMode(GL10.GL_MODELVIEW);
         gl10.glEnable(GL10.GL_BLEND);
         gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
