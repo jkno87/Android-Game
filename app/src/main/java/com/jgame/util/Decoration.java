@@ -8,22 +8,28 @@ public abstract class Decoration {
         public final TextureDrawer.TextureData sprite;
         public int preDrawFrames;
         public int drawFrames;
+        private final int initialDrawFrames;
+        private final boolean fade;
 
-        public StaticDecoration(TextureDrawer.TextureData sprite, Square size, SimpleDrawer.ColorData color, boolean inverted, int preDrawFrames, int drawFrames){
+        public StaticDecoration(TextureDrawer.TextureData sprite, Square size, SimpleDrawer.ColorData color, boolean inverted, int preDrawFrames, int drawFrames, boolean fade){
             this.sprite = sprite;
             this.size = size;
             this.color = color;
             this.inverted = inverted;
             this.preDrawFrames = preDrawFrames;
             this.drawFrames = drawFrames;
+            initialDrawFrames = drawFrames;
+            this.fade = fade;
         }
 
-        public StaticDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted, int preDrawFrames, int drawFrames){
+        public StaticDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted, int preDrawFrames, int drawFrames, boolean fade){
             this.sprite = sprite;
             this.size = size;
             this.inverted = inverted;
             this.preDrawFrames = preDrawFrames;
             this.drawFrames = drawFrames;
+            initialDrawFrames = drawFrames;
+            this.fade = fade;
         }
 
         @Override
@@ -40,8 +46,12 @@ public abstract class Decoration {
         public void update() {
             if(preDrawFrames > 0)
                 preDrawFrames--;
-            else
+            else {
                 drawFrames--;
+                if(fade)
+                    color.a = color.a * ((float) drawFrames) / initialDrawFrames;
+                }
+
         }
 
         @Override

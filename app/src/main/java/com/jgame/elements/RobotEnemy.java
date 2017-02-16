@@ -135,12 +135,16 @@ public class RobotEnemy extends GameCharacter {
                 currentState = EnemyState.EXPLODING;
                 activeAttack = explosionAttack;
                 decorationData.add(new StaticDecoration(EXPLOSION, new Square(new Vector2(position), 200, 90, 0),
-                        baseX.x == -1, 0, 15));
+                        baseX.x == -1, 0, 15, true));
                 decorationData.add(new StaticDecoration(EXPLOSION, new Square(new Vector2(position), 300, 75, 0),
-                        baseX.x == -1, 13, 10));
+                        baseX.x == -1, 13, 10, true));
             }
 
             if (position.x > foe.position.x && (position.x - foe.position.x) < attackRange) {
+                decorationData.add(new StaticDecoration(IDLE_TEXTURE,
+                        new Square(new Vector2(0,0), spriteContainer.lenX, spriteContainer.lenY, 0),
+                        new SimpleDrawer.ColorData(1,1,1,0.75f),
+                        baseX.x == -1, 0, 100, true));
                 currentState = EnemyState.ATTACKING;
                 activeAttack = regularAttack;
                 for(CollisionObject co : activeAttack.active)
@@ -154,7 +158,7 @@ public class RobotEnemy extends GameCharacter {
                 decorationData.add(new StaticDecoration(IDLE_TEXTURE,
                         new Square(new Vector2(position), spriteContainer.lenX, spriteContainer.lenY, 0),
                         new SimpleDrawer.ColorData(1,0,0,0.25f),
-                        baseX.x == -1, 0, 10));
+                        baseX.x == -1, 0, 10, false));
                 beepInterval = 0;
             }
 
