@@ -28,9 +28,11 @@ public class RobotEnemy extends GameCharacter {
     private final int[] MEDIUM_FRAME_DATA = new int[]{9,20,5};
     private final static int INITIAL_BEEP_INTERVAL = 30;
     public final static TextureData IDLE_TEXTURE = new TextureData(0.375f,0.125f,0.5f,0.25f);
-    public final static TextureData[] STARTUP_TEXTURES = {new TextureData(0.375f,0,0.5f,0.125f),
+    public final static TextureData[] STARTUP_TEXTURES = {
+            IDLE_TEXTURE, new TextureData(0.375f,0,0.5f,0.125f),
             new TextureData(0.375f,0.25f,0.5f,0.375f),
-            new TextureData(0.5f,0.25f,0.625f,0.375f)};
+            new TextureData(0.5f,0.25f,0.625f,0.375f)
+    };
     private final static AnimationData BEEP_ANIMATION = new AnimationData(15, false,
             new TextureData[]{IDLE_TEXTURE});
     private final static TextureData EXPLOSION = TextureDrawer.genTextureData(6,2,8);
@@ -140,16 +142,13 @@ public class RobotEnemy extends GameCharacter {
                         baseX.x == -1, 13, 10, true));
             }
 
-            if (position.x > foe.position.x && (position.x - foe.position.x) < attackRange) {
+            //Se verifica que el enemigo se encuentre en rango del ataque.
+            if ((position.x > foe.position.x && (position.x - foe.position.x) < attackRange) ||
+                    (position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange)) {
                 decorationData.add(new StaticDecoration(IDLE_TEXTURE,
-                        new Square(new Vector2(0,0), spriteContainer.lenX, spriteContainer.lenY, 0),
-                        new SimpleDrawer.ColorData(1,1,1,0.75f),
-                        baseX.x == -1, 0, 100, true));
-                currentState = EnemyState.ATTACKING;
-                activeAttack = regularAttack;
-                for(CollisionObject co : activeAttack.active)
-                    co.updatePosition();
-            } else if(position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange) {
+                        new Square(new Vector2(position), spriteContainer.lenX, spriteContainer.lenY, 0),
+                        new SimpleDrawer.ColorData(1,1,1,1),
+                        baseX.x == -1, 0, 75, true));
                 currentState = EnemyState.ATTACKING;
                 activeAttack = regularAttack;
                 for(CollisionObject co : activeAttack.active)
