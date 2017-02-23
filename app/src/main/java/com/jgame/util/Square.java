@@ -1,7 +1,5 @@
 package com.jgame.util;
 
-import android.util.FloatMath;
-
 public class Square extends GeometricElement {
     public static float TO_RADIANS = (1 / 180.0f) * (float) Math.PI;
 
@@ -22,6 +20,11 @@ public class Square extends GeometricElement {
         this.lenX = lenX;
         this.lenY = lenY;
         this.angle = angle;
+    }
+
+    public void scale(float m){
+        this.lenX *= m;
+        this.lenY *= m;
     }
 
     @Override

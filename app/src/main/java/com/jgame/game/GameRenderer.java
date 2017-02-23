@@ -30,6 +30,7 @@ public class GameRenderer implements Renderer {
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
+    public final static TextureData DISAPPEAR_TEXTURE = new TextureData(0.25390625f,0.3125f,0.33203125f,0.3515625f);
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.96875f,0.96875f,1.0f,1.0f);
     public final static TextureData SPEAKER_TEXTURE = new TextureData(0.4375f, 0.375f, 0.5f, 0.4375f);
     public final static TextureData SOUND_TEXTURE = new TextureData(0.4375f,0.4375f,0.5f,0.5f);

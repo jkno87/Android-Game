@@ -2,6 +2,7 @@ package com.jgame.elements;
 
 import com.jgame.game.GameActivity;
 import com.jgame.game.GameActivity.Difficulty;
+import com.jgame.game.GameRenderer;
 import com.jgame.util.Decoration;
 import com.jgame.util.SimpleDrawer;
 import com.jgame.util.Square;
@@ -193,8 +194,16 @@ public class RobotEnemy extends GameCharacter {
 
         if(currentState == EnemyState.DYING){
             DESTROY_ANIMATION.updateFrame();
-            if(DESTROY_ANIMATION.completed())
+            if(DESTROY_ANIMATION.completed()) {
+                StaticDecoration s = new StaticDecoration(GameRenderer.DISAPPEAR_TEXTURE,
+                        new Square(new Vector2(position).add(spriteContainer.lenX * baseX.x, 0)
+                                , spriteContainer.lenX, spriteContainer.lenY, 0),
+                        new SimpleDrawer.ColorData(1,1,1,1),
+                        baseX.x == 1, 0, 10, false);
+                s.shrinkRate = 0.99f;
+                decorationData.add(s);
                 currentState = EnemyState.DEAD;
+            }
         }
 
         if(currentState == EnemyState.EXPLODING)
