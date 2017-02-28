@@ -10,7 +10,7 @@ public abstract class Decoration {
         public int drawFrames;
         private final int initialDrawFrames;
         private final boolean fade;
-        public float shrinkRate = 0.0f;
+        public float shrinkRateX = 0.0f;
 
         public StaticDecoration(TextureDrawer.TextureData sprite, Square size, SimpleDrawer.ColorData color, boolean inverted, int preDrawFrames, int drawFrames, boolean fade){
             this.sprite = sprite;
@@ -52,10 +52,11 @@ public abstract class Decoration {
                 if(fade)
                     color.a = color.a * ((float) drawFrames) / initialDrawFrames;
 
-                if(shrinkRate > 0.0)
-                    size.scale(shrinkRate);
-
+                if(shrinkRateX > 0.0) {
+                    size.scaleX(shrinkRateX);
                 }
+
+            }
 
         }
 

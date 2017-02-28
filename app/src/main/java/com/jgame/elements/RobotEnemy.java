@@ -199,8 +199,8 @@ public class RobotEnemy extends GameCharacter {
                         new Square(new Vector2(position).add(spriteContainer.lenX * baseX.x, 0)
                                 , spriteContainer.lenX, spriteContainer.lenY, 0),
                         new SimpleDrawer.ColorData(1,1,1,1),
-                        baseX.x == 1, 0, 10, false);
-                s.shrinkRate = 0.99f;
+                        baseX.x == 1, 0, 3, false);
+                s.shrinkRateX = 0.9f;
                 decorationData.add(s);
                 currentState = EnemyState.DEAD;
             }

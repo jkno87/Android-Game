@@ -22,9 +22,8 @@ public class Square extends GeometricElement {
         this.angle = angle;
     }
 
-    public void scale(float m){
+    public void scaleX(float m){
         this.lenX *= m;
-        this.lenY *= m;
     }
 
     @Override
