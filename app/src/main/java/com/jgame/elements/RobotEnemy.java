@@ -25,24 +25,28 @@ public class RobotEnemy extends GameCharacter {
         WAITING, EXPLODING, ATTACKING, DYING, DEAD, RECOVERING
     }
 
-    private final int[] EASY_FRAME_DATA = new int[]{11,40,11};
-    private final int[] MEDIUM_FRAME_DATA = new int[]{9,20,5};
+    private final int[] EASY_FRAME_DATA = new int[]{3,2,20};
+    private final int[] MEDIUM_FRAME_DATA = new int[]{2,3,15};
     private final static int INITIAL_BEEP_INTERVAL = 30;
     public final static TextureData IDLE_TEXTURE = new TextureData(0.375f,0.125f,0.5f,0.25f);
     public final static TextureData[] STARTUP_TEXTURES = {
-            IDLE_TEXTURE, new TextureData(0.375f,0,0.5f,0.125f),
+            IDLE_TEXTURE, new TextureData(0.375f,0f,0.5f,0.125f),
             new TextureData(0.375f,0.25f,0.5f,0.375f),
-            new TextureData(0.5f,0.25f,0.625f,0.375f)
+            new TextureData(0.5f,0.25f,0.625f,0.375f),
+            new TextureData(0.5f,0.125f,0.625f,0.25f),
+            new TextureData(0.5f,0f,0.625f,0.125f),
+            new TextureData(0.625f,0f,0.75f,0.125f),
+            new TextureData(0.625f,0.125f,0.75f,0.25f),
+            new TextureData(0.625f,0.25f,0.75f,0.375f)
     };
     private final static AnimationData BEEP_ANIMATION = new AnimationData(15, false,
             new TextureData[]{IDLE_TEXTURE});
     private final static TextureData EXPLOSION = TextureDrawer.genTextureData(6,2,8);
-    private final static AnimationData DESTROY_ANIMATION = new AnimationData(2, false,
-            new TextureData[] {STARTUP_TEXTURES[2], STARTUP_TEXTURES[1], STARTUP_TEXTURES[0], EXPLOSION});
-    public final static TextureData CHAIN_ON_GROUND = TextureDrawer.genTextureData(6,1,8);
-    public final static TextureData[] RECOVERY_TEXTURES = {TextureDrawer.genTextureData(5,1,8),
-    CHAIN_ON_GROUND};
-    public final static TextureData ATTACK_TEXTURE = new TextureData(0.5f,0.125f,0.625f,0.25f);
+    //private final static AnimationData DESTROY_ANIMATION = new AnimationData(2, false,
+    //        new TextureData[] {STARTUP_TEXTURES[2], STARTUP_TEXTURES[1], STARTUP_TEXTURES[0], EXPLOSION});
+    public final static TextureData DISAPPEAR_TEXTURE = new TextureData(0.75f,0f,0.875f,0.125f);
+    public final static TextureData[] RECOVERY_TEXTURES = {new TextureData(0.75f,0.125f,0.875f,0.25f)};
+    public final static TextureData ATTACK_TEXTURE = new TextureData(0.75f,0.25f,0.875f,0.375f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 150;
     public final static float ATTACK_DISTANCE = 100;
     //private final EnemyAction[] actions;
@@ -94,7 +98,7 @@ public class RobotEnemy extends GameCharacter {
         currentState = EnemyState.WAITING;
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
         regularAttack.reset();
-        DESTROY_ANIMATION.reset();
+        //DESTROY_ANIMATION.reset();
         regularAttack.updateFrameData(currentFrameDataSet);
     }
 
@@ -118,9 +122,9 @@ public class RobotEnemy extends GameCharacter {
         if(currentState == EnemyState.ATTACKING)
             return activeAttack.getCurrentAnimation().getCurrentSprite();
         else if(currentState == EnemyState.DYING)
-            return DESTROY_ANIMATION.getCurrentSprite();
+            return RECOVERY_TEXTURES[0];
         else if(currentState == EnemyState.RECOVERING)
-            return CHAIN_ON_GROUND;
+            return DISAPPEAR_TEXTURE;
         else
             return IDLE_TEXTURE;
     }
@@ -193,17 +197,14 @@ public class RobotEnemy extends GameCharacter {
         }
 
         if(currentState == EnemyState.DYING){
-            DESTROY_ANIMATION.updateFrame();
-            if(DESTROY_ANIMATION.completed()) {
-                StaticDecoration s = new StaticDecoration(GameRenderer.DISAPPEAR_TEXTURE,
-                        new Square(new Vector2(position).add(spriteContainer.lenX * baseX.x, 0)
-                                , spriteContainer.lenX, spriteContainer.lenY, 0),
-                        new SimpleDrawer.ColorData(1,1,1,1),
-                        baseX.x == 1, 0, 3, false);
-                s.shrinkRateX = 0.9f;
-                decorationData.add(s);
-                currentState = EnemyState.DEAD;
-            }
+            StaticDecoration s = new StaticDecoration(GameRenderer.DISAPPEAR_TEXTURE,
+                    new Square(new Vector2(position).add(spriteContainer.lenX * baseX.x, 0)
+                            , spriteContainer.lenX, spriteContainer.lenY, 0),
+                    new SimpleDrawer.ColorData(1,1,1,1),
+                    baseX.x == 1, 0, 3, false);
+            s.shrinkRateX = 0.9f;
+            decorationData.add(s);
+            currentState = EnemyState.DEAD;
         }
 
         if(currentState == EnemyState.EXPLODING)
