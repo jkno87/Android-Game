@@ -1,5 +1,6 @@
 package com.jgame.game;
 
+import java.io.IOException;
 import java.util.PriorityQueue;
 
 import android.content.Context;
@@ -15,11 +16,27 @@ public class SoundManager implements Runnable {
     private MediaPlayer mediaPlayer;
     private PriorityQueue<Integer> sonidosQueue;
     private volatile Boolean vivo;
+    private Context context;
 
     public SoundManager(Context context){
         sonidosQueue = new PriorityQueue<Integer>(10);
         this.soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         vivo = true;
+        this.context = context;
+    }
+
+    /**
+     * Pausa la musica que se encuentra siendo reproducida
+     */
+    public void pauseMusic(){
+        mediaPlayer.pause();
+    }
+
+    /**
+     * Inicia la reproduccion de musica
+     */
+    public void startMusic(){
+        mediaPlayer.start();
     }
 
     public int loadSound(Context context, int resId){
@@ -35,12 +52,17 @@ public class SoundManager implements Runnable {
             vivo = false;
             Log.d("Game", "Terminando thread de sonido");
         }
+
+        mediaPlayer.release();
+        mediaPlayer = null;
     }
 
     public void iniciar(){
+        Log.d("Game", "iniciar() soundManager");
         synchronized(vivo){
             vivo = true;
         }
+        mediaPlayer = MediaPlayer.create(context, R.raw.music);
     }
 
     @Override
@@ -49,8 +71,9 @@ public class SoundManager implements Runnable {
             try {
                 Thread.sleep(200L);
                 synchronized(vivo){
-                    if(!vivo)
+                    if(!vivo) {
                         break;
+                    }
                 }
 
                 if(!sonidosQueue.isEmpty())

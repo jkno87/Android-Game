@@ -84,6 +84,9 @@ public class GameActivity extends Activity {
                                 gameData.soundEnabled = !gameData.soundEnabled;
                             }
                     } else if(currentState == GameState.STARTING) {
+                        if(gameData.soundEnabled)
+                            soundManager.startMusic();
+
                         synchronized (enemyLock) {
                             currentEnemy = enemySpawnInterval;
                         }
@@ -241,7 +244,6 @@ public class GameActivity extends Activity {
         this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), MIN_X, MAX_X);
         gameTask = new GameRunnable(mainCharacter);
         new Thread(gameTask).start();
-        new Thread(soundManager).start();
     }
 
     private void triggerGameOver(int score){
@@ -270,6 +272,9 @@ public class GameActivity extends Activity {
                     synchronized (gameData) {
                         gameData.paused = false;
                     }
+                    if(gameData.paused == false)
+                        soundManager.startMusic();
+
                 } else if (quitButton.bounds.contains(x, y))
                     finish();
 
@@ -290,13 +295,14 @@ public class GameActivity extends Activity {
     @Override
     public void onResume(){
         super.onResume();
-        soundManager.iniciar();
+        Log.d("Game", "Resumiendo juego");
         new Thread(soundManager).start();
+        soundManager.iniciar();
         gameSurfaceView.onResume();
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         Log.d("Game", "onPause");
         soundManager.terminar();
@@ -310,6 +316,13 @@ public class GameActivity extends Activity {
             synchronized (gameData){
                 gameData.paused = !gameData.paused;
             }
+
+            if(gameData.paused)
+                soundManager.pauseMusic();
+            else
+                soundManager.startMusic();
+
+
             return true;
         }
 
