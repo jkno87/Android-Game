@@ -204,6 +204,7 @@ public class GameActivity extends Activity {
     public static final int TELEPORT_SPRITE_LENGTH = 115;
     public static final int TELEPORT_SPRITE_HEIGHT = 145;
     public static final int CHARGING_SPRITE_LENGTH = 115;
+    public static final Square EASY_DIFFICULTY_BOUNDS = new Square(10, 10, 20, 20);
     public static final Square INPUT_SOUND_SPRITE = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 100, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH);
     public static final Square INPUT_SOUND_BOUNDS = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 130, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH + 40);
     public static final Square INPUT_LEFT_BOUNDS = new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);

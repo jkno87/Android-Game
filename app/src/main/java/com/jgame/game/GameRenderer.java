@@ -40,6 +40,7 @@ public class GameRenderer implements Renderer {
     public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.0625f,0.5f,0,0.4375f);
     public final static TextureData SOUND_SWITCH_ON_TEXTURE = new TextureData(0.375f,0.375f,0.4375f,0.4375f);
     public final static TextureData SOUND_SWITCH_OFF_TEXTURE = new TextureData(0.4375f,0.4375f,0.375f,0.375f);
+    public final static TextureData LED_SPRITE = new TextureData(0f,0.625f,0.0625f,0.6875f);
     public final static TextureData BACKGROUND_TEXTURE = new TextureData(0,0,1,0.247f);
     public final static TextureData LEVEL_2_BACKGROUND = new TextureData(0, 0.2478f, 1, 0.4956f);
     public final static TextureData LEVEL_3_BACKGROUND = new TextureData(0, 0.499f, 1, 0.7449f);
@@ -255,6 +256,8 @@ public class GameRenderer implements Renderer {
             OFF_LABEL.addLetterTexture(mainTextureDrawer);
             mainTextureDrawer.addTexturedSquare(SOUND_SWITCH_SPRITE, SOUND_SWITCH_OFF_TEXTURE);
         }
+
+        mainTextureDrawer.addTexturedSquare(GameActivity.EASY_DIFFICULTY_BOUNDS, LED_SPRITE);
 
         if(gameData.paused) {
             mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
