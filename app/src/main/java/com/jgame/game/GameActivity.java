@@ -204,7 +204,6 @@ public class GameActivity extends Activity {
     public static final int TELEPORT_SPRITE_LENGTH = 115;
     public static final int TELEPORT_SPRITE_HEIGHT = 145;
     public static final int CHARGING_SPRITE_LENGTH = 115;
-    public static final Square EASY_DIFFICULTY_BOUNDS = new Square(10, 10, 20, 20);
     public static final Square INPUT_SOUND_SPRITE = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 100, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH);
     public static final Square INPUT_SOUND_BOUNDS = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 130, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH + 40);
     public static final Square INPUT_LEFT_BOUNDS = new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
@@ -216,6 +215,9 @@ public class GameActivity extends Activity {
     public static final Square RESTART_BOUNDS = new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 + 10, 200, 50);
     public static final Square START_BUTTON_BOUNDS = new Square(FRUSTUM_WIDTH/2 - 100, FRUSTUM_HEIGHT - 160, 200, 100);
     public static final Square SOUND_SWITCH = new Square(160, 40, 150, 40);
+    public static final Square EASY_DIFF_BOUNDS = new Square(35, FRUSTUM_HEIGHT - 90, 80, 40);
+    public static final Square MEDIUM_DIFF_BOUNDS = new Square(35, FRUSTUM_HEIGHT - 140, 80, 40);
+    public static final Square HARD_DIFF_BOUNDS = new Square(35, FRUSTUM_HEIGHT - 190, 80, 40);
     public static final String HIGH_SCORE = "highScore";
     public static int ID_PUNCH;
     private GLSurfaceView gameSurfaceView;

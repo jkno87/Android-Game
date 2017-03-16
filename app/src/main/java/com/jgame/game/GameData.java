@@ -21,7 +21,7 @@ public class GameData {
     public boolean soundEnabled;
     public GameState state;
     public boolean paused;
-    public GameActivity.Difficulty currentDifficulty;
+    public GameActivity.Difficulty currentDifficulty = GameActivity.Difficulty.EASY;
     public Vector2 backgroundModifier = new Vector2();
 
     public void copy(GameData other){

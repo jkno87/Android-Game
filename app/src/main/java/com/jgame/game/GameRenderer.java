@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
+import android.util.Log;
 
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.CollisionObject;
@@ -19,6 +20,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import com.jgame.util.Decoration;
 import com.jgame.util.Vector2;
+import com.jgame.game.GameActivity.Difficulty;
 
 public class GameRenderer implements Renderer {
 
@@ -40,7 +42,9 @@ public class GameRenderer implements Renderer {
     public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.0625f,0.5f,0,0.4375f);
     public final static TextureData SOUND_SWITCH_ON_TEXTURE = new TextureData(0.375f,0.375f,0.4375f,0.4375f);
     public final static TextureData SOUND_SWITCH_OFF_TEXTURE = new TextureData(0.4375f,0.4375f,0.375f,0.375f);
-    public final static TextureData LED_SPRITE = new TextureData(0f,0.625f,0.0625f,0.6875f);
+    public final static TextureData EASY_SPRITE = new TextureData(0f,0.6875f,0.125f,0.75f);
+    public final static TextureData MEDIUM_SPRITE = new TextureData(0f,0.75f,0.125f,0.8125f);
+    public final static TextureData HARD_SPRITE = new TextureData(0f,0.8125f,0.125f,0.875f);
     public final static TextureData BACKGROUND_TEXTURE = new TextureData(0,0,1,0.247f);
     public final static TextureData LEVEL_2_BACKGROUND = new TextureData(0, 0.2478f, 1, 0.4956f);
     public final static TextureData LEVEL_3_BACKGROUND = new TextureData(0, 0.499f, 1, 0.7449f);
@@ -60,6 +64,7 @@ public class GameRenderer implements Renderer {
     public static final Square BACKGROUND_CONTAINER = new Square(new Vector2(), GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT - GameActivity.CONTROLS_HEIGHT, 0);
     private static final DigitsDisplay CURRENT_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, 5, new Vector2(250,35));
     private static final ColorData PAUSE_MENU_COLOR = new ColorData(0,1,0,1);
+    private static final ColorData TRANSPARENCY_COLOR = new ColorData(1,1,1,0.65f);
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
     private Vector2 backgroundPosition;
@@ -115,7 +120,7 @@ public class GameRenderer implements Renderer {
         }
 
         if(gameData.state == GameState.MENU)
-            drawMenu();
+            drawMenu(gameData.currentDifficulty);
         else {
 
             boolean characterAlive = gameActivity.mainCharacter.alive();
@@ -226,7 +231,7 @@ public class GameRenderer implements Renderer {
             drawer.addTexturedSquare(c.spriteContainer, c.getCurrentTexture());
     }
 
-    private void drawMenu(){
+    private void drawMenu(Difficulty currentDifficulty){
         gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
         gl10.glMatrixMode(GL10.GL_PROJECTION);
@@ -257,7 +262,20 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.addTexturedSquare(SOUND_SWITCH_SPRITE, SOUND_SWITCH_OFF_TEXTURE);
         }
 
-        mainTextureDrawer.addTexturedSquare(GameActivity.EASY_DIFFICULTY_BOUNDS, LED_SPRITE);
+        //Dibuja los botones que representan la dificultad. Esto se puede mejorar, se ve horrible
+        if(currentDifficulty == Difficulty.EASY) {
+            mainTextureDrawer.addTexturedSquare(GameActivity.EASY_DIFF_BOUNDS, EASY_SPRITE);
+            mainTextureDrawer.addColoredSquare(GameActivity.MEDIUM_DIFF_BOUNDS, MEDIUM_SPRITE, TRANSPARENCY_COLOR);
+            mainTextureDrawer.addColoredSquare(GameActivity.HARD_DIFF_BOUNDS, HARD_SPRITE, TRANSPARENCY_COLOR);
+        } else if(currentDifficulty == Difficulty.MEDIUM){
+            mainTextureDrawer.addColoredSquare(GameActivity.EASY_DIFF_BOUNDS, EASY_SPRITE, TRANSPARENCY_COLOR);
+            mainTextureDrawer.addTexturedSquare(GameActivity.MEDIUM_DIFF_BOUNDS, MEDIUM_SPRITE);
+            mainTextureDrawer.addColoredSquare(GameActivity.HARD_DIFF_BOUNDS, HARD_SPRITE, TRANSPARENCY_COLOR);
+        } else {
+            mainTextureDrawer.addColoredSquare(GameActivity.EASY_DIFF_BOUNDS, EASY_SPRITE, TRANSPARENCY_COLOR);
+            mainTextureDrawer.addColoredSquare(GameActivity.MEDIUM_DIFF_BOUNDS, MEDIUM_SPRITE, TRANSPARENCY_COLOR);
+            mainTextureDrawer.addTexturedSquare(GameActivity.HARD_DIFF_BOUNDS, HARD_SPRITE);
+        }
 
         if(gameData.paused) {
             mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
