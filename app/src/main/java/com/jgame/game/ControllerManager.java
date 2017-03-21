@@ -11,7 +11,8 @@ import java.util.concurrent.BlockingQueue;
 public class ControllerManager {
 
     public enum GameInput {
-        LEFT, RIGHT, INPUT_A, INPUT_OFF,NO_INPUT, QUIT_GAME, START_GAME, CHANGE_SOUND_STATE
+        LEFT, RIGHT, INPUT_A, INPUT_OFF,NO_INPUT, QUIT_GAME, START_GAME, CHANGE_SOUND_STATE,
+        DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD
     }
 
     private final BlockingQueue<GameInput> inputs;
@@ -112,9 +113,15 @@ public class ControllerManager {
             if (gameData.state == GameState.MENU) {
                 if (GameActivity.START_BUTTON_BOUNDS.contains(inputX, inputY)) {
                     inputs.put(GameInput.START_GAME);
-                } else if (GameActivity.SOUND_SWITCH.contains(inputX, inputY))
+                } else if (GameActivity.SOUND_SWITCH.contains(inputX, inputY)){
                     inputs.put(GameInput.CHANGE_SOUND_STATE);
-
+                } else if (GameActivity.EASY_DIFF_BOUNDS.contains(inputX, inputY)){
+                    inputs.put(GameInput.DIFFICULTY_EASY);
+                } else if (GameActivity.MEDIUM_DIFF_BOUNDS.contains(inputX, inputY)){
+                    inputs.put(GameInput.DIFFICULTY_MEDIUM);
+                } else if (GameActivity.HARD_DIFF_BOUNDS.contains(inputX, inputY)) {
+                    inputs.put(GameInput.DIFFICULTY_HARD);
+                }
             }
         } catch (InterruptedException e){
             Thread.interrupted();

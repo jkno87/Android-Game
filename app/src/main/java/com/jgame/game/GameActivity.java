@@ -41,6 +41,7 @@ public class GameActivity extends Activity {
         private ControllerManager.GameInput lastInput;
         private int currentEnemyCounter;
         private GameData.GameState currentState;
+        private Difficulty initialDifficulty;
         private Difficulty currentDifficulty;
         private Vector2 backgroundModifier;
         private Event lastTriggeredEvent = Event.NONE;
@@ -79,10 +80,20 @@ public class GameActivity extends Activity {
                     if(currentState == GameState.MENU) {
                         if(lastInput == ControllerManager.GameInput.START_GAME)
                             currentState = GameState.STARTING;
-                        else if(lastInput == ControllerManager.GameInput.CHANGE_SOUND_STATE)
-                            synchronized (gameData){
+                        else if(lastInput == ControllerManager.GameInput.CHANGE_SOUND_STATE) {
+                            synchronized (gameData) {
                                 gameData.soundEnabled = !gameData.soundEnabled;
                             }
+                        } else if(lastInput == ControllerManager.GameInput.DIFFICULTY_EASY){
+                            currentDifficulty = Difficulty.EASY;
+                            initialDifficulty = currentDifficulty;
+                        } else if(lastInput == ControllerManager.GameInput.DIFFICULTY_MEDIUM) {
+                            currentDifficulty = Difficulty.MEDIUM;
+                            initialDifficulty = currentDifficulty;
+                        } else if(lastInput == ControllerManager.GameInput.DIFFICULTY_HARD){
+                            currentDifficulty = Difficulty.HARD;
+                            initialDifficulty = currentDifficulty;
+                        }
                     } else if(currentState == GameState.STARTING) {
                         if(gameData.soundEnabled)
                             soundManager.startMusic();
@@ -91,11 +102,10 @@ public class GameActivity extends Activity {
                             currentEnemy = enemySpawnInterval;
                         }
 
-                        currentDifficulty = Difficulty.EASY;
-
                         for(GameCharacter gc : availableEnemies)
                             gc.setCurrentDifficulty(currentDifficulty);
 
+                        currentDifficulty = initialDifficulty;
                         score = 0;
                         currentEnemyCounter = 0;
                         currentEnemy.reset(0,0);
@@ -179,7 +189,7 @@ public class GameActivity extends Activity {
 
 
     public static enum Difficulty {
-        EASY, MEDIUM
+        EASY, MEDIUM, HARD
     }
 
     public static final long UPDATE_INTERVAL = 16L;
