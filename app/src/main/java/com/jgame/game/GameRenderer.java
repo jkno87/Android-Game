@@ -32,6 +32,8 @@ public class GameRenderer implements Renderer {
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
+    public final static TextureData CONTINUE_BUTTON = new TextureData(0f,1.9375f,0.125f,2f);
+    public final static TextureData QUIT_BUTTON = new TextureData(0f,1.875f,0.125f,1.9375f);
     public final static TextureData DISAPPEAR_TEXTURE = new TextureData(0.1875f,0.625f,0.125f,0.5625f);
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.96875f,0.96875f,1.0f,1.0f);
     public final static TextureData SPEAKER_TEXTURE = new TextureData(0.4375f, 0.375f, 0.5f, 0.4375f);
@@ -178,15 +180,16 @@ public class GameRenderer implements Renderer {
             }
 
             if (gameData.state == GameState.RESTART_SCREEN) {
-                gameActivity.restartButton.label.addLetterTexture(mainTextureDrawer);
-                gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
+                mainTextureDrawer.addTexturedSquare(GameActivity.RESTART_BOUNDS, CONTINUE_BUTTON);
+                mainTextureDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
             }
 
             if (gameData.paused) {
                 mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
                 mainTextureDrawer.addColoredSquare(PAUSE_RECTANGLE, NO_TEXTURE_COORDS, PAUSE_MENU_COLOR);
-                gameActivity.continueButton.label.addLetterTexture(mainTextureDrawer);
-                gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
+
+                mainTextureDrawer.addTexturedSquare(GameActivity.CONTINUE_BOUNDS, CONTINUE_BUTTON);
+                mainTextureDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
                 mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SPEAKER_TEXTURE);
                 if (gameData.soundEnabled)
                     mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_TEXTURE);
@@ -280,8 +283,8 @@ public class GameRenderer implements Renderer {
         if(gameData.paused) {
             mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
             mainTextureDrawer.addColoredSquare(PAUSE_RECTANGLE, NO_TEXTURE_COORDS, PAUSE_MENU_COLOR);
-            gameActivity.continueButton.label.addLetterTexture(mainTextureDrawer);
-            gameActivity.quitButton.label.addLetterTexture(mainTextureDrawer);
+            mainTextureDrawer.addTexturedSquare(GameActivity.CONTINUE_BOUNDS, CONTINUE_BUTTON);
+            mainTextureDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
             mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SPEAKER_TEXTURE);
             if(gameData.soundEnabled)
                 mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_TEXTURE);

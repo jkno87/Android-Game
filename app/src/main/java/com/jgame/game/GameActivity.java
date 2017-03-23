@@ -220,7 +220,7 @@ public class GameActivity extends Activity {
     public static final Square INPUT_RIGHT_BOUNDS = new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
     public static final Square INPUT_A_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
     public static final Square INPUT_B_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
-    public final LabelButton continueButton = new LabelButton(new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 + 10, 200, 50), "continue");
+    public static final Square CONTINUE_BOUNDS = new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 + 10, 200, 50);
     public static final Square QUIT_BOUNDS = new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 - 60, 200, 50);
     public static final Square RESTART_BOUNDS = new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 + 10, 200, 50);
     public static final Square START_BUTTON_BOUNDS = new Square(FRUSTUM_WIDTH/2 - 100, FRUSTUM_HEIGHT - 160, 200, 100);
@@ -233,8 +233,6 @@ public class GameActivity extends Activity {
     private GLSurfaceView gameSurfaceView;
     public SoundManager soundManager;
     public final GameData gameData = new GameData();
-    public final LabelButton quitButton = new LabelButton(QUIT_BOUNDS, "quit");
-    public final LabelButton restartButton = new LabelButton(RESTART_BOUNDS, "restart");
     public MainCharacter mainCharacter;
     public GameCharacter currentEnemy;
     public final Object enemyLock = new Object();
@@ -281,14 +279,14 @@ public class GameActivity extends Activity {
 
         switch(e.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (continueButton.bounds.contains(x, y)) {
+                if (CONTINUE_BOUNDS.contains(x, y)) {
                     synchronized (gameData) {
                         gameData.paused = false;
                     }
                     if(gameData.paused == false)
                         soundManager.startMusic();
 
-                } else if (quitButton.bounds.contains(x, y))
+                } else if (QUIT_BOUNDS.contains(x, y))
                     finish();
 
                 break;
