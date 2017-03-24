@@ -27,6 +27,7 @@ public class RobotEnemy extends GameCharacter {
 
     private final int[] EASY_FRAME_DATA = new int[]{3,2,20};
     private final int[] MEDIUM_FRAME_DATA = new int[]{2,3,15};
+    private final int[] HARD_FRAME_DATA = new int[]{2,3,10};
     private final static int INITIAL_BEEP_INTERVAL = 30;
     public final static TextureData IDLE_TEXTURE = new TextureData(0.375f,0.125f,0.5f,0.25f);
     public final static TextureData[] STARTUP_TEXTURES = {
@@ -220,8 +221,10 @@ public class RobotEnemy extends GameCharacter {
         else {
             if(newDifficulty == Difficulty.EASY)
                 currentFrameDataSet = EASY_FRAME_DATA;
-            if(newDifficulty == Difficulty.MEDIUM)
+            else if(newDifficulty == Difficulty.MEDIUM)
                 currentFrameDataSet = MEDIUM_FRAME_DATA;
+            else
+                currentFrameDataSet = HARD_FRAME_DATA;
 
             currentDifficulty = newDifficulty;
         }

@@ -117,7 +117,9 @@ public class GameActivity extends Activity {
                         currentState = GameState.RESTART_SCREEN;
                     } else if (currentState == GameState.PLAYING){
                         gameData.score = score;
-                        if(score > EASY_DIFFICULTY_POINTS)
+                        if(score > HARD_DIFFICULTY_POINTS)
+                            currentDifficulty = Difficulty.HARD;
+                        else if(score > MEDIUM_DIFFICULTY_POINTS)
                             currentDifficulty = Difficulty.MEDIUM;
 
                         if(!mainCharacter.alive()) {
@@ -194,7 +196,8 @@ public class GameActivity extends Activity {
 
     public static final long UPDATE_INTERVAL = 16L;
     public static final float FRAMES_PER_SECOND = UPDATE_INTERVAL / 1000L;
-    public static final int EASY_DIFFICULTY_POINTS = 4;
+    public static final int MEDIUM_DIFFICULTY_POINTS = 4;
+    public static final int HARD_DIFFICULTY_POINTS = 10;
     public static final float FRUSTUM_HEIGHT = 320f;
     public static final float FRUSTUM_WIDTH = 480f;
     public static final float MIN_X = 20;

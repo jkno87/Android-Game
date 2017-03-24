@@ -57,7 +57,6 @@ public class GameRenderer implements Renderer {
     public static final Square PAUSE_RECTANGLE = new Square(GameActivity.FRUSTUM_WIDTH/2 - PAUSE_X_SIZE, GameActivity.FRUSTUM_HEIGHT/2 - PAUSE_Y_SIZE,
             PAUSE_X_SIZE * 2, PAUSE_Y_SIZE * 2);
     private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
-    public static final GameText HIGHSCORE_TEXT = new GameText("highscore", new Square(160, GameActivity.FRUSTUM_HEIGHT - 35, 50, 18), 2);
     public static final GameText SOUND_LABEL = new GameText("sound", new Square(160, 85, 150, 35), 0);
     public static final GameText ON_LABEL = new GameText("on", new Square(160, 50, 50, 20), 20);
     public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 20);
@@ -140,7 +139,9 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.reset();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, backgroundId);
             mainTextureDrawer.addTexturedSquare(BACKGROUND_CONTAINER, BACKGROUND_TEXTURE);
-            if(gameData.currentDifficulty == GameActivity.Difficulty.MEDIUM)
+            if(gameData.currentDifficulty == Difficulty.MEDIUM)
+                mainTextureDrawer.addColoredSquare(BACKGROUND_CONTAINER, LEVEL_2_BACKGROUND, BACKGROUND_OVERLAY);
+            else if(gameData.currentDifficulty == Difficulty.HARD)
                 mainTextureDrawer.addColoredSquare(BACKGROUND_CONTAINER, LEVEL_3_BACKGROUND, BACKGROUND_OVERLAY);
             mainTextureDrawer.draw(gl10);
 
@@ -176,7 +177,6 @@ public class GameRenderer implements Renderer {
             if (characterAlive) {
                 CURRENT_SCORE.number = gameData.score;
                 CURRENT_SCORE.addDigitsTexture(mainTextureDrawer);
-                HIGHSCORE_TEXT.addLetterTexture(mainTextureDrawer);
             }
 
             if (gameData.state == GameState.RESTART_SCREEN) {
