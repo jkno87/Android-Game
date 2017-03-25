@@ -49,7 +49,7 @@ public class RobotEnemy extends GameCharacter {
     public final static TextureData[] RECOVERY_TEXTURES = {new TextureData(0.75f,0.125f,0.875f,0.25f)};
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.75f,0.25f,0.875f,0.375f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 150;
-    public final static float ATTACK_DISTANCE = 100;
+    public final static float ATTACK_DISTANCE = 95;
     //private final EnemyAction[] actions;
     private final MainCharacter mainCharacter;
     private final int FRAMES_TO_SELFDESTRUCT = 300;
@@ -77,7 +77,7 @@ public class RobotEnemy extends GameCharacter {
         currentFrameDataSet = EASY_FRAME_DATA;
         attackRange = ATTACK_DISTANCE + idleSizeX;
         CollisionObject[] explosionBoxes = new CollisionObject[]{new CollisionObject(new Vector2(57,55),0,GameActivity.PLAYING_WIDTH,35,this, CollisionObject.TYPE_ATTACK)};
-        CollisionObject[] startupBoxes = new CollisionObject[]{new CollisionObject(new Vector2(120,100), 0, 10, 10, this, CollisionObject.TYPE_HITTABLE)};
+        CollisionObject[] startupBoxes = new CollisionObject[]{new CollisionObject(new Vector2(115,100), 0, 15, 10, this, CollisionObject.TYPE_HITTABLE)};
         CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,140,55,this, CollisionObject.TYPE_HITTABLE),
         new CollisionObject(new Vector2(100, 50),0,15,20, this, CollisionObject.TYPE_ATTACK)};
         explosionAttack = new AttackData(explosionBoxes, explosionBoxes, explosionBoxes);
