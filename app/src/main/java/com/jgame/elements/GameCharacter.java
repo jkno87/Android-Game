@@ -113,8 +113,10 @@ public abstract class GameCharacter extends GameObject {
     public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData){
         if(foe.hittable()) {
             for (CollisionObject co : getActiveCollisionBoxes())
-                if (co.checkCollision(foe))
+                if (co.checkCollision(foe)) {
                     foe.hit();
+                    return Event.HIT;
+                }
         }
 
         return Event.NONE;

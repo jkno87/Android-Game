@@ -17,10 +17,12 @@ import java.util.ArrayDeque;
 public class MainCharacter extends GameCharacter {
 
     public enum CharacterState {
-        IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B, DEAD, KNOCKDOWN
+        ABSORBING, IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B, DEAD, KNOCKDOWN
     }
 
     public final static TextureData IDLE_TEXTURE = TextureDrawer.genTextureData(1,3,16);
+    public final static TextureData RECOVERY_SUCCESS_1 = TextureDrawer.genTextureData(2,1,16);
+    public final static TextureData RECOVERY_SUCCESS_2 = TextureDrawer.genTextureData(2,2,16);
     public final static TextureData INIT_MOV_A = TextureDrawer.genTextureData(1,1,16);
     public final static TextureData ACTIVE_MOV_A = TextureDrawer.genTextureData(1,2,16);
     public final static TextureData MOVING_A = TextureDrawer.genTextureData(1,4,16);
@@ -40,6 +42,7 @@ public class MainCharacter extends GameCharacter {
     public CharacterState state;
     private final float maxX;
     private final float minX;
+    private final AnimationData ABSORBING_ANIMATION = new AnimationData(2, false, new TextureData[]{RECOVERY_SUCCESS_1, RECOVERY_SUCCESS_2});
 
     public MainCharacter(int id, Vector2 position, float minX, float maxX){
         super(SPRITE_LENGTH, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id);
@@ -118,6 +121,9 @@ public class MainCharacter extends GameCharacter {
         if(state == CharacterState.MOVING_FORWARD || state == CharacterState.MOVING_BACKWARDS)
             return WALKING_ANIMATION.getCurrentSprite();
 
+        if(state == CharacterState.ABSORBING)
+            return ABSORBING_ANIMATION.getCurrentSprite();
+
         if(state != CharacterState.INPUT_A)
             return IDLE_TEXTURE;
 
@@ -126,7 +132,7 @@ public class MainCharacter extends GameCharacter {
 
     @Override
     public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
-        super.update(foe, decorationData);
+        Event e = super.update(foe, decorationData);
         if (state == CharacterState.IDLE) {
             adjustToFoePosition(foe);
             WALKING_ANIMATION.reset();
@@ -144,11 +150,24 @@ public class MainCharacter extends GameCharacter {
                 WALKING_ANIMATION.updateFrame();
             }
         } if(state == CharacterState.INPUT_A){
+            //Si se detecta colision con el input, significa que absorbio energia
+            if (e == Event.HIT){
+                state = CharacterState.ABSORBING;
+                ABSORBING_ANIMATION.reset();
+                return Event.NONE;
+            }
+
             moveA.update();
             if(moveA.completed()){
                 this.state = CharacterState.IDLE;
             }
+        } if (state == CharacterState.ABSORBING){
+            ABSORBING_ANIMATION.updateFrame();
+            if(ABSORBING_ANIMATION.completed())
+                state = CharacterState.IDLE;
         }
+
+
 
         if(state == CharacterState.INPUT_B){
             /*MOVE_B_COUNTER.accum(timeDifference);

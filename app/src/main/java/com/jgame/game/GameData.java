@@ -13,7 +13,7 @@ public class GameData {
     }
 
     public enum Event {
-        QUAKE, NONE
+        QUAKE, NONE, HIT
     }
 
     public int score;
