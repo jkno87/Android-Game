@@ -122,6 +122,8 @@ public class GameRenderer implements Renderer {
 
         if(gameData.state == GameState.MENU)
             drawMenu(gameData.currentDifficulty);
+        else if(gameData.state == GameState.TITLE_SCREEN)
+            drawTitleScreen();
         else {
 
             boolean characterAlive = gameActivity.mainCharacter.alive();
@@ -232,6 +234,26 @@ public class GameRenderer implements Renderer {
             drawer.addInvertedTexturedSquare(c.spriteContainer, c.getCurrentTexture());
         else
             drawer.addTexturedSquare(c.spriteContainer, c.getCurrentTexture());
+    }
+
+    /**
+     * Se encarga de dibujar la pantalla del titulo inicial
+     */
+    private void drawTitleScreen(){
+        gl10.glViewport(0,0, surfaceView.getWidth(), surfaceView.getHeight());
+        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        gl10.glMatrixMode(GL10.GL_PROJECTION);
+        gl10.glLoadIdentity();
+        gl10.glOrthof(0, GameActivity.FRUSTUM_WIDTH, 0, GameActivity.FRUSTUM_HEIGHT, 1, -1);
+        gl10.glMatrixMode(GL10.GL_MODELVIEW);
+        gl10.glEnable(GL10.GL_BLEND);
+        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+
+        mainTextureDrawer.reset();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
+        mainTextureDrawer.addTexturedSquare(120, 120, 150, 150, START_BUTTON_TEXTURE);
+        mainTextureDrawer.draw(gl10);
     }
 
     private void drawMenu(Difficulty currentDifficulty){

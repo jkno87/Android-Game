@@ -104,6 +104,11 @@ public class ControllerManager {
         inputY = GameActivity.FRUSTUM_HEIGHT * y;
 
         try {
+            if(gameData.state == GameState.TITLE_SCREEN) {
+                inputs.add(GameInput.START_GAME);
+                return;
+            }
+
             if (gameData.state == GameState.PLAYING) {
                 if (mainButtonPressed != INPUT_NONE)
                     inputs.put(GameInput.INPUT_OFF);
@@ -150,7 +155,7 @@ public class ControllerManager {
     }
 
     public void handlePointerUp(float x, float y){
-        if(gameData.state != GameData.GameState.PLAYING)
+        if(gameData.state != GameState.PLAYING)
             return;
 
         inputX = x;
