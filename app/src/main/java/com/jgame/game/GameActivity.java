@@ -48,10 +48,10 @@ public class GameActivity extends Activity {
     private final int MAX_WORLD_OBJECTS = 1;
     public static final float PLAYING_WIDTH = FRUSTUM_WIDTH;
     public static final float PLAYING_HEIGHT = FRUSTUM_HEIGHT;
-    private static final float DIRECTION_WIDTH = 45;
+    private static final float DIRECTION_WIDTH = 65;
     private static final float INPUT_SOUND_WIDTH = 55;
-    private static final float BUTTONS_WIDTH = 50;
-    private static final float INPUTS_HEIGHT = 15;
+    private static final float BUTTONS_WIDTH = 65;
+    private static final float INPUTS_HEIGHT = 5;
     public static final float CONTROLS_HEIGHT = PLAYING_HEIGHT * 0.25f;
     private static final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 10;
     private static final float INITIAL_CHARACTER_POSITION = FRUSTUM_WIDTH / 2;
@@ -61,9 +61,9 @@ public class GameActivity extends Activity {
     public static final int CHARGING_SPRITE_LENGTH = 115;
     public static final Square INPUT_SOUND_SPRITE = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 100, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH);
     public static final Square INPUT_SOUND_BOUNDS = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 130, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH + 40);
-    public static final Square INPUT_LEFT_BOUNDS = new Square(20,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
-    public static final Square INPUT_RIGHT_BOUNDS = new Square(20 + DIRECTION_WIDTH + 20, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
-    public static final Square INPUT_A_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 50, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
+    public static final Square INPUT_LEFT_BOUNDS = new Square(5,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
+    public static final Square INPUT_RIGHT_BOUNDS = new Square(5 + DIRECTION_WIDTH + 10, INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
+    public static final Square INPUT_A_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 20, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
     public static final Square INPUT_B_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
     public static final Square CONTINUE_BOUNDS = new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 + 10, 200, 50);
     public static final Square QUIT_BOUNDS = new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 - 60, 200, 50);

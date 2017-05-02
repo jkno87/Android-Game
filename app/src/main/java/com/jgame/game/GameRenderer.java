@@ -28,7 +28,7 @@ public class GameRenderer implements Renderer {
     private final static int SCORE_SIZE_Y = 20;
     private final static int PAUSE_X_SIZE = 100;
     private final static int PAUSE_Y_SIZE = 70;
-    private final static boolean RENDER_HITBOXES = false;
+    private final static boolean RENDER_HITBOXES = true;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
@@ -151,12 +151,11 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.reset();
 
             renderCharacter(gameActivity.mainCharacter, mainTextureDrawer);
-            if (RENDER_HITBOXES)
-                renderEnemy(gameActivity.mainCharacter, mainTextureDrawer);
+
             synchronized (gameActivity.enemyLock) {
                 renderCharacter(gameActivity.currentEnemy, mainTextureDrawer);
                 if (RENDER_HITBOXES)
-                    renderEnemy(gameActivity.currentEnemy, mainTextureDrawer);
+                    renderHitBoxes(gameActivity.currentEnemy, mainTextureDrawer);
             }
 
             for(Decoration d : decorations) {
@@ -175,6 +174,13 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_LEFT_BOUNDS, LEFT_ARROW_TEXTURE);
             mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_RIGHT_BOUNDS, ARROW_TEXTURE);
             mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_A_BOUNDS, BUTTON_TEXTURE);
+
+            if (RENDER_HITBOXES) {
+                renderHitBoxes(gameActivity.mainCharacter, mainTextureDrawer);
+                mainTextureDrawer.addColoredSquare(GameActivity.INPUT_LEFT_BOUNDS, NO_TEXTURE_COORDS, ATTACK_COLOR);
+                mainTextureDrawer.addColoredSquare(GameActivity.INPUT_RIGHT_BOUNDS, NO_TEXTURE_COORDS, ATTACK_COLOR);
+                mainTextureDrawer.addColoredSquare(GameActivity.INPUT_A_BOUNDS, NO_TEXTURE_COORDS, ATTACK_COLOR);
+            }
 
             if (characterAlive) {
                 CURRENT_SCORE.number = gameData.score;
@@ -207,7 +213,7 @@ public class GameRenderer implements Renderer {
      * @param c
      * @param drawer
      */
-    private void renderEnemy(GameCharacter c, TextureDrawer drawer){
+    private void renderHitBoxes(GameCharacter c, TextureDrawer drawer){
         if(!c.hittable())
             return;
 
