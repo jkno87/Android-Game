@@ -47,9 +47,9 @@ public class GameRenderer implements Renderer {
     public final static TextureData EASY_SPRITE = new TextureData(0f,0.6875f,0.125f,0.75f);
     public final static TextureData MEDIUM_SPRITE = new TextureData(0f,0.75f,0.125f,0.8125f);
     public final static TextureData HARD_SPRITE = new TextureData(0f,0.8125f,0.125f,0.875f);
-    public final static TextureData BACKGROUND_TEXTURE = new TextureData(0,0,1,0.247f);
-    public final static TextureData LEVEL_2_BACKGROUND = new TextureData(0, 0.2478f, 1, 0.4956f);
-    public final static TextureData LEVEL_3_BACKGROUND = new TextureData(0, 0.499f, 1, 0.7449f);
+    public final static TextureData BACKGROUND_1 = new TextureData(0,0,0.34f,0.247f);
+    public final static TextureData BACKGROUND_2 = new TextureData(0.33f,0,0.66f,0.247f);
+    public final static TextureData BACKGROUND_3 = new TextureData(0.66f,0,1,0.247f);
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
@@ -61,14 +61,14 @@ public class GameRenderer implements Renderer {
     public static final GameText ON_LABEL = new GameText("on", new Square(160, 50, 50, 20), 20);
     public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 20);
     public static final Square SOUND_SWITCH_SPRITE = new Square(210, 40, 50, 50);
-    public static final Vector2 BACKGROUND_POSITION = new Vector2(0, GameActivity.CONTROLS_HEIGHT);
-    public static final Square BACKGROUND_CONTAINER = new Square(new Vector2(), GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT - GameActivity.CONTROLS_HEIGHT, 0);
     private static final DigitsDisplay CURRENT_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, 5, new Vector2(250,35));
     private static final ColorData PAUSE_MENU_COLOR = new ColorData(0,1,0,1);
     private static final ColorData TRANSPARENCY_COLOR = new ColorData(1,1,1,0.65f);
+    private static final float BACKGROUND_TILE_WIDTH = GameActivity.FRUSTUM_WIDTH / 2;
+    private static final float BACKGROUND_TILE_HEIGHT = GameActivity.PLAYING_HEIGHT - GameActivity.CONTROLS_HEIGHT;
+    private static final float SCREEN_EDGE = BACKGROUND_TILE_WIDTH * 2;
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
-    private Vector2 backgroundPosition;
     private GL10 gl10;
     int personajesId;
     int backgroundId;
@@ -77,6 +77,9 @@ public class GameRenderer implements Renderer {
     ColorData menuBase;
     private final GameData gameData;
     private final Decoration[] decorations = new Decoration[5];
+    private final Square backgroundContainer1;
+    private final Square backgroundContainer2;
+    private final Square backgroundContainer3;
 
     public GameRenderer(GameActivity gameActivity){
         this.gameActivity = gameActivity;
@@ -84,7 +87,9 @@ public class GameRenderer implements Renderer {
         pauseOverlay = new SimpleDrawer.ColorData(0,0,0,0.5f);
         menuBase = new SimpleDrawer.ColorData(0,0.75f,0.5f,1);
         gameData = new GameData();
-        backgroundPosition = new Vector2();
+        backgroundContainer1 = new Square(new Vector2(0, GameActivity.CONTROLS_HEIGHT), BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
+        backgroundContainer2 = new Square(new Vector2(BACKGROUND_TILE_WIDTH, GameActivity.CONTROLS_HEIGHT), BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
+        backgroundContainer3 = new Square(new Vector2(BACKGROUND_TILE_WIDTH * 2, GameActivity.CONTROLS_HEIGHT), BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
     }
 
     public void setSurfaceView(GameSurfaceView surfaceView){
@@ -108,8 +113,16 @@ public class GameRenderer implements Renderer {
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
         //Se suma la posicion original con cualquier cambio nuevo
-        backgroundPosition.set(BACKGROUND_POSITION).add(gameData.backgroundModifier);
-        BACKGROUND_CONTAINER.setPosition(backgroundPosition);
+        backgroundContainer1.position.add(gameData.backgroundModifier);
+        backgroundContainer2.position.add(gameData.backgroundModifier);
+        backgroundContainer3.position.add(gameData.backgroundModifier);
+
+        if(BACKGROUND_TILE_WIDTH + backgroundContainer1.position.x < 0)
+            backgroundContainer1.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
+        if(BACKGROUND_TILE_WIDTH + backgroundContainer2.position.x < 0)
+            backgroundContainer2.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
+        if(BACKGROUND_TILE_WIDTH + backgroundContainer3.position.x < 0)
+            backgroundContainer3.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
 
         //Se actualiza la lista de decoraciones
         for(int i = 0; i < decorations.length; i++){
@@ -140,11 +153,15 @@ public class GameRenderer implements Renderer {
 
             mainTextureDrawer.reset();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, backgroundId);
-            mainTextureDrawer.addTexturedSquare(BACKGROUND_CONTAINER, BACKGROUND_TEXTURE);
-            if(gameData.currentDifficulty == Difficulty.MEDIUM)
+            mainTextureDrawer.addTexturedSquare(backgroundContainer1, BACKGROUND_1);
+            mainTextureDrawer.addTexturedSquare(backgroundContainer2, BACKGROUND_2);
+            mainTextureDrawer.addTexturedSquare(backgroundContainer3, BACKGROUND_3);
+
+            /*if(gameData.currentDifficulty == Difficulty.MEDIUM)
                 mainTextureDrawer.addColoredSquare(BACKGROUND_CONTAINER, LEVEL_2_BACKGROUND, BACKGROUND_OVERLAY);
             else if(gameData.currentDifficulty == Difficulty.HARD)
                 mainTextureDrawer.addColoredSquare(BACKGROUND_CONTAINER, LEVEL_3_BACKGROUND, BACKGROUND_OVERLAY);
+                */
             mainTextureDrawer.draw(gl10);
 
 

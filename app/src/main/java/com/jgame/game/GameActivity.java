@@ -345,6 +345,8 @@ public class GameActivity extends Activity {
                         backgroundModifier.set(1 - r.nextInt(2) * 2, 0);
                         eventFrame--;
                     }
+
+                    backgroundModifier.set(-0.3f, 0);
                 }
             } catch (InterruptedException e){
 
