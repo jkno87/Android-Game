@@ -109,13 +109,18 @@ public class GameRenderer implements Renderer {
         return textureIds[0];
     }
 
-    @Override
-    public void onDrawFrame(GL10 arg0) {
-        gameData.copy(gameActivity.gameData);
+    /**
+     * Se encarga de mover el background del juego en caso de que exista algun cambio en el vector modifier
+     * @param modifier Vector que contiene el cambio del background
+     */
+    private void advanceBackground(Vector2 modifier) {
+        if(modifier.x == 0 && modifier.y == 0)
+            return;
+
         //Se suma la posicion original con cualquier cambio nuevo
-        backgroundContainer1.position.add(gameData.backgroundModifier);
-        backgroundContainer2.position.add(gameData.backgroundModifier);
-        backgroundContainer3.position.add(gameData.backgroundModifier);
+        backgroundContainer1.position.add(modifier);
+        backgroundContainer2.position.add(modifier);
+        backgroundContainer3.position.add(modifier);
 
         if(BACKGROUND_TILE_WIDTH + backgroundContainer1.position.x < 0)
             backgroundContainer1.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
@@ -123,6 +128,15 @@ public class GameRenderer implements Renderer {
             backgroundContainer2.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
         if(BACKGROUND_TILE_WIDTH + backgroundContainer3.position.x < 0)
             backgroundContainer3.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
+
+    }
+
+    @Override
+    public void onDrawFrame(GL10 arg0) {
+        gameData.copy(gameActivity.gameData);
+
+        if(!gameData.paused)
+            advanceBackground(gameData.backgroundModifier);
 
         //Se actualiza la lista de decoraciones
         for(int i = 0; i < decorations.length; i++){

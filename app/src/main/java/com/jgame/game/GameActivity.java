@@ -37,15 +37,13 @@ public class GameActivity extends Activity {
     }
 
     public static final long UPDATE_INTERVAL = 16L;
-    public static final float FRAMES_PER_SECOND = UPDATE_INTERVAL / 1000L;
+    public static final float FRAMES_PER_SECOND = 1000L / UPDATE_INTERVAL;
     public static final int MEDIUM_DIFFICULTY_POINTS = 4;
     public static final int HARD_DIFFICULTY_POINTS = 10;
     public static final float FRUSTUM_HEIGHT = 320f;
     public static final float FRUSTUM_WIDTH = 480f;
     public static final float MIN_X = 20;
     public static final float MAX_X = FRUSTUM_WIDTH - MIN_X;
-    private final float SPAWN_TIME = 1.5f;
-    private final int MAX_WORLD_OBJECTS = 1;
     public static final float PLAYING_WIDTH = FRUSTUM_WIDTH;
     public static final float PLAYING_HEIGHT = FRUSTUM_HEIGHT;
     private static final float DIRECTION_WIDTH = 65;
@@ -104,7 +102,12 @@ public class GameActivity extends Activity {
         new Thread(gameTask).start();
     }
 
-    private void triggerGameOver(int score){
+    /**
+     * Se encarga de verificar el score del jugador y en caso de tener un nuevo highscore lo registra en shared preferences.
+     * Tambien lo manda a firebase analytics en caso de que sea un highscore nuevo.
+     * @param score
+     */
+    private void checkHighScore(int score){
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "NewHighScore");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
@@ -194,9 +197,12 @@ public class GameActivity extends Activity {
 
     class GameRunnable implements Runnable {
 
+        private final int MAX_WORLD_OBJECTS = 1;
+        private final float SPAWN_TIME = 2f;
         private final int QUAKE_FRAMES = 6;
+        private final Vector2 ADVANCE_SPEED = new Vector2(-0.3f, 0);
         public final MainCharacter mainCharacter;
-        public final GameCharacter enemySpawnInterval;
+        public final GameCharacter SPAWN_INTERVAL = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
         public final GameCharacter[] availableEnemies;
         public int score;
         private ControllerManager.GameInput lastInput;
@@ -206,13 +212,13 @@ public class GameActivity extends Activity {
         private Difficulty currentDifficulty;
         private Vector2 backgroundModifier;
         private Event lastTriggeredEvent = Event.NONE;
-        private int eventFrame = 0;
+        private boolean advancing = false;
+        private int eventFrame = 0; //Este se usaba para indicar el frame de quake que se utiliza, posiblemente se elimine
         private Random r = new Random();
 
         public GameRunnable(MainCharacter mainCharacter){
             this.mainCharacter = mainCharacter;
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
-            enemySpawnInterval = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
             backgroundModifier = new Vector2();
             //availableEnemies[1] = new TeleportEnemy(TELEPORT_SPRITE_LENGTH, TELEPORT_SPRITE_HEIGHT,
             //        TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
@@ -220,7 +226,7 @@ public class GameActivity extends Activity {
             //        MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             availableEnemies[0] = new RobotEnemy(TELEPORT_SPRITE_HEIGHT, TELEPORT_SPRITE_HEIGHT,
                     TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT, ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
-            currentEnemy = enemySpawnInterval;
+            currentEnemy = SPAWN_INTERVAL;
         }
 
         @Override
@@ -260,7 +266,7 @@ public class GameActivity extends Activity {
                             soundManager.startMusic();
 
                         synchronized (enemyLock) {
-                            currentEnemy = enemySpawnInterval;
+                            currentEnemy = SPAWN_INTERVAL;
                         }
 
                         for(GameCharacter gc : availableEnemies)
@@ -274,8 +280,9 @@ public class GameActivity extends Activity {
                         currentState = GameState.PLAYING;
 
                     } else if(currentState == GameState.GAME_OVER){
-                        triggerGameOver(score);
+                        checkHighScore(score);
                         currentState = GameState.RESTART_SCREEN;
+                        advancing = false;
                     } else if (currentState == GameState.PLAYING){
                         gameData.score = score;
                         if(score > HARD_DIFFICULTY_POINTS)
@@ -302,6 +309,9 @@ public class GameActivity extends Activity {
                         gameData.backgroundModifier.set(backgroundModifier);
                     }
 
+                    //Se reinicia el modifier de cualquier cambio en el frame anterior.
+                    backgroundModifier.set(0,0);
+
                     if(currentState != GameState.PLAYING && currentState != GameState.RESTART_SCREEN)
                         continue;
 
@@ -321,32 +331,39 @@ public class GameActivity extends Activity {
                     }
 
 
+                    //Se realiza el cambio de enemigo en el caso de que el enemigo actual muera
                     if (!currentEnemy.alive() && currentState == GameState.PLAYING) {
                         if (currentEnemy instanceof EmptyEnemy) {
+                            Log.d("Game", "Aqui deberia dejar de caminar");
                             if(currentEnemyCounter == availableEnemies.length)
                                 currentEnemyCounter = 0;
                             synchronized (enemyLock) {
                                 currentEnemy = availableEnemies[currentEnemyCounter];
                             }
                             currentEnemyCounter++;
+                            //Como aparecera un enemigo nuevo, se deja de avanzar
+                            advancing = false;
                         } else {
                             synchronized (enemyLock) {
-                                currentEnemy = enemySpawnInterval;
+                                currentEnemy = SPAWN_INTERVAL;
                             }
                             score++;
                             if(gameData.soundEnabled)
                                 soundManager.playSound(ID_PUNCH);
+                            //Tambien se inicia con el avance del personaje principal
+                            advancing = true;
                         }
                         currentEnemy.setCurrentDifficulty(currentDifficulty);
                         currentEnemy.reset(0,0);
                     }
 
-                    if(eventFrame > 0){
+                    /*if(eventFrame > 0){
                         backgroundModifier.set(1 - r.nextInt(2) * 2, 0);
                         eventFrame--;
-                    }
-
-                    backgroundModifier.set(-0.3f, 0);
+                    }*/
+                    //En caso de que el juego este en el estado de advancing se manda el modificador al renderer
+                    if(advancing)
+                        backgroundModifier.set(ADVANCE_SPEED);
                 }
             } catch (InterruptedException e){
 
