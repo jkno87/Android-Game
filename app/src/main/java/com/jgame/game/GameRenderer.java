@@ -67,6 +67,9 @@ public class GameRenderer implements Renderer {
     private static final float BACKGROUND_TILE_WIDTH = GameActivity.FRUSTUM_WIDTH / 2;
     private static final float BACKGROUND_TILE_HEIGHT = GameActivity.PLAYING_HEIGHT - GameActivity.CONTROLS_HEIGHT;
     private static final float SCREEN_EDGE = BACKGROUND_TILE_WIDTH * 2;
+    private final Vector2 BACKGROUND_INITIAL_POSITION1 = new Vector2(0, GameActivity.CONTROLS_HEIGHT);
+    private final Vector2 BACKGROUND_INITIAL_POSITION2 = new Vector2(BACKGROUND_TILE_WIDTH, GameActivity.CONTROLS_HEIGHT);
+    private final Vector2 BACKGROUND_INITIAL_POSITION3 = new Vector2(BACKGROUND_TILE_WIDTH*2, GameActivity.CONTROLS_HEIGHT);
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
     private GL10 gl10;
@@ -87,9 +90,9 @@ public class GameRenderer implements Renderer {
         pauseOverlay = new SimpleDrawer.ColorData(0,0,0,0.5f);
         menuBase = new SimpleDrawer.ColorData(0,0.75f,0.5f,1);
         gameData = new GameData();
-        backgroundContainer1 = new Square(new Vector2(0, GameActivity.CONTROLS_HEIGHT), BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
-        backgroundContainer2 = new Square(new Vector2(BACKGROUND_TILE_WIDTH, GameActivity.CONTROLS_HEIGHT), BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
-        backgroundContainer3 = new Square(new Vector2(BACKGROUND_TILE_WIDTH * 2, GameActivity.CONTROLS_HEIGHT), BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
+        backgroundContainer1 = new Square(new Vector2(), BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
+        backgroundContainer2 = new Square(new Vector2(), BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
+        backgroundContainer3 = new Square(new Vector2(), BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
     }
 
     public void setSurfaceView(GameSurfaceView surfaceView){
@@ -221,6 +224,13 @@ public class GameRenderer implements Renderer {
             if (gameData.state == GameState.RESTART_SCREEN) {
                 mainTextureDrawer.addTexturedSquare(GameActivity.RESTART_BOUNDS, CONTINUE_BUTTON);
                 mainTextureDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
+            }
+
+            //En caso de que el juego este iniciando, se establece la posicion inicial del background
+            if (gameData.state == GameState.STARTING) {
+                backgroundContainer1.setPosition(BACKGROUND_INITIAL_POSITION1);
+                backgroundContainer2.setPosition(BACKGROUND_INITIAL_POSITION2);
+                backgroundContainer3.setPosition(BACKGROUND_INITIAL_POSITION3);
             }
 
             if (gameData.paused) {
