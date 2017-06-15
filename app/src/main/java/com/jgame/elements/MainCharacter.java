@@ -17,7 +17,7 @@ import java.util.ArrayDeque;
 public class MainCharacter extends GameCharacter {
 
     public enum CharacterState {
-        ABSORBING, IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B, DEAD, KNOCKDOWN
+        ABSORBING, IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B, DEAD, KNOCKDOWN, ADVANCING
     }
 
     public final static TextureData IDLE_TEXTURE = TextureDrawer.genTextureData(1,3,16);
@@ -167,10 +167,15 @@ public class MainCharacter extends GameCharacter {
             }
         } if (state == CharacterState.ABSORBING){
             ABSORBING_ANIMATION.updateFrame();
-            if(ABSORBING_ANIMATION.completed())
-                state = CharacterState.IDLE;
+            if(ABSORBING_ANIMATION.completed()) {
+                state = CharacterState.ADVANCING;
+                baseX.set(1,0);
+            }
         }
 
+        if (state == CharacterState.ADVANCING) {
+
+        }
 
 
         if(state == CharacterState.INPUT_B){
@@ -197,6 +202,10 @@ public class MainCharacter extends GameCharacter {
         idleCollisionBoxes[0].updatePosition();
         state = CharacterState.IDLE;
         hp = INITIAL_HP;
+    }
+
+    public void completeTransition(){
+        this.state = CharacterState.IDLE;
     }
 
     /**

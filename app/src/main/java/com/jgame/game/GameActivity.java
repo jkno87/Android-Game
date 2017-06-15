@@ -335,6 +335,7 @@ public class GameActivity extends Activity {
                     if (!currentEnemy.alive() && currentState == GameState.PLAYING) {
                         if (currentEnemy instanceof EmptyEnemy) {
                             Log.d("Game", "Aqui deberia dejar de caminar");
+                            mainCharacter.completeTransition();
                             if(currentEnemyCounter == availableEnemies.length)
                                 currentEnemyCounter = 0;
                             synchronized (enemyLock) {
