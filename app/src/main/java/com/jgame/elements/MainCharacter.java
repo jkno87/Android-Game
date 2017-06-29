@@ -1,6 +1,7 @@
 package com.jgame.elements;
 
 import com.jgame.game.ControllerManager;
+import com.jgame.game.GameActivity;
 import com.jgame.game.GameData.Event;
 import com.jgame.util.Decoration;
 import com.jgame.util.TextureDrawer;
@@ -86,7 +87,8 @@ public class MainCharacter extends GameCharacter {
     }
 
     public void receiveInput(ControllerManager.GameInput input){
-        if(state == CharacterState.INPUT_A || input == ControllerManager.GameInput.NO_INPUT)
+        if(state == CharacterState.INPUT_A || state == CharacterState.ADVANCING
+                || input == ControllerManager.GameInput.NO_INPUT)
             return;
 
         if(input == ControllerManager.GameInput.INPUT_OFF)
@@ -174,7 +176,8 @@ public class MainCharacter extends GameCharacter {
         }
 
         if (state == CharacterState.ADVANCING) {
-
+            if(position.x > GameActivity.INITIAL_CHARACTER_POSITION)
+                moveX(GameActivity.ADVANCE_RATE);
         }
 
 
@@ -204,8 +207,8 @@ public class MainCharacter extends GameCharacter {
         hp = INITIAL_HP;
     }
 
-    public void completeTransition(){
-        this.state = CharacterState.IDLE;
+    public boolean completedTransition(){
+        return this.state == CharacterState.ADVANCING && this.position.x < GameActivity.INITIAL_CHARACTER_POSITION;
     }
 
     /**

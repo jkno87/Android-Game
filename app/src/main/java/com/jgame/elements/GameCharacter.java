@@ -21,7 +21,7 @@ public abstract class GameCharacter extends GameObject {
     abstract class EnemyAction {
         public abstract void act();
     }
-
+    
     public final ColorData color = new ColorData(1,1,1,1);
     public final CollisionObject[] idleCollisionBoxes;
     public AttackData activeAttack;
@@ -91,7 +91,6 @@ public abstract class GameCharacter extends GameObject {
         baseX.x = other.baseX.x * -1;
         moveTo(other.position.x + (distanceFromCharacter + idleSizeX + other.idleSizeX), position.y);
         adjustToFoePosition(other);
-
     }
 
     /**

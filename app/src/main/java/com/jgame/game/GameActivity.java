@@ -46,13 +46,14 @@ public class GameActivity extends Activity {
     public static final float MAX_X = FRUSTUM_WIDTH - MIN_X;
     public static final float PLAYING_WIDTH = FRUSTUM_WIDTH;
     public static final float PLAYING_HEIGHT = FRUSTUM_HEIGHT;
+    public static final float INITIAL_CHARACTER_POSITION = 35;
+    public static final float ADVANCE_RATE = -0.5f;
     private static final float DIRECTION_WIDTH = 65;
     private static final float INPUT_SOUND_WIDTH = 55;
     private static final float BUTTONS_WIDTH = 65;
     private static final float INPUTS_HEIGHT = 5;
     public static final float CONTROLS_HEIGHT = PLAYING_HEIGHT * 0.25f;
     private static final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 10;
-    private static final float INITIAL_CHARACTER_POSITION = FRUSTUM_WIDTH / 2;
     private static final IdGenerator ID_GEN = new IdGenerator();
     public static final int TELEPORT_SPRITE_LENGTH = 115;
     public static final int TELEPORT_SPRITE_HEIGHT = 145;
@@ -95,10 +96,10 @@ public class GameActivity extends Activity {
         setContentView(gameSurfaceView);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
+        mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), MIN_X, MAX_X);
         gameData.highScore = settings.getInt(HIGH_SCORE, 0);
         gameData.state = GameState.TITLE_SCREEN;
-        this.mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), MIN_X, MAX_X);
-        gameTask = new GameRunnable(mainCharacter);
+        gameTask = new GameRunnable();
         new Thread(gameTask).start();
     }
 
@@ -201,7 +202,6 @@ public class GameActivity extends Activity {
         private final float SPAWN_TIME = 2f;
         private final int QUAKE_FRAMES = 6;
         private final Vector2 ADVANCE_SPEED = new Vector2(-0.3f, 0);
-        public final MainCharacter mainCharacter;
         public final GameCharacter SPAWN_INTERVAL = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
         public final GameCharacter[] availableEnemies;
         public int score;
@@ -216,8 +216,7 @@ public class GameActivity extends Activity {
         private int eventFrame = 0; //Este se usaba para indicar el frame de quake que se utiliza, posiblemente se elimine
         private Random r = new Random();
 
-        public GameRunnable(MainCharacter mainCharacter){
-            this.mainCharacter = mainCharacter;
+        public GameRunnable(){
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
             backgroundModifier = new Vector2();
             //availableEnemies[1] = new TeleportEnemy(TELEPORT_SPRITE_LENGTH, TELEPORT_SPRITE_HEIGHT,
@@ -331,19 +330,24 @@ public class GameActivity extends Activity {
                     }
 
 
+                    if(mainCharacter.state == MainCharacter.CharacterState.ADVANCING){
+                        if(mainCharacter.completedTransition()) {
+                            mainCharacter.state = MainCharacter.CharacterState.IDLE;
+                            advancing = false;
+                        }
+
+                        currentEnemy.moveX(GameActivity.ADVANCE_RATE);
+                    }
+
                     //Se realiza el cambio de enemigo en el caso de que el enemigo actual muera
                     if (!currentEnemy.alive() && currentState == GameState.PLAYING) {
                         if (currentEnemy instanceof EmptyEnemy) {
-                            Log.d("Game", "Aqui deberia dejar de caminar");
-                            mainCharacter.completeTransition();
                             if(currentEnemyCounter == availableEnemies.length)
                                 currentEnemyCounter = 0;
                             synchronized (enemyLock) {
                                 currentEnemy = availableEnemies[currentEnemyCounter];
                             }
                             currentEnemyCounter++;
-                            //Como aparecera un enemigo nuevo, se deja de avanzar
-                            advancing = false;
                         } else {
                             synchronized (enemyLock) {
                                 currentEnemy = SPAWN_INTERVAL;
