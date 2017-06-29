@@ -22,9 +22,6 @@ public abstract class GameCharacter extends GameObject {
         public abstract void act();
     }
 
-    private static final int LEFT_TELEPORT = -1;
-    private static final int RIGHT_TELEPORT = 1;
-    private static final Random RANDOM_POSITION = new Random();
     public final ColorData color = new ColorData(1,1,1,1);
     public final CollisionObject[] idleCollisionBoxes;
     public AttackData activeAttack;
@@ -91,19 +88,8 @@ public abstract class GameCharacter extends GameObject {
      * Reinicia la posicion del objeto tomando en cuenta la posicion de mainCharacter
      */
     public void setPosition(GameCharacter other, float distanceFromCharacter){
-        float characterMid = other.position.x + other.idleSizeX * other.baseX.x;
-        int modifier = 0;
-
-        if(characterMid + distanceFromCharacter + idleSizeX> GameActivity.MAX_X)
-            modifier = LEFT_TELEPORT;
-        else if (characterMid - distanceFromCharacter - idleSizeX < GameActivity.MIN_X)
-            modifier = RIGHT_TELEPORT;
-        else
-            modifier = 1 - 2*RANDOM_POSITION.nextInt(2);
-
         baseX.x = other.baseX.x * -1;
-        moveTo(modifier != other.baseX.x ? other.position.x + modifier * distanceFromCharacter:
-                other.position.x + modifier * (distanceFromCharacter + idleSizeX + other.idleSizeX), position.y);
+        moveTo(other.position.x + (distanceFromCharacter + idleSizeX + other.idleSizeX), position.y);
         adjustToFoePosition(other);
 
     }
