@@ -175,12 +175,6 @@ public class MainCharacter extends GameCharacter {
             }
         }
 
-        if (state == CharacterState.ADVANCING) {
-            if(position.x > GameActivity.INITIAL_CHARACTER_POSITION)
-                moveX(GameActivity.ADVANCE_RATE);
-        }
-
-
         if(state == CharacterState.INPUT_B){
             /*MOVE_B_COUNTER.accum(timeDifference);
             if(MOVE_B_COUNTER.completed()){

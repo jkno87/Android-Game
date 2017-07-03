@@ -72,9 +72,6 @@ public abstract class GameCharacter extends GameObject {
      * @param foe
      */
     public void adjustToFoePosition(GameCharacter foe){
-        if(foe instanceof EmptyEnemy)
-            return;
-
         if(baseX.x > 0) {
             if (position.x > foe.position.x)
                 changeDirection();

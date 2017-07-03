@@ -9,7 +9,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 import com.jgame.game.GameData.Event;
-import com.jgame.elements.EmptyEnemy;
 import com.jgame.elements.RobotEnemy;
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.MainCharacter;
@@ -46,8 +45,8 @@ public class GameActivity extends Activity {
     public static final float MAX_X = FRUSTUM_WIDTH - MIN_X;
     public static final float PLAYING_WIDTH = FRUSTUM_WIDTH;
     public static final float PLAYING_HEIGHT = FRUSTUM_HEIGHT;
-    public static final float INITIAL_CHARACTER_POSITION = 35;
-    public static final float ADVANCE_RATE = -0.5f;
+    public static final float INITIAL_CHARACTER_POSITION = 75;
+    public static final float ADVANCE_RATE = -2f;
     private static final float DIRECTION_WIDTH = 65;
     private static final float INPUT_SOUND_WIDTH = 55;
     private static final float BUTTONS_WIDTH = 65;
@@ -199,10 +198,8 @@ public class GameActivity extends Activity {
     class GameRunnable implements Runnable {
 
         private final int MAX_WORLD_OBJECTS = 1;
-        private final float SPAWN_TIME = 2f;
         private final int QUAKE_FRAMES = 6;
         private final Vector2 ADVANCE_SPEED = new Vector2(-0.3f, 0);
-        public final GameCharacter SPAWN_INTERVAL = new EmptyEnemy(ID_GEN.getId(), SPAWN_TIME);
         public final GameCharacter[] availableEnemies;
         public int score;
         private ControllerManager.GameInput lastInput;
@@ -225,7 +222,7 @@ public class GameActivity extends Activity {
             //        MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             availableEnemies[0] = new RobotEnemy(TELEPORT_SPRITE_HEIGHT, TELEPORT_SPRITE_HEIGHT,
                     TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT, ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
-            currentEnemy = SPAWN_INTERVAL;
+            currentEnemy = availableEnemies[0];
         }
 
         @Override
@@ -265,7 +262,7 @@ public class GameActivity extends Activity {
                             soundManager.startMusic();
 
                         synchronized (enemyLock) {
-                            currentEnemy = SPAWN_INTERVAL;
+                            currentEnemy = availableEnemies[0];
                         }
 
                         for(GameCharacter gc : availableEnemies)
@@ -337,27 +334,23 @@ public class GameActivity extends Activity {
                         }
 
                         currentEnemy.moveX(GameActivity.ADVANCE_RATE);
+                        mainCharacter.moveX(ADVANCE_RATE);
                     }
 
                     //Se realiza el cambio de enemigo en el caso de que el enemigo actual muera
                     if (!currentEnemy.alive() && currentState == GameState.PLAYING) {
-                        if (currentEnemy instanceof EmptyEnemy) {
-                            if(currentEnemyCounter == availableEnemies.length)
-                                currentEnemyCounter = 0;
-                            synchronized (enemyLock) {
-                                currentEnemy = availableEnemies[currentEnemyCounter];
-                            }
-                            currentEnemyCounter++;
-                        } else {
-                            synchronized (enemyLock) {
-                                currentEnemy = SPAWN_INTERVAL;
-                            }
-                            score++;
-                            if(gameData.soundEnabled)
-                                soundManager.playSound(ID_PUNCH);
-                            //Tambien se inicia con el avance del personaje principal
-                            advancing = true;
+                        if(currentEnemyCounter == availableEnemies.length)
+                            currentEnemyCounter = 0;
+                        synchronized (enemyLock) {
+                            currentEnemy = availableEnemies[currentEnemyCounter];
                         }
+
+                        if(gameData.soundEnabled)
+                            soundManager.playSound(ID_PUNCH);
+                        //Se agrega un punto y se inicia con la transicion del personaje a la siguiente escena
+                        score++;
+                        advancing = true;
+                        //Se reinicia el enemigo para que se encuentre en su estado inicial en caso de algun cambio
                         currentEnemy.setCurrentDifficulty(currentDifficulty);
                         currentEnemy.reset(0,0);
                     }
