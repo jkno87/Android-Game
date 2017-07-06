@@ -270,9 +270,9 @@ public class GameActivity extends Activity {
 
                         currentDifficulty = initialDifficulty;
                         score = 0;
+                        mainCharacter.reset(INITIAL_CHARACTER_POSITION, ELEMENTS_HEIGHT);
                         currentEnemyCounter = 0;
                         currentEnemy.reset(0,0);
-                        mainCharacter.reset(INITIAL_CHARACTER_POSITION, ELEMENTS_HEIGHT);
                         currentState = GameState.PLAYING;
 
                     } else if(currentState == GameState.GAME_OVER){
@@ -333,7 +333,7 @@ public class GameActivity extends Activity {
                             advancing = false;
                         }
 
-                        currentEnemy.moveX(GameActivity.ADVANCE_RATE);
+                        currentEnemy.moveX(ADVANCE_RATE);
                         mainCharacter.moveX(ADVANCE_RATE);
                     }
 
