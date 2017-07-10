@@ -8,12 +8,15 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.jgame.game.GameData.Event;
 import com.jgame.elements.RobotEnemy;
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.IdGenerator;
-import com.jgame.util.LabelButton;
 import com.jgame.util.Square;
 import com.jgame.util.Vector2;
 import com.jgame.game.GameData.GameState;
@@ -22,6 +25,7 @@ import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import com.jgame.util.Decoration;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.*;
 
 
@@ -84,6 +88,7 @@ public class GameActivity extends Activity {
     public final ArrayDeque<Decoration> decorationsBuffer = new ArrayDeque<>();
     public GameRunnable gameTask;
     private FirebaseAnalytics mFirebaseAnalytics;
+    private AdView mAdView;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -91,8 +96,8 @@ public class GameActivity extends Activity {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         soundManager = GameResources.soundManager;
         ID_PUNCH = soundManager.loadSound(this, R.raw.punch);
-        gameSurfaceView = new GameSurfaceView(this);
-        setContentView(gameSurfaceView);
+        setContentView(R.layout.activity_main);
+        gameSurfaceView = (GameSurfaceView) findViewById(R.id.game_surface);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
         mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), MIN_X, MAX_X);
@@ -100,6 +105,9 @@ public class GameActivity extends Activity {
         gameData.state = GameState.TITLE_SCREEN;
         gameTask = new GameRunnable();
         new Thread(gameTask).start();
+        mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     /**

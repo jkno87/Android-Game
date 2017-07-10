@@ -18,7 +18,49 @@ import java.util.ArrayDeque;
 public class MainCharacter extends GameCharacter {
 
     public enum CharacterState {
-        ABSORBING, IDLE, MOVING_FORWARD, MOVING_BACKWARDS, INPUT_A, INPUT_B, DEAD, KNOCKDOWN, ADVANCING
+        ABSORBING {
+            @Override
+            public boolean isCancellable() {
+                return false;
+            }
+        }, IDLE {
+            @Override
+            public boolean isCancellable() {
+                return true;
+            }
+        }, MOVING_FORWARD {
+            @Override
+            public boolean isCancellable() {
+                return true;
+            }
+        }, MOVING_BACKWARDS {
+            @Override
+            public boolean isCancellable() {
+                return true;
+            }
+        }, INPUT_A {
+            @Override
+            public boolean isCancellable() {
+                return false;
+            }
+        }, INPUT_B {
+            @Override
+            public boolean isCancellable() {
+                return false;
+            }
+        }, DEAD {
+            @Override
+            public boolean isCancellable() {
+                return false;
+            }
+        }, ADVANCING {
+            @Override
+            public boolean isCancellable() {
+                return false;
+            }
+        };
+
+        public abstract boolean isCancellable();
     }
 
     public final static TextureData IDLE_TEXTURE = TextureDrawer.genTextureData(1,3,16);
@@ -86,9 +128,14 @@ public class MainCharacter extends GameCharacter {
         return idleCollisionBoxes;
     }
 
+    /**
+     * Funcion que se encarga de recibir el ultimo input del ControllerManager.
+     * Solo realiza una accion si el estado en el que se encuentra el personaje
+     * puede ser cancelable
+     * @param input Ultimo GameInput recibido
+     */
     public void receiveInput(ControllerManager.GameInput input){
-        if(state == CharacterState.INPUT_A || state == CharacterState.ADVANCING
-                || input == ControllerManager.GameInput.NO_INPUT)
+        if (!state.isCancellable())
             return;
 
         if(input == ControllerManager.GameInput.INPUT_OFF)

@@ -1,7 +1,9 @@
 package com.jgame.game;
 
+import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.support.v4.view.MotionEventCompat;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 public class GameSurfaceView extends GLSurfaceView {
@@ -10,9 +12,9 @@ public class GameSurfaceView extends GLSurfaceView {
     private final GameRenderer gameRenderer;
     private final ControllerManager controllerManager;
 
-    public GameSurfaceView(GameActivity context){
-        super(context);
-        this.gameActivity = context;
+    public GameSurfaceView(Context context, AttributeSet attrs){
+        super(context, attrs);
+        this.gameActivity = (GameActivity) context;
         gameRenderer = new GameRenderer(gameActivity);
         setRenderer(gameRenderer);
         gameRenderer.setSurfaceView(this);
