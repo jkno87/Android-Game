@@ -63,7 +63,7 @@ public class MainCharacter extends GameCharacter {
         public abstract boolean isCancellable();
     }
 
-    public final static TextureData IDLE_TEXTURE = TextureDrawer.genTextureData(1,3,16);
+    public final static TextureData IDLE_TEXTURE = new TextureData(0.875f,0f,1,0.25f);
     public final static TextureData RECOVERY_SUCCESS_1 = TextureDrawer.genTextureData(2,1,16);
     public final static TextureData RECOVERY_SUCCESS_2 = TextureDrawer.genTextureData(2,2,16);
     public final static TextureData INIT_MOV_A = TextureDrawer.genTextureData(1,1,16);
