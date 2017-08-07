@@ -68,8 +68,8 @@ public class MainCharacter extends GameCharacter {
     public final static TextureData RECOVERY_SUCCESS_2 = TextureDrawer.genTextureData(2,2,16);
     public final static TextureData INIT_MOV_A = TextureDrawer.genTextureData(1,1,16);
     public final static TextureData ACTIVE_MOV_A = TextureDrawer.genTextureData(1,2,16);
-    public final static TextureData MOVING_A = TextureDrawer.genTextureData(1,4,16);
-    public final static TextureData MOVING_B = TextureDrawer.genTextureData(1,5,16);
+    public final static TextureData MOVING_A = new TextureData(0.875f, 0.25f, 1, 0.5f);
+    public final static TextureData MOVING_B = new TextureData(0.875f, 0.5f, 1, 0.75f);;
     public static final int SPRITE_LENGTH = 75;
     public static final int CHARACTER_LENGTH = 40;
     public static final int CHARACTER_HEIGHT = 160;
