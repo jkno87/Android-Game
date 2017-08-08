@@ -69,7 +69,10 @@ public class MainCharacter extends GameCharacter {
     public final static TextureData INIT_MOV_A = TextureDrawer.genTextureData(1,1,16);
     public final static TextureData ACTIVE_MOV_A = TextureDrawer.genTextureData(1,2,16);
     public final static TextureData MOVING_A = new TextureData(0.875f, 0.25f, 1, 0.5f);
-    public final static TextureData MOVING_B = new TextureData(0.875f, 0.5f, 1, 0.75f);;
+    public final static TextureData MOVING_B = new TextureData(0.875f, 0.5f, 1, 0.75f);
+    public final static TextureData MOVING_C = new TextureData(0.75f, 0.5f, 0.875f, 0.75f);
+    public final static TextureData MOVING_D = new TextureData(0.625f, 0.75f, 0.75f, 1f);
+    public final static TextureData MOVING_E = new TextureData(0.75f, 0.75f, 0.875f, 1f);
     public static final int SPRITE_LENGTH = 75;
     public static final int CHARACTER_LENGTH = 40;
     public static final int CHARACTER_HEIGHT = 160;
@@ -77,7 +80,7 @@ public class MainCharacter extends GameCharacter {
     public final int HEIGHT_MOVE_A = CHARACTER_HEIGHT;
     private final int KNOCKDOWN_FRAMES = 18;
     private final int INITIAL_HP = 1000;
-    private final AnimationData WALKING_ANIMATION = new AnimationData(15, true, new TextureData[]{MOVING_A, MOVING_B});
+    private final AnimationData WALKING_ANIMATION = new AnimationData(15, true, new TextureData[]{MOVING_A, MOVING_B, MOVING_C, MOVING_D, MOVING_E});
     private final float MOVING_SPEED = 0.75f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
