@@ -64,10 +64,10 @@ public class MainCharacter extends GameCharacter {
     }
 
     public final static TextureData IDLE_TEXTURE = new TextureData(0.875f,0f,1,0.25f);
-    public final static TextureData RECOVERY_SUCCESS_1 = TextureDrawer.genTextureData(2,1,16);
-    public final static TextureData RECOVERY_SUCCESS_2 = TextureDrawer.genTextureData(2,2,16);
-    public final static TextureData INIT_MOV_A = TextureDrawer.genTextureData(1,1,16);
-    public final static TextureData ACTIVE_MOV_A = TextureDrawer.genTextureData(1,2,16);
+    public final static TextureData RECOVERY_SUCCESS_1 = new TextureData(0.25f, 0.75f, 0.375f, 1f);
+    public final static TextureData RECOVERY_SUCCESS_2 = new TextureData(0.125f, 0.75f, 0.25f, 1f);
+    public final static TextureData STARTUP_MOV_A = new TextureData(0.5f, 0.75f, 0.625f, 1f);
+    public final static TextureData ACTIVE_MOV_A = new TextureData(0.375f, 0.75f, 0.5f, 1f);
     public final static TextureData MOVING_A = new TextureData(0.875f, 0.25f, 1, 0.5f);
     public final static TextureData MOVING_B = new TextureData(0.875f, 0.5f, 1, 0.75f);
     public final static TextureData MOVING_C = new TextureData(0.75f, 0.5f, 0.875f, 0.75f);
@@ -108,9 +108,9 @@ public class MainCharacter extends GameCharacter {
                 LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
 
         moveA = new AttackData(startupA, activeA, recoveryA);
-        moveA.setStartupAnimation(new AnimationData(5, false, INIT_MOV_A));
+        moveA.setStartupAnimation(new AnimationData(5, false, STARTUP_MOV_A));
         moveA.setActiveAnimation(new AnimationData(10, false, ACTIVE_MOV_A));
-        moveA.setRecoveryAnimation(new AnimationData(10, false, INIT_MOV_A));
+        moveA.setRecoveryAnimation(new AnimationData(10, false, STARTUP_MOV_A));
 
         this.maxX = maxX;
         this.minX = minX;
