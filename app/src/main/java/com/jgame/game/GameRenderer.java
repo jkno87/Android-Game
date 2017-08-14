@@ -28,10 +28,13 @@ public class GameRenderer implements Renderer {
     private final static int SCORE_SIZE_Y = 20;
     private final static int PAUSE_X_SIZE = 100;
     private final static int PAUSE_Y_SIZE = 70;
+    private final static int SCORE_LEDS = 5;
     private final static boolean RENDER_HITBOXES = false;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
+    public final static TextureData SCORE_LABEL_TEX = new TextureData(0.125f, 0.6875f, 0.25f, 0.75f);
+    public final static TextureData ATTACK_LABEL_TEX = new TextureData(0.125f, 0.625f, 0.25f, 0.6875f);
     public final static TextureData CONTINUE_BUTTON = new TextureData(0f,1.9375f,0.125f,2f);
     public final static TextureData QUIT_BUTTON = new TextureData(0f,1.875f,0.125f,1.9375f);
     public final static TextureData DISAPPEAR_TEXTURE = new TextureData(0.1875f,0.625f,0.125f,0.5625f);
@@ -61,7 +64,9 @@ public class GameRenderer implements Renderer {
     public static final GameText ON_LABEL = new GameText("on", new Square(160, 50, 50, 20), 20);
     public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 20);
     public static final Square SOUND_SWITCH_SPRITE = new Square(210, 40, 50, 50);
-    private static final DigitsDisplay CURRENT_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, 5, new Vector2(250,35));
+    public static final Square SCORE_LABEL_BOUNDS = new Square(195, 40, SCORE_SIZE_X * SCORE_LEDS, SCORE_SIZE_Y);
+    public static final Square ATTACK_LABEL_BOUNDS = new Square(GameActivity.INPUT_A_BOUNDS.position.x + 70, 40, SCORE_LABEL_BOUNDS.lenX, SCORE_LABEL_BOUNDS.lenY);
+    private static final DigitsDisplay CURRENT_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, SCORE_LEDS, new Vector2(250,15));
     private static final ColorData PAUSE_MENU_COLOR = new ColorData(0,1,0,1);
     private static final ColorData TRANSPARENCY_COLOR = new ColorData(1,1,1,0.65f);
     private static final float BACKGROUND_TILE_WIDTH = GameActivity.FRUSTUM_WIDTH / 2;
@@ -208,6 +213,8 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_LEFT_BOUNDS, LEFT_ARROW_TEXTURE);
             mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_RIGHT_BOUNDS, ARROW_TEXTURE);
             mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_A_BOUNDS, BUTTON_TEXTURE);
+            mainTextureDrawer.addTexturedSquare(SCORE_LABEL_BOUNDS, SCORE_LABEL_TEX);
+            mainTextureDrawer.addTexturedSquare(ATTACK_LABEL_BOUNDS, ATTACK_LABEL_TEX);
 
             if (RENDER_HITBOXES) {
                 renderHitBoxes(gameActivity.mainCharacter, mainTextureDrawer);
