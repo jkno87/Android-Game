@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.CollisionObject;
+import com.jgame.elements.MainCharacter;
 import com.jgame.util.DigitsDisplay;
 import com.jgame.util.GameText;
 import com.jgame.util.SimpleDrawer;
@@ -33,6 +34,9 @@ public class GameRenderer implements Renderer {
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
+    public final static TextureData NEUTRAL_JOYSTICK_TEX = new TextureData(0.5f,0.375f,0.5625f,0.4375f);
+    public final static TextureData LEFT_JOYSTICK_TEX = new TextureData(0.5625f,0.375f,0.625f,0.4375f);
+    public final static TextureData RIGHT_JOYSTICK_TEX = new TextureData(0.625f,0.375f,0.6875f,0.4375f);;
     public final static TextureData SCORE_LABEL_TEX = new TextureData(0.125f, 0.6875f, 0.25f, 0.75f);
     public final static TextureData ATTACK_LABEL_TEX = new TextureData(0.125f, 0.625f, 0.25f, 0.6875f);
     public final static TextureData CONTINUE_BUTTON = new TextureData(0f,1.9375f,0.125f,2f);
@@ -41,10 +45,10 @@ public class GameRenderer implements Renderer {
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.96875f,0.96875f,1.0f,1.0f);
     public final static TextureData SPEAKER_TEXTURE = new TextureData(0.4375f, 0.375f, 0.5f, 0.4375f);
     public final static TextureData SOUND_TEXTURE = new TextureData(0.4375f,0.4375f,0.5f,0.5f);
-    public final static TextureData BUTTON_TEXTURE = TextureDrawer.genTextureData(1.0f,7.05f,16);
+    public final static TextureData BUTTON_TEXTURE = new TextureData(0.25f, 0.5625f, 0.375f, 0.6875f);
     public final static TextureData ARROW_TEXTURE = TextureDrawer.genTextureData(1.0f,8.05f,16);
     public final static TextureData START_BUTTON_TEXTURE = new TextureData(0, 0.5625f, 0.125f, 0.625f);
-    public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.0625f,0.5f,0,0.4375f);
+    public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.0625f,0.5f,0,0.4372f);
     public final static TextureData SOUND_SWITCH_ON_TEXTURE = new TextureData(0.375f,0.375f,0.4375f,0.4375f);
     public final static TextureData SOUND_SWITCH_OFF_TEXTURE = new TextureData(0.4375f,0.4375f,0.375f,0.375f);
     public final static TextureData EASY_SPRITE = new TextureData(0f,0.6875f,0.125f,0.75f);
@@ -63,6 +67,7 @@ public class GameRenderer implements Renderer {
     public static final GameText SOUND_LABEL = new GameText("sound", new Square(160, 85, 150, 35), 0);
     public static final GameText ON_LABEL = new GameText("on", new Square(160, 50, 50, 20), 20);
     public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 20);
+    public static final Square JOYSTICK_BOUNDS = new Square(35, GameActivity.INPUT_LEFT_BOUNDS.position.y - 5, 75, 75);
     public static final Square SOUND_SWITCH_SPRITE = new Square(210, 40, 50, 50);
     public static final Square SCORE_LABEL_BOUNDS = new Square(195, 40, SCORE_SIZE_X * SCORE_LEDS, SCORE_SIZE_Y);
     public static final Square ATTACK_LABEL_BOUNDS = new Square(GameActivity.INPUT_A_BOUNDS.position.x + 70, 40, SCORE_LABEL_BOUNDS.lenX, SCORE_LABEL_BOUNDS.lenY);
@@ -216,6 +221,16 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.addTexturedSquare(SCORE_LABEL_BOUNDS, SCORE_LABEL_TEX);
             mainTextureDrawer.addTexturedSquare(ATTACK_LABEL_BOUNDS, ATTACK_LABEL_TEX);
 
+            CURRENT_SCORE.number = gameData.score;
+            CURRENT_SCORE.addDigitsTexture(mainTextureDrawer);
+
+            if(gameActivity.mainCharacter.state == MainCharacter.CharacterState.MOVING_FORWARD)
+                mainTextureDrawer.addTexturedSquare(JOYSTICK_BOUNDS, RIGHT_JOYSTICK_TEX);
+            else if(gameActivity.mainCharacter.state == MainCharacter.CharacterState.MOVING_BACKWARDS)
+                mainTextureDrawer.addTexturedSquare(JOYSTICK_BOUNDS, LEFT_JOYSTICK_TEX);
+            else
+                mainTextureDrawer.addTexturedSquare(JOYSTICK_BOUNDS, NEUTRAL_JOYSTICK_TEX);
+
             if (RENDER_HITBOXES) {
                 renderHitBoxes(gameActivity.mainCharacter, mainTextureDrawer);
                 mainTextureDrawer.addColoredSquare(GameActivity.INPUT_LEFT_BOUNDS, NO_TEXTURE_COORDS, ATTACK_COLOR);
@@ -223,10 +238,6 @@ public class GameRenderer implements Renderer {
                 mainTextureDrawer.addColoredSquare(GameActivity.INPUT_A_BOUNDS, NO_TEXTURE_COORDS, ATTACK_COLOR);
             }
 
-            if (characterAlive) {
-                CURRENT_SCORE.number = gameData.score;
-                CURRENT_SCORE.addDigitsTexture(mainTextureDrawer);
-            }
 
             if (gameData.state == GameState.RESTART_SCREEN) {
                 mainTextureDrawer.addTexturedSquare(GameActivity.RESTART_BOUNDS, CONTINUE_BUTTON);
