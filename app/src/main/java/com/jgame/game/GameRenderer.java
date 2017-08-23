@@ -26,6 +26,29 @@ import com.jgame.game.GameActivity.Difficulty;
 public class GameRenderer implements Renderer {
 
     class BackgroundWindow {
+        private final TextureData[] tData;
+        private int currentTexture;
+
+        public BackgroundWindow(TextureData[] tData){
+            this.tData = tData;
+        }
+
+        public TextureData getCurrentTexture(){
+            TextureData td = tData[currentTexture];
+            currentTexture++;
+            return td;
+        }
+
+        public boolean isFinished(){
+            return tData.length >= currentTexture;
+        }
+
+        public void reset(){
+            currentTexture = 0;
+        }
+    }
+
+    class Background {
         private final float BACKGROUND_TILE_WIDTH = GameActivity.FRUSTUM_WIDTH / 2;
         private final float BACKGROUND_TILE_HEIGHT = GameActivity.PLAYING_HEIGHT - GameActivity.CONTROLS_HEIGHT;
         private final float SCREEN_EDGE = BACKGROUND_TILE_WIDTH * 2;
@@ -38,32 +61,63 @@ public class GameRenderer implements Renderer {
                 BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
         private final Square backgroundContainer3 = new Square(new Vector2(BACKGROUND_X_POSITION_3, GameActivity.CONTROLS_HEIGHT),
                 BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
+        public TextureData tData1;
+        public TextureData tData2;
+        public TextureData tData3;
+        private Vector2 scrollSpeed;
 
-        public BackgroundWindow(){
+        private BackgroundWindow currentWindow;
+        private BackgroundWindow nextWindow;
 
+        public Background(Vector2 scrollSpeed){
+            TextureData[] i1 = new TextureData[]{new TextureData(0,0,0.0625f,0.25f), new TextureData(0.0625f,0,0.125f,0.25f), new TextureData(0.125f,0,0.1875f,0.25f)};
+            TextureData[] i2 = new TextureData[]{new TextureData(0.75f,0,0.8125f,0.25f), new TextureData(0.8125f,0,0.875f,0.25f),
+                    new TextureData(0.875f,0,0.9375f,0.25f), new TextureData(0.9375f,0,1,0.25f)};
+            currentWindow = new BackgroundWindow(i1);
+            nextWindow = new BackgroundWindow(i2);
+            this.scrollSpeed = scrollSpeed;
+            //Esto asume que la primer ventana tiene minimo 3 texturas
+            tData1 = currentWindow.getCurrentTexture();
+            tData2 = currentWindow.getCurrentTexture();
+            tData3 = currentWindow.getCurrentTexture();
+        }
+
+        private void scrollWindows(){
+            //Version preeliminar que solo cambia el orden de las ventanas
+            BackgroundWindow current = currentWindow;
+            currentWindow = nextWindow;
+            nextWindow = current;
+            nextWindow.reset();
         }
 
 
-        public void advanceBackground(Vector2 modifier){
-            if(modifier.x == 0 && modifier.y == 0)
-                return;
+        public void advanceBackground(){
+            //if(modifier.x == 0 && modifier.y == 0)
+             //   return;
 
             //Se suma la posicion original con cualquier cambio nuevo
-            backgroundContainer1.position.add(modifier);
-            backgroundContainer2.position.add(modifier);
-            backgroundContainer3.position.add(modifier);
+            backgroundContainer1.position.add(scrollSpeed);
+            backgroundContainer2.position.add(scrollSpeed);
+            backgroundContainer3.position.add(scrollSpeed);
 
             if(BACKGROUND_TILE_WIDTH + backgroundContainer1.position.x < 0) {
                 backgroundContainer1.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
-                //aqui se actualiza este container con la siguiente textura
+                if(currentWindow.isFinished())
+                    scrollWindows();
+                tData1 = currentWindow.getCurrentTexture();
+
             }
             if(BACKGROUND_TILE_WIDTH + backgroundContainer2.position.x < 0) {
                 backgroundContainer2.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
-                //aqui se actualiza el container con la siguiente textura
+                if(currentWindow.isFinished())
+                    scrollWindows();
+                tData2 = currentWindow.getCurrentTexture();
             }
             if(BACKGROUND_TILE_WIDTH + backgroundContainer3.position.x < 0) {
                 backgroundContainer3.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
-                //aqui se actualiza el container con la siguiente textura
+                if(currentWindow.isFinished())
+                    scrollWindows();
+                tData3 = currentWindow.getCurrentTexture();
             }
         }
 
@@ -71,6 +125,7 @@ public class GameRenderer implements Renderer {
             backgroundContainer1.position.x = BACKGROUND_X_POSITION_1;
             backgroundContainer2.position.x = BACKGROUND_X_POSITION_2;
             backgroundContainer3.position.x = BACKGROUND_X_POSITION_3;
+            currentWindow.reset();
         }
 
     }
@@ -125,11 +180,6 @@ public class GameRenderer implements Renderer {
     private static final DigitsDisplay CURRENT_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, SCORE_LEDS, new Vector2(250,15));
     private static final ColorData PAUSE_MENU_COLOR = new ColorData(0,1,0,1);
     private static final ColorData TRANSPARENCY_COLOR = new ColorData(1,1,1,0.65f);
-
-    //private static final float SCREEN_EDGE = BACKGROUND_TILE_WIDTH * 2;
-    //private final Vector2 BACKGROUND_INITIAL_POSITION1 = new Vector2(0, GameActivity.CONTROLS_HEIGHT);
-    //private final Vector2 BACKGROUND_INITIAL_POSITION2 = new Vector2(BACKGROUND_TILE_WIDTH, GameActivity.CONTROLS_HEIGHT);
-    //private final Vector2 BACKGROUND_INITIAL_POSITION3 = new Vector2(BACKGROUND_TILE_WIDTH*2, GameActivity.CONTROLS_HEIGHT);
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
     private GL10 gl10;
@@ -140,9 +190,7 @@ public class GameRenderer implements Renderer {
     ColorData menuBase;
     private final GameData gameData;
     private final Decoration[] decorations = new Decoration[5];
-    //private final Square backgroundContainer1;
-    //private final Square backgroundContainer2;
-    //private final Square backgroundContainer3;
+    private final Background background = new Background(new Vector2(-0.7f, 0));
 
     public GameRenderer(GameActivity gameActivity){
         this.gameActivity = gameActivity;
@@ -169,21 +217,12 @@ public class GameRenderer implements Renderer {
         return textureIds[0];
     }
 
-    /**
-     * Se encarga de mover el background del juego en caso de que exista algun cambio en el vector modifier
-     * @param modifier Vector que contiene el cambio del background
-     */
-    private void advanceBackground(Vector2 modifier) {
-
-
-    }
-
     @Override
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
 
         if(!gameData.paused)
-            advanceBackground(gameData.backgroundModifier);
+            background.advanceBackground();
 
         //Se actualiza la lista de decoraciones
         for(int i = 0; i < decorations.length; i++){
@@ -214,7 +253,9 @@ public class GameRenderer implements Renderer {
 
             mainTextureDrawer.reset();
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, backgroundId);
-            //TODO: Dibujar el background
+            mainTextureDrawer.addTexturedSquare(background.backgroundContainer1, background.tData1);
+            mainTextureDrawer.addTexturedSquare(background.backgroundContainer2, background.tData2);
+            mainTextureDrawer.addTexturedSquare(background.backgroundContainer3, background.tData3);
 
             /*if(gameData.currentDifficulty == Difficulty.MEDIUM)
                 mainTextureDrawer.addColoredSquare(BACKGROUND_CONTAINER, LEVEL_2_BACKGROUND, BACKGROUND_OVERLAY);
@@ -278,7 +319,7 @@ public class GameRenderer implements Renderer {
 
             //En caso de que el juego este iniciando, se establece la posicion inicial del background
             if (gameData.state == GameState.STARTING) {
-                //TODO: Aqui se reinicia el estado del background manager
+                background.resetBackground();
             }
 
             if (gameData.paused) {
