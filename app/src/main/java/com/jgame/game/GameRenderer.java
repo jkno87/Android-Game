@@ -22,6 +22,7 @@ import javax.microedition.khronos.opengles.GL10;
 import com.jgame.util.Decoration;
 import com.jgame.util.Vector2;
 import com.jgame.game.GameActivity.Difficulty;
+import java.util.Random;
 
 public class GameRenderer implements Renderer {
 
@@ -40,7 +41,7 @@ public class GameRenderer implements Renderer {
         }
 
         public boolean isFinished(){
-            return tData.length >= currentTexture;
+            return tData.length <= currentTexture;
         }
 
         public void reset(){
@@ -65,16 +66,18 @@ public class GameRenderer implements Renderer {
         public TextureData tData2;
         public TextureData tData3;
         private Vector2 scrollSpeed;
-
         private BackgroundWindow currentWindow;
-        private BackgroundWindow nextWindow;
+        private BackgroundWindow[] windows;
+        private final Random r = new Random();
 
         public Background(Vector2 scrollSpeed){
             TextureData[] i1 = new TextureData[]{new TextureData(0,0,0.0625f,0.25f), new TextureData(0.0625f,0,0.125f,0.25f), new TextureData(0.125f,0,0.1875f,0.25f)};
             TextureData[] i2 = new TextureData[]{new TextureData(0.75f,0,0.8125f,0.25f), new TextureData(0.8125f,0,0.875f,0.25f),
                     new TextureData(0.875f,0,0.9375f,0.25f), new TextureData(0.9375f,0,1,0.25f)};
-            currentWindow = new BackgroundWindow(i1);
-            nextWindow = new BackgroundWindow(i2);
+            windows = new BackgroundWindow[2];
+            windows[0] = new BackgroundWindow(i2);
+            windows[1] = new BackgroundWindow(i1);
+            updateWindows();
             this.scrollSpeed = scrollSpeed;
             //Esto asume que la primer ventana tiene minimo 3 texturas
             tData1 = currentWindow.getCurrentTexture();
@@ -82,14 +85,11 @@ public class GameRenderer implements Renderer {
             tData3 = currentWindow.getCurrentTexture();
         }
 
-        private void scrollWindows(){
-            //Version preeliminar que solo cambia el orden de las ventanas
-            BackgroundWindow current = currentWindow;
-            currentWindow = nextWindow;
-            nextWindow = current;
-            nextWindow.reset();
+        private void updateWindows(){
+            int n = r.nextInt(2);
+            currentWindow = windows[n];
+            currentWindow.reset();
         }
-
 
         public void advanceBackground(){
             //if(modifier.x == 0 && modifier.y == 0)
@@ -103,20 +103,20 @@ public class GameRenderer implements Renderer {
             if(BACKGROUND_TILE_WIDTH + backgroundContainer1.position.x < 0) {
                 backgroundContainer1.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
                 if(currentWindow.isFinished())
-                    scrollWindows();
+                    updateWindows();
                 tData1 = currentWindow.getCurrentTexture();
 
             }
             if(BACKGROUND_TILE_WIDTH + backgroundContainer2.position.x < 0) {
                 backgroundContainer2.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
                 if(currentWindow.isFinished())
-                    scrollWindows();
+                    updateWindows();
                 tData2 = currentWindow.getCurrentTexture();
             }
             if(BACKGROUND_TILE_WIDTH + backgroundContainer3.position.x < 0) {
                 backgroundContainer3.position.set(SCREEN_EDGE, GameActivity.CONTROLS_HEIGHT);
                 if(currentWindow.isFinished())
-                    scrollWindows();
+                    updateWindows();
                 tData3 = currentWindow.getCurrentTexture();
             }
         }
@@ -160,9 +160,6 @@ public class GameRenderer implements Renderer {
     public final static TextureData EASY_SPRITE = new TextureData(0f,0.6875f,0.125f,0.75f);
     public final static TextureData MEDIUM_SPRITE = new TextureData(0f,0.75f,0.125f,0.8125f);
     public final static TextureData HARD_SPRITE = new TextureData(0f,0.8125f,0.125f,0.875f);
-    public final static TextureData BACKGROUND_1 = new TextureData(0,0,1,0.25f);
-    //public final static TextureData BACKGROUND_2 = new TextureData(0.33f,0,0.66f,0.247f);
-    //public final static TextureData BACKGROUND_3 = new TextureData(0.66f,0,1,0.247f);
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
