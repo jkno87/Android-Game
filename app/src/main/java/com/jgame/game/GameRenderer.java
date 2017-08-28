@@ -50,6 +50,7 @@ public class GameRenderer implements Renderer {
     }
 
     class Background {
+        private final int NUMBER_OF_BACKGROUNDS = 2;
         private final float BACKGROUND_TILE_WIDTH = GameActivity.FRUSTUM_WIDTH / 2;
         private final float BACKGROUND_TILE_HEIGHT = GameActivity.PLAYING_HEIGHT - GameActivity.CONTROLS_HEIGHT;
         private final float SCREEN_EDGE = BACKGROUND_TILE_WIDTH * 2;
@@ -57,11 +58,11 @@ public class GameRenderer implements Renderer {
         private final float BACKGROUND_X_POSITION_2 = BACKGROUND_TILE_WIDTH;
         private final float BACKGROUND_X_POSITION_3 = BACKGROUND_TILE_WIDTH*2;
         private final Square backgroundContainer1 = new Square(new Vector2(BACKGROUND_X_POSITION_1, GameActivity.CONTROLS_HEIGHT),
-                BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
+                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT, 0);
         private final Square backgroundContainer2 = new Square(new Vector2(BACKGROUND_X_POSITION_2, GameActivity.CONTROLS_HEIGHT),
-                BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
+                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT, 0);
         private final Square backgroundContainer3 = new Square(new Vector2(BACKGROUND_X_POSITION_3, GameActivity.CONTROLS_HEIGHT),
-                BACKGROUND_TILE_WIDTH, BACKGROUND_TILE_HEIGHT, 0);
+                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT, 0);
         public TextureData tData1;
         public TextureData tData2;
         public TextureData tData3;
@@ -72,11 +73,11 @@ public class GameRenderer implements Renderer {
 
         public Background(Vector2 scrollSpeed){
             TextureData[] i1 = new TextureData[]{new TextureData(0,0,0.0625f,0.25f), new TextureData(0.0625f,0,0.125f,0.25f), new TextureData(0.125f,0,0.1875f,0.25f)};
-            TextureData[] i2 = new TextureData[]{new TextureData(0.75f,0,0.8125f,0.25f), new TextureData(0.8125f,0,0.875f,0.25f),
-                    new TextureData(0.875f,0,0.9375f,0.25f), new TextureData(0.9375f,0,1,0.25f)};
-            windows = new BackgroundWindow[2];
-            windows[0] = new BackgroundWindow(i2);
-            windows[1] = new BackgroundWindow(i1);
+            TextureData[] i2 = new TextureData[]{new TextureData(0.1875f,0,0.25f,0.25f), new TextureData(0.25f,0,0.3125f,0.25f),
+                    new TextureData(0.3125f,0,0.375f,0.25f), new TextureData(0.375f,0,0.4375f,0.25f)};
+            windows = new BackgroundWindow[NUMBER_OF_BACKGROUNDS];
+            windows[0] = new BackgroundWindow(i1);
+            windows[1] = new BackgroundWindow(i2);
             updateWindows();
             this.scrollSpeed = scrollSpeed;
             //Esto asume que la primer ventana tiene minimo 3 texturas
@@ -86,7 +87,7 @@ public class GameRenderer implements Renderer {
         }
 
         private void updateWindows(){
-            int n = r.nextInt(2);
+            int n = r.nextInt(NUMBER_OF_BACKGROUNDS);
             currentWindow = windows[n];
             currentWindow.reset();
         }
