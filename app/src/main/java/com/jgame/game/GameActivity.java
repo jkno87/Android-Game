@@ -207,7 +207,6 @@ public class GameActivity extends Activity {
 
         private final int MAX_WORLD_OBJECTS = 1;
         private final int QUAKE_FRAMES = 6;
-        private final Vector2 ADVANCE_SPEED = new Vector2(-0.3f, 0);
         public final GameCharacter[] availableEnemies;
         public int score;
         private ControllerManager.GameInput lastInput;
@@ -215,15 +214,13 @@ public class GameActivity extends Activity {
         private GameData.GameState currentState;
         private Difficulty initialDifficulty;
         private Difficulty currentDifficulty;
-        private Vector2 backgroundModifier;
+        private boolean backgroundMoving;
         private Event lastTriggeredEvent = Event.NONE;
         private boolean advancing = false;
-        private int eventFrame = 0; //Este se usaba para indicar el frame de quake que se utiliza, posiblemente se elimine
-        private Random r = new Random();
+        private int eventFrame = 0; //Este se usaba para indicar el frame de quake que se utiliza, posiblemente se elimineS
 
         public GameRunnable(){
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
-            backgroundModifier = new Vector2();
             //availableEnemies[1] = new TeleportEnemy(TELEPORT_SPRITE_LENGTH, TELEPORT_SPRITE_HEIGHT,
             //        TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             //availableEnemies[0] = new ChargingEnemy(CHARGING_SPRITE_LENGTH, MainCharacter.CHARACTER_HEIGHT,
@@ -310,11 +307,11 @@ public class GameActivity extends Activity {
                     synchronized (gameData){
                         gameData.state = currentState;
                         gameData.currentDifficulty = currentDifficulty;
-                        gameData.backgroundModifier.set(backgroundModifier);
+                        gameData.backgroundMoving = backgroundMoving;
                     }
 
                     //Se reinicia el modifier de cualquier cambio en el frame anterior.
-                    backgroundModifier.set(0,0);
+                    backgroundMoving = false;
 
                     if(currentState != GameState.PLAYING && currentState != GameState.RESTART_SCREEN)
                         continue;
@@ -369,7 +366,7 @@ public class GameActivity extends Activity {
                     }*/
                     //En caso de que el juego este en el estado de advancing se manda el modificador al renderer
                     if(advancing)
-                        backgroundModifier.set(ADVANCE_SPEED);
+                        backgroundMoving = true;
                 }
             } catch (InterruptedException e){
 

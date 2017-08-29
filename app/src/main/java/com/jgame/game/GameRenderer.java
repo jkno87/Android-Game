@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
-import android.util.Log;
-
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.CollisionObject;
 import com.jgame.elements.MainCharacter;
@@ -93,9 +91,6 @@ public class GameRenderer implements Renderer {
         }
 
         public void advanceBackground(){
-            //if(modifier.x == 0 && modifier.y == 0)
-             //   return;
-
             //Se suma la posicion original con cualquier cambio nuevo
             backgroundContainer1.position.add(scrollSpeed);
             backgroundContainer2.position.add(scrollSpeed);
@@ -127,6 +122,9 @@ public class GameRenderer implements Renderer {
             backgroundContainer2.position.x = BACKGROUND_X_POSITION_2;
             backgroundContainer3.position.x = BACKGROUND_X_POSITION_3;
             currentWindow.reset();
+            tData1 = currentWindow.getCurrentTexture();
+            tData2 = currentWindow.getCurrentTexture();
+            tData3 = currentWindow.getCurrentTexture();
         }
 
     }
@@ -219,7 +217,7 @@ public class GameRenderer implements Renderer {
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
 
-        if(!gameData.paused)
+        if(!gameData.paused && gameData.backgroundMoving)
             background.advanceBackground();
 
         //Se actualiza la lista de decoraciones

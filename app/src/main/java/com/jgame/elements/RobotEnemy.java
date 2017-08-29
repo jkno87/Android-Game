@@ -22,7 +22,7 @@ import java.util.ArrayDeque;
 public class RobotEnemy extends GameCharacter {
 
     enum EnemyState {
-        WAITING, EXPLODING, ATTACKING, DYING, DEAD, RECOVERING
+        WAITING, ATTACKING, DYING, DEAD, RECOVERING
     }
 
     private final int[] EASY_FRAME_DATA = new int[]{3,2,20};
@@ -52,10 +52,8 @@ public class RobotEnemy extends GameCharacter {
     public final static float ATTACK_DISTANCE = 95;
     //private final EnemyAction[] actions;
     private final MainCharacter mainCharacter;
-    private final int FRAMES_TO_SELFDESTRUCT = 600;
     private final int FRAMES_TO_RECOVER = 20;
     private EnemyState currentState;
-    private int beepInterval;
     private int currentIdleFrame;
     private float attackRange;
     private final AttackData explosionAttack;
@@ -94,7 +92,6 @@ public class RobotEnemy extends GameCharacter {
 
     @Override
     public void reset(float x, float y) {
-        beepInterval = 0;
         currentIdleFrame = 0;
         currentState = EnemyState.WAITING;
         setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
@@ -139,14 +136,6 @@ public class RobotEnemy extends GameCharacter {
     public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         adjustToFoePosition(foe);
         if(currentState == EnemyState.WAITING) {
-            if(currentIdleFrame >= FRAMES_TO_SELFDESTRUCT) {
-                currentState = EnemyState.EXPLODING;
-                activeAttack = explosionAttack;
-                decorationData.add(new StaticDecoration(EXPLOSION, new Square(new Vector2(position), 200, 90, 0),
-                        baseX.x == -1, 0, 15, true));
-                decorationData.add(new StaticDecoration(EXPLOSION, new Square(new Vector2(position), 300, 75, 0),
-                        baseX.x == -1, 13, 10, true));
-            }
 
             //Se verifica que el enemigo se encuentre en rango del ataque.
             if ((position.x > foe.position.x && (position.x - foe.position.x) < attackRange) ||
@@ -159,24 +148,15 @@ public class RobotEnemy extends GameCharacter {
                 activeAttack = regularAttack;
                 for(CollisionObject co : activeAttack.active)
                     co.updatePosition();
-            } else if(beepInterval == INITIAL_BEEP_INTERVAL){
-                decorationData.add(new StaticDecoration(IDLE_TEXTURE,
-                        new Square(new Vector2(position), spriteContainer.lenX, spriteContainer.lenY, 0),
-                        new SimpleDrawer.ColorData(1,0,0,0.25f),
-                        baseX.x == -1, 0, 10, false));
-                beepInterval = 0;
             }
 
             currentIdleFrame += 1;
-            beepInterval += 1;
-
         }
 
         if(currentState == EnemyState.ATTACKING){
             activeAttack.update();
             if(activeAttack.completed()) {
                 currentIdleFrame = 0;
-                beepInterval = 0;
                 currentState = EnemyState.RECOVERING;
                 regularAttack.reset();
                 foe.trip();
@@ -207,9 +187,6 @@ public class RobotEnemy extends GameCharacter {
             decorationData.add(s);
             currentState = EnemyState.DEAD;
         }
-
-        if(currentState == EnemyState.EXPLODING)
-            currentState = EnemyState.DEAD;
 
         return Event.NONE;
     }

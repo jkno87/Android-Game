@@ -22,7 +22,7 @@ public class GameData {
     public GameState state;
     public boolean paused;
     public GameActivity.Difficulty currentDifficulty = GameActivity.Difficulty.EASY;
-    public Vector2 backgroundModifier = new Vector2();
+    public boolean backgroundMoving;
 
     public void copy(GameData other){
         synchronized (other){
@@ -32,7 +32,7 @@ public class GameData {
             paused = other.paused;
             soundEnabled = other.soundEnabled;
             this.currentDifficulty = other.currentDifficulty;
-            this.backgroundModifier.set(other.backgroundModifier);
+            this.backgroundMoving = other.backgroundMoving;
         }
     }
 
