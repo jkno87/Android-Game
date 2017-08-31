@@ -25,29 +25,16 @@ public class RobotEnemy extends GameCharacter {
         WAITING, ATTACKING, DYING, DEAD, RECOVERING
     }
 
-    private final int[] EASY_FRAME_DATA = new int[]{3,2,20};
+    private final int[] EASY_FRAME_DATA = new int[]{7,5,20};
     private final int[] MEDIUM_FRAME_DATA = new int[]{2,3,15};
     private final int[] HARD_FRAME_DATA = new int[]{2,3,10};
-    private final static int INITIAL_BEEP_INTERVAL = 30;
-    public final static TextureData IDLE_TEXTURE = new TextureData(0.375f,0.125f,0.5f,0.25f);
+    public final static TextureData IDLE_TEXTURE = new TextureData(0,0,0.25f,0.25f);
     public final static TextureData[] STARTUP_TEXTURES = {
-            IDLE_TEXTURE, new TextureData(0.375f,0f,0.5f,0.125f),
-            new TextureData(0.375f,0.25f,0.5f,0.375f),
-            new TextureData(0.5f,0.25f,0.625f,0.375f),
-            new TextureData(0.5f,0.125f,0.625f,0.25f),
-            new TextureData(0.5f,0f,0.625f,0.125f),
-            new TextureData(0.625f,0f,0.75f,0.125f),
-            new TextureData(0.625f,0.125f,0.75f,0.25f),
-            new TextureData(0.625f,0.25f,0.75f,0.375f)
+            IDLE_TEXTURE, new TextureData(0.25f, 0, 0.50f, 0.25f)
     };
-    private final static AnimationData BEEP_ANIMATION = new AnimationData(15, false,
-            new TextureData[]{IDLE_TEXTURE});
-    private final static TextureData EXPLOSION = TextureDrawer.genTextureData(6,2,8);
-    //private final static AnimationData DESTROY_ANIMATION = new AnimationData(2, false,
-    //        new TextureData[] {STARTUP_TEXTURES[2], STARTUP_TEXTURES[1], STARTUP_TEXTURES[0], EXPLOSION});
     public final static TextureData DISAPPEAR_TEXTURE = new TextureData(0.75f,0f,0.875f,0.125f);
-    public final static TextureData[] RECOVERY_TEXTURES = {new TextureData(0.75f,0.125f,0.875f,0.25f)};
-    public final static TextureData ATTACK_TEXTURE = new TextureData(0.75f,0.25f,0.875f,0.375f);
+    public final static TextureData[] RECOVERY_TEXTURES = {new TextureData(0.25f, 0, 0.5f, 0.25f)};
+    public final static TextureData ATTACK_TEXTURE = new TextureData(0.50f, 0, 0.75f, 0.25f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 260;
     public final static float ATTACK_DISTANCE = 95;
     //private final EnemyAction[] actions;
@@ -56,7 +43,6 @@ public class RobotEnemy extends GameCharacter {
     private EnemyState currentState;
     private int currentIdleFrame;
     private float attackRange;
-    private final AttackData explosionAttack;
     private final AttackData regularAttack;
     private int[] currentFrameDataSet;
 
@@ -74,11 +60,9 @@ public class RobotEnemy extends GameCharacter {
         this.mainCharacter = mainCharacter;
         currentFrameDataSet = EASY_FRAME_DATA;
         attackRange = ATTACK_DISTANCE + idleSizeX;
-        CollisionObject[] explosionBoxes = new CollisionObject[]{new CollisionObject(new Vector2(57,55),0,GameActivity.PLAYING_WIDTH,35,this, CollisionObject.TYPE_ATTACK)};
         CollisionObject[] startupBoxes = new CollisionObject[]{new CollisionObject(new Vector2(115,100), 0, 15, 10, this, CollisionObject.TYPE_HITTABLE)};
         CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,140,55,this, CollisionObject.TYPE_HITTABLE),
         new CollisionObject(new Vector2(100, 50),0,15,20, this, CollisionObject.TYPE_ATTACK)};
-        explosionAttack = new AttackData(explosionBoxes, explosionBoxes, explosionBoxes);
         regularAttack = new AttackData(startupBoxes, attackBoxes, startupBoxes);
         regularAttack.setStartupAnimation(new AnimationData(currentFrameDataSet[0], false, STARTUP_TEXTURES));
         regularAttack.setActiveAnimation(new AnimationData(currentFrameDataSet[1], false, ATTACK_TEXTURE));
