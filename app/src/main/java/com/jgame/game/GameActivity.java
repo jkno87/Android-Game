@@ -228,6 +228,7 @@ public class GameActivity extends Activity {
             availableEnemies[0] = new RobotEnemy(TELEPORT_SPRITE_HEIGHT, TELEPORT_SPRITE_HEIGHT,
                     TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT, ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             currentEnemy = availableEnemies[0];
+            initialDifficulty = Difficulty.EASY;
         }
 
         @Override
@@ -254,14 +255,13 @@ public class GameActivity extends Activity {
                             }
                         } else if(lastInput == ControllerManager.GameInput.DIFFICULTY_EASY){
                             currentDifficulty = Difficulty.EASY;
-                            initialDifficulty = currentDifficulty;
                         } else if(lastInput == ControllerManager.GameInput.DIFFICULTY_MEDIUM) {
                             currentDifficulty = Difficulty.MEDIUM;
-                            initialDifficulty = currentDifficulty;
                         } else if(lastInput == ControllerManager.GameInput.DIFFICULTY_HARD){
                             currentDifficulty = Difficulty.HARD;
-                            initialDifficulty = currentDifficulty;
                         }
+                        initialDifficulty = currentDifficulty;
+
                     } else if(currentState == GameState.STARTING) {
                         if(gameData.soundEnabled)
                             soundManager.startMusic();
@@ -270,8 +270,9 @@ public class GameActivity extends Activity {
                             currentEnemy = availableEnemies[0];
                         }
 
-                        for(GameCharacter gc : availableEnemies)
+                        for(GameCharacter gc : availableEnemies){
                             gc.setCurrentDifficulty(currentDifficulty);
+                        }
 
                         currentDifficulty = initialDifficulty;
                         score = 0;
