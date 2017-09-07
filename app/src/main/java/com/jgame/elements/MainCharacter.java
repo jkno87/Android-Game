@@ -173,7 +173,7 @@ public class MainCharacter extends GameCharacter {
 
     @Override
     public TextureDrawer.TextureData getCurrentTexture(){
-        if(state == CharacterState.MOVING_FORWARD || state == CharacterState.MOVING_BACKWARDS)
+        if(state == CharacterState.MOVING_FORWARD || state == CharacterState.MOVING_BACKWARDS || state == CharacterState.ADVANCING)
             return WALKING_ANIMATION.getCurrentSprite();
 
         if(state == CharacterState.ABSORBING)
@@ -191,46 +191,49 @@ public class MainCharacter extends GameCharacter {
         if (state == CharacterState.IDLE) {
             adjustToFoePosition(foe);
             WALKING_ANIMATION.reset();
-            return Event.NONE;
-        } if (state == CharacterState.MOVING_FORWARD) {
+        } else if (state == CharacterState.MOVING_FORWARD) {
             adjustToFoePosition(foe);
             if(position.x + MOVING_SPEED < maxX) {
                 move(RIGHT_MOVE_SPEED);
                 WALKING_ANIMATION.updateFrame();
             }
-        } if (state == CharacterState.MOVING_BACKWARDS) {
+        } else if (state == CharacterState.MOVING_BACKWARDS) {
             adjustToFoePosition(foe);
             if(position.x - MOVING_SPEED > minX) {
                 move(LEFT_MOVE_SPEED);
                 WALKING_ANIMATION.updateFrame();
             }
-        } if(state == CharacterState.INPUT_A){
+        } else if(state == CharacterState.INPUT_A){
             //Si se detecta colision con el input, significa que absorbio energia
             if (e == Event.HIT){
                 hp = INITIAL_HP;
                 state = CharacterState.ABSORBING;
                 ABSORBING_ANIMATION.reset();
-                return Event.NONE;
             }
 
             moveA.update();
             if(moveA.completed()){
                 this.state = CharacterState.IDLE;
             }
-        } if (state == CharacterState.ABSORBING){
+        } else if (state == CharacterState.ABSORBING){
             ABSORBING_ANIMATION.updateFrame();
             if(ABSORBING_ANIMATION.completed()) {
                 state = CharacterState.ADVANCING;
                 baseX.set(1,0);
+                WALKING_ANIMATION.reset();
             }
+        } else if (state == CharacterState.ADVANCING) {
+            //Este estado no debe de provocar que el personaje pierda hp
+            WALKING_ANIMATION.updateFrame();
+            return Event.NONE;
         }
 
-        if(state == CharacterState.INPUT_B){
+        /*if(state == CharacterState.INPUT_B){
             /*MOVE_B_COUNTER.accum(timeDifference);
             if(MOVE_B_COUNTER.completed()){
                 this.state = CharacterState.IDLE;
-            }*/
-        }
+            }
+        }*/
 
         if(hp < 0)
             state = CharacterState.DEAD;
