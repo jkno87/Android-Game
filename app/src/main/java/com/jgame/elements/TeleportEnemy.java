@@ -154,9 +154,4 @@ public class TeleportEnemy extends GameCharacter {
         return currentState != EnemyState.DEAD;
     }
 
-    @Override
-    public void trip(){
-
-    }
-
 }

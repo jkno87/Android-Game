@@ -25,7 +25,7 @@ public class RobotEnemy extends GameCharacter {
         WAITING, ATTACKING, DYING, DEAD, RECOVERING
     }
 
-    private final int[] EASY_FRAME_DATA = new int[]{7,5,20};
+    private final int[] EASY_FRAME_DATA = new int[]{20,35,20};
     private final int[] MEDIUM_FRAME_DATA = new int[]{2,3,15};
     private final int[] HARD_FRAME_DATA = new int[]{2,3,10};
     public final static TextureData IDLE_TEXTURE = new TextureData(0,0,0.25f,0.25f);
@@ -67,11 +67,6 @@ public class RobotEnemy extends GameCharacter {
         regularAttack.setStartupAnimation(new AnimationData(currentFrameDataSet[0], false, STARTUP_TEXTURES));
         regularAttack.setActiveAnimation(new AnimationData(currentFrameDataSet[1], false, ATTACK_TEXTURE));
         regularAttack.setRecoveryAnimation(new AnimationData(currentFrameDataSet[2], false, RECOVERY_TEXTURES));
-    }
-
-    @Override
-    public void trip(){
-
     }
 
     @Override
@@ -143,7 +138,6 @@ public class RobotEnemy extends GameCharacter {
                 currentIdleFrame = 0;
                 currentState = EnemyState.RECOVERING;
                 regularAttack.reset();
-                foe.trip();
 
                 return Event.QUAKE;
             }

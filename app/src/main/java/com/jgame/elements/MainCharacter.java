@@ -58,6 +58,9 @@ public class MainCharacter extends GameCharacter {
             public boolean isCancellable() {
                 return false;
             }
+        }, STUNNED {
+            @Override
+            public boolean isCancellable() { return false; }
         };
 
         public abstract boolean isCancellable();
@@ -73,12 +76,13 @@ public class MainCharacter extends GameCharacter {
     public final static TextureData MOVING_C = new TextureData(0.75f, 0.5f, 0.875f, 0.75f);
     public final static TextureData MOVING_D = new TextureData(0.625f, 0.75f, 0.75f, 1f);
     public final static TextureData MOVING_E = new TextureData(0.75f, 0.75f, 0.875f, 1f);
+    public final static TextureData STUNNED_SPRITE = new TextureData(0.625f, 0.5f, 0.75f, 0.75f);
     public static final int SPRITE_LENGTH = 75;
     public static final int CHARACTER_LENGTH = 40;
     public static final int CHARACTER_HEIGHT = 160;
     public final int LENGTH_MOVE_A = CHARACTER_LENGTH + 10;
     public final int HEIGHT_MOVE_A = CHARACTER_HEIGHT;
-    private final int KNOCKDOWN_FRAMES = 18;
+    private final int STUN_FRAMES = 18;
     private final int INITIAL_HP = 1000;
     private final AnimationData WALKING_ANIMATION = new AnimationData(15, true, new TextureData[]{MOVING_A, MOVING_B, MOVING_C, MOVING_D, MOVING_E});
     private final float MOVING_SPEED = 0.75f;
@@ -88,6 +92,7 @@ public class MainCharacter extends GameCharacter {
     public final AttackData moveA;
     public CharacterState state;
     private int hp;
+    private int stunVal;
     private final float maxX;
     private final float minX;
     private final AnimationData ABSORBING_ANIMATION = new AnimationData(2, false, new TextureData[]{RECOVERY_SUCCESS_1, RECOVERY_SUCCESS_2});
@@ -175,14 +180,16 @@ public class MainCharacter extends GameCharacter {
     public TextureDrawer.TextureData getCurrentTexture(){
         if(state == CharacterState.MOVING_FORWARD || state == CharacterState.MOVING_BACKWARDS || state == CharacterState.ADVANCING)
             return WALKING_ANIMATION.getCurrentSprite();
-
-        if(state == CharacterState.ABSORBING)
+        else if (state == CharacterState.STUNNED)
+            return STUNNED_SPRITE;
+        else if(state == CharacterState.ABSORBING)
             return ABSORBING_ANIMATION.getCurrentSprite();
 
-        if(state != CharacterState.INPUT_A)
+        else if(state != CharacterState.INPUT_A)
             return IDLE_TEXTURE;
 
-        return moveA.getCurrentAnimation().getCurrentSprite();
+        else
+            return moveA.getCurrentAnimation().getCurrentSprite();
     }
 
     @Override
@@ -191,6 +198,14 @@ public class MainCharacter extends GameCharacter {
         if (state == CharacterState.IDLE) {
             adjustToFoePosition(foe);
             WALKING_ANIMATION.reset();
+        } else if (state == CharacterState.STUNNED) {
+            move(LEFT_MOVE_SPEED);
+            if(stunVal > 0)
+                stunVal--;
+            else
+                state = CharacterState.IDLE;
+            //Se sale de la funcion para que esto no disminuya el HP
+            return Event.NONE;
         } else if (state == CharacterState.MOVING_FORWARD) {
             adjustToFoePosition(foe);
             if(position.x + MOVING_SPEED < maxX) {
@@ -262,9 +277,9 @@ public class MainCharacter extends GameCharacter {
      * Accion que sirve para que el personaje principal se caiga. Esto tiene la funcion de crear espacio entre el jugador y
      * el enemigo, tambien para controlar el ritmo de juego.
      */
-    public void trip(){
+    /*public void trip(){
         moveBackwards(25);
-    }
+    }*/
 
 
     @Override
@@ -285,6 +300,7 @@ public class MainCharacter extends GameCharacter {
 
     @Override
     public void hit(){
-        state = CharacterState.DEAD;
+        state = CharacterState.STUNNED;
+        stunVal = STUN_FRAMES;
     }
 }

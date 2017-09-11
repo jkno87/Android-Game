@@ -115,7 +115,6 @@ public abstract class GameCharacter extends GameObject {
         this.currentDifficulty = diff;
     }
 
-    public abstract void trip();
     public abstract void reset(float x, float y);
     public abstract boolean hittable();
     public abstract boolean alive();

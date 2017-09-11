@@ -1,5 +1,7 @@
 package com.jgame.elements;
 
+import android.util.Log;
+
 import com.jgame.util.TextureDrawer.TextureData;
 
 /**
