@@ -135,10 +135,12 @@ public class GameRenderer implements Renderer {
     private final static int PAUSE_X_SIZE = 100;
     private final static int PAUSE_Y_SIZE = 70;
     private final static int SCORE_LEDS = 5;
+    private final static int TITLE_SCREEN_INTERVAL = 40;
     private final static boolean RENDER_HITBOXES = false;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
+    public final static TextureData TITLE_LOGO = new TextureData(0, 0.25f, 0.25f, 0.375f);
     public final static TextureData NEUTRAL_JOYSTICK_TEX = new TextureData(0.5f,0.375f,0.5625f,0.4375f);
     public final static TextureData LEFT_JOYSTICK_TEX = new TextureData(0.5625f,0.375f,0.625f,0.4375f);
     public final static TextureData RIGHT_JOYSTICK_TEX = new TextureData(0.625f,0.375f,0.6875f,0.4375f);;
@@ -187,6 +189,8 @@ public class GameRenderer implements Renderer {
     private final GameData gameData;
     private final Decoration[] decorations = new Decoration[5];
     private final Background background = new Background(new Vector2(-0.7f, 0));
+    private int titleScreenCounter = TITLE_SCREEN_INTERVAL;
+    private boolean showTitleMessage = true;
 
     public GameRenderer(GameActivity gameActivity){
         this.gameActivity = gameActivity;
@@ -384,7 +388,19 @@ public class GameRenderer implements Renderer {
 
         mainTextureDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
-        mainTextureDrawer.addTexturedSquare(120, 120, 150, 150, START_BUTTON_TEXTURE);
+        mainTextureDrawer.addTexturedSquare(120, 120, 150, 150, TITLE_LOGO);
+        if(titleScreenCounter > 0) {
+            if(showTitleMessage)
+                mainTextureDrawer.addTexturedSquare(120, 20, 50, 20, START_BUTTON_TEXTURE);
+            titleScreenCounter--;
+            if(titleScreenCounter == 0) {
+                showTitleMessage = !showTitleMessage;
+                titleScreenCounter = TITLE_SCREEN_INTERVAL;
+            }
+        }
+
+
+
         mainTextureDrawer.draw(gl10);
     }
 
