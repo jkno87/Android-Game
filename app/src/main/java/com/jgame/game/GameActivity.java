@@ -148,8 +148,12 @@ public class GameActivity extends Activity {
                     if(gameData.paused == false)
                         soundManager.startMusic();
 
-                } else if (QUIT_BOUNDS.contains(x, y))
+                } else if (QUIT_BOUNDS.contains(x, y)) {
+                    synchronized (gameData){
+                        gameData.state = GameState.TERMINATING;
+                    }
                     finish();
+                }
 
                 break;
 
@@ -246,7 +250,9 @@ public class GameActivity extends Activity {
                         currentDifficulty = gameData.currentDifficulty;
                     }
 
-                    if(currentState == GameState.MENU) {
+                    if(currentState == GameState.TERMINATING) {
+                        continue;
+                    } else if(currentState == GameState.MENU) {
                         if(lastInput == ControllerManager.GameInput.START_GAME)
                             currentState = GameState.STARTING;
                         else if(lastInput == ControllerManager.GameInput.CHANGE_SOUND_STATE) {

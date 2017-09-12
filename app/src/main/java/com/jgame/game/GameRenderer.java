@@ -237,6 +237,8 @@ public class GameRenderer implements Renderer {
             drawMenu(gameData.currentDifficulty);
         else if(gameData.state == GameState.TITLE_SCREEN)
             drawTitleScreen();
+        else if(gameData.state == GameState.TERMINATING)
+            drawFinishScreen();
         else {
 
             boolean characterAlive = gameActivity.mainCharacter.alive();
@@ -370,6 +372,10 @@ public class GameRenderer implements Renderer {
             drawer.addInvertedColoredSquare(c.spriteContainer, c.getCurrentTexture(), c.color);
         else
             drawer.addColoredSquare(c.spriteContainer, c.getCurrentTexture(), c.color);
+    }
+
+    private void drawFinishScreen(){
+        
     }
 
     /**
