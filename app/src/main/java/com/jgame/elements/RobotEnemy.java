@@ -38,6 +38,7 @@ public class RobotEnemy extends GameCharacter {
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 260;
     public final static float ATTACK_DISTANCE = 95;
     public final static int BREATH_FRAMES = 10;
+    public final static int BREATH_DELAY = 15;
     private final MainCharacter mainCharacter;
     private final int FRAMES_TO_RECOVER = 20;
     private EnemyState currentState;
@@ -119,8 +120,8 @@ public class RobotEnemy extends GameCharacter {
             //Se verifica que el enemigo se encuentre en rango del ataque.
             if ((position.x > foe.position.x && (position.x - foe.position.x) < attackRange) ||
                     (position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange)) {
-                decorationData.add(new BreathDecoration(BREATH_FRAMES,
-                        new Square(new Vector2(position), 30, 30, 0), true));
+                decorationData.add(new BreathDecoration(BREATH_DELAY, BREATH_FRAMES,
+                        new Square(new Vector2(position).add(-95, 50), 50, 50, 0), true));
                 currentState = EnemyState.ATTACKING;
                 activeAttack = regularAttack;
                 for(CollisionObject co : activeAttack.active)

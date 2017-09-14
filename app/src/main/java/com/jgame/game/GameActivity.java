@@ -137,7 +137,8 @@ public class GameActivity extends Activity {
             return false;
 
         float x = (e.getX() / (float) gameSurfaceView.getWidth()) * FRUSTUM_WIDTH;
-        float y = (((float) gameSurfaceView.getHeight() - e.getY()) / (float) gameSurfaceView.getHeight()) * FRUSTUM_HEIGHT;
+        float y = (((float) gameSurfaceView.getHeight() - (e.getY() - mAdView.getHeight())) / (float) gameSurfaceView.getHeight())
+                * FRUSTUM_HEIGHT;
 
         switch(e.getAction()) {
             case MotionEvent.ACTION_DOWN:

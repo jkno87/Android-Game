@@ -68,6 +68,7 @@ public abstract class Decoration {
 
     public static abstract class AnimatedDecoration extends Decoration {
         public AnimationData animation;
+        public int preDrawFrames;
 
         public AnimatedDecoration(AnimationData animation, Square size, SimpleDrawer.ColorData color, boolean inverted){
             this.animation = animation;
@@ -76,10 +77,11 @@ public abstract class Decoration {
             this.inverted = inverted;
         }
 
-        public AnimatedDecoration(AnimationData animation, Square size, boolean inverted){
+        public AnimatedDecoration(int preDrawFrames, AnimationData animation, Square size, boolean inverted){
             this.animation = animation;
             this.size = size;
             this.inverted = inverted;
+            this.preDrawFrames = preDrawFrames;
         }
 
         public boolean completed(){
@@ -91,7 +93,7 @@ public abstract class Decoration {
         }
 
         public boolean drawable(){
-            return true;
+            return preDrawFrames <= 0 && !animation.completed();
         }
     }
 

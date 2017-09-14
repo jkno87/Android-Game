@@ -12,31 +12,23 @@ public class AnimationData {
 
     public int framesPerSprite;
     private int currentFrame;
-    private int currentSprite;
     private TextureData[] sprites;
     private final boolean loops;
-
-    public AnimationData(AnimationData other){
-        this.framesPerSprite = other.framesPerSprite;
-        currentFrame = 0;
-        currentSprite = 0;
-        this.sprites = other.sprites;
-        this.loops = other.loops;
-    }
+    private final int totalFrames;
 
     public AnimationData(int frames, boolean loops,TextureData[] sprites){
+        totalFrames = frames * sprites.length;
         this.sprites = sprites;
         framesPerSprite = frames;
         currentFrame = 0;
-        currentSprite = 0;
         this.loops = loops;
     }
 
     public AnimationData(int frames, boolean loops, TextureData sprite){
+        totalFrames = frames;
         this.framesPerSprite = frames;
         this.sprites = new TextureData[]{sprite};
         currentFrame = 0;
-        currentSprite = 0;
         this.loops = loops;
     }
 
@@ -46,27 +38,22 @@ public class AnimationData {
 
     public void reset(){
         currentFrame = 0;
-        currentSprite = 0;
     }
 
     public void updateFrame(){
         if(!completed()) {
-            currentFrame += 1;
-            if (currentFrame > framesPerSprite) {
-                currentSprite++;
-                currentFrame = 0;
-            }
+            currentFrame++;
+            if(loops && completed())
+                reset();
         }
-        if(loops && completed())
-            reset();
     }
 
     public boolean completed(){
-        return currentSprite >= sprites.length;
+        return currentFrame + 1 >= totalFrames;
     }
 
     public TextureData getCurrentSprite(){
-        return sprites[currentSprite];
+        return sprites[currentFrame / framesPerSprite];
     }
 
 }

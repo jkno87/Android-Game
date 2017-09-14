@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
+import android.util.Log;
+
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.CollisionObject;
 import com.jgame.elements.MainCharacter;
@@ -141,6 +143,7 @@ public class GameRenderer implements Renderer {
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
     public final static TextureData TITLE_LOGO = new TextureData(0, 0.25f, 0.25f, 0.375f);
+    public final static TextureData CLOSING_MESSAGE = new TextureData(0.375f, 0.5f, 0.625f, 0.625f);
     public final static TextureData NEUTRAL_JOYSTICK_TEX = new TextureData(0.5f,0.375f,0.5625f,0.4375f);
     public final static TextureData LEFT_JOYSTICK_TEX = new TextureData(0.5625f,0.375f,0.625f,0.4375f);
     public final static TextureData RIGHT_JOYSTICK_TEX = new TextureData(0.625f,0.375f,0.6875f,0.4375f);;
@@ -227,8 +230,9 @@ public class GameRenderer implements Renderer {
         //Se actualiza la lista de decoraciones
         for(int i = 0; i < decorations.length; i++){
             if(decorations[i] == null || decorations[i].completed()) {
-                if (!gameActivity.decorationsBuffer.isEmpty())
+                if (!gameActivity.decorationsBuffer.isEmpty()) {
                     decorations[i] = gameActivity.decorationsBuffer.removeFirst();
+                }
             } else
                 decorations[i].update();
         }
@@ -375,7 +379,20 @@ public class GameRenderer implements Renderer {
     }
 
     private void drawFinishScreen(){
-        
+        gl10.glViewport(0,0, surfaceView.getWidth(), surfaceView.getHeight());
+        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        gl10.glMatrixMode(GL10.GL_PROJECTION);
+        gl10.glLoadIdentity();
+        gl10.glOrthof(0, GameActivity.FRUSTUM_WIDTH, 0, GameActivity.FRUSTUM_HEIGHT, 1, -1);
+        gl10.glMatrixMode(GL10.GL_MODELVIEW);
+        gl10.glEnable(GL10.GL_BLEND);
+        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+
+        mainTextureDrawer.reset();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
+        mainTextureDrawer.addTexturedSquare(120, 120, 150, 150, CLOSING_MESSAGE);
+        mainTextureDrawer.draw(gl10);
     }
 
     /**
