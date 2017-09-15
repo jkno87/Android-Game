@@ -22,7 +22,7 @@ import java.util.ArrayDeque;
 public class RobotEnemy extends GameCharacter {
 
     enum EnemyState {
-        WAITING, ATTACKING, DYING, DEAD, RECOVERING
+        WAITING, ATTACKING, DYING, DEAD
     }
 
     private final int[] EASY_FRAME_DATA = new int[]{20,35,20};
@@ -32,7 +32,6 @@ public class RobotEnemy extends GameCharacter {
     public final static TextureData[] STARTUP_TEXTURES = {
             IDLE_TEXTURE, new TextureData(0.25f, 0, 0.50f, 0.25f)
     };
-    public final static TextureData DISAPPEAR_TEXTURE = new TextureData(0.75f,0f,0.875f,0.125f);
     public final static TextureData[] RECOVERY_TEXTURES = {new TextureData(0.25f, 0, 0.5f, 0.25f)};
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.50f, 0, 0.75f, 0.25f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 260;
@@ -101,8 +100,6 @@ public class RobotEnemy extends GameCharacter {
             return activeAttack.getCurrentAnimation().getCurrentSprite();
         else if(currentState == EnemyState.DYING)
             return RECOVERY_TEXTURES[0];
-        else if(currentState == EnemyState.RECOVERING)
-            return DISAPPEAR_TEXTURE;
         else
             return IDLE_TEXTURE;
     }
@@ -135,16 +132,7 @@ public class RobotEnemy extends GameCharacter {
             activeAttack.update();
             if(activeAttack.completed()) {
                 currentIdleFrame = 0;
-                currentState = EnemyState.RECOVERING;
                 regularAttack.reset();
-            }
-        }
-
-        if(currentState == EnemyState.RECOVERING){
-            currentIdleFrame += 1;
-            if(currentIdleFrame > FRAMES_TO_RECOVER) {
-                currentState = EnemyState.WAITING;
-                currentIdleFrame = 0;
             }
         }
 
