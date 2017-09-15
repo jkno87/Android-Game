@@ -17,7 +17,7 @@ public class AnimationData {
     private final int totalFrames;
 
     public AnimationData(int frames, boolean loops,TextureData[] sprites){
-        totalFrames = frames * sprites.length;
+        totalFrames = frames * sprites.length - 1;
         this.sprites = sprites;
         framesPerSprite = frames;
         currentFrame = 0;
@@ -41,15 +41,13 @@ public class AnimationData {
     }
 
     public void updateFrame(){
-        if(!completed()) {
-            currentFrame++;
-            if(loops && completed())
-                reset();
-        }
+        currentFrame++;
+        if(loops && completed())
+            reset();
     }
 
     public boolean completed(){
-        return currentFrame + 1 >= totalFrames;
+        return currentFrame >= totalFrames;
     }
 
     public TextureData getCurrentSprite(){
