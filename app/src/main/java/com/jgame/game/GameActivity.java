@@ -146,7 +146,7 @@ public class GameActivity extends Activity {
                     synchronized (gameData) {
                         gameData.paused = false;
                     }
-                    if(gameData.paused == false)
+                    if(gameData.soundEnabled && gameData.paused == false)
                         soundManager.startMusic();
 
                 } else if (QUIT_BOUNDS.contains(x, y)) {
@@ -195,10 +195,13 @@ public class GameActivity extends Activity {
                 gameData.paused = !gameData.paused;
             }
 
-            if(gameData.paused)
-                soundManager.pauseMusic();
-            else
-                soundManager.startMusic();
+
+            if(gameData.soundEnabled) {
+                if (gameData.paused)
+                    soundManager.pauseMusic();
+                else
+                    soundManager.startMusic();
+            }
 
 
             return true;
