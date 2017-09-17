@@ -153,8 +153,8 @@ public class GameRenderer implements Renderer {
     public final static TextureData QUIT_BUTTON = new TextureData(0f,1.875f,0.125f,1.9375f);
     public final static TextureData DISAPPEAR_TEXTURE = new TextureData(0.1875f,0.625f,0.125f,0.5625f);
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.96875f,0.96875f,1.0f,1.0f);
-    public final static TextureData SPEAKER_TEXTURE = new TextureData(0.4375f, 0.375f, 0.5f, 0.4375f);
-    public final static TextureData SOUND_TEXTURE = new TextureData(0.4375f,0.4375f,0.5f,0.5f);
+    public final static TextureData SOUND_BUTTON =  new TextureData(0f,0.625f,0.125f,0.6875f);
+    public final static TextureData SOUND_CANCELLED_SPRITE = new TextureData(0.25f, 0.6875f, 0.375f, 0.75f);
     public final static TextureData BUTTON_TEXTURE = new TextureData(0.25f, 0.5625f, 0.375f, 0.6875f);
     public final static TextureData ARROW_TEXTURE = TextureDrawer.genTextureData(1.0f,8.05f,16);
     public final static TextureData START_BUTTON_TEXTURE = new TextureData(0, 0.5625f, 0.125f, 0.625f);
@@ -334,9 +334,9 @@ public class GameRenderer implements Renderer {
 
                 mainTextureDrawer.addTexturedSquare(GameActivity.CONTINUE_BOUNDS, CONTINUE_BUTTON);
                 mainTextureDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
-                mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SPEAKER_TEXTURE);
-                if (gameData.soundEnabled)
-                    mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_TEXTURE);
+                mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_BUTTON);
+                if(!gameData.soundEnabled)
+                    mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_CANCELLED_SPRITE);
             }
 
             mainTextureDrawer.draw(gl10);
@@ -478,9 +478,9 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.addColoredSquare(PAUSE_RECTANGLE, NO_TEXTURE_COORDS, PAUSE_MENU_COLOR);
             mainTextureDrawer.addTexturedSquare(GameActivity.CONTINUE_BOUNDS, CONTINUE_BUTTON);
             mainTextureDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
-            mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SPEAKER_TEXTURE);
-            if(gameData.soundEnabled)
-                mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_TEXTURE);
+            mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_BUTTON);
+            if(!gameData.soundEnabled)
+                mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_CANCELLED_SPRITE);
         }
 
         mainTextureDrawer.draw(gl10);

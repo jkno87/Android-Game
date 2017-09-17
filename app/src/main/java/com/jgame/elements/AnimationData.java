@@ -14,7 +14,7 @@ public class AnimationData {
     private int currentFrame;
     private TextureData[] sprites;
     private final boolean loops;
-    private final int totalFrames;
+    private int totalFrames;
 
     public AnimationData(int frames, boolean loops,TextureData[] sprites){
         totalFrames = frames * sprites.length - 1;
@@ -34,6 +34,7 @@ public class AnimationData {
 
     public void updateFrameData(int framesPerSprite){
         this.framesPerSprite = framesPerSprite;
+        totalFrames = framesPerSprite * sprites.length - 1;
     }
 
     public void reset(){
