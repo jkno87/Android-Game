@@ -237,7 +237,7 @@ public class GameRenderer implements Renderer {
                 decorations[i].update();
         }
 
-        if(gameData.state == GameState.MENU)
+        if(gameData.state == GameState.MENU || gameData.state == GameState.STARTING)
             drawMenu(gameData.currentDifficulty);
         else if(gameData.state == GameState.TITLE_SCREEN)
             drawTitleScreen();

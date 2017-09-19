@@ -58,9 +58,6 @@ public class GameActivity extends Activity {
     public static final float CONTROLS_HEIGHT = PLAYING_HEIGHT * 0.25f;
     private static final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 10;
     private static final IdGenerator ID_GEN = new IdGenerator();
-    public static final int TELEPORT_SPRITE_LENGTH = 115;
-    public static final int TELEPORT_SPRITE_HEIGHT = 145;
-    public static final int CHARGING_SPRITE_LENGTH = 115;
     public static final Square INPUT_SOUND_SPRITE = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 100, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH);
     public static final Square INPUT_SOUND_BOUNDS = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 130, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH + 40);
     public static final Square INPUT_LEFT_BOUNDS = new Square(5,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
@@ -233,8 +230,8 @@ public class GameActivity extends Activity {
             //        TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             //availableEnemies[0] = new ChargingEnemy(CHARGING_SPRITE_LENGTH, MainCharacter.CHARACTER_HEIGHT,
             //        MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
-            availableEnemies[0] = new RobotEnemy(TELEPORT_SPRITE_HEIGHT, TELEPORT_SPRITE_HEIGHT,
-                    TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT, ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
+            availableEnemies[0] = new RobotEnemy(175, 215,
+                    135, 215, ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             currentEnemy = availableEnemies[0];
             initialDifficulty = Difficulty.EASY;
         }
@@ -278,10 +275,7 @@ public class GameActivity extends Activity {
 
                         synchronized (enemyLock) {
                             currentEnemy = availableEnemies[0];
-                        }
-
-                        for(GameCharacter gc : availableEnemies){
-                            gc.setCurrentDifficulty(currentDifficulty);
+                            currentEnemy.setCurrentDifficulty(currentDifficulty);
                         }
 
                         currentDifficulty = initialDifficulty;
@@ -344,6 +338,7 @@ public class GameActivity extends Activity {
 
 
                     if(mainCharacter.state == MainCharacter.CharacterState.ADVANCING){
+                        advancing = true;
                         if(mainCharacter.completedTransition()) {
                             mainCharacter.state = MainCharacter.CharacterState.IDLE;
                             advancing = false;
@@ -365,7 +360,6 @@ public class GameActivity extends Activity {
                             soundManager.playSound(ID_PUNCH);
                         //Se agrega un punto y se inicia con la transicion del personaje a la siguiente escena
                         score++;
-                        advancing = true;
                         //Se reinicia el enemigo para que se encuentre en su estado inicial en caso de algun cambio
                         currentEnemy.setCurrentDifficulty(currentDifficulty);
                         currentEnemy.reset(0,0);

@@ -25,7 +25,7 @@ public class RobotEnemy extends GameCharacter {
         WAITING, ATTACKING, DYING, DEAD
     }
 
-    private final int[] EASY_FRAME_DATA = new int[]{20,35,20};
+    private final int[] EASY_FRAME_DATA = new int[]{20,35,28};
     private final int[] MEDIUM_FRAME_DATA = new int[]{2,3,15};
     private final int[] HARD_FRAME_DATA = new int[]{2,3,10};
     public final static TextureData IDLE_TEXTURE = new TextureData(0,0,0.25f,0.25f);
@@ -35,9 +35,8 @@ public class RobotEnemy extends GameCharacter {
     public final static TextureData[] RECOVERY_TEXTURES = {new TextureData(0.25f, 0, 0.5f, 0.25f)};
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.50f, 0, 0.75f, 0.25f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 260;
-    public final static float ATTACK_DISTANCE = 95;
+    public final static float ATTACK_DISTANCE = 54;
     public final static int BREATH_FRAMES = 10;
-    public final static int BREATH_DELAY = 15;
     private final MainCharacter mainCharacter;
     private final int FRAMES_TO_RECOVER = 20;
     private EnemyState currentState;
@@ -59,11 +58,11 @@ public class RobotEnemy extends GameCharacter {
         //actions = new EnemyAction[]{checkAttackDistance};
         this.mainCharacter = mainCharacter;
         currentFrameDataSet = EASY_FRAME_DATA;
-        attackRange = ATTACK_DISTANCE + idleSizeX;
-        CollisionObject[] startupBoxes = new CollisionObject[]{new CollisionObject(new Vector2(115,100), 0, 15, 10, this, CollisionObject.TYPE_HITTABLE)};
-        CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,140,55,this, CollisionObject.TYPE_HITTABLE),
-        new CollisionObject(new Vector2(100, 50),0,15,20, this, CollisionObject.TYPE_ATTACK)};
-        regularAttack = new AttackData(startupBoxes, attackBoxes, startupBoxes);
+        attackRange = idleSizeX + ATTACK_DISTANCE;
+        CollisionObject[] startupBoxes = new CollisionObject[]{new CollisionObject(new Vector2(143,100), 0, 15, 25, this, CollisionObject.TYPE_HITTABLE)};
+        CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,162,55,this, CollisionObject.TYPE_HITTABLE),
+        new CollisionObject(new Vector2(100, 50),0,58,20, this, CollisionObject.TYPE_ATTACK)};
+        regularAttack = new AttackData(startupBoxes, attackBoxes, attackBoxes);
         regularAttack.setStartupAnimation(new AnimationData(currentFrameDataSet[0], false, STARTUP_TEXTURES));
         regularAttack.setActiveAnimation(new AnimationData(currentFrameDataSet[1], false, ATTACK_TEXTURE));
         regularAttack.setRecoveryAnimation(new AnimationData(currentFrameDataSet[2], false, RECOVERY_TEXTURES));
@@ -81,7 +80,7 @@ public class RobotEnemy extends GameCharacter {
 
     @Override
     public boolean hittable() {
-        return currentState != EnemyState.WAITING;
+        return true;
     }
 
     @Override
@@ -117,8 +116,8 @@ public class RobotEnemy extends GameCharacter {
             //Se verifica que el enemigo se encuentre en rango del ataque.
             if ((position.x > foe.position.x && (position.x - foe.position.x) < attackRange) ||
                     (position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange)) {
-                decorationData.add(new BreathDecoration(BREATH_DELAY, BREATH_FRAMES,
-                        new Square(new Vector2(position).add(-95, 50), 50, 50, 0), true));
+                decorationData.add(new BreathDecoration(currentFrameDataSet[0], BREATH_FRAMES,
+                        new Square(new Vector2(position).add(-120, 82), 50, 50, 0), true));
                 currentState = EnemyState.ATTACKING;
                 activeAttack = regularAttack;
                 for(CollisionObject co : activeAttack.active)
@@ -133,6 +132,7 @@ public class RobotEnemy extends GameCharacter {
             if(activeAttack.completed()) {
                 currentIdleFrame = 0;
                 regularAttack.reset();
+                currentState = EnemyState.WAITING;
             }
         }
 

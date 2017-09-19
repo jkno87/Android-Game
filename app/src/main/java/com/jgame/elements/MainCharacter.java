@@ -80,7 +80,7 @@ public class MainCharacter extends GameCharacter {
     public static final int SPRITE_LENGTH = 75;
     public static final int CHARACTER_LENGTH = 40;
     public static final int CHARACTER_HEIGHT = 160;
-    public final int LENGTH_MOVE_A = CHARACTER_LENGTH + 10;
+    public final int LENGTH_MOVE_A = CHARACTER_LENGTH + 2;
     public final int HEIGHT_MOVE_A = CHARACTER_HEIGHT;
     private final int STUN_FRAMES = 18;
     private final int INITIAL_HP = 1000;
@@ -95,7 +95,7 @@ public class MainCharacter extends GameCharacter {
     private int stunVal;
     private final float maxX;
     private final float minX;
-    private final AnimationData ABSORBING_ANIMATION = new AnimationData(2, false, new TextureData[]{RECOVERY_SUCCESS_1, RECOVERY_SUCCESS_2});
+    private final AnimationData ABSORBING_ANIMATION = new AnimationData(13, false, new TextureData[]{RECOVERY_SUCCESS_1, RECOVERY_SUCCESS_2});
 
     public MainCharacter(int id, Vector2 position, float minX, float maxX){
         super(SPRITE_LENGTH, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id);
@@ -114,8 +114,8 @@ public class MainCharacter extends GameCharacter {
 
         moveA = new AttackData(startupA, activeA, recoveryA);
         moveA.setStartupAnimation(new AnimationData(5, false, STARTUP_MOV_A));
-        moveA.setActiveAnimation(new AnimationData(10, false, ACTIVE_MOV_A));
-        moveA.setRecoveryAnimation(new AnimationData(10, false, STARTUP_MOV_A));
+        moveA.setActiveAnimation(new AnimationData(13, false, ACTIVE_MOV_A));
+        moveA.setRecoveryAnimation(new AnimationData(18, false, ACTIVE_MOV_A));
 
         this.maxX = maxX;
         this.minX = minX;

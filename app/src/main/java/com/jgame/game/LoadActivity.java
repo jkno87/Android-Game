@@ -20,7 +20,7 @@ public class LoadActivity extends Activity {
         if(getIntent().getBooleanExtra("EXIT", false)){
             finish();
         } else {
-
+            setContentView(R.layout.load_layout);
             GameResources.soundManager = new SoundManager(this);
             Intent intent = new Intent(this, GameActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
