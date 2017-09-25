@@ -35,7 +35,7 @@ public class RobotEnemy extends GameCharacter {
     public final static TextureData[] RECOVERY_TEXTURES = {new TextureData(0.25f, 0, 0.5f, 0.25f)};
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.50f, 0, 0.75f, 0.25f);
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 260;
-    public final static float ATTACK_DISTANCE = 54;
+    public final static float ATTACK_DISTANCE = 56;
     public final static int BREATH_FRAMES = 10;
     private final MainCharacter mainCharacter;
     private final int FRAMES_TO_RECOVER = 20;

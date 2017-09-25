@@ -353,6 +353,7 @@ public class GameRenderer implements Renderer {
         if(!c.hittable())
             return;
 
+        Log.d("game", "" + c.getActiveCollisionBoxes());
         for(CollisionObject o : c.getActiveCollisionBoxes())
             if(o.type == CollisionObject.TYPE_ATTACK)
                 drawer.addColoredSquare(o.bounds, NO_TEXTURE_COORDS, ATTACK_COLOR);
