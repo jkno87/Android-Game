@@ -10,11 +10,11 @@ import com.jgame.util.TextureDrawer.TextureData;
 
 public class BreathDecoration extends AnimatedDecoration {
 
-    private final static TextureData[] sprites = {new TextureData(0.375f,0.25f,0.5f,0.375f),
+    private final static TextureData[] SPRITES = {new TextureData(0.375f,0.25f,0.5f,0.375f),
             new TextureData(0.5f,0.25f,0.625f,0.375f)};
 
     public BreathDecoration(int preDrawFrames, int frames, Square boundaries, boolean inverted){
-        super(preDrawFrames, new AnimationData(frames, false, sprites), boundaries, inverted);
+        super(preDrawFrames, new AnimationData(frames, false, SPRITES), boundaries, inverted);
     }
 
     @Override

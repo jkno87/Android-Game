@@ -9,6 +9,7 @@ import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.Vector2;
+import com.jgame.util.Decoration.AnimatedDecoration;
 import com.jgame.util.Decoration.StaticDecoration;
 import com.jgame.game.GameData.Event;
 import java.util.ArrayDeque;
@@ -28,6 +29,7 @@ public class RobotEnemy extends GameCharacter {
     private final int[] EASY_FRAME_DATA = new int[]{20,35,28};
     private final int[] MEDIUM_FRAME_DATA = new int[]{2,3,15};
     private final int[] HARD_FRAME_DATA = new int[]{2,3,10};
+    private final static TextureData[] ABSORBED_SPRITES = { new TextureData(0.5f,0.25f,0.625f,0.375f), new TextureData(0.375f,0.25f,0.5f,0.375f)};
     public final static TextureData IDLE_TEXTURE = new TextureData(0,0,0.25f,0.25f);
     public final static TextureData[] STARTUP_TEXTURES = {
             IDLE_TEXTURE, new TextureData(0.25f, 0, 0.50f, 0.25f)
@@ -141,13 +143,10 @@ public class RobotEnemy extends GameCharacter {
         }
 
         if(currentState == EnemyState.DYING){
-            StaticDecoration s = new StaticDecoration(GameRenderer.DISAPPEAR_TEXTURE,
+            AnimatedDecoration a = new AnimatedDecoration(0, new AnimationData(18, false, ABSORBED_SPRITES),
                     new Square(new Vector2(position).add(spriteContainer.lenX * baseX.x, 0)
-                            , spriteContainer.lenX, spriteContainer.lenY, 0),
-                    new SimpleDrawer.ColorData(1,1,1,1),
-                    baseX.x == 1, 0, 3, false);
-            s.shrinkRateX = 0.9f;
-            decorationData.add(s);
+                            , spriteContainer.lenX, spriteContainer.lenY, 0), false);
+            decorationData.add(a);
             currentState = EnemyState.DEAD;
         }
 

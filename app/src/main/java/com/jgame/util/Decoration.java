@@ -66,7 +66,7 @@ public abstract class Decoration {
         }
     }
 
-    public static abstract class AnimatedDecoration extends Decoration {
+    public static class AnimatedDecoration extends Decoration {
         public AnimationData animation;
         public int preDrawFrames;
 
@@ -94,6 +94,13 @@ public abstract class Decoration {
 
         public boolean drawable(){
             return preDrawFrames <= 0 && !animation.completed();
+        }
+
+        public void update(){
+            if(preDrawFrames > 0)
+                preDrawFrames--;
+            else
+                animation.updateFrame();
         }
     }
 

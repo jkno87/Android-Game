@@ -16,17 +16,17 @@ public class AnimationData {
     private final boolean loops;
     private int totalFrames;
 
-    public AnimationData(int frames, boolean loops,TextureData[] sprites){
-        totalFrames = frames * sprites.length - 1;
+    public AnimationData(int totalFrames, boolean loops,TextureData[] sprites){
+        this.totalFrames = totalFrames - 1;
         this.sprites = sprites;
-        framesPerSprite = frames;
+        framesPerSprite = totalFrames / sprites.length;
         currentFrame = 0;
         this.loops = loops;
     }
 
-    public AnimationData(int frames, boolean loops, TextureData sprite){
-        totalFrames = frames;
-        this.framesPerSprite = frames;
+    public AnimationData(int totalFrames, boolean loops, TextureData sprite){
+        this.totalFrames = totalFrames - 1;
+        this.framesPerSprite = totalFrames;
         this.sprites = new TextureData[]{sprite};
         currentFrame = 0;
         this.loops = loops;
