@@ -164,6 +164,7 @@ public class GameRenderer implements Renderer {
     public final static TextureData EASY_SPRITE = new TextureData(0f,0.6875f,0.125f,0.75f);
     public final static TextureData MEDIUM_SPRITE = new TextureData(0f,0.75f,0.125f,0.8125f);
     public final static TextureData HARD_SPRITE = new TextureData(0f,0.8125f,0.125f,0.875f);
+    public final static TextureData RECORDS_BUTTON_SPRITE = new TextureData(0.5f, 0.4375f, 0.625f, 0.5f);
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
@@ -473,6 +474,8 @@ public class GameRenderer implements Renderer {
             mainTextureDrawer.addColoredSquare(GameActivity.MEDIUM_DIFF_BOUNDS, MEDIUM_SPRITE, TRANSPARENCY_COLOR);
             mainTextureDrawer.addTexturedSquare(GameActivity.HARD_DIFF_BOUNDS, HARD_SPRITE);
         }
+
+        mainTextureDrawer.addTexturedSquare(GameActivity.RECORDS_BUTTON_BOUNDS, RECORDS_BUTTON_SPRITE);
 
         if(gameData.paused) {
             mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
