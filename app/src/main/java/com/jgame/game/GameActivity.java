@@ -257,6 +257,8 @@ public class GameActivity extends Activity {
                     } else if(currentState == GameState.MENU) {
                         if(lastInput == ControllerManager.GameInput.START_GAME)
                             currentState = GameState.STARTING;
+                        else if(lastInput == ControllerManager.GameInput.RECORDS_TRIGGER)
+                            currentState = GameState.RECORDS;
                         else if(lastInput == ControllerManager.GameInput.CHANGE_SOUND_STATE) {
                             synchronized (gameData) {
                                 gameData.soundEnabled = !gameData.soundEnabled;

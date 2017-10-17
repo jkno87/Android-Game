@@ -12,7 +12,7 @@ public class ControllerManager {
 
     public enum GameInput {
         LEFT, RIGHT, INPUT_A, INPUT_OFF,NO_INPUT, QUIT_GAME, START_GAME, CHANGE_SOUND_STATE,
-        DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD
+        DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD, RECORDS_TRIGGER
     }
 
     private final BlockingQueue<GameInput> inputs;
@@ -126,6 +126,8 @@ public class ControllerManager {
                     inputs.put(GameInput.DIFFICULTY_MEDIUM);
                 } else if (GameActivity.HARD_DIFF_BOUNDS.contains(inputX, inputY)) {
                     inputs.put(GameInput.DIFFICULTY_HARD);
+                } else if (GameActivity.RECORDS_BUTTON_BOUNDS.contains(inputX, inputY)) {
+                    inputs.put(GameInput.RECORDS_TRIGGER);
                 }
             }
         } catch (InterruptedException e){

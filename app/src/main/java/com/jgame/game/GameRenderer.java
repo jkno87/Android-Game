@@ -142,6 +142,7 @@ public class GameRenderer implements Renderer {
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
+    public final static TextureData HIGHSCORE_LABEL = new TextureData(0.375f, 0.625f, 0.625f, 0.75f);
     public final static TextureData TITLE_LOGO = new TextureData(0, 0.25f, 0.25f, 0.375f);
     public final static TextureData CLOSING_MESSAGE = new TextureData(0.375f, 0.5f, 0.625f, 0.625f);
     public final static TextureData NEUTRAL_JOYSTICK_TEX = new TextureData(0.5f,0.375f,0.5625f,0.4375f);
@@ -221,6 +222,21 @@ public class GameRenderer implements Renderer {
         return textureIds[0];
     }
 
+    /**
+     * Agrega el dibujo del menu de pausa a tDrawer
+     * @param tDrawer
+     */
+    private void addPauseLayer(TextureDrawer tDrawer, boolean soundEnabled){
+        tDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
+        tDrawer.addColoredSquare(PAUSE_RECTANGLE, NO_TEXTURE_COORDS, PAUSE_MENU_COLOR);
+
+        tDrawer.addTexturedSquare(GameActivity.CONTINUE_BOUNDS, CONTINUE_BUTTON);
+        tDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
+        tDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_BUTTON);
+        if(!soundEnabled)
+            tDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_CANCELLED_SPRITE);
+    }
+
     @Override
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
@@ -244,6 +260,8 @@ public class GameRenderer implements Renderer {
             drawTitleScreen();
         else if(gameData.state == GameState.TERMINATING)
             drawFinishScreen();
+        else if(gameData.state == GameState.RECORDS)
+            drawRecordsScreen();
         else {
 
             boolean characterAlive = gameActivity.mainCharacter.alive();
@@ -325,20 +343,12 @@ public class GameRenderer implements Renderer {
             }
 
             //En caso de que el juego este iniciando, se establece la posicion inicial del background
-            if (gameData.state == GameState.STARTING) {
+            if (gameData.state == GameState.STARTING)
                 background.resetBackground();
-            }
 
-            if (gameData.paused) {
-                mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
-                mainTextureDrawer.addColoredSquare(PAUSE_RECTANGLE, NO_TEXTURE_COORDS, PAUSE_MENU_COLOR);
+            if (gameData.paused)
+                addPauseLayer(mainTextureDrawer, gameData.soundEnabled);
 
-                mainTextureDrawer.addTexturedSquare(GameActivity.CONTINUE_BOUNDS, CONTINUE_BUTTON);
-                mainTextureDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
-                mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_BUTTON);
-                if(!gameData.soundEnabled)
-                    mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_CANCELLED_SPRITE);
-            }
 
             mainTextureDrawer.draw(gl10);
         }
@@ -394,6 +404,27 @@ public class GameRenderer implements Renderer {
         mainTextureDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
         mainTextureDrawer.addTexturedSquare(120, 120, 150, 150, CLOSING_MESSAGE);
+        mainTextureDrawer.draw(gl10);
+    }
+
+    private void drawRecordsScreen(){
+        gl10.glViewport(0,0, surfaceView.getWidth(), surfaceView.getHeight());
+        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        gl10.glMatrixMode(GL10.GL_PROJECTION);
+        gl10.glLoadIdentity();
+        gl10.glOrthof(0, GameActivity.FRUSTUM_WIDTH, 0, GameActivity.FRUSTUM_HEIGHT, 1, -1);
+        gl10.glMatrixMode(GL10.GL_MODELVIEW);
+        gl10.glEnable(GL10.GL_BLEND);
+        gl10.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+
+        mainTextureDrawer.reset();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
+        mainTextureDrawer.addTexturedSquare(120, 120, 150, 150, HIGHSCORE_LABEL);
+
+        if(gameData.paused)
+            addPauseLayer(mainTextureDrawer, gameData.soundEnabled);
+
         mainTextureDrawer.draw(gl10);
     }
 
