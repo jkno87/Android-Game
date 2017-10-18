@@ -166,6 +166,7 @@ public class GameRenderer implements Renderer {
     public final static TextureData MEDIUM_SPRITE = new TextureData(0f,0.75f,0.125f,0.8125f);
     public final static TextureData HARD_SPRITE = new TextureData(0f,0.8125f,0.125f,0.875f);
     public final static TextureData RECORDS_BUTTON_SPRITE = new TextureData(0.5f, 0.4375f, 0.625f, 0.5f);
+    public final static TextureData RETURN_BUTTON = new TextureData(0.625f, 0.4375f, 0.75f, 0.5f);
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
@@ -181,6 +182,7 @@ public class GameRenderer implements Renderer {
     public static final Square SCORE_LABEL_BOUNDS = new Square(195, 40, SCORE_SIZE_X * SCORE_LEDS, SCORE_SIZE_Y);
     public static final Square ATTACK_LABEL_BOUNDS = new Square(GameActivity.INPUT_A_BOUNDS.position.x + 70, 40, SCORE_LABEL_BOUNDS.lenX, SCORE_LABEL_BOUNDS.lenY);
     private static final DigitsDisplay CURRENT_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, SCORE_LEDS, new Vector2(250,15));
+    private static final DigitsDisplay RECORDS_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, SCORE_LEDS, new Vector2(200, 100));
     private static final ColorData PAUSE_MENU_COLOR = new ColorData(0,1,0,1);
     private static final ColorData TRANSPARENCY_COLOR = new ColorData(1,1,1,0.65f);
     private GameSurfaceView surfaceView;
@@ -420,7 +422,10 @@ public class GameRenderer implements Renderer {
 
         mainTextureDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
-        mainTextureDrawer.addTexturedSquare(120, 120, 150, 150, HIGHSCORE_LABEL);
+        mainTextureDrawer.addTexturedSquare(100, 170, 150, 75, HIGHSCORE_LABEL);
+        mainTextureDrawer.addTexturedSquare(GameActivity.RETURN_BUTTON_BOUNDS, RETURN_BUTTON);
+        RECORDS_SCORE.number = gameData.highScore;
+        RECORDS_SCORE.addDigitsTexture(mainTextureDrawer);
 
         if(gameData.paused)
             addPauseLayer(mainTextureDrawer, gameData.soundEnabled);
