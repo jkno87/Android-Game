@@ -34,6 +34,11 @@ public abstract class Decoration {
         }
 
         @Override
+        public void terminate(){
+            drawFrames = -1;
+        }
+
+        @Override
         public boolean completed(){
             return drawFrames < 0;
         }
@@ -84,6 +89,9 @@ public abstract class Decoration {
             this.preDrawFrames = preDrawFrames;
         }
 
+        public void terminate(){
+        }
+
         public boolean completed(){
             return animation.completed();
         }
@@ -114,6 +122,11 @@ public abstract class Decoration {
         }
 
         @Override
+        public void terminate(){
+            size.position.x = -10;
+        }
+
+        @Override
         public boolean completed(){
             return size.position.x < 0;
         }
@@ -138,6 +151,7 @@ public abstract class Decoration {
     public boolean inverted;
     public Square size;
     public SimpleDrawer.ColorData color = TextureDrawer.DEFAULT_COLOR;
+    public abstract void terminate();
     public abstract boolean drawable();
     public abstract void update(Vector2 backgroundMoveDelta);
     public abstract boolean completed();

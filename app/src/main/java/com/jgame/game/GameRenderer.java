@@ -347,11 +347,15 @@ public class GameRenderer implements Renderer {
             if (gameData.state == GameState.RESTART_SCREEN) {
                 mainTextureDrawer.addTexturedSquare(GameActivity.RESTART_BOUNDS, CONTINUE_BUTTON);
                 mainTextureDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
+                for(int i = 0; i < decorations.length; i++)
+                    if(decorations[i] != null)
+                        decorations[i].terminate();
             }
 
             //En caso de que el juego este iniciando, se establece la posicion inicial del background
-            if (gameData.state == GameState.STARTING)
+            if (gameData.state == GameState.STARTING) {
                 background.resetBackground();
+            }
 
             if (gameData.paused)
                 addPauseLayer(mainTextureDrawer, gameData.soundEnabled);
