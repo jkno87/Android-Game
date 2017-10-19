@@ -44,7 +44,7 @@ public abstract class Decoration {
         }
 
         @Override
-        public void update() {
+        public void update(Vector2 backgroundMoveDelta) {
             if(preDrawFrames > 0)
                 preDrawFrames--;
             else {
@@ -96,7 +96,7 @@ public abstract class Decoration {
             return preDrawFrames <= 0 && !animation.completed();
         }
 
-        public void update(){
+        public void update(Vector2 backgroundMoveDelta){
             if(preDrawFrames > 0)
                 preDrawFrames--;
             else
@@ -104,11 +104,42 @@ public abstract class Decoration {
         }
     }
 
+    public static class IdleDecoration extends Decoration {
+        private TextureDrawer.TextureData sprite;
+
+        public IdleDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted){
+            this.sprite = sprite;
+            this.size = size;
+            this.inverted = inverted;
+        }
+
+        @Override
+        public boolean completed(){
+            return size.position.x < 0;
+        }
+
+        @Override
+        public boolean drawable(){
+            return true;
+        }
+
+        @Override
+        public TextureDrawer.TextureData getSprite(){
+            return sprite;
+        }
+
+        @Override
+        public void update(Vector2 backgroundMoveDelta){
+            size.position.add(backgroundMoveDelta);
+        }
+
+    }
+
     public boolean inverted;
     public Square size;
     public SimpleDrawer.ColorData color = TextureDrawer.DEFAULT_COLOR;
     public abstract boolean drawable();
-    public abstract void update();
+    public abstract void update(Vector2 backgroundMoveDelta);
     public abstract boolean completed();
     public abstract TextureDrawer.TextureData getSprite();
 }

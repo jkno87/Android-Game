@@ -185,6 +185,8 @@ public class GameRenderer implements Renderer {
     private static final DigitsDisplay RECORDS_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, SCORE_LEDS, new Vector2(200, 100));
     private static final ColorData PAUSE_MENU_COLOR = new ColorData(0,1,0,1);
     private static final ColorData TRANSPARENCY_COLOR = new ColorData(1,1,1,0.65f);
+    private static final Vector2 BACKGROUND_SCROLL_SPEED = new Vector2(-0.7f, 0);
+    private static final Vector2 BACKGROUND_IDLE = new Vector2();
     private GameSurfaceView surfaceView;
     private GameActivity gameActivity;
     private GL10 gl10;
@@ -195,7 +197,7 @@ public class GameRenderer implements Renderer {
     ColorData menuBase;
     private final GameData gameData;
     private final Decoration[] decorations = new Decoration[5];
-    private final Background background = new Background(new Vector2(-0.7f, 0));
+    private final Background background = new Background(BACKGROUND_SCROLL_SPEED);
     private int titleScreenCounter = TITLE_SCREEN_INTERVAL;
     private boolean showTitleMessage = true;
 
@@ -242,9 +244,12 @@ public class GameRenderer implements Renderer {
     @Override
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
+        Vector2 backgroundMoveSpeed = BACKGROUND_IDLE;
 
-        if(!gameData.paused && gameData.backgroundMoving)
+        if(!gameData.paused && gameData.backgroundMoving) {
             background.advanceBackground();
+            backgroundMoveSpeed = GameActivity.ADVANCE_SPEED;
+        }
 
         //Se actualiza la lista de decoraciones
         for(int i = 0; i < decorations.length; i++){
@@ -253,7 +258,7 @@ public class GameRenderer implements Renderer {
                     decorations[i] = gameActivity.decorationsBuffer.removeFirst();
                 }
             } else
-                decorations[i].update();
+                decorations[i].update(backgroundMoveSpeed);
         }
 
         if(gameData.state == GameState.MENU || gameData.state == GameState.STARTING)

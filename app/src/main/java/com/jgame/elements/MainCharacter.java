@@ -4,6 +4,7 @@ import com.jgame.game.ControllerManager;
 import com.jgame.game.GameActivity;
 import com.jgame.game.GameData.Event;
 import com.jgame.util.Decoration;
+import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
@@ -77,6 +78,7 @@ public class MainCharacter extends GameCharacter {
     public final static TextureData MOVING_D = new TextureData(0.625f, 0.75f, 0.75f, 1f);
     public final static TextureData MOVING_E = new TextureData(0.75f, 0.75f, 0.875f, 1f);
     public final static TextureData STUNNED_SPRITE = new TextureData(0.625f, 0.5f, 0.75f, 0.75f);
+    private final static TextureData[] ABSORBED_SPRITES = { new TextureData(0.5f,0.25f,0.625f,0.375f), new TextureData(0.375f,0.25f,0.5f,0.375f)};
     public static final int SPRITE_LENGTH = 75;
     public static final int CHARACTER_LENGTH = 40;
     public static final int CHARACTER_HEIGHT = 160;
@@ -224,6 +226,10 @@ public class MainCharacter extends GameCharacter {
                 hp = INITIAL_HP;
                 state = CharacterState.ABSORBING;
                 ABSORBING_ANIMATION.reset();
+                Decoration.AnimatedDecoration a = new Decoration.AnimatedDecoration(0, new AnimationData(18, false, ABSORBED_SPRITES),
+                        new Square(new Vector2(position).add(spriteContainer.lenX * baseX.x, 0)
+                                , spriteContainer.lenX, spriteContainer.lenY, 0), false);
+                decorationData.add(a);
             }
 
             moveA.update();

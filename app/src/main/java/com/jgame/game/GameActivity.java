@@ -50,7 +50,6 @@ public class GameActivity extends Activity {
     public static final float PLAYING_WIDTH = FRUSTUM_WIDTH;
     public static final float PLAYING_HEIGHT = FRUSTUM_HEIGHT;
     public static final float INITIAL_CHARACTER_POSITION = 75;
-    public static final float ADVANCE_RATE = -2f;
     private static final float DIRECTION_WIDTH = 65;
     private static final float INPUT_SOUND_WIDTH = 55;
     private static final float BUTTONS_WIDTH = 65;
@@ -74,6 +73,7 @@ public class GameActivity extends Activity {
     public static final Square HARD_DIFF_BOUNDS = new Square(35, FRUSTUM_HEIGHT - 190, 80, 40);
     public static final Square RETURN_BUTTON_BOUNDS = new Square(FRUSTUM_WIDTH - 115, FRUSTUM_HEIGHT - 90, 80, 40);
     public static final Square RECORDS_BUTTON_BOUNDS = new Square(FRUSTUM_WIDTH - 115, FRUSTUM_HEIGHT - 90, 80, 40);
+    public static final Vector2 ADVANCE_SPEED = new Vector2(-2f, 0);
     public static final String HIGH_SCORE = "highScore";
     public static int ID_PUNCH;
     private GLSurfaceView gameSurfaceView;
@@ -311,6 +311,9 @@ public class GameActivity extends Activity {
                     } else if (currentState == GameState.TITLE_SCREEN){
                         if(lastInput == ControllerManager.GameInput.START_GAME)
                             currentState = GameState.MENU;
+                    } else if (currentState == GameState.RECORDS) {
+                        if(lastInput == ControllerManager.GameInput.MAIN_MENU)
+                            currentState = GameState.MENU;
                     }
 
                     synchronized (gameData){
@@ -348,8 +351,8 @@ public class GameActivity extends Activity {
                             advancing = false;
                         }
 
-                        currentEnemy.moveX(ADVANCE_RATE);
-                        mainCharacter.moveX(ADVANCE_RATE);
+                        currentEnemy.move(ADVANCE_SPEED);
+                        mainCharacter.move(ADVANCE_SPEED);
                     }
 
                     //Se realiza el cambio de enemigo en el caso de que el enemigo actual muera

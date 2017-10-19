@@ -23,13 +23,14 @@ import java.util.ArrayDeque;
 public class RobotEnemy extends GameCharacter {
 
     enum EnemyState {
-        WAITING, ATTACKING, DYING, DEAD
+        WAITING, ATTACKING, DEAD, DYING
     }
 
+    private final static TextureData[] BREATH_SPRITES = {new TextureData(0.375f,0.25f,0.5f,0.375f),
+            new TextureData(0.5f,0.25f,0.625f,0.375f)};
     private final int[] EASY_FRAME_DATA = new int[]{20,35,28};
     private final int[] MEDIUM_FRAME_DATA = new int[]{2,3,15};
     private final int[] HARD_FRAME_DATA = new int[]{2,3,10};
-    private final static TextureData[] ABSORBED_SPRITES = { new TextureData(0.5f,0.25f,0.625f,0.375f), new TextureData(0.375f,0.25f,0.5f,0.375f)};
     public final static TextureData IDLE_TEXTURE = new TextureData(0,0,0.25f,0.25f);
     public final static TextureData[] STARTUP_TEXTURES = {
             IDLE_TEXTURE, new TextureData(0.25f, 0, 0.50f, 0.25f)
@@ -99,8 +100,6 @@ public class RobotEnemy extends GameCharacter {
     public TextureData getCurrentTexture() {
         if(currentState == EnemyState.ATTACKING)
             return activeAttack.getCurrentAnimation().getCurrentSprite();
-        else if(currentState == EnemyState.DYING)
-            return RECOVERY_TEXTURES[0];
         else
             return IDLE_TEXTURE;
     }
@@ -118,7 +117,8 @@ public class RobotEnemy extends GameCharacter {
             //Se verifica que el enemigo se encuentre en rango del ataque.
             if ((position.x > foe.position.x && (position.x - foe.position.x) < attackRange) ||
                     (position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange)) {
-                decorationData.add(new BreathDecoration(currentFrameDataSet[0], BREATH_FRAMES,
+                decorationData.add(new AnimatedDecoration(currentFrameDataSet[0],
+                        new AnimationData(BREATH_FRAMES, false, BREATH_SPRITES),
                         new Square(new Vector2(position).add(-120, 82), 50, 50, 0), true));
                 currentState = EnemyState.ATTACKING;
                 activeAttack = regularAttack;
@@ -143,11 +143,9 @@ public class RobotEnemy extends GameCharacter {
         }
 
         if(currentState == EnemyState.DYING){
-            AnimatedDecoration a = new AnimatedDecoration(0, new AnimationData(18, false, ABSORBED_SPRITES),
-                    new Square(new Vector2(position).add(spriteContainer.lenX * baseX.x, 0)
-                            , spriteContainer.lenX, spriteContainer.lenY, 0), false);
-            decorationData.add(a);
             currentState = EnemyState.DEAD;
+            decorationData.add(new Decoration.IdleDecoration(IDLE_TEXTURE,
+                    new Square(this.spriteContainer), true));
         }
 
         return Event.NONE;

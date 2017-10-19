@@ -12,16 +12,16 @@ public class ControllerManager {
 
     public enum GameInput {
         LEFT, RIGHT, INPUT_A, INPUT_OFF,NO_INPUT, QUIT_GAME, START_GAME, CHANGE_SOUND_STATE,
-        DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD, RECORDS_TRIGGER
+        DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD, RECORDS_TRIGGER, MAIN_MENU
     }
 
     private final BlockingQueue<GameInput> inputs;
     private static final int NUMBER_OF_INPUTS = 4;
     private static final int INPUT_NONE = -1;
-    public static final int INPUT_LEFT = 0;
-    public static final int INPUT_RIGHT = 1;
-    public static final int INPUT_A = 2;
-    public static final int INPUT_B = 3;
+    private static final int INPUT_LEFT = 0;
+    private static final int INPUT_RIGHT = 1;
+    private static final int INPUT_A = 2;
+    private static final int INPUT_B = 3;
     private final Square[] gameButtons;
     private int mainButtonPressed;
     private float inputX;
@@ -130,6 +130,13 @@ public class ControllerManager {
                     inputs.put(GameInput.RECORDS_TRIGGER);
                 }
             }
+
+            if (gameData.state == GameState.RECORDS){
+                if(GameActivity.RECORDS_BUTTON_BOUNDS.contains(inputX, inputY))
+                    inputs.put(GameInput.MAIN_MENU);
+
+            }
+
         } catch (InterruptedException e){
             Thread.interrupted();
         }
