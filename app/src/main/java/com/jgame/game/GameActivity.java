@@ -10,8 +10,7 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.jgame.game.GameData.Event;
 import com.jgame.elements.RobotEnemy;
 import com.jgame.elements.GameCharacter;
@@ -25,7 +24,6 @@ import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import com.jgame.util.Decoration;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.*;
 
 
@@ -87,7 +85,7 @@ public class GameActivity extends Activity {
     public final ArrayDeque<Decoration> decorationsBuffer = new ArrayDeque<>();
     public GameRunnable gameTask;
     private FirebaseAnalytics mFirebaseAnalytics;
-    private AdView mAdView;
+    private InterstitialAd mInterstitialAd;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -104,9 +102,10 @@ public class GameActivity extends Activity {
         gameData.state = GameState.TITLE_SCREEN;
         gameTask = new GameRunnable();
         new Thread(gameTask).start();
-        mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
     }
 
     /**
@@ -132,12 +131,22 @@ public class GameActivity extends Activity {
 
     @Override
     public boolean onTouchEvent(MotionEvent e){
-        if(!gameData.paused)
-            return false;
+        if(gameData.state == GameState.GAME_OVER){
+            if(mInterstitialAd.isLoaded())
+                mInterstitialAd.show();
+
+            synchronized (gameData){
+                gameData.state = GameState.RESTART_SCREEN;
+            }
+            return true;
+        }
+
+
+        //if(!gameData.paused)
+        //    return false;
 
         float x = (e.getX() / (float) gameSurfaceView.getWidth()) * FRUSTUM_WIDTH;
-        float y = (((float) gameSurfaceView.getHeight() - (e.getY() - mAdView.getHeight())) / (float) gameSurfaceView.getHeight())
-                * FRUSTUM_HEIGHT;
+        float y = (((float) gameSurfaceView.getHeight() - e.getY()) / (float) gameSurfaceView.getHeight()) * FRUSTUM_HEIGHT;
 
         switch(e.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -291,8 +300,8 @@ public class GameActivity extends Activity {
 
                     } else if(currentState == GameState.GAME_OVER){
                         checkHighScore(score);
-                        currentState = GameState.RESTART_SCREEN;
                         advancing = false;
+                        //currentState = GameState.AD_INPUT_REVEAL;
                     } else if (currentState == GameState.PLAYING){
                         gameData.score = score;
                         if(score > HARD_DIFFICULTY_POINTS)
