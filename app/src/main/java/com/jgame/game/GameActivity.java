@@ -193,7 +193,8 @@ public class GameActivity extends Activity {
         Log.d("Game", "onPause");
         soundManager.terminar();
         gameSurfaceView.onPause();
-        gameData.paused = true;
+        if(gameData.state == GameState.PLAYING)
+            gameData.paused = true;
     }
 
     @Override

@@ -242,6 +242,24 @@ public class GameRenderer implements Renderer {
             tDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_CANCELLED_SPRITE);
     }
 
+    /**
+     * Asigna el sprite que se debe de dibujar para GameCharacter c. Requiere que al menos uno de los
+     * activeCollisionBoxes sea del tipo TYPE_SPRITE_CONTAINER
+     * @param c GameCharacter que se va a dibujar
+     * @param drawer TextureDrawer al que se le agregara la informacion del personaje.
+     */
+    private void renderMainCharacter(MainCharacter c, TextureDrawer drawer){
+        if(!c.alive())
+            return;
+
+        if(c.baseX.x < 0)
+            drawer.addInvertedColoredSquare(c.spriteContainer, c.getCurrentTexture(), c.color);
+        else {
+            drawer.addColoredSquare(c.spriteContainer, c.getCurrentTexture(), c.color);
+            drawer.addColoredSquare(c.spriteContainer, c.getCurrentTexture(), c.colorModifier);
+        }
+    }
+
     @Override
     public void onDrawFrame(GL10 arg0) {
         gameData.copy(gameActivity.gameData);
@@ -302,7 +320,8 @@ public class GameRenderer implements Renderer {
 
             mainTextureDrawer.reset();
 
-            renderCharacter(gameActivity.mainCharacter, mainTextureDrawer);
+            //renderCharacter(gameActivity.mainCharacter, mainTextureDrawer);
+            renderMainCharacter(gameActivity.mainCharacter, mainTextureDrawer);
 
             synchronized (gameActivity.enemyLock) {
                 renderCharacter(gameActivity.currentEnemy, mainTextureDrawer);
