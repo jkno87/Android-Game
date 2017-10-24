@@ -255,8 +255,8 @@ public class GameRenderer implements Renderer {
         if(c.baseX.x < 0)
             drawer.addInvertedColoredSquare(c.spriteContainer, c.getCurrentTexture(), c.color);
         else {
-            drawer.addColoredSquare(c.spriteContainer, c.getCurrentTexture(), c.color);
             drawer.addColoredSquare(c.spriteContainer, c.getCurrentTexture(), c.colorModifier);
+            drawer.addColoredSquare(c.spriteContainer, c.getCurrentTexture(), c.color);
         }
     }
 

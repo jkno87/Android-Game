@@ -87,7 +87,7 @@ public class MainCharacter extends GameCharacter {
     public final int LENGTH_MOVE_A = CHARACTER_LENGTH + 2;
     public final int HEIGHT_MOVE_A = CHARACTER_HEIGHT;
     private final int STUN_FRAMES = 18;
-    private final int INITIAL_HP = 3000;
+    private final int INITIAL_HP = 1000;
     private final AnimationData WALKING_ANIMATION = new AnimationData(15, true, new TextureData[]{MOVING_A, MOVING_B, MOVING_C, MOVING_D, MOVING_E});
     private final float MOVING_SPEED = 0.75f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
@@ -122,7 +122,8 @@ public class MainCharacter extends GameCharacter {
         moveA.setActiveAnimation(new AnimationData(13, false, ACTIVE_MOV_A));
         moveA.setRecoveryAnimation(new AnimationData(18, false, ACTIVE_MOV_A));
 
-        this.colorModifier = new SimpleDrawer.ColorData(1,1,0,0.65f);
+        this.color.a = 0;
+        this.colorModifier = new SimpleDrawer.ColorData(0.78f,1,0,1);
         this.maxX = maxX;
         this.minX = minX;
         this.hp = INITIAL_HP;
@@ -264,7 +265,7 @@ public class MainCharacter extends GameCharacter {
             state = CharacterState.DEAD;
         else {
             hp -= 1;
-            colorModifier.a = colorModifier.a * (float) hp / INITIAL_HP;
+            color.a = 1 - (float) hp / INITIAL_HP;
         }
 
         return Event.NONE;
