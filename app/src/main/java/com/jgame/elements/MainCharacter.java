@@ -46,7 +46,7 @@ public class MainCharacter extends GameCharacter {
             public boolean isCancellable() {
                 return false;
             }
-        }, INPUT_B {
+        }, DYING {
             @Override
             public boolean isCancellable() {
                 return false;
@@ -69,6 +69,7 @@ public class MainCharacter extends GameCharacter {
         public abstract boolean isCancellable();
     }
 
+    public final static int FRAMES_TO_GAME_OVER = 65;
     public final static TextureData IDLE_TEXTURE = new TextureData(0.875f,0f,1,0.25f);
     public final static TextureData RECOVERY_SUCCESS_1 = new TextureData(0.25f, 0.75f, 0.375f, 1f);
     public final static TextureData RECOVERY_SUCCESS_2 = new TextureData(0.125f, 0.75f, 0.25f, 1f);
@@ -97,6 +98,7 @@ public class MainCharacter extends GameCharacter {
     public CharacterState state;
     public SimpleDrawer.ColorData colorModifier;
     private int hp;
+    private int framesToGameOver;
     private int stunVal;
     private final float maxX;
     private final float minX;
@@ -122,6 +124,7 @@ public class MainCharacter extends GameCharacter {
         moveA.setActiveAnimation(new AnimationData(13, false, ACTIVE_MOV_A));
         moveA.setRecoveryAnimation(new AnimationData(18, false, ACTIVE_MOV_A));
 
+        framesToGameOver = FRAMES_TO_GAME_OVER;
         this.color.a = 0;
         this.colorModifier = new SimpleDrawer.ColorData(0.78f,1,0,1);
         this.maxX = maxX;
@@ -172,13 +175,12 @@ public class MainCharacter extends GameCharacter {
      * @param state state en el que se encontrara el personaje.
      */
     private synchronized void setStateFromButton(CharacterState state){
-        if(this.state == CharacterState.DEAD || this.state == CharacterState.INPUT_A || this.state == CharacterState.INPUT_B)
+        if(this.state == CharacterState.DEAD || this.state == CharacterState.INPUT_A)
             return;
 
         if(state == CharacterState.INPUT_A) {
             moveA.reset();
-        } else if(state == CharacterState.INPUT_B)
-            MOVE_B_COUNTER.reset();
+        }
 
         this.state = state;
     }
@@ -187,14 +189,12 @@ public class MainCharacter extends GameCharacter {
     public TextureDrawer.TextureData getCurrentTexture(){
         if(state == CharacterState.MOVING_FORWARD || state == CharacterState.MOVING_BACKWARDS || state == CharacterState.ADVANCING)
             return WALKING_ANIMATION.getCurrentSprite();
-        else if (state == CharacterState.STUNNED)
+        else if (state == CharacterState.STUNNED || state == CharacterState.DYING)
             return STUNNED_SPRITE;
         else if(state == CharacterState.ABSORBING)
             return ABSORBING_ANIMATION.getCurrentSprite();
-
         else if(state != CharacterState.INPUT_A)
             return IDLE_TEXTURE;
-
         else
             return moveA.getCurrentAnimation().getCurrentSprite();
     }
@@ -205,6 +205,13 @@ public class MainCharacter extends GameCharacter {
         if (state == CharacterState.IDLE) {
             adjustToFoePosition(foe);
             WALKING_ANIMATION.reset();
+        } else if (state == CharacterState.DYING){
+            if(framesToGameOver == 0 )
+                state = CharacterState.DEAD;
+            else
+                framesToGameOver--;
+
+            return Event.NONE;
         } else if (state == CharacterState.STUNNED) {
             move(LEFT_MOVE_SPEED);
             if(stunVal > 0)
@@ -252,6 +259,8 @@ public class MainCharacter extends GameCharacter {
             //Este estado no debe de provocar que el personaje pierda hp
             WALKING_ANIMATION.updateFrame();
             return Event.NONE;
+        } else if (state == CharacterState.DEAD) {
+            return Event.NONE;
         }
 
         /*if(state == CharacterState.INPUT_B){
@@ -262,7 +271,7 @@ public class MainCharacter extends GameCharacter {
         }*/
 
         if(hp < 0)
-            state = CharacterState.DEAD;
+            state = CharacterState.DYING;
         else {
             hp -= 1;
             color.a = 1 - (float) hp / INITIAL_HP;
@@ -278,6 +287,7 @@ public class MainCharacter extends GameCharacter {
         idleCollisionBoxes[0].updatePosition();
         state = CharacterState.IDLE;
         hp = INITIAL_HP;
+        framesToGameOver = FRAMES_TO_GAME_OVER;
     }
 
     public boolean completedTransition(){
