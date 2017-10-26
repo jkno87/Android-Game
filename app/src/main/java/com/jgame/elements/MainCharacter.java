@@ -82,6 +82,7 @@ public class MainCharacter extends GameCharacter {
     public final static TextureData MOVING_E = new TextureData(0.75f, 0.75f, 0.875f, 1f);
     public final static TextureData STUNNED_SPRITE = new TextureData(0.625f, 0.5f, 0.75f, 0.75f);
     private final static TextureData[] ABSORBED_SPRITES = { new TextureData(0.5f,0.25f,0.625f,0.375f), new TextureData(0.375f,0.25f,0.5f,0.375f)};
+    public static final float INITIAL_POSITION_X = 85;
     public static final int SPRITE_LENGTH = 75;
     public static final int CHARACTER_LENGTH = 40;
     public static final int CHARACTER_HEIGHT = 160;
@@ -93,7 +94,6 @@ public class MainCharacter extends GameCharacter {
     private final float MOVING_SPEED = 0.75f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
-    private final TimeCounter MOVE_B_COUNTER = new TimeCounter(0.64f);
     public final AttackData moveA;
     public CharacterState state;
     public SimpleDrawer.ColorData colorModifier;
@@ -280,8 +280,9 @@ public class MainCharacter extends GameCharacter {
         return Event.NONE;
     }
 
+
     public void reset(float x, float y){
-        relativePosition.set(x, y);
+        relativePosition.set(INITIAL_POSITION_X, y);
         baseX.set(1,0);
         updatePosition();
         idleCollisionBoxes[0].updatePosition();
@@ -291,7 +292,7 @@ public class MainCharacter extends GameCharacter {
     }
 
     public boolean completedTransition(){
-        return this.state == CharacterState.ADVANCING && this.position.x < GameActivity.INITIAL_CHARACTER_POSITION;
+        return this.state == CharacterState.ADVANCING && this.position.x < INITIAL_POSITION_X;
     }
 
     /**

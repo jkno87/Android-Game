@@ -47,7 +47,7 @@ public class GameActivity extends Activity {
     public static final float MAX_X = FRUSTUM_WIDTH - MIN_X;
     public static final float PLAYING_WIDTH = FRUSTUM_WIDTH;
     public static final float PLAYING_HEIGHT = FRUSTUM_HEIGHT;
-    public static final float INITIAL_CHARACTER_POSITION = 75;
+    //public static final float INITIAL_CHARACTER_POSITION = 75;
     private static final float DIRECTION_WIDTH = 65;
     private static final float INPUT_SOUND_WIDTH = 55;
     private static final float BUTTONS_WIDTH = 65;
@@ -294,7 +294,7 @@ public class GameActivity extends Activity {
 
                         currentDifficulty = initialDifficulty;
                         score = 0;
-                        mainCharacter.reset(INITIAL_CHARACTER_POSITION, ELEMENTS_HEIGHT);
+                        mainCharacter.reset(0, ELEMENTS_HEIGHT);
                         currentEnemyCounter = 0;
                         currentEnemy.reset(0,0);
                         currentState = GameState.PLAYING;

@@ -37,7 +37,7 @@ public class RobotEnemy extends GameCharacter {
     };
     public final static TextureData[] RECOVERY_TEXTURES = {new TextureData(0.25f, 0, 0.5f, 0.25f)};
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.50f, 0, 0.75f, 0.25f);
-    public final static float DISTANCE_FROM_MAIN_CHARACTER = 260;
+    public final static float DISTANCE_FROM_MAIN_CHARACTER = 200;
     public final static float ATTACK_DISTANCE = 56;
     public final static int BREATH_FRAMES = 10;
     private final MainCharacter mainCharacter;
@@ -60,6 +60,8 @@ public class RobotEnemy extends GameCharacter {
 
         //actions = new EnemyAction[]{checkAttackDistance};
         this.mainCharacter = mainCharacter;
+        //Este personaje siempre va a ver hacia la izquierda
+        this.baseX.x = -1;
         currentFrameDataSet = EASY_FRAME_DATA;
         attackRange = idleSizeX + ATTACK_DISTANCE;
         CollisionObject[] startupBoxes = new CollisionObject[]{new CollisionObject(new Vector2(143,100), 0, 15, 25, this, CollisionObject.TYPE_HITTABLE)};
@@ -75,7 +77,7 @@ public class RobotEnemy extends GameCharacter {
     public void reset(float x, float y) {
         currentIdleFrame = 0;
         currentState = EnemyState.WAITING;
-        setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
+        moveX(mainCharacter.idleSizeX + mainCharacter.position.x + idleSizeX + DISTANCE_FROM_MAIN_CHARACTER);
         regularAttack.reset();
         //DESTROY_ANIMATION.reset();
         regularAttack.updateFrameData(currentFrameDataSet);
