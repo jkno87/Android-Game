@@ -97,7 +97,7 @@ public class GameActivity extends Activity {
         gameSurfaceView = (GameSurfaceView) findViewById(R.id.game_surface);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
-        mainCharacter = new MainCharacter(ID_GEN.getId(), new Vector2(), MIN_X, MAX_X);
+        mainCharacter = new MainCharacter(ID_GEN.getId(), ELEMENTS_HEIGHT, MIN_X, MAX_X);
         gameData.highScore = settings.getInt(HIGH_SCORE, 0);
         gameData.state = GameState.TITLE_SCREEN;
         gameTask = new GameRunnable();
@@ -294,9 +294,9 @@ public class GameActivity extends Activity {
 
                         currentDifficulty = initialDifficulty;
                         score = 0;
-                        mainCharacter.reset(0, ELEMENTS_HEIGHT);
+                        mainCharacter.reset();
                         currentEnemyCounter = 0;
-                        currentEnemy.reset(0,0);
+                        currentEnemy.reset();
                         currentState = GameState.PLAYING;
 
                     } else if(currentState == GameState.GAME_OVER){
@@ -379,7 +379,7 @@ public class GameActivity extends Activity {
                         score++;
                         //Se reinicia el enemigo para que se encuentre en su estado inicial en caso de algun cambio
                         currentEnemy.setCurrentDifficulty(currentDifficulty);
-                        currentEnemy.reset(0,0);
+                        currentEnemy.reset();
                     }
 
                     /*if(eventFrame > 0){

@@ -76,7 +76,7 @@ public class RobotEnemy extends GameCharacter {
     }
 
     @Override
-    public void reset(float x, float y) {
+    public void reset() {
         currentIdleFrame = 0;
         currentState = EnemyState.WAITING;
         moveTo(mainCharacter.position, DISTANCE_FROM_MAIN_CHARACTER);

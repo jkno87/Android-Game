@@ -100,13 +100,15 @@ public class MainCharacter extends GameCharacter {
     private int hp;
     private int framesToGameOver;
     private int stunVal;
+    private final float playingHeight;
     private final float maxX;
     private final float minX;
     private final AnimationData ABSORBING_ANIMATION = new AnimationData(13, false, new TextureData[]{RECOVERY_SUCCESS_1, RECOVERY_SUCCESS_2});
 
-    public MainCharacter(int id, Vector2 position, float minX, float maxX){
-        super(SPRITE_LENGTH, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, position, id);
+    public MainCharacter(int id, float playingHeight,float minX, float maxX){
+        super(SPRITE_LENGTH, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, new Vector2(), id);
         this.state = CharacterState.IDLE;
+        this.playingHeight = playingHeight;
         CollisionObject [] startupA = new CollisionObject[1];
         startupA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A,
                 HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
@@ -278,8 +280,8 @@ public class MainCharacter extends GameCharacter {
     }
 
 
-    public void reset(float x, float y){
-        relativePosition.set(INITIAL_POSITION_X, y);
+    public void reset(){
+        relativePosition.set(INITIAL_POSITION_X, playingHeight);
         baseX.set(1,0);
         updatePosition();
         idleCollisionBoxes[0].updatePosition();
