@@ -47,7 +47,7 @@ public class ChargingEnemy extends GameCharacter {
         idleFrame = IDLE_FRAMES;
         chargeFrame = CHARGE_FRAMES;
         currentState = State.IDLE;
-        setPosition(mainCharacter, DISTANCE_FROM_CHARACTER);
+        //setPosition(mainCharacter, DISTANCE_FROM_CHARACTER);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class ChargingEnemy extends GameCharacter {
         } else if (currentState == State.ATTACKING){
             if(foe.hittable())
                 super.update(foe, decorationData);
-            moveX(baseX.x * ATTACK_SPEED[0]);
+            //moveX(baseX.x * ATTACK_SPEED[0]);
         }
 
         for(CollisionObject co : activeAttack.active)

@@ -58,29 +58,15 @@ public class GameObject {
     }
 
     /**
-     * Suma el vector direction a position.
-     * @param diffX direccion X en la que se movera el GameObject
+     * Mueve a GameObject a la posicion target. Se incluye modifier para ser mas flexible con los posibles cambios en la posicion, tipicamente
+     * se quiere mover al objeto y moverlo cerca del target.
+      * @param target
+     * @param modifier
      */
-    public void moveX(float diffX){
-        relativePosition.add(diffX,0);
+    public void moveTo(Vector2 target, Vector2 modifier){
+        relativePosition.set(target).add(modifier);
         updatePosition();
     }
-
-    /**
-     * Mueve la posicion actual a position
-     * @param x  nueva posicion x
-     * @param y nueva posicion y
-     */
-    public void moveTo(float x, float y){
-        relativePosition.set(x,y);
-        updatePosition();
-    }
-
-    public void moveBackwards(float xDiff){
-        relativePosition.add(-xDiff * baseX.x, 0);
-        updatePosition();
-    }
-
 
     /**
      * Funcion que determina si el GameObject puede ser dibujado en el renderer.

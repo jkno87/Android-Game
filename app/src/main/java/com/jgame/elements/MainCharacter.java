@@ -203,7 +203,6 @@ public class MainCharacter extends GameCharacter {
     public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         Event e = super.update(foe, decorationData);
         if (state == CharacterState.IDLE) {
-            adjustToFoePosition(foe);
             WALKING_ANIMATION.reset();
         } else if (state == CharacterState.DYING){
             if(framesToGameOver == 0 )
@@ -221,13 +220,11 @@ public class MainCharacter extends GameCharacter {
             //Se sale de la funcion para que esto no disminuya el HP
             return Event.NONE;
         } else if (state == CharacterState.MOVING_FORWARD) {
-            adjustToFoePosition(foe);
             if(position.x + MOVING_SPEED < maxX) {
                 move(RIGHT_MOVE_SPEED);
                 WALKING_ANIMATION.updateFrame();
             }
         } else if (state == CharacterState.MOVING_BACKWARDS) {
-            adjustToFoePosition(foe);
             if(position.x - MOVING_SPEED > minX) {
                 move(LEFT_MOVE_SPEED);
                 WALKING_ANIMATION.updateFrame();

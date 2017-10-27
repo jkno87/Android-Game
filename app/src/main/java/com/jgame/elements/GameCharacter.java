@@ -52,11 +52,6 @@ public abstract class GameCharacter extends GameObject {
         return idleCollisionBoxes;
     }
 
-    public synchronized void changeDirection(){
-        baseX.set(baseX.x * -1, 0);
-        moveX(baseX.x * -1 * idleSizeX);
-    }
-
     /**
      * Se agrega la funcionalidad de actualizar la posicion del spriteContainer
      */
@@ -68,26 +63,11 @@ public abstract class GameCharacter extends GameObject {
     }
 
     /**
-     * Sirve para checar la posicion en la que se encuentra el objeto foe y determina si es necesario realizar un cambio de direccion.
-     * @param foe
-     */
-    public void adjustToFoePosition(GameCharacter foe){
-        if(baseX.x > 0) {
-            if (position.x > foe.position.x)
-                changeDirection();
-        } else {
-            if (position.x < foe.position.x)
-                changeDirection();
-        }
-    }
-
-    /**
      * Reinicia la posicion del objeto tomando en cuenta la posicion de mainCharacter
      */
-    public void setPosition(GameCharacter other, float distanceFromCharacter){
+    public void setPosition(GameCharacter other, Vector2 distanceFromCharacter){
         baseX.x = other.baseX.x * -1;
-        moveTo(other.position.x + (distanceFromCharacter + idleSizeX + other.idleSizeX), position.y);
-        adjustToFoePosition(other);
+        moveTo(other.position, distanceFromCharacter);
     }
 
     /**

@@ -48,7 +48,7 @@ public class TeleportEnemy extends GameCharacter {
         EnemyAction move  = new EnemyAction() {
             @Override
             public void act() {
-                setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
+                //setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
             }
         };
         EnemyAction attack = new EnemyAction(){
@@ -76,13 +76,13 @@ public class TeleportEnemy extends GameCharacter {
         currentAction = 0;
         //activeAttack.attackDuration = attackFrames[currentDifficulty];
         idleFrame = IDLE_FRAMES;
-        setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
+        //setPosition(mainCharacter, DISTANCE_FROM_MAIN_CHARACTER);
     }
 
     @Override
     public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
 
-        adjustToFoePosition(foe);
+        //adjustToFoePosition(foe);
 
         if(currentState == EnemyState.DEAD)
             return Event.NONE;

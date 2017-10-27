@@ -37,7 +37,7 @@ public class RobotEnemy extends GameCharacter {
     };
     public final static TextureData[] RECOVERY_TEXTURES = {new TextureData(0.25f, 0, 0.5f, 0.25f)};
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.50f, 0, 0.75f, 0.25f);
-    public final static float DISTANCE_FROM_MAIN_CHARACTER = 200;
+    public final static Vector2 DISTANCE_FROM_MAIN_CHARACTER = new Vector2(200,0);
     public final static float ATTACK_DISTANCE = 56;
     public final static int BREATH_FRAMES = 10;
     private final MainCharacter mainCharacter;
@@ -71,13 +71,15 @@ public class RobotEnemy extends GameCharacter {
         regularAttack.setStartupAnimation(new AnimationData(currentFrameDataSet[0], false, STARTUP_TEXTURES));
         regularAttack.setActiveAnimation(new AnimationData(currentFrameDataSet[1], false, ATTACK_TEXTURE));
         regularAttack.setRecoveryAnimation(new AnimationData(currentFrameDataSet[2], false, RECOVERY_TEXTURES));
+        //No deberia hacer esto, pero asi se hacen mas eficientes las siguientes operaciones
+        DISTANCE_FROM_MAIN_CHARACTER.add(mainCharacter.idleSizeX + idleSizeX, 0);
     }
 
     @Override
     public void reset(float x, float y) {
         currentIdleFrame = 0;
         currentState = EnemyState.WAITING;
-        moveX(mainCharacter.idleSizeX + mainCharacter.position.x + idleSizeX + DISTANCE_FROM_MAIN_CHARACTER);
+        moveTo(mainCharacter.position, DISTANCE_FROM_MAIN_CHARACTER);
         regularAttack.reset();
         //DESTROY_ANIMATION.reset();
         regularAttack.updateFrameData(currentFrameDataSet);
@@ -113,7 +115,7 @@ public class RobotEnemy extends GameCharacter {
 
     @Override
     public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
-        adjustToFoePosition(foe);
+
         if(currentState == EnemyState.WAITING) {
 
             //Se verifica que el enemigo se encuentre en rango del ataque.
