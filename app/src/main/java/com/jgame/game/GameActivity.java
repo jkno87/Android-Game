@@ -47,7 +47,6 @@ public class GameActivity extends Activity {
     public static final float MAX_X = FRUSTUM_WIDTH - MIN_X;
     public static final float PLAYING_WIDTH = FRUSTUM_WIDTH;
     public static final float PLAYING_HEIGHT = FRUSTUM_HEIGHT;
-    //public static final float INITIAL_CHARACTER_POSITION = 75;
     private static final float DIRECTION_WIDTH = 65;
     private static final float INPUT_SOUND_WIDTH = 55;
     private static final float BUTTONS_WIDTH = 65;
@@ -243,7 +242,7 @@ public class GameActivity extends Activity {
             //availableEnemies[0] = new ChargingEnemy(CHARGING_SPRITE_LENGTH, MainCharacter.CHARACTER_HEIGHT,
             //        MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             availableEnemies[0] = new RobotEnemy(175, 215,
-                    135, 215, ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
+                    135, 215, ELEMENTS_HEIGHT, ID_GEN.getId());
             currentEnemy = availableEnemies[0];
             initialDifficulty = Difficulty.EASY;
         }
@@ -355,14 +354,16 @@ public class GameActivity extends Activity {
 
 
                     if(mainCharacter.state == MainCharacter.CharacterState.ADVANCING){
-                        advancing = true;
-                        if(mainCharacter.completedTransition()) {
-                            mainCharacter.state = MainCharacter.CharacterState.IDLE;
-                            advancing = false;
-                        }
+                        advancing = !(mainCharacter.completedTransition() && currentEnemy.completedTransition());
+                        if(advancing) {
+                            if(!mainCharacter.completedTransition())
+                                mainCharacter.move(ADVANCE_SPEED);
+                            if(!currentEnemy.completedTransition())
+                                currentEnemy.move(ADVANCE_SPEED);
 
-                        currentEnemy.move(ADVANCE_SPEED);
-                        mainCharacter.move(ADVANCE_SPEED);
+                        } else {
+                            mainCharacter.state = MainCharacter.CharacterState.IDLE;
+                        }
                     }
 
                     //Se realiza el cambio de enemigo en el caso de que el enemigo actual muera

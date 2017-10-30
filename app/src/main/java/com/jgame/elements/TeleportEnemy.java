@@ -120,6 +120,10 @@ public class TeleportEnemy extends GameCharacter {
         return Event.NONE;
     }
 
+    public boolean completedTransition(){
+        return false;
+    }
+
     @Override
     public boolean hittable(){
         return currentState != EnemyState.TELEPORTING;

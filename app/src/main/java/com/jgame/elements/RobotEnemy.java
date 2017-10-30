@@ -1,16 +1,11 @@
 package com.jgame.elements;
 
-import com.jgame.game.GameActivity;
 import com.jgame.game.GameActivity.Difficulty;
-import com.jgame.game.GameRenderer;
 import com.jgame.util.Decoration;
-import com.jgame.util.SimpleDrawer;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer.TextureData;
-import com.jgame.util.TextureDrawer;
 import com.jgame.util.Vector2;
 import com.jgame.util.Decoration.AnimatedDecoration;
-import com.jgame.util.Decoration.StaticDecoration;
 import com.jgame.game.GameData.Event;
 import java.util.ArrayDeque;
 
@@ -26,6 +21,7 @@ public class RobotEnemy extends GameCharacter {
         WAITING, ATTACKING, DEAD, DYING
     }
 
+    private final static Vector2 INITIAL_POSITION = new Vector2(410,0);
     private final static TextureData[] BREATH_SPRITES = {new TextureData(0.375f,0.25f,0.5f,0.375f),
             new TextureData(0.5f,0.25f,0.625f,0.375f)};
     private final int[] EASY_FRAME_DATA = new int[]{20,35,28};
@@ -37,19 +33,18 @@ public class RobotEnemy extends GameCharacter {
     };
     public final static TextureData[] RECOVERY_TEXTURES = {new TextureData(0.25f, 0, 0.5f, 0.25f)};
     public final static TextureData ATTACK_TEXTURE = new TextureData(0.50f, 0, 0.75f, 0.25f);
-    public final static Vector2 DISTANCE_FROM_MAIN_CHARACTER = new Vector2(200,0);
     public final static float ATTACK_DISTANCE = 56;
     public final static int BREATH_FRAMES = 10;
-    private final MainCharacter mainCharacter;
     private final int FRAMES_TO_RECOVER = 20;
     private EnemyState currentState;
     private int currentIdleFrame;
     private float attackRange;
     private final AttackData regularAttack;
     private int[] currentFrameDataSet;
+    private final Vector2 positionOffset;
 
 
-    public RobotEnemy(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, float positionY, int id, final MainCharacter mainCharacter) {
+    public RobotEnemy(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, float positionY, int id) {
         super(spriteSizeX, spriteSizeY, idleSizeX, idleSizeY, new Vector2(0, positionY), id);
         //EnemyAction checkAttackDistance = new EnemyAction() {
          //   @Override
@@ -59,7 +54,6 @@ public class RobotEnemy extends GameCharacter {
         //};
 
         //actions = new EnemyAction[]{checkAttackDistance};
-        this.mainCharacter = mainCharacter;
         //Este personaje siempre va a ver hacia la izquierda
         this.baseX.x = -1;
         currentFrameDataSet = EASY_FRAME_DATA;
@@ -71,17 +65,15 @@ public class RobotEnemy extends GameCharacter {
         regularAttack.setStartupAnimation(new AnimationData(currentFrameDataSet[0], false, STARTUP_TEXTURES));
         regularAttack.setActiveAnimation(new AnimationData(currentFrameDataSet[1], false, ATTACK_TEXTURE));
         regularAttack.setRecoveryAnimation(new AnimationData(currentFrameDataSet[2], false, RECOVERY_TEXTURES));
-        //No deberia hacer esto, pero asi se hacen mas eficientes las siguientes operaciones
-        DISTANCE_FROM_MAIN_CHARACTER.add(mainCharacter.idleSizeX + idleSizeX, 0);
+        positionOffset = new Vector2(position);
     }
 
     @Override
     public void reset() {
         currentIdleFrame = 0;
         currentState = EnemyState.WAITING;
-        moveTo(mainCharacter.position, DISTANCE_FROM_MAIN_CHARACTER);
+        moveTo(positionOffset, INITIAL_POSITION);
         regularAttack.reset();
-        //DESTROY_ANIMATION.reset();
         regularAttack.updateFrameData(currentFrameDataSet);
     }
 
@@ -111,6 +103,11 @@ public class RobotEnemy extends GameCharacter {
     @Override
     public void hit() {
         currentState = EnemyState.DYING;
+    }
+
+    @Override
+    public boolean completedTransition(){
+        return position.x < INITIAL_POSITION.x;
     }
 
     @Override
@@ -147,6 +144,7 @@ public class RobotEnemy extends GameCharacter {
         }
 
         if(currentState == EnemyState.DYING){
+            positionOffset.set(position);
             currentState = EnemyState.DEAD;
             decorationData.add(new Decoration.IdleDecoration(IDLE_TEXTURE,
                     new Square(this.spriteContainer), true));

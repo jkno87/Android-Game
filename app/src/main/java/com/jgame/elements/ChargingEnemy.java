@@ -66,6 +66,11 @@ public class ChargingEnemy extends GameCharacter {
     }
 
     @Override
+    public boolean completedTransition(){
+        return false;
+    }
+
+    @Override
     public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         if(currentState == State.IDLE){
             idleFrame -= 1;

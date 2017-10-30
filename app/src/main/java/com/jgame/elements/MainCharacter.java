@@ -290,6 +290,7 @@ public class MainCharacter extends GameCharacter {
         framesToGameOver = FRAMES_TO_GAME_OVER;
     }
 
+    @Override
     public boolean completedTransition(){
         return this.state == CharacterState.ADVANCING && this.position.x < INITIAL_POSITION_X;
     }
