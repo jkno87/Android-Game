@@ -94,6 +94,7 @@ public class MainCharacter extends GameCharacter {
     private final float MOVING_SPEED = 0.75f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
+    private final Vector2 STUN_SPEED = new Vector2(-2f,0);
     public final AttackData moveA;
     public CharacterState state;
     public SimpleDrawer.ColorData colorModifier;
@@ -214,7 +215,7 @@ public class MainCharacter extends GameCharacter {
 
             return Event.NONE;
         } else if (state == CharacterState.STUNNED) {
-            move(LEFT_MOVE_SPEED);
+            move(STUN_SPEED);
             if(stunVal > 0)
                 stunVal--;
             else

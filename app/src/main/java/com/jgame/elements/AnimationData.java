@@ -37,20 +37,41 @@ public class AnimationData {
         totalFrames = framesPerSprite * sprites.length - 1;
     }
 
+    /**
+     * Reinicia la animacion hasta el primer frame
+     */
     public void reset(){
         currentFrame = 0;
     }
 
+    /**
+     * Avanza un frame de animacion
+     */
     public void updateFrame(){
         currentFrame++;
         if(loops && completed())
             reset();
     }
 
+    /**
+     * Termina la animacion en el momento en que se llama este metodo
+     */
+    public void terminate(){
+        currentFrame = totalFrames;
+    }
+
+    /**
+     * Determina si la animacion ya se termino
+     * @return
+     */
     public boolean completed(){
         return currentFrame >= totalFrames;
     }
 
+    /**
+     * Regresa el sprite en el que se encuentra la animacion
+     * @return
+     */
     public TextureData getCurrentSprite(){
         return sprites[currentFrame / framesPerSprite];
     }
