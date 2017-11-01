@@ -142,32 +142,37 @@ public class GameRenderer implements Renderer {
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
-    public final static TextureData HIGHSCORE_LABEL = new TextureData(0.375f, 0.625f, 0.625f, 0.75f);
+    //Texturas varias
+    public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.4375f,0.4375f,0.46875f,0.46875f);
     public final static TextureData GAME_OVER_LABEL = new TextureData(0.6875f,0.25f, 0.8125f, 0.3125f);
-    public final static TextureData TITLE_LOGO = new TextureData(0, 0.25f, 0.25f, 0.375f);
     public final static TextureData CLOSING_MESSAGE = new TextureData(0.375f, 0.5f, 0.625f, 0.625f);
-    public final static TextureData NEUTRAL_JOYSTICK_TEX = new TextureData(0.5f,0.375f,0.5625f,0.4375f);
-    public final static TextureData LEFT_JOYSTICK_TEX = new TextureData(0.5625f,0.375f,0.625f,0.4375f);
-    public final static TextureData RIGHT_JOYSTICK_TEX = new TextureData(0.625f,0.375f,0.6875f,0.4375f);;
-    public final static TextureData SCORE_LABEL_TEX = new TextureData(0.125f, 0.6875f, 0.25f, 0.75f);
-    public final static TextureData ATTACK_LABEL_TEX = new TextureData(0.125f, 0.625f, 0.25f, 0.6875f);
-    public final static TextureData CONTINUE_BUTTON = new TextureData(0f,1.9375f,0.125f,2f);
-    public final static TextureData QUIT_BUTTON = new TextureData(0f,1.875f,0.125f,1.9375f);
-    public final static TextureData DISAPPEAR_TEXTURE = new TextureData(0.1875f,0.625f,0.125f,0.5625f);
-    public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.96875f,0.96875f,1.0f,1.0f);
-    public final static TextureData SOUND_BUTTON =  new TextureData(0f,0.625f,0.125f,0.6875f);
-    public final static TextureData SOUND_CANCELLED_SPRITE = new TextureData(0.25f, 0.6875f, 0.375f, 0.75f);
-    public final static TextureData BUTTON_TEXTURE = new TextureData(0.25f, 0.5625f, 0.375f, 0.6875f);
-    public final static TextureData ARROW_TEXTURE = TextureDrawer.genTextureData(1.0f,8.05f,16);
-    public final static TextureData START_BUTTON_TEXTURE = new TextureData(0, 0.5625f, 0.125f, 0.625f);
-    public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.0625f,0.5f,0,0.4372f);
+    //Texturas del menu principal
+    public final static TextureData TITLE_LOGO = new TextureData(0, 0.125f, 0.125f, 0.1875f);
+    public final static TextureData START_BUTTON_TEXTURE = new TextureData(0f,0.28125f,0.0625f,0.3125f);
+    public final static TextureData SOUND_BUTTON =  new TextureData(0f,0.3125f,0.0625f,0.34375f);
+    public final static TextureData EASY_SPRITE = new TextureData(0f,0.34375f,0.0625f,0.375f);
+    public final static TextureData MEDIUM_SPRITE = new TextureData(0f,0.375f,0.0625f,0.40625f);
+    public final static TextureData HARD_SPRITE = new TextureData(0f,0.40625f,0.0625f,0.4375f);
+    public final static TextureData RECORDS_BUTTON_SPRITE = new TextureData(0f, 0.5f, 0.0625f, 0.53125f);
     public final static TextureData SOUND_SWITCH_ON_TEXTURE = new TextureData(0.375f,0.375f,0.4375f,0.4375f);
     public final static TextureData SOUND_SWITCH_OFF_TEXTURE = new TextureData(0.4375f,0.4375f,0.375f,0.375f);
-    public final static TextureData EASY_SPRITE = new TextureData(0f,0.6875f,0.125f,0.75f);
-    public final static TextureData MEDIUM_SPRITE = new TextureData(0f,0.75f,0.125f,0.8125f);
-    public final static TextureData HARD_SPRITE = new TextureData(0f,0.8125f,0.125f,0.875f);
-    public final static TextureData RECORDS_BUTTON_SPRITE = new TextureData(0.5f, 0.4375f, 0.625f, 0.5f);
-    public final static TextureData RETURN_BUTTON = new TextureData(0.625f, 0.4375f, 0.75f, 0.5f);
+    //Texturas del menu de records
+    public final static TextureData RETURN_BUTTON = new TextureData(0f, 0.53125f, 0.0625f, 0.5625f);
+    public final static TextureData HIGHSCORE_LABEL = new TextureData(0.375f, 0.625f, 0.625f, 0.75f);
+    //Texturas del menu de pausa
+    public final static TextureData SOUND_CANCELLED_SPRITE = new TextureData(0.25f, 0.6875f, 0.375f, 0.75f);
+    public final static TextureData QUIT_BUTTON = new TextureData(0f,0.4375f,0.0625f,0.46875f);
+    public final static TextureData CONTINUE_BUTTON = new TextureData(0f,0.46875f,0.0625f,0.5f);
+    //Texturas de controles
+    public final static TextureData NEUTRAL_JOYSTICK_TEX = new TextureData(0.5f,0.375f,0.5625f,0.4375f);
+    public final static TextureData LEFT_JOYSTICK_TEX = new TextureData(0.5625f,0.375f,0.625f,0.4375f);
+    public final static TextureData RIGHT_JOYSTICK_TEX = new TextureData(0.625f,0.375f,0.6875f,0.4375f);
+    public final static TextureData ATTACK_LABEL_TEX = new TextureData(0.125f, 0.625f, 0.25f, 0.6875f);
+    public final static TextureData SCORE_LABEL_TEX = new TextureData(0.125f, 0.6875f, 0.25f, 0.75f);
+    public final static TextureData BUTTON_TEXTURE = new TextureData(0.25f, 0.5625f, 0.375f, 0.6875f);
+    public final static TextureData ARROW_TEXTURE = TextureDrawer.genTextureData(1.0f,8.05f,16);
+    public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.0625f,0.5f,0,0.4372f);
+
     public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
     public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
     public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
