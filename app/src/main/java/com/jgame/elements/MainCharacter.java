@@ -69,6 +69,8 @@ public class MainCharacter extends GameCharacter {
         public abstract boolean isCancellable();
     }
 
+
+    //IDLE Y MOVING EMPIEZAN EN 14,0 1/32 Y SON DE 3X1
     public final static int FRAMES_TO_GAME_OVER = 65;
     public final static TextureData IDLE_TEXTURE = new TextureData(0.875f,0f,1,0.25f);
     public final static TextureData RECOVERY_SUCCESS_1 = new TextureData(0.25f, 0.75f, 0.375f, 1f);
