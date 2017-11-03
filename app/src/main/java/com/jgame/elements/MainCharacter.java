@@ -63,27 +63,35 @@ public class MainCharacter extends GameCharacter {
             }
         }, STUNNED {
             @Override
-            public boolean isCancellable() { return false; }
+            public boolean isCancellable() {
+                return false;
+            }
         };
 
         public abstract boolean isCancellable();
     }
 
+    public final static int FRAMES_TO_GAME_OVER = 65;
+    public final static TextureData IDLE_TEXTURE = new TextureData(0.4375f, 0, 0.46875f, 0.09375f);
+    //Frames de animacion para caminar
+    //0.03125
+    public final static TextureData MOVING_A = new TextureData(0.46875f, 0, 0.5f, 0.09375f);
+    public final static TextureData MOVING_B = new TextureData(0.5f, 0, 0.53125f, 0.09375f);
+    public final static TextureData MOVING_C = new TextureData(0.53125f, 0, 0.5625f, 0.09375f);
+    public final static TextureData MOVING_D = new TextureData(0.5625f, 0, 0.59375f, 0.09375f);
+    public final static TextureData MOVING_E = new TextureData(0.59375f, 0, 0.625f, 0.09375f);
+    //Frames de animacion para el movimiento de absorber
+    public final static TextureData STARTUP_MOV_A = new TextureData(0.625f,0.09375f, 0.6875f, 0.1875f);
+    public final static TextureData ACTIVE_MOV_A = new TextureData(0.5f,0.09375f, 0.5625f,0.1875f);
 
     //IDLE Y MOVING EMPIEZAN EN 14,0 1/32 Y SON DE 3X1
-    public final static int FRAMES_TO_GAME_OVER = 65;
-    public final static TextureData IDLE_TEXTURE = new TextureData(0.875f,0f,1,0.25f);
     public final static TextureData RECOVERY_SUCCESS_1 = new TextureData(0.25f, 0.75f, 0.375f, 1f);
     public final static TextureData RECOVERY_SUCCESS_2 = new TextureData(0.125f, 0.75f, 0.25f, 1f);
-    public final static TextureData STARTUP_MOV_A = new TextureData(0.5f, 0.75f, 0.625f, 1f);
-    public final static TextureData ACTIVE_MOV_A = new TextureData(0.375f, 0.75f, 0.5f, 1f);
-    public final static TextureData MOVING_A = new TextureData(0.875f, 0.25f, 1, 0.5f);
-    public final static TextureData MOVING_B = new TextureData(0.875f, 0.5f, 1, 0.75f);
-    public final static TextureData MOVING_C = new TextureData(0.75f, 0.5f, 0.875f, 0.75f);
-    public final static TextureData MOVING_D = new TextureData(0.625f, 0.75f, 0.75f, 1f);
-    public final static TextureData MOVING_E = new TextureData(0.75f, 0.75f, 0.875f, 1f);
+
     public final static TextureData STUNNED_SPRITE = new TextureData(0.625f, 0.5f, 0.75f, 0.75f);
-    private final static TextureData[] ABSORBED_SPRITES = { new TextureData(0.5f,0.25f,0.625f,0.375f), new TextureData(0.375f,0.25f,0.5f,0.375f)};
+
+    private final static TextureData[] ABSORBED_SPRITES = { TextureDrawer.generarTextureData(15,3,17,6,32),
+            TextureDrawer.generarTextureData(13,3,15,6,32)};
     public static final float INITIAL_POSITION_X = 85;
     public static final int SPRITE_LENGTH = 75;
     public static final int CHARACTER_LENGTH = 40;

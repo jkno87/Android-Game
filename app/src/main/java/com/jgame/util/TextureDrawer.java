@@ -41,6 +41,10 @@ public class TextureDrawer extends Drawer {
         return new TextureData((x - 1) / total, (y - 1) / total, x / total, y / total);
     }
 
+    public static TextureData generarTextureData(float x1, float y1, float x2, float y2, float scale){
+        return new TextureData(x1/scale, y1/scale, x2/scale, y2/scale);
+    }
+
     private final static int MAX_TEXTURES = 40;
     public final static SimpleDrawer.ColorData DEFAULT_COLOR = new SimpleDrawer.ColorData(1,1,1,1);
 
