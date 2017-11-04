@@ -167,7 +167,7 @@ public class GameRenderer implements Renderer {
     public final static TextureData NEUTRAL_JOYSTICK_TEX = new TextureData(0.25f,0.1875f,0.28125f,0.21875f);
     public final static TextureData LEFT_JOYSTICK_TEX = new TextureData(0.28125f,0.1875f,0.3125f,0.21875f);
     public final static TextureData RIGHT_JOYSTICK_TEX = new TextureData(0.3125f,0.1875f,0.34375f,0.21875f);
-    public final static TextureData ATTACK_LABEL_TEX = new TextureData(0.0625f, 0.625f, 0.125f, 0.6875f);
+    public final static TextureData ATTACK_LABEL_TEX = TextureDrawer.generarTextureData(2,10,4,11,32);
     public final static TextureData SCORE_LABEL_TEX = new TextureData(0.125f, 0.34375f, 0.25f, 0.375f);
     public final static TextureData BUTTON_TEXTURE = new TextureData(0.125f, 0.28125f, 0.1875f, 0.34375f);
     public final static TextureData ARROW_TEXTURE = new TextureData(0,0.21875f,0.03125f,0.25f);

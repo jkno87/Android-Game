@@ -3,6 +3,7 @@ package com.jgame.elements;
 import com.jgame.game.GameActivity.Difficulty;
 import com.jgame.util.Decoration;
 import com.jgame.util.Square;
+import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.Vector2;
 import com.jgame.util.Decoration.AnimatedDecoration;
@@ -27,12 +28,12 @@ public class RobotEnemy extends GameCharacter {
     private final int[] EASY_FRAME_DATA = new int[]{20,35,28};
     private final int[] MEDIUM_FRAME_DATA = new int[]{2,3,15};
     private final int[] HARD_FRAME_DATA = new int[]{2,3,10};
-    public final static TextureData IDLE_TEXTURE = new TextureData(0,0,0.25f,0.25f);
+    public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(0,0,4,4,32);
     public final static TextureData[] STARTUP_TEXTURES = {
-            IDLE_TEXTURE, new TextureData(0.25f, 0, 0.50f, 0.25f)
+            IDLE_TEXTURE, TextureDrawer.generarTextureData(4,0,8,4,32)
     };
-    public final static TextureData[] RECOVERY_TEXTURES = {new TextureData(0.25f, 0, 0.5f, 0.25f)};
-    public final static TextureData ATTACK_TEXTURE = new TextureData(0.50f, 0, 0.75f, 0.25f);
+    public final static TextureData[] RECOVERY_TEXTURES = {TextureDrawer.generarTextureData(4,0,8,4,32)};
+    public final static TextureData ATTACK_TEXTURE = TextureDrawer.generarTextureData(8,0,12,4,32);
     public final static float ATTACK_DISTANCE = 56;
     public final static int BREATH_FRAMES = 10;
     private final int FRAMES_TO_RECOVER = 20;

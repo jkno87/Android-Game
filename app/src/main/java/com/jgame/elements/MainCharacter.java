@@ -83,17 +83,17 @@ public class MainCharacter extends GameCharacter {
     //Frames de animacion para el movimiento de absorber
     public final static TextureData STARTUP_MOV_A = new TextureData(0.625f,0.09375f, 0.6875f, 0.1875f);
     public final static TextureData ACTIVE_MOV_A = new TextureData(0.5f,0.09375f, 0.5625f,0.1875f);
-
     //IDLE Y MOVING EMPIEZAN EN 14,0 1/32 Y SON DE 3X1
     public final static TextureData RECOVERY_SUCCESS_1 = new TextureData(0.25f, 0.75f, 0.375f, 1f);
     public final static TextureData RECOVERY_SUCCESS_2 = new TextureData(0.125f, 0.75f, 0.25f, 1f);
-
-    public final static TextureData STUNNED_SPRITE = new TextureData(0.625f, 0.5f, 0.75f, 0.75f);
+    //Frames para el personaje cuando se encuentra stunned
+    public final static TextureData STUNNED_SPRITE = TextureDrawer.generarTextureData(14,6,16,9,32);
 
     private final static TextureData[] ABSORBED_SPRITES = { TextureDrawer.generarTextureData(15,3,17,6,32),
             TextureDrawer.generarTextureData(13,3,15,6,32)};
     public static final float INITIAL_POSITION_X = 85;
     public static final int SPRITE_LENGTH = 75;
+    public static final int SPRITE_LENGTH_SMALL = 37;
     public static final int CHARACTER_LENGTH = 40;
     public static final int CHARACTER_HEIGHT = 160;
     public final int LENGTH_MOVE_A = CHARACTER_LENGTH + 2;
@@ -117,7 +117,7 @@ public class MainCharacter extends GameCharacter {
     private final AnimationData ABSORBING_ANIMATION = new AnimationData(13, false, new TextureData[]{RECOVERY_SUCCESS_1, RECOVERY_SUCCESS_2});
 
     public MainCharacter(int id, float playingHeight,float minX, float maxX){
-        super(SPRITE_LENGTH, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, new Vector2(), id);
+        super(SPRITE_LENGTH_SMALL, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, new Vector2(), id);
         this.state = CharacterState.IDLE;
         this.playingHeight = playingHeight;
         CollisionObject [] startupA = new CollisionObject[1];
@@ -218,6 +218,7 @@ public class MainCharacter extends GameCharacter {
         if (state == CharacterState.IDLE) {
             WALKING_ANIMATION.reset();
         } else if (state == CharacterState.DYING){
+            spriteContainer.lenX = SPRITE_LENGTH;
             if(framesToGameOver == 0 )
                 state = CharacterState.DEAD;
             else
@@ -225,11 +226,14 @@ public class MainCharacter extends GameCharacter {
 
             return Event.NONE;
         } else if (state == CharacterState.STUNNED) {
+            spriteContainer.lenX = SPRITE_LENGTH;
             move(STUN_SPEED);
             if(stunVal > 0)
                 stunVal--;
-            else
+            else {
                 state = CharacterState.IDLE;
+                spriteContainer.lenX = SPRITE_LENGTH_SMALL;
+            }
             //Se sale de la funcion para que esto no disminuya el HP
             return Event.NONE;
         } else if (state == CharacterState.MOVING_FORWARD) {
@@ -243,6 +247,7 @@ public class MainCharacter extends GameCharacter {
                 WALKING_ANIMATION.updateFrame();
             }
         } else if(state == CharacterState.INPUT_A){
+            spriteContainer.lenX = SPRITE_LENGTH;
             //Si se detecta colision con el input, significa que absorbio energia
             if (e == Event.HIT){
                 hp = INITIAL_HP;
@@ -257,6 +262,7 @@ public class MainCharacter extends GameCharacter {
             moveA.update();
             if(moveA.completed()){
                 this.state = CharacterState.IDLE;
+                spriteContainer.lenX = SPRITE_LENGTH_SMALL;
             }
         } else if (state == CharacterState.ABSORBING){
             ABSORBING_ANIMATION.updateFrame();
@@ -264,6 +270,7 @@ public class MainCharacter extends GameCharacter {
                 state = CharacterState.ADVANCING;
                 baseX.set(1,0);
                 WALKING_ANIMATION.reset();
+                spriteContainer.lenX = SPRITE_LENGTH_SMALL;
             }
         } else if (state == CharacterState.ADVANCING) {
             //Este estado no debe de provocar que el personaje pierda hp
