@@ -2,6 +2,7 @@ package com.jgame.elements;
 
 import com.jgame.game.GameActivity.Difficulty;
 import com.jgame.util.Decoration;
+import com.jgame.util.SimpleDrawer;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
@@ -25,9 +26,10 @@ public class RobotEnemy extends GameCharacter {
     private final static Vector2 INITIAL_POSITION = new Vector2(410,0);
     private final static TextureData[] BREATH_SPRITES = {new TextureData(0.375f,0.25f,0.5f,0.375f),
             new TextureData(0.5f,0.25f,0.625f,0.375f)};
-    private final int[] EASY_FRAME_DATA = new int[]{20,35,28};
+    private final int[] EASY_FRAME_DATA = new int[]{20,45,45};
     private final int[] MEDIUM_FRAME_DATA = new int[]{2,3,15};
     private final int[] HARD_FRAME_DATA = new int[]{2,3,10};
+    public final static TextureData BREATH_DECORATION = TextureDrawer.generarTextureData(4,4,5,6,32);
     public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(0,0,4,4,32);
     public final static TextureData[] STARTUP_TEXTURES = {
             IDLE_TEXTURE, TextureDrawer.generarTextureData(4,0,8,4,32)
@@ -62,7 +64,8 @@ public class RobotEnemy extends GameCharacter {
         CollisionObject[] startupBoxes = new CollisionObject[]{new CollisionObject(new Vector2(143,100), 0, 15, 25, this, CollisionObject.TYPE_HITTABLE)};
         CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,162,55,this, CollisionObject.TYPE_HITTABLE),
         new CollisionObject(new Vector2(100, 50),0,58,20, this, CollisionObject.TYPE_ATTACK)};
-        regularAttack = new AttackData(startupBoxes, attackBoxes, attackBoxes);
+        CollisionObject[] recoveryBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,162,55,this, CollisionObject.TYPE_HITTABLE)};
+        regularAttack = new AttackData(startupBoxes, attackBoxes, recoveryBoxes);
         regularAttack.setStartupAnimation(new AnimationData(currentFrameDataSet[0], false, STARTUP_TEXTURES));
         regularAttack.setActiveAnimation(new AnimationData(currentFrameDataSet[1], false, ATTACK_TEXTURE));
         regularAttack.setRecoveryAnimation(new AnimationData(currentFrameDataSet[2], false, RECOVERY_TEXTURES));
@@ -119,13 +122,14 @@ public class RobotEnemy extends GameCharacter {
             //Se verifica que el enemigo se encuentre en rango del ataque.
             if ((position.x > foe.position.x && (position.x - foe.position.x) < attackRange) ||
                     (position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange)) {
-                decorationData.add(new AnimatedDecoration(currentFrameDataSet[0],
-                        new AnimationData(BREATH_FRAMES, false, BREATH_SPRITES),
-                        new Square(new Vector2(position).add(-120, 82), 50, 50, 0), true));
+                decorationData.add(new Decoration.StaticDecoration(BREATH_DECORATION, new Square(new Vector2(position).add(-120,65),65,85,0),
+                                true, currentFrameDataSet[0],currentFrameDataSet[1] + currentFrameDataSet[2], new SimpleDrawer.ColorData(0,1,1,1), 1, currentFrameDataSet[1]));
                 currentState = EnemyState.ATTACKING;
                 activeAttack = regularAttack;
                 for(CollisionObject co : activeAttack.active)
                     co.updatePosition();
+
+                return Event.NONE;
             }
 
             currentIdleFrame += 1;
@@ -138,11 +142,12 @@ public class RobotEnemy extends GameCharacter {
                 regularAttack.reset();
                 currentState = EnemyState.WAITING;
             }
+
+            super.update(foe, decorationData);
+
+            return Event.NONE;
         }
 
-        if(currentState != EnemyState.WAITING){
-            super.update(foe, decorationData);
-        }
 
         if(currentState == EnemyState.DYING){
             positionOffset.set(position);

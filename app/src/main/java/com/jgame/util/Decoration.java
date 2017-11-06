@@ -9,38 +9,30 @@ public abstract class Decoration {
         public int preDrawFrames;
         public int drawFrames;
         private final int initialDrawFrames;
-        private final boolean fade;
+        private float framesToChangeColor;
         public float shrinkRateX = 0.0f;
 
-        public StaticDecoration(TextureDrawer.TextureData sprite, Square size, SimpleDrawer.ColorData color, boolean inverted, int preDrawFrames, int drawFrames, boolean fade){
+        public StaticDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted, int preDrawFrames, int drawFrames, SimpleDrawer.ColorData color,
+                                float sizeDelta, float framesToChangeColor){
             this.sprite = sprite;
             this.size = size;
+            this.inverted = inverted;
             this.color = color;
-            this.inverted = inverted;
             this.preDrawFrames = preDrawFrames;
             this.drawFrames = drawFrames;
             initialDrawFrames = drawFrames;
-            this.fade = fade;
-        }
-
-        public StaticDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted, int preDrawFrames, int drawFrames, boolean fade){
-            this.sprite = sprite;
-            this.size = size;
-            this.inverted = inverted;
-            this.preDrawFrames = preDrawFrames;
-            this.drawFrames = drawFrames;
-            initialDrawFrames = drawFrames;
-            this.fade = fade;
+            this.shrinkRateX = sizeDelta;
+            this.framesToChangeColor = framesToChangeColor;
         }
 
         @Override
         public void terminate(){
-            drawFrames = -1;
+            drawFrames = 0;
         }
 
         @Override
         public boolean completed(){
-            return drawFrames < 0;
+            return drawFrames == 0;
         }
 
         @Override
@@ -54,8 +46,13 @@ public abstract class Decoration {
                 preDrawFrames--;
             else {
                 drawFrames--;
-                if(fade)
-                    color.a = color.a * ((float) drawFrames) / initialDrawFrames;
+                framesToChangeColor--;
+
+                if(framesToChangeColor == 0){
+                    color.b = 0;
+                    color.r = 1;
+                    return;
+                }
 
                 if(shrinkRateX > 0.0) {
                     size.scaleX(shrinkRateX);
