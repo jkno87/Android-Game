@@ -144,8 +144,8 @@ public class GameRenderer implements Renderer {
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
     //Texturas varias
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.4375f,0.4375f,0.46875f,0.46875f);
-    public final static TextureData GAME_OVER_LABEL = new TextureData(0.6875f,0.25f, 0.8125f, 0.3125f);
-    public final static TextureData CLOSING_MESSAGE = new TextureData(0.375f, 0.5f, 0.625f, 0.625f);
+    public final static TextureData GAME_OVER_LABEL = TextureDrawer.generarTextureData(11,4,13,5,32);
+    public final static TextureData CLOSING_MESSAGE = TextureDrawer.generarTextureData(11,5,13,6,32);
     //Texturas del menu principal
     public final static TextureData TITLE_LOGO = new TextureData(0, 0.125f, 0.125f, 0.1875f);
     public final static TextureData START_BUTTON_TEXTURE = new TextureData(0f,0.28125f,0.0625f,0.3125f);
@@ -168,7 +168,7 @@ public class GameRenderer implements Renderer {
     public final static TextureData LEFT_JOYSTICK_TEX = new TextureData(0.28125f,0.1875f,0.3125f,0.21875f);
     public final static TextureData RIGHT_JOYSTICK_TEX = new TextureData(0.3125f,0.1875f,0.34375f,0.21875f);
     public final static TextureData ATTACK_LABEL_TEX = TextureDrawer.generarTextureData(2,10,4,11,32);
-    public final static TextureData SCORE_LABEL_TEX = new TextureData(0.125f, 0.34375f, 0.25f, 0.375f);
+    public final static TextureData SCORE_LABEL_TEX = TextureDrawer.generarTextureData(2,11,4,12,32);
     public final static TextureData BUTTON_TEXTURE = new TextureData(0.125f, 0.28125f, 0.1875f, 0.34375f);
     public final static TextureData ARROW_TEXTURE = new TextureData(0,0.21875f,0.03125f,0.25f);
     public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.03125f,0.25f,0,0.21875f);
