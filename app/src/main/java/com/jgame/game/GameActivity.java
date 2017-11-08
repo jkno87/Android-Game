@@ -33,7 +33,7 @@ import com.google.firebase.analytics.*;
  */
 public class GameActivity extends Activity {
 
-    public static enum Difficulty {
+    public enum Difficulty {
         EASY, MEDIUM, HARD
     }
 
@@ -113,6 +113,7 @@ public class GameActivity extends Activity {
      * @param score
      */
     private void checkHighScore(int score){
+        Log.d("game", "Ejecutando proceso de save");
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "NewHighScore");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
@@ -298,10 +299,11 @@ public class GameActivity extends Activity {
                         currentEnemy.reset();
                         currentState = GameState.PLAYING;
 
-                    } else if(currentState == GameState.GAME_OVER){
+                    } else if(currentState == GameState.SAVING) {
                         checkHighScore(score);
+                        currentState = GameState.GAME_OVER;
+                    } else if(currentState == GameState.GAME_OVER){
                         advancing = false;
-                        //currentState = GameState.AD_INPUT_REVEAL;
                     } else if (currentState == GameState.PLAYING){
                         gameData.score = score;
                         if(score > HARD_DIFFICULTY_POINTS)
@@ -310,7 +312,7 @@ public class GameActivity extends Activity {
                             currentDifficulty = Difficulty.MEDIUM;
 
                         if(!mainCharacter.alive()) {
-                            currentState = GameState.GAME_OVER;
+                            currentState = GameState.SAVING;
                         }
                     } else if (currentState == GameState.RESTART_SCREEN) {
                         if(lastInput == ControllerManager.GameInput.START_GAME)

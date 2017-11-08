@@ -8,7 +8,6 @@ public abstract class Decoration {
         public final TextureDrawer.TextureData sprite;
         public int preDrawFrames;
         public int drawFrames;
-        private final int initialDrawFrames;
         private float framesToChangeColor;
         public float shrinkRateX = 0.0f;
 
@@ -20,7 +19,6 @@ public abstract class Decoration {
             this.color = color;
             this.preDrawFrames = preDrawFrames;
             this.drawFrames = drawFrames;
-            initialDrawFrames = drawFrames;
             this.shrinkRateX = sizeDelta;
             this.framesToChangeColor = framesToChangeColor;
         }

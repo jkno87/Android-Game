@@ -9,7 +9,7 @@ import com.jgame.util.Vector2;
 public class GameData {
 
     public enum GameState {
-        GAME_OVER, PLAYING, RESTART_SCREEN, STARTING, MENU, TITLE_SCREEN, TERMINATING, RECORDS
+        GAME_OVER, PLAYING, RESTART_SCREEN, STARTING, MENU, TITLE_SCREEN, TERMINATING, RECORDS, SAVING
     }
 
     public enum Event {

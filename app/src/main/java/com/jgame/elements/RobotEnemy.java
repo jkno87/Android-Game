@@ -122,12 +122,17 @@ public class RobotEnemy extends GameCharacter {
             //Se verifica que el enemigo se encuentre en rango del ataque.
             if ((position.x > foe.position.x && (position.x - foe.position.x) < attackRange) ||
                     (position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange)) {
-                decorationData.add(new Decoration.StaticDecoration(BREATH_DECORATION, new Square(new Vector2(position).add(-120,65),65,85,0),
-                                true, currentFrameDataSet[0],currentFrameDataSet[1] + currentFrameDataSet[2], new SimpleDrawer.ColorData(0,1,1,1), 1, currentFrameDataSet[1]));
+                decorationData.add(new Decoration.StaticDecoration(BREATH_DECORATION, new Square(new Vector2(position).add(-120,65),45,85,0),
+                                true, currentFrameDataSet[0],
+                        currentFrameDataSet[1] + currentFrameDataSet[2], new SimpleDrawer.ColorData(0,1,1,1),
+                        1, currentFrameDataSet[1]));
                 currentState = EnemyState.ATTACKING;
                 activeAttack = regularAttack;
-                for(CollisionObject co : activeAttack.active)
+                activeAttack.reset();
+                /*for(CollisionObject co : activeAttack.recovery)
                     co.updatePosition();
+                for(CollisionObject co : activeAttack.active)
+                    co.updatePosition();*/
 
                 return Event.NONE;
             }
