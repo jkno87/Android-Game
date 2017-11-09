@@ -19,7 +19,7 @@ public abstract class Decoration {
             this.color = color;
             this.preDrawFrames = preDrawFrames;
             this.drawFrames = drawFrames;
-            this.shrinkRateX = sizeDelta;
+            this.shrinkRateX = 1.005f;
             this.framesToChangeColor = framesToChangeColor;
         }
 
@@ -44,17 +44,18 @@ public abstract class Decoration {
                 preDrawFrames--;
             else {
                 drawFrames--;
-                framesToChangeColor--;
 
                 if(framesToChangeColor == 0){
                     color.b = 0;
                     color.r = 1;
-                    return;
-                }
-
-                if(shrinkRateX > 0.0) {
                     size.scaleX(shrinkRateX);
-                }
+                    return;
+                } else
+                    framesToChangeColor--;
+
+                /*if(shrinkRateX > 0.0) {
+                    size.scaleX(shrinkRateX);
+                }*/
 
             }
 

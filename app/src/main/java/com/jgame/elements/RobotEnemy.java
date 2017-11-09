@@ -61,10 +61,9 @@ public class RobotEnemy extends GameCharacter {
         this.baseX.x = -1;
         currentFrameDataSet = EASY_FRAME_DATA;
         attackRange = idleSizeX + ATTACK_DISTANCE;
-        CollisionObject[] startupBoxes = new CollisionObject[]{new CollisionObject(new Vector2(143,100), 0, 15, 25, this, CollisionObject.TYPE_HITTABLE)};
-        CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,162,55,this, CollisionObject.TYPE_HITTABLE),
-        new CollisionObject(new Vector2(100, 50),0,58,20, this, CollisionObject.TYPE_ATTACK)};
-        CollisionObject[] recoveryBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,162,55,this, CollisionObject.TYPE_HITTABLE)};
+        CollisionObject[] startupBoxes = new CollisionObject[]{};
+        CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(100, 50),0,58,20, this, CollisionObject.TYPE_ATTACK)};
+        CollisionObject[] recoveryBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,165,55,this, CollisionObject.TYPE_HITTABLE)};
         regularAttack = new AttackData(startupBoxes, attackBoxes, recoveryBoxes);
         regularAttack.setStartupAnimation(new AnimationData(currentFrameDataSet[0], false, STARTUP_TEXTURES));
         regularAttack.setActiveAnimation(new AnimationData(currentFrameDataSet[1], false, ATTACK_TEXTURE));
@@ -122,7 +121,7 @@ public class RobotEnemy extends GameCharacter {
             //Se verifica que el enemigo se encuentre en rango del ataque.
             if ((position.x > foe.position.x && (position.x - foe.position.x) < attackRange) ||
                     (position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange)) {
-                decorationData.add(new Decoration.StaticDecoration(BREATH_DECORATION, new Square(new Vector2(position).add(-120,65),45,85,0),
+                decorationData.add(new Decoration.StaticDecoration(BREATH_DECORATION, new Square(new Vector2(position).add(-120,65),40,85,0),
                                 true, currentFrameDataSet[0],
                         currentFrameDataSet[1] + currentFrameDataSet[2], new SimpleDrawer.ColorData(0,1,1,1),
                         1, currentFrameDataSet[1]));
