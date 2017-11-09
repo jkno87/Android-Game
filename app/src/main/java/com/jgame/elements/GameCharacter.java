@@ -95,7 +95,7 @@ public abstract class GameCharacter extends GameObject {
         this.currentDifficulty = diff;
     }
     public abstract boolean completedTransition();
-    public abstract void reset();
+    public abstract void reset(Vector2 positionOffset);
     public abstract boolean hittable();
     public abstract boolean alive();
     public abstract boolean attacking();

@@ -182,22 +182,6 @@ public class MainCharacter extends GameCharacter {
 
     }
 
-    /**
-     * Asigna un nuevo estado state al personaje. Esta funcion es para utilizarse por un boton para que no
-     * interfiera con el manejo interno de los estados del personaje.
-     * @param state state en el que se encontrara el personaje.
-     */
-    private synchronized void setStateFromButton(CharacterState state){
-        if(this.state == CharacterState.DEAD || this.state == CharacterState.INPUT_A)
-            return;
-
-        if(state == CharacterState.INPUT_A) {
-            moveA.reset();
-        }
-
-        this.state = state;
-    }
-
     @Override
     public TextureDrawer.TextureData getCurrentTexture(){
         if(state == CharacterState.MOVING_FORWARD || state == CharacterState.MOVING_BACKWARDS || state == CharacterState.ADVANCING)
@@ -280,13 +264,6 @@ public class MainCharacter extends GameCharacter {
             return Event.NONE;
         }
 
-        /*if(state == CharacterState.INPUT_B){
-            /*MOVE_B_COUNTER.accum(timeDifference);
-            if(MOVE_B_COUNTER.completed()){
-                this.state = CharacterState.IDLE;
-            }
-        }*/
-
         if(hp < 0)
             state = CharacterState.DYING;
         else {
@@ -298,8 +275,9 @@ public class MainCharacter extends GameCharacter {
     }
 
 
-    public void reset(){
+    public void reset(Vector2 positionOffset){
         relativePosition.set(INITIAL_POSITION_X, playingHeight);
+        spriteContainer.lenX = SPRITE_LENGTH_SMALL;
         baseX.set(1,0);
         updatePosition();
         idleCollisionBoxes[0].updatePosition();

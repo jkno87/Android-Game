@@ -70,7 +70,7 @@ public class TeleportEnemy extends GameCharacter {
     }
 
     @Override
-    public void reset(){
+    public void reset(Vector2 positionOffset){
         teleportFrame = TELEPORT_FRAMES;
         currentState = EnemyState.TELEPORTING;
         currentAction = 0;

@@ -234,6 +234,7 @@ public class GameActivity extends Activity {
         private boolean backgroundMoving;
         private Event lastTriggeredEvent = Event.NONE;
         private boolean advancing = false;
+        private final Vector2 positionOffset = new Vector2();
         private int eventFrame = 0; //Este se usaba para indicar el frame de quake que se utiliza, posiblemente se elimineS
 
         public GameRunnable(){
@@ -293,10 +294,11 @@ public class GameActivity extends Activity {
                         }
 
                         currentDifficulty = initialDifficulty;
+                        positionOffset.set(0,ELEMENTS_HEIGHT);
                         score = 0;
-                        mainCharacter.reset();
+                        mainCharacter.reset(positionOffset);
                         currentEnemyCounter = 0;
-                        currentEnemy.reset();
+                        currentEnemy.reset(positionOffset);
                         currentState = GameState.PLAYING;
 
                     } else if(currentState == GameState.SAVING) {
@@ -370,6 +372,7 @@ public class GameActivity extends Activity {
 
                     //Se realiza el cambio de enemigo en el caso de que el enemigo actual muera
                     if (!currentEnemy.alive() && currentState == GameState.PLAYING) {
+                        positionOffset.set(currentEnemy.position);
                         if(currentEnemyCounter == availableEnemies.length)
                             currentEnemyCounter = 0;
                         synchronized (enemyLock) {
@@ -382,7 +385,7 @@ public class GameActivity extends Activity {
                         score++;
                         //Se reinicia el enemigo para que se encuentre en su estado inicial en caso de algun cambio
                         currentEnemy.setCurrentDifficulty(currentDifficulty);
-                        currentEnemy.reset();
+                        currentEnemy.reset(positionOffset);
                     }
 
                     /*if(eventFrame > 0){

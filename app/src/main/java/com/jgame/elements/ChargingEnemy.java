@@ -43,7 +43,7 @@ public class ChargingEnemy extends GameCharacter {
     }
 
     @Override
-    public void reset() {
+    public void reset(Vector2 positionOffset) {
         idleFrame = IDLE_FRAMES;
         chargeFrame = CHARGE_FRAMES;
         currentState = State.IDLE;

@@ -44,7 +44,6 @@ public class RobotEnemy extends GameCharacter {
     private float attackRange;
     private final AttackData regularAttack;
     private int[] currentFrameDataSet;
-    private final Vector2 positionOffset;
 
 
     public RobotEnemy(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, float positionY, int id) {
@@ -68,11 +67,10 @@ public class RobotEnemy extends GameCharacter {
         regularAttack.setStartupAnimation(new AnimationData(currentFrameDataSet[0], false, STARTUP_TEXTURES));
         regularAttack.setActiveAnimation(new AnimationData(currentFrameDataSet[1], false, ATTACK_TEXTURE));
         regularAttack.setRecoveryAnimation(new AnimationData(currentFrameDataSet[2], false, RECOVERY_TEXTURES));
-        positionOffset = new Vector2(position);
     }
 
     @Override
-    public void reset() {
+    public void reset(Vector2 positionOffset) {
         currentIdleFrame = 0;
         currentState = EnemyState.WAITING;
         moveTo(positionOffset, INITIAL_POSITION);
@@ -154,7 +152,6 @@ public class RobotEnemy extends GameCharacter {
 
 
         if(currentState == EnemyState.DYING){
-            positionOffset.set(position);
             currentState = EnemyState.DEAD;
             decorationData.add(new Decoration.IdleDecoration(IDLE_TEXTURE,
                     new Square(this.spriteContainer), true));
