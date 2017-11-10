@@ -27,7 +27,7 @@ public class RobotEnemy extends GameCharacter {
     private final static TextureData[] BREATH_SPRITES = {new TextureData(0.375f,0.25f,0.5f,0.375f),
             new TextureData(0.5f,0.25f,0.625f,0.375f)};
     private final int[] EASY_FRAME_DATA = new int[]{20,45,45};
-    private final int[] MEDIUM_FRAME_DATA = new int[]{2,3,15};
+    private final int[] MEDIUM_FRAME_DATA = new int[]{17,28,28};
     private final int[] HARD_FRAME_DATA = new int[]{2,3,10};
     public final static TextureData BREATH_DECORATION = TextureDrawer.generarTextureData(4,4,5,6,32);
     public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(0,0,4,4,32);
