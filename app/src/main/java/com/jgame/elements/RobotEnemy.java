@@ -2,10 +2,10 @@ package com.jgame.elements;
 
 import com.jgame.game.GameActivity.Difficulty;
 import com.jgame.util.Decoration;
-import com.jgame.util.SimpleDrawer;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
+import com.jgame.util.TextureDrawer.ColorData;
 import com.jgame.util.Vector2;
 import com.jgame.util.Decoration.AnimatedDecoration;
 import com.jgame.game.GameData.Event;
@@ -121,7 +121,7 @@ public class RobotEnemy extends GameCharacter {
                     (position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange)) {
                 decorationData.add(new Decoration.StaticDecoration(BREATH_DECORATION, new Square(new Vector2(position).add(-120,65),40,85,0),
                                 true, currentFrameDataSet[0],
-                        currentFrameDataSet[1] + currentFrameDataSet[2], new SimpleDrawer.ColorData(0,1,1,1),
+                        currentFrameDataSet[1] + currentFrameDataSet[2], new ColorData(0,1,1,1),
                         1, currentFrameDataSet[1]));
                 currentState = EnemyState.ATTACKING;
                 activeAttack = regularAttack;

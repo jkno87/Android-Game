@@ -11,11 +11,10 @@ import com.jgame.elements.CollisionObject;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.DigitsDisplay;
 import com.jgame.util.GameText;
-import com.jgame.util.SimpleDrawer;
-import com.jgame.util.SimpleDrawer.ColorData;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
+import com.jgame.util.TextureDrawer.ColorData;
 import com.jgame.game.GameData.GameState;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -173,9 +172,9 @@ public class GameRenderer implements Renderer {
     public final static TextureData ARROW_TEXTURE = new TextureData(0,0.21875f,0.03125f,0.25f);
     public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.03125f,0.25f,0,0.21875f);
 
-    public static final ColorData ATTACK_COLOR = new SimpleDrawer.ColorData(0.85f,0.109f,0.207f,0.65f);
-    public static final ColorData HITTABLE_COLOR = new SimpleDrawer.ColorData(0,0.75f,0,0.65f);
-    public static final ColorData SMASHED_COLOR = new SimpleDrawer.ColorData(0,0,0.65f,0.65f);
+    public static final ColorData ATTACK_COLOR = new ColorData(0.85f,0.109f,0.207f,0.65f);
+    public static final ColorData HITTABLE_COLOR = new ColorData(0,0.75f,0,0.65f);
+    public static final ColorData SMASHED_COLOR = new ColorData(0,0,0.65f,0.65f);
     public static final Square CONTROLS_RECT = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
     public static final Square PAUSE_RECTANGLE = new Square(GameActivity.FRUSTUM_WIDTH/2 - PAUSE_X_SIZE, GameActivity.FRUSTUM_HEIGHT/2 - PAUSE_Y_SIZE,
             PAUSE_X_SIZE * 2, PAUSE_Y_SIZE * 2);
@@ -210,8 +209,8 @@ public class GameRenderer implements Renderer {
     public GameRenderer(GameActivity gameActivity){
         this.gameActivity = gameActivity;
         mainTextureDrawer = new TextureDrawer(true);
-        pauseOverlay = new SimpleDrawer.ColorData(0,0,0,0.5f);
-        menuBase = new SimpleDrawer.ColorData(0,0.75f,0.5f,1);
+        pauseOverlay = new TextureDrawer.ColorData(0,0,0,0.5f);
+        menuBase = new TextureDrawer.ColorData(0,0.75f,0.5f,1);
         gameData = new GameData();
     }
 
@@ -394,7 +393,7 @@ public class GameRenderer implements Renderer {
     }
 
     /**
-     * Se encarga de agregar la informacion de las collisionBoxes a SimpleDrawer
+     * Se encarga de agregar la informacion de las collisionBoxes a TextureDrawer
      * @param c
      * @param drawer
      */

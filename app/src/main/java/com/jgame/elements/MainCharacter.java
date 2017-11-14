@@ -5,9 +5,9 @@ import com.jgame.game.GameActivity;
 import com.jgame.game.GameData.Event;
 import com.jgame.game.GameRenderer;
 import com.jgame.util.Decoration;
-import com.jgame.util.SimpleDrawer;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
+import com.jgame.util.TextureDrawer.ColorData;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
@@ -107,7 +107,7 @@ public class MainCharacter extends GameCharacter {
     private final Vector2 STUN_SPEED = new Vector2(-2f,0);
     public final AttackData moveA;
     public CharacterState state;
-    public SimpleDrawer.ColorData colorModifier;
+    public ColorData colorModifier;
     private int hp;
     private int framesToGameOver;
     private int stunVal;
@@ -139,7 +139,7 @@ public class MainCharacter extends GameCharacter {
 
         framesToGameOver = FRAMES_TO_GAME_OVER;
         this.color.a = 0;
-        this.colorModifier = new SimpleDrawer.ColorData(0.78f,1,0,1);
+        this.colorModifier = new ColorData(0.78f,1,0,1);
         this.maxX = maxX;
         this.minX = minX;
         this.hp = INITIAL_HP;

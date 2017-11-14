@@ -29,6 +29,20 @@ public class TextureDrawer extends Drawer {
 
     }
 
+    public static class ColorData {
+        public float r;
+        public float g;
+        public float b;
+        public float a;
+
+        public ColorData(float r, float g, float b, float a){
+            this.r = r;
+            this.g = g;
+            this.b = b;
+            this.a = a;
+        }
+    }
+
 
     /**
      * Metodo estatico que sirve para generar una TextureData utilizando coordenadas simples
@@ -46,13 +60,13 @@ public class TextureDrawer extends Drawer {
     }
 
     private final static int MAX_TEXTURES = 40;
-    public final static SimpleDrawer.ColorData DEFAULT_COLOR = new SimpleDrawer.ColorData(1,1,1,1);
+    public final static ColorData DEFAULT_COLOR = new ColorData(1,1,1,1);
 
     public TextureDrawer(boolean withColor){
         super(true, withColor, MAX_TEXTURES);
     }
 
-    public void addColoredSquare(Square s, TextureData tData, SimpleDrawer.ColorData cData){
+    public void addColoredSquare(Square s, TextureData tData, ColorData cData){
         elementsAdded++;
 
         verticesBuffer[currentIndex++] = s.position.x;
@@ -240,7 +254,7 @@ public class TextureDrawer extends Drawer {
      * @param tData Informacion de textura que se utilizara
      * @return Drawer que contiene los vertices del cuadrado
      */
-    public void addInvertedColoredSquare(Square s, TextureData tData, SimpleDrawer.ColorData cData){
+    public void addInvertedColoredSquare(Square s, TextureData tData, ColorData cData){
         elementsAdded++;
 
         verticesBuffer[currentIndex++] = s.position.x - s.lenX;

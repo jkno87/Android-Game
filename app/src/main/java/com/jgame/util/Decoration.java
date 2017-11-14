@@ -11,7 +11,7 @@ public abstract class Decoration {
         private float framesToChangeColor;
         public float shrinkRateX = 0.0f;
 
-        public StaticDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted, int preDrawFrames, int drawFrames, SimpleDrawer.ColorData color,
+        public StaticDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted, int preDrawFrames, int drawFrames, TextureDrawer.ColorData color,
                                 float sizeDelta, float framesToChangeColor){
             this.sprite = sprite;
             this.size = size;
@@ -71,7 +71,7 @@ public abstract class Decoration {
         public AnimationData animation;
         public int preDrawFrames;
 
-        public AnimatedDecoration(AnimationData animation, Square size, SimpleDrawer.ColorData color, boolean inverted){
+        public AnimatedDecoration(AnimationData animation, Square size, TextureDrawer.ColorData color, boolean inverted){
             this.animation = animation;
             this.size = size;
             this.color = color;
@@ -146,7 +146,7 @@ public abstract class Decoration {
 
     public boolean inverted;
     public Square size;
-    public SimpleDrawer.ColorData color = TextureDrawer.DEFAULT_COLOR;
+    public TextureDrawer.ColorData color = TextureDrawer.DEFAULT_COLOR;
     public abstract void terminate();
     public abstract boolean drawable();
     public abstract void update(Vector2 backgroundMoveDelta);

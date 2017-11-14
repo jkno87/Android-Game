@@ -1,6 +1,7 @@
 package com.jgame.util;
 
 import com.jgame.util.TextureDrawer.TextureData;
+import com.jgame.util.TextureDrawer.ColorData;
 
 /**
  * Created by ej-jose on 17/08/15.
@@ -73,7 +74,7 @@ public class GameText {
      * @param textureDrawer drawer al que se le asignara la informacion de dibujo
      * @param colorData informacion de color
      */
-    public void addLetterTexture(TextureDrawer textureDrawer, SimpleDrawer.ColorData colorData){
+    public void addLetterTexture(TextureDrawer textureDrawer, ColorData colorData){
         currentLetter.position.x = startX;
         currentLetter.position.y = startY;
 

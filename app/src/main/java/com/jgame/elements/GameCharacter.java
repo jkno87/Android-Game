@@ -1,14 +1,13 @@
 package com.jgame.elements;
 
 import com.jgame.game.GameActivity;
-import com.jgame.util.SimpleDrawer;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.game.GameActivity.Difficulty;
 import com.jgame.util.Vector2;
 import com.jgame.util.Decoration;
 import com.jgame.game.GameData.Event;
-import com.jgame.util.SimpleDrawer.ColorData;
+import com.jgame.util.TextureDrawer.ColorData;
 import java.util.ArrayDeque;
 import java.util.Random;
 

@@ -1,11 +1,5 @@
 package com.jgame.elements;
 
-import com.jgame.game.GameFlow;
-import com.jgame.util.TextureDrawer.TextureData;
-import com.jgame.util.SimpleDrawer;
-import com.jgame.util.TimeCounter;
-import com.jgame.util.Vector2;
-
 /**
  * Objeto que sirve para representar los estados de un movimiento.
  * Created by jose on 26/04/16.
