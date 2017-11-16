@@ -37,8 +37,6 @@ public class RobotEnemy extends GameCharacter {
     public final static TextureData[] RECOVERY_TEXTURES = {TextureDrawer.generarTextureData(4,0,8,4,32)};
     public final static TextureData ATTACK_TEXTURE = TextureDrawer.generarTextureData(8,0,12,4,32);
     public final static float ATTACK_DISTANCE = 56;
-    public final static int BREATH_FRAMES = 10;
-    private final int FRAMES_TO_RECOVER = 20;
     private EnemyState currentState;
     private int currentIdleFrame;
     private float attackRange;

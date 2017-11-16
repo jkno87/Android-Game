@@ -28,6 +28,16 @@ public abstract class GameCharacter extends GameObject {
     public float idleSizeX;
     public Difficulty currentDifficulty;
 
+    public GameCharacter(Square spriteContainer, int id){
+        super(spriteContainer.position, id);
+        this.spriteContainer = spriteContainer;
+        this.idleSizeX = spriteContainer.lenX;
+        idleCollisionBoxes = new CollisionObject[] {
+                new CollisionObject(new Vector2(), id, idleSizeX, spriteContainer.lenY, this, CollisionObject.TYPE_HITTABLE)
+        };
+        updatePosition();
+    }
+
     public GameCharacter(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, Vector2 position, int id) {
         super(position, id);
         this.idleSizeX = idleSizeX;

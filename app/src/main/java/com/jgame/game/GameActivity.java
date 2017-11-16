@@ -11,6 +11,7 @@ import android.view.WindowManager;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.jgame.elements.ChargingEnemy;
 import com.jgame.game.GameData.Event;
 import com.jgame.elements.RobotEnemy;
 import com.jgame.elements.GameCharacter;
@@ -222,7 +223,7 @@ public class GameActivity extends Activity {
 
     class GameRunnable implements Runnable {
 
-        private final int MAX_WORLD_OBJECTS = 1;
+        private final int MAX_WORLD_OBJECTS = 2;
         private final int QUAKE_FRAMES = 6;
         public final GameCharacter[] availableEnemies;
         public int score;
@@ -239,12 +240,9 @@ public class GameActivity extends Activity {
 
         public GameRunnable(){
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
-            //availableEnemies[1] = new TeleportEnemy(TELEPORT_SPRITE_LENGTH, TELEPORT_SPRITE_HEIGHT,
-            //        TELEPORT_SPRITE_LENGTH - 50, TELEPORT_SPRITE_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
-            //availableEnemies[0] = new ChargingEnemy(CHARGING_SPRITE_LENGTH, MainCharacter.CHARACTER_HEIGHT,
-            //        MainCharacter.CHARACTER_LENGTH, MainCharacter.CHARACTER_HEIGHT,ELEMENTS_HEIGHT, ID_GEN.getId(), mainCharacter);
             availableEnemies[0] = new RobotEnemy(175, 215,
                     135, 215, ELEMENTS_HEIGHT, ID_GEN.getId());
+            availableEnemies[1] = new ChargingEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
             currentEnemy = availableEnemies[0];
             initialDifficulty = Difficulty.EASY;
         }
@@ -373,6 +371,7 @@ public class GameActivity extends Activity {
                     //Se realiza el cambio de enemigo en el caso de que el enemigo actual muera
                     if (!currentEnemy.alive() && currentState == GameState.PLAYING) {
                         positionOffset.set(currentEnemy.position);
+                        currentEnemyCounter++;
                         if(currentEnemyCounter == availableEnemies.length)
                             currentEnemyCounter = 0;
                         synchronized (enemyLock) {

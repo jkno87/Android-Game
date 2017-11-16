@@ -1,6 +1,7 @@
 package com.jgame.elements;
 
 import com.jgame.util.Decoration;
+import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.game.GameData.Event;
 import com.jgame.util.Vector2;
@@ -17,29 +18,24 @@ public class ChargingEnemy extends GameCharacter {
         IDLE, ATTACKING, CHARGING, DEAD
     }
 
-    public final static TextureData IDLE_TEXTURE = new TextureData(0.25f,0,0.5f,0.25f);
-    public final static TextureData CHARGING_TEXTURE = new TextureData(0.25f,0.25f,0.5f,0.5f);
-    public final static TextureData ATTACKING_TEXTURE = new TextureData(0.25f,0.5f,0.5f,0.75f);
-    public final static float[] ATTACK_SPEED = new float[]{2, 5f};
+    private final static Vector2 INITIAL_POSITION = new Vector2(425,0);
+    public final static TextureData IDLE_TEXTURE = new TextureData(0.4375f, 0, 0.46875f, 0.09375f);
+    private final static Vector2 ATTACK_SPEED = new Vector2(-5f, 0);
     public final static float DISTANCE_FROM_CHARACTER = 150;
-    private final static int IDLE_FRAMES = 21;
-    private final static int CHARGE_FRAMES = 16;
-    private final CollisionObject[] activeBoxes;
-    private final MainCharacter mainCharacter;
+    private final static int IDLE_FRAMES = 120;
+    private final static int CHARGE_FRAMES = 20;
     private State currentState;
     private int idleFrame;
     private int chargeFrame;
 
-    public ChargingEnemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition, int id, final MainCharacter mainCharacter){
-        super(sizeX, sizeY, idleSizeX, idleSizeY, new Vector2(0, yPosition), id);
-        activeBoxes = new CollisionObject[]{new CollisionObject(new Vector2(),0, idleSizeX + 25, idleSizeY,this, CollisionObject.TYPE_HITTABLE),
-                new CollisionObject(new Vector2(57,55),0,10,15,this, CollisionObject.TYPE_ATTACK)};
+    public ChargingEnemy(float yPosition, int id){
+        super(new Square(new Vector2(0, yPosition), 37,160,0), id);
+        this.baseX.x = -1;
         currentState = State.IDLE;
         idleFrame = IDLE_FRAMES;
         chargeFrame = CHARGE_FRAMES;
-        this.mainCharacter = mainCharacter;
-        activeAttack = new AttackData(activeBoxes, activeBoxes, activeBoxes);
-        activeAttack.currentState = AttackData.CollisionState.ACTIVE;
+        CollisionObject[] a = new CollisionObject[]{};
+        activeAttack = new AttackData(a, a, a);
     }
 
     @Override
@@ -47,7 +43,9 @@ public class ChargingEnemy extends GameCharacter {
         idleFrame = IDLE_FRAMES;
         chargeFrame = CHARGE_FRAMES;
         currentState = State.IDLE;
-        //setPosition(mainCharacter, DISTANCE_FROM_CHARACTER);
+        moveTo(positionOffset, INITIAL_POSITION);
+        color.g = 0;
+        color.r = 0;
     }
 
     @Override
@@ -67,38 +65,37 @@ public class ChargingEnemy extends GameCharacter {
 
     @Override
     public boolean completedTransition(){
-        return false;
+        return position.x < INITIAL_POSITION.x;
     }
 
     @Override
     public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+        if(!completedTransition())
+            return Event.NONE;
+
         if(currentState == State.IDLE){
             idleFrame -= 1;
-            if(idleFrame <= 0)
+            if(idleFrame <= 0) {
                 currentState = State.CHARGING;
+                color.g = 1;
+                color.b = 0;
+            }
         } else if(currentState == State.CHARGING){
             chargeFrame -= 1;
-            if(chargeFrame <= 0)
+            if(chargeFrame == 0) {
                 currentState = State.ATTACKING;
+                color.g = 0;
+                color.r = 1;
+            }
         } else if (currentState == State.ATTACKING){
-            if(foe.hittable())
-                super.update(foe, decorationData);
-            //moveX(baseX.x * ATTACK_SPEED[0]);
+            move(ATTACK_SPEED);
         }
-
-        for(CollisionObject co : activeAttack.active)
-            co.updatePosition();
 
         return Event.NONE;
     }
 
-    //@Override
+    @Override
     public TextureData getCurrentTexture() {
-        if(currentState == State.CHARGING)
-            return CHARGING_TEXTURE;
-
-        if(currentState == State.ATTACKING)
-            return ATTACKING_TEXTURE;
 
         return IDLE_TEXTURE;
     }
