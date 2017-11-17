@@ -2,6 +2,7 @@ package com.jgame.elements;
 
 import com.jgame.util.Decoration;
 import com.jgame.util.Square;
+import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.game.GameData.Event;
 import com.jgame.util.Vector2;
@@ -19,7 +20,7 @@ public class ChargingEnemy extends GameCharacter {
     }
 
     private final static Vector2 INITIAL_POSITION = new Vector2(425,0);
-    public final static TextureData IDLE_TEXTURE = new TextureData(0.4375f, 0, 0.46875f, 0.09375f);
+    public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(20,0,22,2,32);
     private final static Vector2 ATTACK_SPEED = new Vector2(-5f, 0);
     public final static float DISTANCE_FROM_CHARACTER = 150;
     private final static int IDLE_FRAMES = 120;
@@ -29,7 +30,7 @@ public class ChargingEnemy extends GameCharacter {
     private int chargeFrame;
 
     public ChargingEnemy(float yPosition, int id){
-        super(new Square(new Vector2(0, yPosition), 37,160,0), id);
+        super(new Square(new Vector2(0, yPosition), 85,85,0), id);
         this.baseX.x = -1;
         currentState = State.IDLE;
         idleFrame = IDLE_FRAMES;
@@ -44,8 +45,7 @@ public class ChargingEnemy extends GameCharacter {
         chargeFrame = CHARGE_FRAMES;
         currentState = State.IDLE;
         moveTo(positionOffset, INITIAL_POSITION);
-        color.g = 0;
-        color.r = 0;
+        color.b = 0;
     }
 
     @Override
@@ -77,14 +77,14 @@ public class ChargingEnemy extends GameCharacter {
             idleFrame -= 1;
             if(idleFrame <= 0) {
                 currentState = State.CHARGING;
-                color.g = 1;
-                color.b = 0;
+                color.b = 1;
             }
         } else if(currentState == State.CHARGING){
             chargeFrame -= 1;
             if(chargeFrame == 0) {
                 currentState = State.ATTACKING;
                 color.g = 0;
+                color.b = 0;
                 color.r = 1;
             }
         } else if (currentState == State.ATTACKING){
