@@ -20,7 +20,7 @@ public class ChargingEnemy extends GameCharacter {
     }
 
     private final static Vector2 INITIAL_POSITION = new Vector2(425,0);
-    public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(20,0,22,2,32);
+    public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(22,0,24,2,32);
     private final static Vector2 ATTACK_SPEED = new Vector2(-5f, 0);
     public final static float DISTANCE_FROM_CHARACTER = 150;
     private final static int IDLE_FRAMES = 120;
@@ -77,15 +77,13 @@ public class ChargingEnemy extends GameCharacter {
             idleFrame -= 1;
             if(idleFrame <= 0) {
                 currentState = State.CHARGING;
-                color.b = 1;
+                color.b = 0.5f;
             }
         } else if(currentState == State.CHARGING){
             chargeFrame -= 1;
             if(chargeFrame == 0) {
                 currentState = State.ATTACKING;
-                color.g = 0;
-                color.b = 0;
-                color.r = 1;
+                color.b = 1;
             }
         } else if (currentState == State.ATTACKING){
             move(ATTACK_SPEED);
