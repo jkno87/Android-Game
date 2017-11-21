@@ -242,7 +242,10 @@ public class GameActivity extends Activity {
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
             availableEnemies[0] = new RobotEnemy(175, 215,
                     135, 215, ELEMENTS_HEIGHT, ID_GEN.getId());
-            availableEnemies[1] = new ChargingEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
+            //Provisional para seguir haciendo tests con robot enemy
+            availableEnemies[1] = new RobotEnemy(175, 215,
+                    135, 215, ELEMENTS_HEIGHT, ID_GEN.getId());
+            //availableEnemies[1] = new ChargingEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
             currentEnemy = availableEnemies[0];
             initialDifficulty = Difficulty.EASY;
         }

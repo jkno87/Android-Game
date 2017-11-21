@@ -37,11 +37,11 @@ public class RobotEnemy extends GameCharacter {
     public final static TextureData[] RECOVERY_TEXTURES = {TextureDrawer.generarTextureData(4,0,8,4,32)};
     public final static TextureData ATTACK_TEXTURE = TextureDrawer.generarTextureData(8,0,12,4,32);
     public final static float ATTACK_DISTANCE = 56;
+    public final static float WARNING_DISTANCE = 45;
     private EnemyState currentState;
-    private int currentIdleFrame;
-    private float attackRange;
     private final AttackData regularAttack;
     private int[] currentFrameDataSet;
+    private float distanceFromCharacter;
 
 
     public RobotEnemy(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, float positionY, int id) {
@@ -57,7 +57,6 @@ public class RobotEnemy extends GameCharacter {
         //Este personaje siempre va a ver hacia la izquierda
         this.baseX.x = -1;
         currentFrameDataSet = EASY_FRAME_DATA;
-        attackRange = idleSizeX + ATTACK_DISTANCE;
         CollisionObject[] startupBoxes = new CollisionObject[]{};
         CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(100, 50),0,58,20, this, CollisionObject.TYPE_ATTACK)};
         CollisionObject[] recoveryBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,165,55,this, CollisionObject.TYPE_HITTABLE)};
@@ -69,7 +68,6 @@ public class RobotEnemy extends GameCharacter {
 
     @Override
     public void reset(Vector2 positionOffset) {
-        currentIdleFrame = 0;
         currentState = EnemyState.WAITING;
         moveTo(positionOffset, INITIAL_POSITION);
         regularAttack.reset();
@@ -113,10 +111,10 @@ public class RobotEnemy extends GameCharacter {
     public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
 
         if(currentState == EnemyState.WAITING) {
+            distanceFromCharacter = position.x - foe.position.x - idleSizeX - ATTACK_DISTANCE;
 
             //Se verifica que el enemigo se encuentre en rango del ataque.
-            if ((position.x > foe.position.x && (position.x - foe.position.x) < attackRange) ||
-                    (position.x < foe.position.x && (position.x - foe.position.x) * -1 < attackRange)) {
+            if (distanceFromCharacter < 0) {
                 decorationData.add(new Decoration.StaticDecoration(BREATH_DECORATION, new Square(new Vector2(position).add(-120,65),40,85,0),
                                 true, currentFrameDataSet[0],
                         currentFrameDataSet[1] + currentFrameDataSet[2], new ColorData(0,1,1,1),
@@ -130,15 +128,20 @@ public class RobotEnemy extends GameCharacter {
                     co.updatePosition();*/
 
                 return Event.NONE;
+            } else if(distanceFromCharacter < WARNING_DISTANCE) {
+                color.r = distanceFromCharacter / WARNING_DISTANCE;
+                color.g = distanceFromCharacter / WARNING_DISTANCE;
+                color.b = distanceFromCharacter / WARNING_DISTANCE;
+            } else {
+                color.g = 1;
+                color.r = 1;
+                color.b = 1;
             }
-
-            currentIdleFrame += 1;
         }
 
         if(currentState == EnemyState.ATTACKING){
             activeAttack.update();
             if(activeAttack.completed()) {
-                currentIdleFrame = 0;
                 regularAttack.reset();
                 currentState = EnemyState.WAITING;
             }
