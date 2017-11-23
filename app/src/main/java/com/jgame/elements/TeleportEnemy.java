@@ -59,7 +59,7 @@ public class TeleportEnemy extends GameCharacter {
         };
         actions = new EnemyAction[]{attack, move};
         currentAction = 0;
-        activeAttack = new AttackData(startupBoxes, activeBoxes, recoveryBoxes);
+        //activeAttack = new AttackData(startupBoxes, activeBoxes, recoveryBoxes);
         //activeAttack.attackDuration = attackFrames[currentDifficulty];
         teleportFrame = TELEPORT_FRAMES;
         idleFrame = IDLE_FRAMES;
@@ -80,44 +80,44 @@ public class TeleportEnemy extends GameCharacter {
     }
 
     @Override
-    public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
 
         //adjustToFoePosition(foe);
 
         if(currentState == EnemyState.DEAD)
-            return Event.NONE;
+            return;
 
         if(currentState == EnemyState.TELEPORTING){
             teleportFrame -= 1;
             if(teleportFrame > 0)
-                return Event.NONE;
+                return;
             teleportFrame = TELEPORT_FRAMES;
             actions[currentAction].act();
             toggleCurrentAction();
 
-            return Event.NONE;
+            return;
         }
 
         if(currentState == EnemyState.IDLE) {
             idleFrame -= 1;
             if (idleFrame <= 0) {
                 currentState = EnemyState.ATTACKING;
-                activeAttack.reset();
+                //activeAttack.reset();
             }
-            return Event.NONE;
+            return;
         }
 
         if(currentState == EnemyState.ATTACKING) {
-            activeAttack.update();
-            if(activeAttack.completed()){
-                currentState = EnemyState.TELEPORTING;
-                idleFrame = 0;
-            }
+            //activeAttack.update();
+            //if(activeAttack.completed()){
+           //     currentState = EnemyState.TELEPORTING;
+           //     idleFrame = 0;
+           // }
 
-            super.update(foe, decorationData);
+
         }
 
-        return Event.NONE;
+        return;
     }
 
     public boolean completedTransition(){
@@ -142,9 +142,9 @@ public class TeleportEnemy extends GameCharacter {
         if(currentState != EnemyState.ATTACKING)
             return IDLE_TEXTURE;
 
-        if(activeAttack.currentState == AttackData.CollisionState.ACTIVE)
-            return ATTACK_TEXTURE;
-        else
+        //if(activeAttack.currentState == AttackData.CollisionState.ACTIVE)
+        //    return ATTACK_TEXTURE;
+        //else
             return STARTUP_ATTACK;
     }
 

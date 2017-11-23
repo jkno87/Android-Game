@@ -38,7 +38,7 @@ public class CollisionObject extends GameObject {
         if(type != TYPE_ATTACK)
             return false;
 
-        for(CollisionObject c : other.getActiveCollisionBoxes()){
+        for(CollisionObject c : other.activeCollisionBoxes){
             if(c.type != TYPE_HITTABLE)
                 continue;
             if(bounds.collides(c.bounds))

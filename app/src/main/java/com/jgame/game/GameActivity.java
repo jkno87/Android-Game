@@ -349,9 +349,7 @@ public class GameActivity extends Activity {
 
                     //Se realiza el update del enemigo
                     synchronized (enemyLock) {
-                        lastTriggeredEvent = currentEnemy.update(mainCharacter, decorationsBuffer);
-                        if(lastTriggeredEvent == Event.QUAKE)
-                            eventFrame = QUAKE_FRAMES;
+                        currentEnemy.update(mainCharacter, decorationsBuffer);
                     }
 
 

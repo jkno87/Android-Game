@@ -137,7 +137,7 @@ public class GameRenderer implements Renderer {
     private final static int PAUSE_Y_SIZE = 70;
     private final static int SCORE_LEDS = 5;
     private final static int TITLE_SCREEN_INTERVAL = 40;
-    private final static boolean RENDER_HITBOXES = false;
+    private final static boolean RENDER_HITBOXES = true;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
@@ -401,7 +401,7 @@ public class GameRenderer implements Renderer {
         if(!c.hittable())
             return;
 
-        for(CollisionObject o : c.getActiveCollisionBoxes())
+        for(CollisionObject o : c.activeCollisionBoxes)
             if(o.type == CollisionObject.TYPE_ATTACK)
                 drawer.addColoredSquare(o.bounds, NO_TEXTURE_COORDS, ATTACK_COLOR);
             else if(o.type == CollisionObject.TYPE_SMASHED)

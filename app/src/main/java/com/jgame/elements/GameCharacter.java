@@ -22,8 +22,8 @@ public abstract class GameCharacter extends GameObject {
     }
     
     public final ColorData color = new ColorData(1,1,1,1);
-    public final CollisionObject[] idleCollisionBoxes;
-    public AttackData activeAttack;
+    public CollisionObject[] activeCollisionBoxes;
+    public CollisionObject[] idleCollisionBoxes;
     public final Square spriteContainer;
     public float idleSizeX;
     public Difficulty currentDifficulty;
@@ -35,6 +35,7 @@ public abstract class GameCharacter extends GameObject {
         idleCollisionBoxes = new CollisionObject[] {
                 new CollisionObject(new Vector2(), id, idleSizeX, spriteContainer.lenY, this, CollisionObject.TYPE_HITTABLE)
         };
+        activeCollisionBoxes = idleCollisionBoxes;
         updatePosition();
     }
 
@@ -45,20 +46,8 @@ public abstract class GameCharacter extends GameObject {
         idleCollisionBoxes = new CollisionObject[]{
                 new CollisionObject(new Vector2(), id, idleSizeX, idleSizeY, this, CollisionObject.TYPE_HITTABLE)
         };
+        activeCollisionBoxes = idleCollisionBoxes;
         updatePosition();
-    }
-
-    public synchronized CollisionObject[] getActiveCollisionBoxes(){
-        if(attacking()){
-            if(activeAttack.currentState == AttackData.CollisionState.STARTUP)
-                return activeAttack.startup;
-            else if(activeAttack.currentState == AttackData.CollisionState.ACTIVE)
-                return activeAttack.active;
-            else if(activeAttack.currentState == AttackData.CollisionState.RECOVERY)
-                return activeAttack.recovery;
-        }
-
-        return idleCollisionBoxes;
     }
 
     /**
@@ -79,20 +68,29 @@ public abstract class GameCharacter extends GameObject {
         moveTo(other.position, distanceFromCharacter);
     }
 
+    public void updateCollisionObjects(AttackData a){
+        if(a.currentState == AttackData.CollisionState.STARTUP)
+            activeCollisionBoxes = a.startup;
+        else if(a.currentState == AttackData.CollisionState.ACTIVE)
+            activeCollisionBoxes = a.active;
+        else if(a.currentState == AttackData.CollisionState.RECOVERY)
+            activeCollisionBoxes = a.recovery;
+    }
+
     /**
-     * Realiza la unica accion en comun de todos los objetos GameCharacter, checar que colisione contra el objeto foe.
-     * @param foe GameCharacter contra el que se podria provocar una colision.
-     * @param decorationData Decoraciones que se encuentran en el juego actual
+     * Verifica si el objeto actual colisiona con foe
+     * @param foe
+     * @param collisionObjects
+     * @return
      */
-    public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData){
+    public Event detectCollision(GameCharacter foe, CollisionObject[] collisionObjects){
         if(foe.hittable()) {
-            for (CollisionObject co : getActiveCollisionBoxes())
+            for (CollisionObject co : collisionObjects)
                 if (co.checkCollision(foe)) {
                     foe.hit();
                     return Event.HIT;
                 }
         }
-
         return Event.NONE;
     }
 
@@ -103,6 +101,7 @@ public abstract class GameCharacter extends GameObject {
     public void setCurrentDifficulty(Difficulty diff){
         this.currentDifficulty = diff;
     }
+    public abstract void update(GameCharacter foe, ArrayDeque<Decoration> decorationData);
     public abstract boolean completedTransition();
     public abstract void reset(Vector2 positionOffset);
     public abstract boolean hittable();

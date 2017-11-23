@@ -145,20 +145,6 @@ public class MainCharacter extends GameCharacter {
         this.hp = INITIAL_HP;
     }
 
-    @Override
-    public synchronized CollisionObject[] getActiveCollisionBoxes(){
-        if(state == CharacterState.INPUT_A){
-            if(moveA.currentState == CollisionState.STARTUP)
-                return moveA.startup;
-            else if(moveA.currentState == CollisionState.ACTIVE)
-                return moveA.active;
-            else if(moveA.currentState == CollisionState.RECOVERY)
-                return moveA.recovery;
-        }
-
-        return idleCollisionBoxes;
-    }
-
     /**
      * Funcion que se encarga de recibir el ultimo input del ControllerManager.
      * Solo realiza una accion si el estado en el que se encuentra el personaje
@@ -197,8 +183,9 @@ public class MainCharacter extends GameCharacter {
     }
 
     @Override
-    public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
-        Event e = super.update(foe, decorationData);
+    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+        Event e = detectCollision(foe, activeCollisionBoxes);
+
         if (state == CharacterState.IDLE) {
             WALKING_ANIMATION.reset();
         } else if (state == CharacterState.DYING){
@@ -208,7 +195,8 @@ public class MainCharacter extends GameCharacter {
             else
                 framesToGameOver--;
 
-            return Event.NONE;
+            return;
+
         } else if (state == CharacterState.STUNNED) {
             spriteContainer.lenX = SPRITE_LENGTH;
             move(STUN_SPEED);
@@ -219,7 +207,8 @@ public class MainCharacter extends GameCharacter {
                 spriteContainer.lenX = SPRITE_LENGTH_SMALL;
             }
             //Se sale de la funcion para que esto no disminuya el HP
-            return Event.NONE;
+            return;
+
         } else if (state == CharacterState.MOVING_FORWARD) {
             if(position.x + MOVING_SPEED < maxX) {
                 move(RIGHT_MOVE_SPEED);
@@ -244,10 +233,14 @@ public class MainCharacter extends GameCharacter {
             }
 
             moveA.update();
+            updateCollisionObjects(moveA);
+
             if(moveA.completed()){
                 this.state = CharacterState.IDLE;
                 spriteContainer.lenX = SPRITE_LENGTH_SMALL;
+                activeCollisionBoxes = idleCollisionBoxes;
             }
+
         } else if (state == CharacterState.ABSORBING){
             ABSORBING_ANIMATION.updateFrame();
             if(ABSORBING_ANIMATION.completed()) {
@@ -255,13 +248,14 @@ public class MainCharacter extends GameCharacter {
                 baseX.set(1,0);
                 WALKING_ANIMATION.reset();
                 spriteContainer.lenX = SPRITE_LENGTH_SMALL;
+                activeCollisionBoxes = idleCollisionBoxes;
             }
         } else if (state == CharacterState.ADVANCING) {
             //Este estado no debe de provocar que el personaje pierda hp
             WALKING_ANIMATION.updateFrame();
-            return Event.NONE;
+            return;
         } else if (state == CharacterState.DEAD) {
-            return Event.NONE;
+            return;
         }
 
         if(hp < 0)
@@ -271,7 +265,7 @@ public class MainCharacter extends GameCharacter {
             color.a = 1 - (float) hp / INITIAL_HP;
         }
 
-        return Event.NONE;
+        return;
     }
 
 

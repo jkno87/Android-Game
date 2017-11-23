@@ -22,12 +22,12 @@ public class ChargingEnemy extends GameCharacter {
     private final static Vector2 INITIAL_POSITION = new Vector2(425,0);
     public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(22,0,24,2,32);
     private final static Vector2 ATTACK_SPEED = new Vector2(-5f, 0);
-    public final static float DISTANCE_FROM_CHARACTER = 150;
     private final static int IDLE_FRAMES = 120;
     private final static int CHARGE_FRAMES = 20;
     private State currentState;
     private int idleFrame;
     private int chargeFrame;
+    private final CollisionObject[] attackObject;
 
     public ChargingEnemy(float yPosition, int id){
         super(new Square(new Vector2(0, yPosition), 85,85,0), id);
@@ -35,8 +35,7 @@ public class ChargingEnemy extends GameCharacter {
         currentState = State.IDLE;
         idleFrame = IDLE_FRAMES;
         chargeFrame = CHARGE_FRAMES;
-        CollisionObject[] a = new CollisionObject[]{};
-        activeAttack = new AttackData(a, a, a);
+        attackObject = new CollisionObject[2];
     }
 
     @Override
@@ -69,9 +68,9 @@ public class ChargingEnemy extends GameCharacter {
     }
 
     @Override
-    public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         if(!completedTransition())
-            return Event.NONE;
+            return;
 
         if(currentState == State.IDLE){
             idleFrame -= 1;
@@ -89,7 +88,7 @@ public class ChargingEnemy extends GameCharacter {
             move(ATTACK_SPEED);
         }
 
-        return Event.NONE;
+        return;
     }
 
     @Override

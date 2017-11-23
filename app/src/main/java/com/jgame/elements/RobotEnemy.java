@@ -92,7 +92,7 @@ public class RobotEnemy extends GameCharacter {
     @Override
     public TextureData getCurrentTexture() {
         if(currentState == EnemyState.ATTACKING)
-            return activeAttack.getCurrentAnimation().getCurrentSprite();
+            return regularAttack.getCurrentAnimation().getCurrentSprite();
         else
             return IDLE_TEXTURE;
     }
@@ -108,7 +108,7 @@ public class RobotEnemy extends GameCharacter {
     }
 
     @Override
-    public Event update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+    public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
 
         if(currentState == EnemyState.WAITING) {
             distanceFromCharacter = position.x - foe.position.x - idleSizeX - ATTACK_DISTANCE;
@@ -120,14 +120,13 @@ public class RobotEnemy extends GameCharacter {
                         currentFrameDataSet[1] + currentFrameDataSet[2], new ColorData(0,1,1,1),
                         1, currentFrameDataSet[1]));
                 currentState = EnemyState.ATTACKING;
-                activeAttack = regularAttack;
-                activeAttack.reset();
+                regularAttack.reset();
                 /*for(CollisionObject co : activeAttack.recovery)
                     co.updatePosition();
                 for(CollisionObject co : activeAttack.active)
                     co.updatePosition();*/
 
-                return Event.NONE;
+                return;
             } else if(distanceFromCharacter < WARNING_DISTANCE) {
                 color.r = distanceFromCharacter / WARNING_DISTANCE;
                 color.g = distanceFromCharacter / WARNING_DISTANCE;
@@ -140,15 +139,17 @@ public class RobotEnemy extends GameCharacter {
         }
 
         if(currentState == EnemyState.ATTACKING){
-            activeAttack.update();
-            if(activeAttack.completed()) {
+            regularAttack.update();
+            updateCollisionObjects(regularAttack);
+            if(regularAttack.completed()) {
                 regularAttack.reset();
                 currentState = EnemyState.WAITING;
+                activeCollisionBoxes = idleCollisionBoxes;
             }
 
-            super.update(foe, decorationData);
+            detectCollision(foe, activeCollisionBoxes);
 
-            return Event.NONE;
+            return;
         }
 
 
@@ -158,7 +159,7 @@ public class RobotEnemy extends GameCharacter {
                     new Square(this.spriteContainer), true));
         }
 
-        return Event.NONE;
+        return;
     }
 
     @Override
