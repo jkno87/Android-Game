@@ -1,17 +1,13 @@
 package com.jgame.elements;
 
 import com.jgame.game.ControllerManager;
-import com.jgame.game.GameActivity;
 import com.jgame.game.GameData.Event;
-import com.jgame.game.GameRenderer;
 import com.jgame.util.Decoration;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.ColorData;
 import com.jgame.util.TextureDrawer.TextureData;
-import com.jgame.util.TimeCounter;
 import com.jgame.util.Vector2;
-import com.jgame.elements.AttackData.CollisionState;
 import java.util.ArrayDeque;
 
 /**

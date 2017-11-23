@@ -21,7 +21,7 @@ public class ChargingEnemy extends GameCharacter {
 
     private final static Vector2 INITIAL_POSITION = new Vector2(425,0);
     public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(22,0,24,2,32);
-    private final static Vector2 ATTACK_SPEED = new Vector2(-5f, 0);
+    private final static Vector2 ATTACK_SPEED = new Vector2(5f, 0);
     private final static int IDLE_FRAMES = 120;
     private final static int CHARGE_FRAMES = 20;
     private State currentState;
@@ -35,16 +35,19 @@ public class ChargingEnemy extends GameCharacter {
         currentState = State.IDLE;
         idleFrame = IDLE_FRAMES;
         chargeFrame = CHARGE_FRAMES;
-        attackObject = new CollisionObject[2];
+        attackObject = new CollisionObject[]{new CollisionObject(new Vector2(), 0, 50, 50, this, CollisionObject.TYPE_ATTACK)};
     }
 
     @Override
     public void reset(Vector2 positionOffset) {
+        activeCollisionBoxes = idleCollisionBoxes;
         idleFrame = IDLE_FRAMES;
         chargeFrame = CHARGE_FRAMES;
         currentState = State.IDLE;
         moveTo(positionOffset, INITIAL_POSITION);
         color.b = 0;
+        attackObject[0].relativePosition.set(0,0);
+        attackObject[0].updatePosition();
     }
 
     @Override
@@ -83,9 +86,20 @@ public class ChargingEnemy extends GameCharacter {
             if(chargeFrame == 0) {
                 currentState = State.ATTACKING;
                 color.b = 1;
+                activeCollisionBoxes = attackObject;
             }
         } else if (currentState == State.ATTACKING){
-            move(ATTACK_SPEED);
+            attackObject[0].move(ATTACK_SPEED);
+            if(Event.HIT == detectCollision(foe, attackObject)){
+                activeCollisionBoxes = idleCollisionBoxes;
+                idleFrame = IDLE_FRAMES;
+                chargeFrame = CHARGE_FRAMES;
+                currentState = State.IDLE;
+                color.b = 0;
+                attackObject[0].relativePosition.set(0,0);
+                attackObject[0].updatePosition();
+            }
+
         }
 
         return;

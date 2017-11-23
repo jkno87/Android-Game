@@ -68,6 +68,7 @@ public class RobotEnemy extends GameCharacter {
 
     @Override
     public void reset(Vector2 positionOffset) {
+        activeCollisionBoxes = idleCollisionBoxes;
         currentState = EnemyState.WAITING;
         moveTo(positionOffset, INITIAL_POSITION);
         regularAttack.reset();
