@@ -201,6 +201,7 @@ public class MainCharacter extends GameCharacter {
             else {
                 state = CharacterState.IDLE;
                 spriteContainer.lenX = SPRITE_LENGTH_SMALL;
+                activeCollisionBoxes = idleCollisionBoxes;
             }
             //Se sale de la funcion para que esto no disminuya el HP
             return;

@@ -35,7 +35,15 @@ public class ChargingEnemy extends GameCharacter {
         currentState = State.IDLE;
         idleFrame = IDLE_FRAMES;
         chargeFrame = CHARGE_FRAMES;
-        attackObject = new CollisionObject[]{new CollisionObject(new Vector2(), 0, 50, 50, this, CollisionObject.TYPE_ATTACK)};
+        attackObject = new CollisionObject[]{new CollisionObject(new Vector2(), 0, 50, 50, this, CollisionObject.TYPE_ATTACK),
+        new CollisionObject(new Vector2(), 0, 50, 150, this, CollisionObject.TYPE_HITTABLE)};
+    }
+
+    private void resetAttack(){
+        attackObject[0].relativePosition.set(0,0);
+        attackObject[0].updatePosition();
+        attackObject[1].relativePosition.set(0,0);
+        attackObject[1].updatePosition();
     }
 
     @Override
@@ -46,8 +54,7 @@ public class ChargingEnemy extends GameCharacter {
         currentState = State.IDLE;
         moveTo(positionOffset, INITIAL_POSITION);
         color.b = 0;
-        attackObject[0].relativePosition.set(0,0);
-        attackObject[0].updatePosition();
+        resetAttack();
     }
 
     @Override
@@ -90,14 +97,14 @@ public class ChargingEnemy extends GameCharacter {
             }
         } else if (currentState == State.ATTACKING){
             attackObject[0].move(ATTACK_SPEED);
+            attackObject[1].move(ATTACK_SPEED);
             if(Event.HIT == detectCollision(foe, attackObject)){
                 activeCollisionBoxes = idleCollisionBoxes;
                 idleFrame = IDLE_FRAMES;
                 chargeFrame = CHARGE_FRAMES;
                 currentState = State.IDLE;
                 color.b = 0;
-                attackObject[0].relativePosition.set(0,0);
-                attackObject[0].updatePosition();
+                resetAttack();
             }
 
         }
