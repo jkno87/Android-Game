@@ -34,17 +34,19 @@ public class ChargingEnemy extends GameCharacter {
 
         @Override
         public boolean drawable() {
-            return true;
+            return !finished;
         }
 
         @Override
         public void update(Vector2 backgroundMoveDelta) {
             size.position.add(MOVEMENT_SPEED);
+            if(!parent.alive() || size.position.x < 0)
+                terminate();
         }
 
         @Override
         public boolean completed() {
-            return finished || !parent.alive();
+            return finished;
         }
 
         @Override
@@ -132,7 +134,8 @@ public class ChargingEnemy extends GameCharacter {
                 currentState = State.ATTACKING;
                 color.b = 1;
                 activeCollisionBoxes = attackObject;
-                decorationData.add(new ProjectileDecoration(this, new Square(new Vector2(position), 50, 50, 0)));
+                decorationData.add(new ProjectileDecoration(this, new Square(new Vector2(position.x, position.y + 85),
+                        50, 50, 0)));
             }
         } else if (currentState == State.ATTACKING){
             attackObject[0].move(ATTACK_SPEED);
