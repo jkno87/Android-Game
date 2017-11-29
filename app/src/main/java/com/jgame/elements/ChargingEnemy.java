@@ -15,6 +15,44 @@ import java.util.ArrayDeque;
  */
 public class ChargingEnemy extends GameCharacter {
 
+    public static class ProjectileDecoration extends Decoration {
+
+        private static final Vector2 MOVEMENT_SPEED = new Vector2(ATTACK_SPEED).mul(-1);
+        private ChargingEnemy parent;
+        private boolean finished;
+
+        public ProjectileDecoration(ChargingEnemy parent, Square size){
+            this.parent = parent;
+            this.inverted = true;
+            this.size = size;
+        }
+
+        @Override
+        public void terminate() {
+            finished = true;
+        }
+
+        @Override
+        public boolean drawable() {
+            return true;
+        }
+
+        @Override
+        public void update(Vector2 backgroundMoveDelta) {
+            size.position.add(MOVEMENT_SPEED);
+        }
+
+        @Override
+        public boolean completed() {
+            return finished || !parent.alive();
+        }
+
+        @Override
+        public TextureData getSprite() {
+            return IDLE_TEXTURE;
+        }
+    }
+
     enum State {
         IDLE, ATTACKING, CHARGING, DEAD
     }
@@ -94,6 +132,7 @@ public class ChargingEnemy extends GameCharacter {
                 currentState = State.ATTACKING;
                 color.b = 1;
                 activeCollisionBoxes = attackObject;
+                decorationData.add(new ProjectileDecoration(this, new Square(new Vector2(position), 50, 50, 0)));
             }
         } else if (currentState == State.ATTACKING){
             attackObject[0].move(ATTACK_SPEED);
@@ -114,7 +153,6 @@ public class ChargingEnemy extends GameCharacter {
 
     @Override
     public TextureData getCurrentTexture() {
-
         return IDLE_TEXTURE;
     }
 
