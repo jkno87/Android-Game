@@ -62,8 +62,8 @@ public class GameActivity extends Activity {
     public static final Square INPUT_A_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH * 2 - 20, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
     public static final Square INPUT_B_BOUNDS = new Square(PLAYING_WIDTH - BUTTONS_WIDTH - 25, INPUTS_HEIGHT, BUTTONS_WIDTH, BUTTONS_WIDTH);
     public static final Square CONTINUE_BOUNDS = new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 + 10, 200, 50);
-    public static final Square QUIT_BOUNDS = new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 - 60, 200, 50);
-    public static final Square RESTART_BOUNDS = new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 + 10, 200, 50);
+    public static final Square RESTART_BOUNDS = new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 - 40, 200, 50);
+    public static final Square QUIT_BOUNDS = new Square(FRUSTUM_WIDTH / 2 - 100, FRUSTUM_HEIGHT/2 - 90, 200, 50);
     public static final Square START_BUTTON_BOUNDS = new Square(FRUSTUM_WIDTH/2 - 100, FRUSTUM_HEIGHT - 160, 200, 100);
     public static final Square SOUND_SWITCH = new Square(160, 40, 150, 40);
     public static final Square EASY_DIFF_BOUNDS = new Square(35, FRUSTUM_HEIGHT - 90, 80, 40);
@@ -142,10 +142,6 @@ public class GameActivity extends Activity {
             return true;
         }
 
-
-        //if(!gameData.paused)
-        //    return false;
-
         float x = (e.getX() / (float) gameSurfaceView.getWidth()) * FRUSTUM_WIDTH;
         float y = (((float) gameSurfaceView.getHeight() - e.getY()) / (float) gameSurfaceView.getHeight()) * FRUSTUM_HEIGHT;
 
@@ -163,6 +159,11 @@ public class GameActivity extends Activity {
                         gameData.state = GameState.TERMINATING;
                     }
                     finish();
+                } else if (RESTART_BOUNDS.contains(x,y)){
+                    synchronized (gameData){
+                        gameData.state = GameState.MENU;
+                        gameData.paused = false;
+                    }
                 }
 
                 break;
@@ -298,6 +299,7 @@ public class GameActivity extends Activity {
                         currentEnemyCounter = 0;
                         currentEnemy.reset(positionOffset);
                         currentState = GameState.PLAYING;
+                        advancing = false;
 
                     } else if(currentState == GameState.SAVING) {
                         checkHighScore(score);

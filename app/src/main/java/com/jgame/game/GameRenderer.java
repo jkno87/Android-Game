@@ -240,6 +240,7 @@ public class GameRenderer implements Renderer {
         tDrawer.addColoredSquare(PAUSE_RECTANGLE, NO_TEXTURE_COORDS, PAUSE_MENU_COLOR);
 
         tDrawer.addTexturedSquare(GameActivity.CONTINUE_BOUNDS, CONTINUE_BUTTON);
+        tDrawer.addTexturedSquare(GameActivity.RESTART_BOUNDS, CONTINUE_BUTTON);
         tDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
         tDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_BUTTON);
         if(!soundEnabled)
@@ -295,8 +296,6 @@ public class GameRenderer implements Renderer {
         else if(gameData.state == GameState.GAME_OVER)
             drawGameOverScreen();
         else {
-
-            boolean characterAlive = gameActivity.mainCharacter.alive();
 
             gl10.glViewport(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
             gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
@@ -373,14 +372,14 @@ public class GameRenderer implements Renderer {
             if (gameData.state == GameState.RESTART_SCREEN) {
                 mainTextureDrawer.addTexturedSquare(GameActivity.RESTART_BOUNDS, CONTINUE_BUTTON);
                 mainTextureDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
-                for(int i = 0; i < decorations.length; i++)
-                    if(decorations[i] != null)
-                        decorations[i].terminate();
             }
 
             //En caso de que el juego este iniciando, se establece la posicion inicial del background
             if (gameData.state == GameState.STARTING) {
                 background.resetBackground();
+                for(int i = 0; i < decorations.length; i++)
+                    if(decorations[i] != null)
+                        decorations[i].terminate();
             }
 
             if (gameData.paused)
