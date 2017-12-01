@@ -17,7 +17,6 @@ public class ChargingEnemy extends GameCharacter {
 
     public static class ProjectileDecoration extends Decoration {
 
-        private static final Vector2 MOVEMENT_SPEED = new Vector2(ATTACK_SPEED).mul(-1);
         private ChargingEnemy parent;
         private boolean finished;
 
@@ -39,8 +38,8 @@ public class ChargingEnemy extends GameCharacter {
 
         @Override
         public void update(Vector2 backgroundMoveDelta) {
-            size.position.add(MOVEMENT_SPEED);
-            if(!parent.alive() || size.position.x < 0)
+            size.lenX += ATTACK_SPEED.x;
+            if(!parent.alive() || size.position.x - size.lenX < 0)
                 terminate();
         }
 
@@ -59,6 +58,7 @@ public class ChargingEnemy extends GameCharacter {
         IDLE, ATTACKING, CHARGING, DEAD
     }
 
+    private final float PROJECTILE_OFFSET = 50;
     private final static Vector2 INITIAL_POSITION = new Vector2(425,0);
     public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(22,0,24,2,32);
     private final static Vector2 ATTACK_SPEED = new Vector2(5f, 0);
@@ -80,9 +80,9 @@ public class ChargingEnemy extends GameCharacter {
     }
 
     private void resetAttack(){
-        attackObject[0].relativePosition.set(0,0);
+        attackObject[0].relativePosition.set(PROJECTILE_OFFSET,0);
         attackObject[0].updatePosition();
-        attackObject[1].relativePosition.set(0,0);
+        attackObject[1].relativePosition.set(PROJECTILE_OFFSET,0);
         attackObject[1].updatePosition();
     }
 
@@ -134,7 +134,8 @@ public class ChargingEnemy extends GameCharacter {
                 currentState = State.ATTACKING;
                 color.b = 1;
                 activeCollisionBoxes = attackObject;
-                decorationData.add(new ProjectileDecoration(this, new Square(new Vector2(position.x, position.y + 85),
+                decorationData.add(new ProjectileDecoration(this,
+                        new Square(new Vector2(position.x - PROJECTILE_OFFSET, position.y + 85),
                         50, 50, 0)));
             }
         } else if (currentState == State.ATTACKING){

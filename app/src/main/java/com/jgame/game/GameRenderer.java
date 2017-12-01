@@ -276,15 +276,17 @@ public class GameRenderer implements Renderer {
         }
 
         //Se actualiza la lista de decoraciones
-        for(int i = 0; i < decorations.length; i++){
-            if(decorations[i] == null || decorations[i].completed()) {
-                if (!gameActivity.decorationsBuffer.isEmpty()) {
-                    decorations[i] = gameActivity.decorationsBuffer.removeFirst();
+        if(!gameData.paused) {
+            for (int i = 0; i < decorations.length; i++) {
+                if (decorations[i] == null || decorations[i].completed()) {
+                    if (!gameActivity.decorationsBuffer.isEmpty()) {
+                        decorations[i] = gameActivity.decorationsBuffer.removeFirst();
+                    }
+                } else {
+                    decorations[i].update(backgroundMoveSpeed);
+                    if (gameData.state != GameState.PLAYING)
+                        decorations[i].terminate();
                 }
-            } else {
-                decorations[i].update(backgroundMoveSpeed);
-                if(gameData.state != GameState.PLAYING)
-                    decorations[i].terminate();
             }
         }
 
