@@ -281,8 +281,11 @@ public class GameRenderer implements Renderer {
                 if (!gameActivity.decorationsBuffer.isEmpty()) {
                     decorations[i] = gameActivity.decorationsBuffer.removeFirst();
                 }
-            } else
+            } else {
                 decorations[i].update(backgroundMoveSpeed);
+                if(gameData.state != GameState.PLAYING)
+                    decorations[i].terminate();
+            }
         }
 
         if(gameData.state == GameState.MENU || gameData.state == GameState.STARTING)
