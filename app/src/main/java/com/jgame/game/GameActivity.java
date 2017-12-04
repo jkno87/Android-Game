@@ -73,7 +73,7 @@ public class GameActivity extends Activity {
     public static final Square RECORDS_BUTTON_BOUNDS = new Square(FRUSTUM_WIDTH - 115, FRUSTUM_HEIGHT - 90, 80, 40);
     public static final Vector2 ADVANCE_SPEED = new Vector2(-2f, 0);
     public static final String HIGH_SCORE = "highScore";
-    public static int ID_PUNCH;
+    //public static int ID_PUNCH;
     private GLSurfaceView gameSurfaceView;
     public SoundManager soundManager;
     public final GameData gameData = new GameData();
@@ -91,21 +91,14 @@ public class GameActivity extends Activity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        soundManager = GameResources.soundManager;
-        ID_PUNCH = soundManager.loadSound(this, R.raw.punch);
+        soundManager = new SoundManager(this);
         setContentView(R.layout.activity_main);
         gameSurfaceView = (GameSurfaceView) findViewById(R.id.game_surface);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        SharedPreferences settings = getPreferences(MODE_PRIVATE);
-        mainCharacter = new MainCharacter(ID_GEN.getId(), ELEMENTS_HEIGHT, MIN_X, MAX_X);
-        gameData.highScore = settings.getInt(HIGH_SCORE, 0);
-        gameData.state = GameState.TITLE_SCREEN;
-        gameTask = new GameRunnable();
-        new Thread(gameTask).start();
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
-
+        gameData.state = GameState.LOADING_SCREEN;
     }
 
     /**
@@ -187,6 +180,11 @@ public class GameActivity extends Activity {
         new Thread(soundManager).start();
         soundManager.iniciar();
         gameSurfaceView.onResume();
+        SharedPreferences settings = getPreferences(MODE_PRIVATE);
+        mainCharacter = new MainCharacter(ID_GEN.getId(), ELEMENTS_HEIGHT, MIN_X, MAX_X);
+        gameData.highScore = settings.getInt(HIGH_SCORE, 0);
+        gameTask = new GameRunnable();
+        new Thread(gameTask).start();
     }
 
     @Override
@@ -251,6 +249,9 @@ public class GameActivity extends Activity {
         @Override
         public void run() {
             try {
+                synchronized (gameData){
+                    gameData.state = GameState.TITLE_SCREEN;
+                }
                 while(true){
                     Thread. sleep(UPDATE_INTERVAL);
                     lastInput = inputQueue.poll();
@@ -263,7 +264,7 @@ public class GameActivity extends Activity {
                         currentDifficulty = gameData.currentDifficulty;
                     }
 
-                    if(currentState == GameState.TERMINATING) {
+                    if(currentState == GameState.TERMINATING || currentState == GameState.LOADING_SCREEN) {
                         continue;
                     } else if(currentState == GameState.MENU) {
                         if(lastInput == ControllerManager.GameInput.START_GAME)
@@ -378,8 +379,8 @@ public class GameActivity extends Activity {
                             currentEnemy = availableEnemies[currentEnemyCounter];
                         }
 
-                        if(gameData.soundEnabled)
-                            soundManager.playSound(ID_PUNCH);
+                        //if(gameData.soundEnabled)
+                        //    soundManager.playSound(ID_PUNCH);
                         //Se agrega un punto y se inicia con la transicion del personaje a la siguiente escena
                         score++;
                         //Se reinicia el enemigo para que se encuentre en su estado inicial en caso de algun cambio

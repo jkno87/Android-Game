@@ -145,6 +145,7 @@ public class GameRenderer implements Renderer {
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.4375f,0.4375f,0.46875f,0.46875f);
     public final static TextureData GAME_OVER_LABEL = TextureDrawer.generarTextureData(11,4,13,5,32);
     public final static TextureData CLOSING_MESSAGE = TextureDrawer.generarTextureData(11,5,13,6,32);
+    public final static TextureData LOADING_MESSAGE = TextureDrawer.generarTextureData(5,4,8,5,32);
     //Texturas del menu principal
     public final static TextureData TITLE_LOGO = new TextureData(0, 0.125f, 0.125f, 0.1875f);
     public final static TextureData START_BUTTON_TEXTURE = new TextureData(0f,0.28125f,0.0625f,0.3125f);
@@ -290,12 +291,14 @@ public class GameRenderer implements Renderer {
             }
         }
 
-        if(gameData.state == GameState.MENU || gameData.state == GameState.STARTING)
+        if(gameData.state ==  GameState.LOADING_SCREEN)
+            drawMessage(LOADING_MESSAGE);
+        else if(gameData.state == GameState.MENU || gameData.state == GameState.STARTING)
             drawMenu(gameData.currentDifficulty);
         else if(gameData.state == GameState.TITLE_SCREEN)
             drawTitleScreen();
         else if(gameData.state == GameState.TERMINATING)
-            drawFinishScreen();
+            drawMessage(CLOSING_MESSAGE);
         else if(gameData.state == GameState.RECORDS)
             drawRecordsScreen();
         else if(gameData.state == GameState.GAME_OVER)
@@ -430,7 +433,11 @@ public class GameRenderer implements Renderer {
             drawer.addColoredSquare(c.spriteContainer, c.getCurrentTexture(), c.color);
     }
 
-    private void drawFinishScreen(){
+    /**
+     * Sirve para dibujar en pantalla un mensaje
+     * @param message
+     */
+    private void drawMessage(TextureData message){
         gl10.glViewport(0,0, surfaceView.getWidth(), surfaceView.getHeight());
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
         gl10.glMatrixMode(GL10.GL_PROJECTION);
@@ -443,7 +450,7 @@ public class GameRenderer implements Renderer {
 
         mainTextureDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
-        mainTextureDrawer.addTexturedSquare(120, 120, 150, 150, CLOSING_MESSAGE);
+        mainTextureDrawer.addTexturedSquare(120, 120, 150, 150, message);
         mainTextureDrawer.draw(gl10);
     }
 
