@@ -146,8 +146,11 @@ public class GameRenderer implements Renderer {
     public final static TextureData GAME_OVER_LABEL = TextureDrawer.generarTextureData(11,4,13,5,32);
     public final static TextureData CLOSING_MESSAGE = TextureDrawer.generarTextureData(11,5,13,6,32);
     public final static TextureData LOADING_MESSAGE = TextureDrawer.generarTextureData(5,4,8,5,32);
-    //Texturas del menu principal
+    //Texturas de la pantalla inicial
+    public final static TextureData TITLE_BACKGROUND = new TextureData(0,0.25f,0.125f,0.5f);
+    public final static TextureData TITLE_MESSAGE = TextureDrawer.generarTextureData(5,5,8,6,32);
     public final static TextureData TITLE_LOGO = new TextureData(0, 0.125f, 0.125f, 0.1875f);
+    //Texturas del menu principal
     public final static TextureData START_BUTTON_TEXTURE = new TextureData(0f,0.28125f,0.0625f,0.3125f);
     public final static TextureData SOUND_BUTTON =  new TextureData(0f,0.3125f,0.0625f,0.34375f);
     public final static TextureData EASY_SPRITE = new TextureData(0f,0.34375f,0.0625f,0.375f);
@@ -510,11 +513,16 @@ public class GameRenderer implements Renderer {
         gl10.glEnable(GL10.GL_TEXTURE_2D);
 
         mainTextureDrawer.reset();
+        gl10.glBindTexture(GL10.GL_TEXTURE_2D, backgroundId);
+        mainTextureDrawer.addTexturedSquare(0,0,GameActivity.FRUSTUM_WIDTH,GameActivity.FRUSTUM_HEIGHT, TITLE_BACKGROUND);
+        mainTextureDrawer.draw(gl10);
+
+        mainTextureDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
         mainTextureDrawer.addTexturedSquare(120, 120, 150, 150, TITLE_LOGO);
         if(titleScreenCounter > 0) {
             if(showTitleMessage)
-                mainTextureDrawer.addTexturedSquare(120, 20, 50, 20, START_BUTTON_TEXTURE);
+                mainTextureDrawer.addTexturedSquare(120, 10, 240, 80, TITLE_MESSAGE);
             titleScreenCounter--;
             if(titleScreenCounter == 0) {
                 showTitleMessage = !showTitleMessage;
