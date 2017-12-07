@@ -60,23 +60,28 @@ public class ChargingEnemy extends GameCharacter {
 
     private final float PROJECTILE_OFFSET = 50;
     private final static Vector2 INITIAL_POSITION = new Vector2(425,0);
-    public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(22,0,24,2,32);
+    public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(20,0,22,2,32);
+    public final static TextureData ATTACK_TEXTURE = TextureDrawer.generarTextureData(26,0,28,2,32);
+    public final static TextureData[] STARTUP_TEXTURE = new TextureData[]{
+            IDLE_TEXTURE, TextureDrawer.generarTextureData(22,0,24,2,32),
+            TextureDrawer.generarTextureData(24,0,26,2,32), ATTACK_TEXTURE
+    };
     private final static Vector2 ATTACK_SPEED = new Vector2(5f, 0);
     private final static int IDLE_FRAMES = 120;
     private final static int CHARGE_FRAMES = 20;
     private State currentState;
     private int idleFrame;
-    private int chargeFrame;
     private final CollisionObject[] attackObject;
+    private final AnimationData attackStartup;
 
     public ChargingEnemy(float yPosition, int id){
         super(new Square(new Vector2(0, yPosition), 85,85,0), id);
         this.baseX.x = -1;
         currentState = State.IDLE;
         idleFrame = IDLE_FRAMES;
-        chargeFrame = CHARGE_FRAMES;
         attackObject = new CollisionObject[]{new CollisionObject(new Vector2(), 0, 50, 50, this, CollisionObject.TYPE_ATTACK),
         new CollisionObject(new Vector2(), 0, 50, 150, this, CollisionObject.TYPE_HITTABLE)};
+        attackStartup = new AnimationData(CHARGE_FRAMES, false, STARTUP_TEXTURE);
     }
 
     private void resetAttack(){
@@ -90,7 +95,6 @@ public class ChargingEnemy extends GameCharacter {
     public void reset(Vector2 positionOffset) {
         activeCollisionBoxes = idleCollisionBoxes;
         idleFrame = IDLE_FRAMES;
-        chargeFrame = CHARGE_FRAMES;
         currentState = State.IDLE;
         moveTo(positionOffset, INITIAL_POSITION);
         color.b = 0;
@@ -125,12 +129,13 @@ public class ChargingEnemy extends GameCharacter {
         if(currentState == State.IDLE){
             idleFrame -= 1;
             if(idleFrame <= 0) {
+                attackStartup.reset();
                 currentState = State.CHARGING;
                 color.b = 0.5f;
             }
         } else if(currentState == State.CHARGING){
-            chargeFrame -= 1;
-            if(chargeFrame == 0) {
+            attackStartup.updateFrame();
+            if(attackStartup.completed()) {
                 currentState = State.ATTACKING;
                 color.b = 1;
                 activeCollisionBoxes = attackObject;
@@ -144,7 +149,6 @@ public class ChargingEnemy extends GameCharacter {
             if(Event.HIT == detectCollision(foe, attackObject)){
                 activeCollisionBoxes = idleCollisionBoxes;
                 idleFrame = IDLE_FRAMES;
-                chargeFrame = CHARGE_FRAMES;
                 currentState = State.IDLE;
                 color.b = 0;
                 resetAttack();
@@ -157,7 +161,12 @@ public class ChargingEnemy extends GameCharacter {
 
     @Override
     public TextureData getCurrentTexture() {
-        return IDLE_TEXTURE;
+        if(currentState == State.CHARGING)
+            return attackStartup.getCurrentSprite();
+        else if(currentState == State.ATTACKING)
+            return ATTACK_TEXTURE;
+        else
+            return IDLE_TEXTURE;
     }
 
     @Override
