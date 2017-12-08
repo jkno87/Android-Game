@@ -84,7 +84,7 @@ public abstract class GameCharacter extends GameObject {
      * @return
      */
     public Event detectCollision(GameCharacter foe, CollisionObject[] collisionObjects){
-        if(foe.hittable()) {
+        if(foe.hittable() && foe.alive()) {
             for (CollisionObject co : collisionObjects)
                 if (co.checkCollision(foe)) {
                     foe.hit();

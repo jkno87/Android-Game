@@ -18,6 +18,7 @@ import com.jgame.elements.GameCharacter;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.IdGenerator;
 import com.jgame.util.Square;
+import com.jgame.util.TextureDrawer;
 import com.jgame.util.Vector2;
 import com.jgame.game.GameData.GameState;
 import java.util.ArrayDeque;
@@ -55,6 +56,7 @@ public class GameActivity extends Activity {
     public static final float CONTROLS_HEIGHT = PLAYING_HEIGHT * 0.25f;
     private static final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 10;
     private static final IdGenerator ID_GEN = new IdGenerator();
+    public static final Square FULL_SCREEN_BOUNDS = new Square(0,0,FRUSTUM_WIDTH,FRUSTUM_HEIGHT);
     public static final Square INPUT_SOUND_SPRITE = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 100, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH);
     public static final Square INPUT_SOUND_BOUNDS = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 130, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH + 40);
     public static final Square INPUT_LEFT_BOUNDS = new Square(5,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
@@ -83,6 +85,7 @@ public class GameActivity extends Activity {
     public final BlockingQueue<ControllerManager.GameInput> inputQueue = new LinkedBlockingQueue<>(5);
     public final ControllerManager controllerManager = new ControllerManager(inputQueue, gameData);
     public final ArrayDeque<Decoration> decorationsBuffer = new ArrayDeque<>();
+    public final TextureDrawer.ColorData transitionOverlay = new TextureDrawer.ColorData(0,0,0,0);
     public GameRunnable gameTask;
     private FirebaseAnalytics mFirebaseAnalytics;
     private InterstitialAd mInterstitialAd;
@@ -99,6 +102,11 @@ public class GameActivity extends Activity {
         mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
         gameData.state = GameState.LOADING_SCREEN;
+        SharedPreferences settings = getPreferences(MODE_PRIVATE);
+        mainCharacter = new MainCharacter(ID_GEN.getId(), ELEMENTS_HEIGHT, MIN_X, MAX_X);
+        gameData.highScore = settings.getInt(HIGH_SCORE, 0);
+        gameTask = new GameRunnable();
+        new Thread(gameTask).start();
     }
 
     /**
@@ -180,11 +188,6 @@ public class GameActivity extends Activity {
         new Thread(soundManager).start();
         soundManager.iniciar();
         gameSurfaceView.onResume();
-        SharedPreferences settings = getPreferences(MODE_PRIVATE);
-        mainCharacter = new MainCharacter(ID_GEN.getId(), ELEMENTS_HEIGHT, MIN_X, MAX_X);
-        gameData.highScore = settings.getInt(HIGH_SCORE, 0);
-        gameTask = new GameRunnable();
-        new Thread(gameTask).start();
     }
 
     @Override
@@ -223,19 +226,19 @@ public class GameActivity extends Activity {
     class GameRunnable implements Runnable {
 
         private final int MAX_WORLD_OBJECTS = 2;
-        private final int QUAKE_FRAMES = 6;
-        public final GameCharacter[] availableEnemies;
-        public int score;
+        private final float TRANSITION_FRAMES = 20;
         private ControllerManager.GameInput lastInput;
         private int currentEnemyCounter;
         private GameData.GameState currentState;
         private Difficulty initialDifficulty;
         private Difficulty currentDifficulty;
         private boolean backgroundMoving;
-        private Event lastTriggeredEvent = Event.NONE;
         private boolean advancing = false;
         private final Vector2 positionOffset = new Vector2();
-        private int eventFrame = 0; //Este se usaba para indicar el frame de quake que se utiliza, posiblemente se elimineS
+        private int transitionFrame;
+        private boolean transitioning;
+        public final GameCharacter[] availableEnemies;
+        public int score;
 
         public GameRunnable(){
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
@@ -252,6 +255,7 @@ public class GameActivity extends Activity {
                 synchronized (gameData){
                     gameData.state = GameState.TITLE_SCREEN;
                 }
+
                 while(true){
                     Thread. sleep(UPDATE_INTERVAL);
                     lastInput = inputQueue.poll();
@@ -323,8 +327,20 @@ public class GameActivity extends Activity {
                         else if(lastInput == ControllerManager.GameInput.QUIT_GAME)
                             finish();
                     } else if (currentState == GameState.TITLE_SCREEN){
-                        if(lastInput == ControllerManager.GameInput.START_GAME)
-                            currentState = GameState.MENU;
+                        if(transitioning) {
+                            if(transitionFrame == 0) {
+                                currentState = GameState.MENU;
+                            } else {
+                                transitionFrame--;
+                                synchronized (transitionOverlay) {
+                                    transitionOverlay.a = transitionFrame / TRANSITION_FRAMES;
+                                }
+                            }
+                        } else if(lastInput == ControllerManager.GameInput.START_GAME) {
+                            transitionFrame = (int)TRANSITION_FRAMES;
+                            transitioning = true;
+                            transitionOverlay.a = 0;
+                        }
                     } else if (currentState == GameState.RECORDS) {
                         if(lastInput == ControllerManager.GameInput.MAIN_MENU)
                             currentState = GameState.MENU;
