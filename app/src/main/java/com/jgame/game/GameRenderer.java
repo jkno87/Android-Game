@@ -515,6 +515,7 @@ public class GameRenderer implements Renderer {
         mainTextureDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, backgroundId);
         mainTextureDrawer.addTexturedSquare(GameActivity.FULL_SCREEN_BOUNDS, TITLE_BACKGROUND);
+        mainTextureDrawer.addColoredSquare(GameActivity.FULL_SCREEN_BOUNDS, TITLE_BACKGROUND, gameActivity.transitionOverlay);
         mainTextureDrawer.draw(gl10);
 
         mainTextureDrawer.reset();
@@ -530,9 +531,7 @@ public class GameRenderer implements Renderer {
             }
         }
 
-
         mainTextureDrawer.addColoredSquare(GameActivity.FULL_SCREEN_BOUNDS, NO_TEXTURE_COORDS, gameActivity.transitionOverlay);
-
         mainTextureDrawer.draw(gl10);
     }
 

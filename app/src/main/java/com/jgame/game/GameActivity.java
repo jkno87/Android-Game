@@ -328,16 +328,16 @@ public class GameActivity extends Activity {
                             finish();
                     } else if (currentState == GameState.TITLE_SCREEN){
                         if(transitioning) {
-                            if(transitionFrame == 0) {
+                            if(transitionFrame == TRANSITION_FRAMES) {
                                 currentState = GameState.MENU;
                             } else {
-                                transitionFrame--;
+                                transitionFrame++;
                                 synchronized (transitionOverlay) {
                                     transitionOverlay.a = transitionFrame / TRANSITION_FRAMES;
                                 }
                             }
                         } else if(lastInput == ControllerManager.GameInput.START_GAME) {
-                            transitionFrame = (int)TRANSITION_FRAMES;
+                            transitionFrame = 0;
                             transitioning = true;
                             transitionOverlay.a = 0;
                         }
