@@ -56,12 +56,12 @@ public class GameRenderer implements Renderer {
         private final float BACKGROUND_X_POSITION_1 = 0;
         private final float BACKGROUND_X_POSITION_2 = BACKGROUND_TILE_WIDTH;
         private final float BACKGROUND_X_POSITION_3 = BACKGROUND_TILE_WIDTH*2;
-        private final Square backgroundContainer1 = new Square(new Vector2(BACKGROUND_X_POSITION_1, GameActivity.CONTROLS_HEIGHT),
-                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT, 0);
-        private final Square backgroundContainer2 = new Square(new Vector2(BACKGROUND_X_POSITION_2, GameActivity.CONTROLS_HEIGHT),
-                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT, 0);
-        private final Square backgroundContainer3 = new Square(new Vector2(BACKGROUND_X_POSITION_3, GameActivity.CONTROLS_HEIGHT),
-                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT, 0);
+        private final Square backgroundContainer1 = new Square(new Vector2(BACKGROUND_X_POSITION_1, GameActivity.CONTROLS_HEIGHT - 2),
+                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT + 2, 0);
+        private final Square backgroundContainer2 = new Square(new Vector2(BACKGROUND_X_POSITION_2, GameActivity.CONTROLS_HEIGHT - 2),
+                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT + 2, 0);
+        private final Square backgroundContainer3 = new Square(new Vector2(BACKGROUND_X_POSITION_3, GameActivity.CONTROLS_HEIGHT - 2),
+                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT + 2, 0);
         public TextureData tData1;
         public TextureData tData2;
         public TextureData tData3;
@@ -182,7 +182,6 @@ public class GameRenderer implements Renderer {
     public static final Square CONTROLS_RECT = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.CONTROLS_HEIGHT);
     public static final Square PAUSE_RECTANGLE = new Square(GameActivity.FRUSTUM_WIDTH/2 - PAUSE_X_SIZE, GameActivity.FRUSTUM_HEIGHT/2 - PAUSE_Y_SIZE,
             PAUSE_X_SIZE * 2, PAUSE_Y_SIZE * 2);
-    private static final Square PAUSE_LAYER = new Square(0, 0, GameActivity.PLAYING_WIDTH, GameActivity.PLAYING_HEIGHT);
     public static final GameText SOUND_LABEL = new GameText("sound", new Square(160, 85, 150, 35), 0);
     public static final GameText ON_LABEL = new GameText("on", new Square(160, 50, 50, 20), 20);
     public static final GameText OFF_LABEL = new GameText("off", new Square(260, 50, 50, 20), 20);
@@ -194,6 +193,7 @@ public class GameRenderer implements Renderer {
     private static final DigitsDisplay RECORDS_SCORE = new DigitsDisplay(SCORE_SIZE_X, SCORE_SIZE_Y, SCORE_LEDS, new Vector2(200, 100));
     private static final ColorData PAUSE_MENU_COLOR = new ColorData(0,1,0,1);
     private static final ColorData TRANSPARENCY_COLOR = new ColorData(1,1,1,0.65f);
+    private static final ColorData PAUSE_OVERLAY_COLOR = new ColorData(0,0,0,0.5f);
     private static final Vector2 BACKGROUND_SCROLL_SPEED = new Vector2(-0.7f, 0);
     private static final Vector2 BACKGROUND_IDLE = new Vector2();
     private GameSurfaceView surfaceView;
@@ -202,7 +202,6 @@ public class GameRenderer implements Renderer {
     int personajesId;
     int backgroundId;
     private TextureDrawer mainTextureDrawer;
-    ColorData pauseOverlay;
     ColorData menuBase;
     private final GameData gameData;
     private final Decoration[] decorations = new Decoration[5];
@@ -213,7 +212,6 @@ public class GameRenderer implements Renderer {
     public GameRenderer(GameActivity gameActivity){
         this.gameActivity = gameActivity;
         mainTextureDrawer = new TextureDrawer(true);
-        pauseOverlay = new TextureDrawer.ColorData(0,0,0,0.5f);
         menuBase = new TextureDrawer.ColorData(0,0.75f,0.5f,1);
         gameData = new GameData();
     }
@@ -240,7 +238,7 @@ public class GameRenderer implements Renderer {
      * @param tDrawer
      */
     private void addPauseLayer(TextureDrawer tDrawer, boolean soundEnabled){
-        tDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
+        tDrawer.addColoredSquare(GameActivity.FULL_SCREEN_BOUNDS, NO_TEXTURE_COORDS, PAUSE_OVERLAY_COLOR);
         tDrawer.addColoredSquare(PAUSE_RECTANGLE, NO_TEXTURE_COORDS, PAUSE_MENU_COLOR);
 
         tDrawer.addTexturedSquare(GameActivity.CONTINUE_BOUNDS, CONTINUE_BUTTON);
@@ -385,6 +383,7 @@ public class GameRenderer implements Renderer {
                 mainTextureDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
             }
 
+            mainTextureDrawer.addColoredSquare(GameActivity.FULL_SCREEN_BOUNDS, NO_TEXTURE_COORDS, gameActivity.transitionOverlay);
             //En caso de que el juego este iniciando, se establece la posicion inicial del background
             if (gameData.state == GameState.STARTING) {
                 background.resetBackground();
@@ -395,7 +394,6 @@ public class GameRenderer implements Renderer {
 
             if (gameData.paused)
                 addPauseLayer(mainTextureDrawer, gameData.soundEnabled);
-
 
             mainTextureDrawer.draw(gl10);
         }
@@ -495,6 +493,7 @@ public class GameRenderer implements Renderer {
         if(gameData.paused)
             addPauseLayer(mainTextureDrawer, gameData.soundEnabled);
 
+        mainTextureDrawer.addColoredSquare(GameActivity.FULL_SCREEN_BOUNDS, NO_TEXTURE_COORDS, gameActivity.transitionOverlay);
         mainTextureDrawer.draw(gl10);
     }
 
@@ -515,7 +514,6 @@ public class GameRenderer implements Renderer {
         mainTextureDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, backgroundId);
         mainTextureDrawer.addTexturedSquare(GameActivity.FULL_SCREEN_BOUNDS, TITLE_BACKGROUND);
-        mainTextureDrawer.addColoredSquare(GameActivity.FULL_SCREEN_BOUNDS, TITLE_BACKGROUND, gameActivity.transitionOverlay);
         mainTextureDrawer.draw(gl10);
 
         mainTextureDrawer.reset();
@@ -584,15 +582,10 @@ public class GameRenderer implements Renderer {
         mainTextureDrawer.addTexturedSquare(GameActivity.RECORDS_BUTTON_BOUNDS, RECORDS_BUTTON_SPRITE);
 
         if(gameData.paused) {
-            mainTextureDrawer.addColoredSquare(PAUSE_LAYER, NO_TEXTURE_COORDS, pauseOverlay);
-            mainTextureDrawer.addColoredSquare(PAUSE_RECTANGLE, NO_TEXTURE_COORDS, PAUSE_MENU_COLOR);
-            mainTextureDrawer.addTexturedSquare(GameActivity.CONTINUE_BOUNDS, CONTINUE_BUTTON);
-            mainTextureDrawer.addTexturedSquare(GameActivity.QUIT_BOUNDS, QUIT_BUTTON);
-            mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_BUTTON);
-            if(!gameData.soundEnabled)
-                mainTextureDrawer.addTexturedSquare(GameActivity.INPUT_SOUND_SPRITE, SOUND_CANCELLED_SPRITE);
+            addPauseLayer(mainTextureDrawer, gameData.soundEnabled);
         }
 
+        mainTextureDrawer.addColoredSquare(GameActivity.FULL_SCREEN_BOUNDS, NO_TEXTURE_COORDS, gameActivity.transitionOverlay);
         mainTextureDrawer.draw(gl10);
     }
 

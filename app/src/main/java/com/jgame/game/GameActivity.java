@@ -56,7 +56,8 @@ public class GameActivity extends Activity {
     public static final float CONTROLS_HEIGHT = PLAYING_HEIGHT * 0.25f;
     private static final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 10;
     private static final IdGenerator ID_GEN = new IdGenerator();
-    public static final Square FULL_SCREEN_BOUNDS = new Square(0,0,FRUSTUM_WIDTH,FRUSTUM_HEIGHT);
+    private static final int OFFSET_ADJ = 8;
+    public static final Square FULL_SCREEN_BOUNDS = new Square(-OFFSET_ADJ,0,FRUSTUM_WIDTH + OFFSET_ADJ,FRUSTUM_HEIGHT + OFFSET_ADJ);
     public static final Square INPUT_SOUND_SPRITE = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 100, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH);
     public static final Square INPUT_SOUND_BOUNDS = new Square(PLAYING_WIDTH - 100, PLAYING_HEIGHT - 130, INPUT_SOUND_WIDTH, INPUT_SOUND_WIDTH + 40);
     public static final Square INPUT_LEFT_BOUNDS = new Square(5,INPUTS_HEIGHT, DIRECTION_WIDTH, DIRECTION_WIDTH);
@@ -161,8 +162,8 @@ public class GameActivity extends Activity {
                     }
                     finish();
                 } else if (RESTART_BOUNDS.contains(x,y)){
+                    gameTask.startTransition(GameState.MENU);
                     synchronized (gameData){
-                        gameData.state = GameState.MENU;
                         gameData.paused = false;
                     }
                 }
@@ -203,6 +204,9 @@ public class GameActivity extends Activity {
     @Override
     public boolean onKeyDown(int keycode, KeyEvent event){
         if(KeyEvent.KEYCODE_BACK == keycode){
+            if(gameData.state == GameState.TITLE_SCREEN)
+                return false;
+
             synchronized (gameData){
                 gameData.paused = !gameData.paused;
             }
@@ -229,7 +233,7 @@ public class GameActivity extends Activity {
         private final float TRANSITION_FRAMES = 20;
         private ControllerManager.GameInput lastInput;
         private int currentEnemyCounter;
-        private GameData.GameState currentState;
+        private GameState currentState;
         private Difficulty initialDifficulty;
         private Difficulty currentDifficulty;
         private boolean backgroundMoving;
@@ -237,6 +241,7 @@ public class GameActivity extends Activity {
         private final Vector2 positionOffset = new Vector2();
         private int transitionFrame;
         private boolean transitioning;
+        private GameState stateAfterTransition;
         public final GameCharacter[] availableEnemies;
         public int score;
 
@@ -247,6 +252,12 @@ public class GameActivity extends Activity {
             availableEnemies[1] = new ChargingEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
             currentEnemy = availableEnemies[0];
             initialDifficulty = Difficulty.EASY;
+        }
+
+        public void startTransition(GameState futureState){
+            stateAfterTransition = futureState;
+            transitioning = true;
+            transitionFrame = 0;
         }
 
         @Override
@@ -268,26 +279,38 @@ public class GameActivity extends Activity {
                         currentDifficulty = gameData.currentDifficulty;
                     }
 
+                    //Se realizan los calculos de la transicion
+                    if(transitioning){
+                        transitionFrame++;
+                        transitionOverlay.a = transitionFrame / TRANSITION_FRAMES;
+                        if(transitionFrame == TRANSITION_FRAMES) {
+                            currentState = stateAfterTransition;
+                            transitionFrame = 0;
+                            transitionOverlay.a = 0;
+                            transitioning = false;
+                        } else
+                            continue;
+                    }
+
                     if(currentState == GameState.TERMINATING || currentState == GameState.LOADING_SCREEN) {
                         continue;
                     } else if(currentState == GameState.MENU) {
-                        if(lastInput == ControllerManager.GameInput.START_GAME)
-                            currentState = GameState.STARTING;
-                        else if(lastInput == ControllerManager.GameInput.RECORDS_TRIGGER)
-                            currentState = GameState.RECORDS;
-                        else if(lastInput == ControllerManager.GameInput.CHANGE_SOUND_STATE) {
+                        if (lastInput == ControllerManager.GameInput.START_GAME)
+                            startTransition(GameState.STARTING);
+                        else if (lastInput == ControllerManager.GameInput.RECORDS_TRIGGER)
+                            startTransition(GameState.RECORDS);
+                        else if (lastInput == ControllerManager.GameInput.CHANGE_SOUND_STATE) {
                             synchronized (gameData) {
                                 gameData.soundEnabled = !gameData.soundEnabled;
                             }
-                        } else if(lastInput == ControllerManager.GameInput.DIFFICULTY_EASY){
+                        } else if (lastInput == ControllerManager.GameInput.DIFFICULTY_EASY) {
                             currentDifficulty = Difficulty.EASY;
-                        } else if(lastInput == ControllerManager.GameInput.DIFFICULTY_MEDIUM) {
+                        } else if (lastInput == ControllerManager.GameInput.DIFFICULTY_MEDIUM) {
                             currentDifficulty = Difficulty.MEDIUM;
-                        } else if(lastInput == ControllerManager.GameInput.DIFFICULTY_HARD){
+                        } else if (lastInput == ControllerManager.GameInput.DIFFICULTY_HARD) {
                             currentDifficulty = Difficulty.HARD;
                         }
                         initialDifficulty = currentDifficulty;
-
                     } else if(currentState == GameState.STARTING) {
                         if(gameData.soundEnabled)
                             soundManager.startMusic();
@@ -323,27 +346,15 @@ public class GameActivity extends Activity {
                         }
                     } else if (currentState == GameState.RESTART_SCREEN) {
                         if(lastInput == ControllerManager.GameInput.START_GAME)
-                            currentState = GameState.STARTING;
+                            startTransition(GameState.STARTING);
                         else if(lastInput == ControllerManager.GameInput.QUIT_GAME)
                             finish();
                     } else if (currentState == GameState.TITLE_SCREEN){
-                        if(transitioning) {
-                            if(transitionFrame == TRANSITION_FRAMES) {
-                                currentState = GameState.MENU;
-                            } else {
-                                transitionFrame++;
-                                synchronized (transitionOverlay) {
-                                    transitionOverlay.a = transitionFrame / TRANSITION_FRAMES;
-                                }
-                            }
-                        } else if(lastInput == ControllerManager.GameInput.START_GAME) {
-                            transitionFrame = 0;
-                            transitioning = true;
-                            transitionOverlay.a = 0;
-                        }
+                        if(lastInput == ControllerManager.GameInput.START_GAME)
+                            startTransition(GameState.MENU);
                     } else if (currentState == GameState.RECORDS) {
                         if(lastInput == ControllerManager.GameInput.MAIN_MENU)
-                            currentState = GameState.MENU;
+                            startTransition(GameState.MENU);
                     }
 
                     synchronized (gameData){
