@@ -50,18 +50,20 @@ public class ChargingEnemy extends GameCharacter {
 
         @Override
         public TextureData getSprite() {
-            return IDLE_TEXTURE;
+            return PROJECTILE_TEXTURE;
         }
     }
 
     enum State {
-        IDLE, ATTACKING, CHARGING, DEAD
+        IDLE, ATTACKING, CHARGING, DEAD, DYING
     }
 
     private final float PROJECTILE_OFFSET = 50;
     private final static Vector2 INITIAL_POSITION = new Vector2(425,0);
+    public final static TextureData PROJECTILE_TEXTURE = TextureDrawer.generarTextureData(12,0,14,2,32);
     public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(20,0,22,2,32);
     public final static TextureData ATTACK_TEXTURE = TextureDrawer.generarTextureData(26,0,28,2,32);
+    public final static TextureData DEFEATED_TEXTURE = TextureDrawer.generarTextureData(22,2,24,4,32);
     public final static TextureData[] STARTUP_TEXTURE = new TextureData[]{
             IDLE_TEXTURE, TextureDrawer.generarTextureData(22,0,24,2,32),
             TextureDrawer.generarTextureData(24,0,26,2,32), ATTACK_TEXTURE
@@ -153,7 +155,11 @@ public class ChargingEnemy extends GameCharacter {
                 color.b = 0;
                 resetAttack();
             }
-
+        } else if(currentState == State.DYING){
+            currentState = State.DEAD;
+            color.b = 0;
+            decorationData.add(new Decoration.IdleDecoration(DEFEATED_TEXTURE,
+                    new Square(this.spriteContainer), true, color));
         }
 
         return;
@@ -171,6 +177,6 @@ public class ChargingEnemy extends GameCharacter {
 
     @Override
     public void hit() {
-        currentState = State.DEAD;
+        currentState = State.DYING;
     }
 }

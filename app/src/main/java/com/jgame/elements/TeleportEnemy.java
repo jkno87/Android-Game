@@ -1,9 +1,8 @@
 package com.jgame.elements;
 
-import com.jgame.game.GameData.Event;
 import com.jgame.util.Decoration;
 import com.jgame.util.TextureDrawer.TextureData;
-import com.jgame.util.TimeCounter;
+import com.jgame.util.FrameCounter;
 import com.jgame.util.Vector2;
 
 import java.util.ArrayDeque;
@@ -29,7 +28,7 @@ public class TeleportEnemy extends GameCharacter {
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
             new CollisionObject(new Vector2(60,55),0,35,20,this, CollisionObject.TYPE_ATTACK)};
     private CollisionObject[] recoveryBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
-    private final TimeCounter[][] attackFrames;
+    private final FrameCounter[][] attackFrames;
     protected EnemyState currentState;
     private int currentAction;
     private final EnemyAction[] actions;
@@ -39,9 +38,9 @@ public class TeleportEnemy extends GameCharacter {
 
     public TeleportEnemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition, int id, final MainCharacter mainCharacter) {
         super(sizeX, sizeY, idleSizeX, idleSizeY, new Vector2(0, yPosition), id);
-        attackFrames = new TimeCounter[][] {
-                new TimeCounter[]{new TimeCounter(0.65f), new TimeCounter(0.5f), new TimeCounter(0.45f)},
-                new TimeCounter[]{new TimeCounter(0.33f), new TimeCounter(0.5f), new TimeCounter(0.45f)}
+        attackFrames = new FrameCounter[][] {
+                new FrameCounter[]{new FrameCounter(0), new FrameCounter(0), new FrameCounter(0)},
+                new FrameCounter[]{new FrameCounter(0), new FrameCounter(0), new FrameCounter(0)}
         };
         currentState = EnemyState.TELEPORTING;
         this.mainCharacter = mainCharacter;

@@ -3,6 +3,7 @@ package com.jgame.elements;
 import com.jgame.game.ControllerManager;
 import com.jgame.game.GameData.Event;
 import com.jgame.util.Decoration;
+import com.jgame.util.FrameCounter;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.ColorData;
@@ -79,14 +80,10 @@ public class MainCharacter extends GameCharacter {
     //Frames de animacion para el movimiento de absorber
     public final static TextureData STARTUP_MOV_A = new TextureData(0.625f,0.09375f, 0.6875f, 0.1875f);
     public final static TextureData ACTIVE_MOV_A = new TextureData(0.5f,0.09375f, 0.5625f,0.1875f);
-    //IDLE Y MOVING EMPIEZAN EN 14,0 1/32 Y SON DE 3X1
-    public final static TextureData RECOVERY_SUCCESS_1 = new TextureData(0.25f, 0.75f, 0.375f, 1f);
-    public final static TextureData RECOVERY_SUCCESS_2 = new TextureData(0.125f, 0.75f, 0.25f, 1f);
     //Frames para el personaje cuando se encuentra stunned
     public final static TextureData STUNNED_SPRITE = TextureDrawer.generarTextureData(14,6,16,9,32);
 
-    private final static TextureData[] ABSORBED_SPRITES = { TextureDrawer.generarTextureData(15,3,17,6,32),
-            TextureDrawer.generarTextureData(13,3,15,6,32)};
+    private final static TextureData[] ABSORBED_SPRITES = { TextureDrawer.generarTextureData(12,0,14,2,32)};
     public static final float INITIAL_POSITION_X = 85;
     public static final int SPRITE_LENGTH = 75;
     public static final int SPRITE_LENGTH_SMALL = 37;
@@ -101,6 +98,7 @@ public class MainCharacter extends GameCharacter {
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
     private final Vector2 STUN_SPEED = new Vector2(-2f,0);
+    private final FrameCounter absorbingFrames = new FrameCounter(26);
     public final AttackData moveA;
     public CharacterState state;
     public ColorData colorModifier;
@@ -110,7 +108,6 @@ public class MainCharacter extends GameCharacter {
     private final float playingHeight;
     private final float maxX;
     private final float minX;
-    private final AnimationData ABSORBING_ANIMATION = new AnimationData(13, false, new TextureData[]{RECOVERY_SUCCESS_1, RECOVERY_SUCCESS_2});
 
     public MainCharacter(int id, float playingHeight,float minX, float maxX){
         super(SPRITE_LENGTH_SMALL, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, new Vector2(), id);
@@ -171,7 +168,7 @@ public class MainCharacter extends GameCharacter {
         else if (state == CharacterState.STUNNED || state == CharacterState.DYING)
             return STUNNED_SPRITE;
         else if(state == CharacterState.ABSORBING)
-            return ABSORBING_ANIMATION.getCurrentSprite();
+            return ACTIVE_MOV_A;
         else if(state != CharacterState.INPUT_A)
             return IDLE_TEXTURE;
         else
@@ -222,7 +219,7 @@ public class MainCharacter extends GameCharacter {
             if (e == Event.HIT){
                 hp = INITIAL_HP;
                 state = CharacterState.ABSORBING;
-                ABSORBING_ANIMATION.reset();
+                absorbingFrames.reset();
                 Decoration.AnimatedDecoration a = new Decoration.AnimatedDecoration(0, new AnimationData(18, false, ABSORBED_SPRITES),
                         new Square(new Vector2(position).add(spriteContainer.lenX * baseX.x, 0)
                                 , spriteContainer.lenX, spriteContainer.lenY, 0), false);
@@ -239,8 +236,8 @@ public class MainCharacter extends GameCharacter {
             }
 
         } else if (state == CharacterState.ABSORBING){
-            ABSORBING_ANIMATION.updateFrame();
-            if(ABSORBING_ANIMATION.completed()) {
+            absorbingFrames.updateFrame();
+            if(absorbingFrames.completed()) {
                 state = CharacterState.ADVANCING;
                 baseX.set(1,0);
                 WALKING_ANIMATION.reset();

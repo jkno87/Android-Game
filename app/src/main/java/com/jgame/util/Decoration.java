@@ -117,6 +117,13 @@ public abstract class Decoration {
             this.inverted = inverted;
         }
 
+        public IdleDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted, TextureDrawer.ColorData color){
+            this.sprite = sprite;
+            this.size = size;
+            this.inverted = inverted;
+            this.color = color;
+        }
+
         @Override
         public void terminate(){
             size.position.x = -10;
