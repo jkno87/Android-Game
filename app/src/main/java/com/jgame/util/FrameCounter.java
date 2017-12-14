@@ -7,7 +7,7 @@ package com.jgame.util;
 public class FrameCounter {
 
     private int currentFrame;
-    private int totalFrames;
+    public final int totalFrames;
 
     public FrameCounter(int totalFrames){
         this.totalFrames = totalFrames;

@@ -68,6 +68,45 @@ public class MainCharacter extends GameCharacter {
         public abstract boolean isCancellable();
     }
 
+    public static class AbsorbingDecoration extends Decoration {
+
+        private int remainingFrames;
+
+        public AbsorbingDecoration(Square size, int frames){
+            this.size = size;
+            this.remainingFrames = frames;
+        }
+
+        @Override
+        public void terminate() {
+            remainingFrames = 0;
+        }
+
+        @Override
+        public boolean drawable() {
+            return !completed();
+        }
+
+        @Override
+        public void update(Vector2 backgroundMoveDelta) {
+            remainingFrames--;
+            size.lenX -= 2;
+            size.lenY -= 3;
+            size.position.y += 1.5f;
+        }
+
+        @Override
+        public boolean completed() {
+            return remainingFrames <= 0;
+        }
+
+        @Override
+        public TextureData getSprite() {
+            return ABSORBING_SPRITES;
+        }
+    }
+
+
     public final static int FRAMES_TO_GAME_OVER = 65;
     public final static TextureData IDLE_TEXTURE = new TextureData(0.4375f, 0, 0.46875f, 0.09375f);
     //Frames de animacion para caminar
@@ -83,7 +122,7 @@ public class MainCharacter extends GameCharacter {
     //Frames para el personaje cuando se encuentra stunned
     public final static TextureData STUNNED_SPRITE = TextureDrawer.generarTextureData(14,6,16,9,32);
 
-    private final static TextureData[] ABSORBED_SPRITES = { TextureDrawer.generarTextureData(12,0,14,2,32)};
+    private final static TextureData ABSORBING_SPRITES = TextureDrawer.generarTextureData(12,0,14,2,32);
     public static final float INITIAL_POSITION_X = 85;
     public static final int SPRITE_LENGTH = 75;
     public static final int SPRITE_LENGTH_SMALL = 37;
@@ -220,10 +259,8 @@ public class MainCharacter extends GameCharacter {
                 hp = INITIAL_HP;
                 state = CharacterState.ABSORBING;
                 absorbingFrames.reset();
-                Decoration.AnimatedDecoration a = new Decoration.AnimatedDecoration(0, new AnimationData(18, false, ABSORBED_SPRITES),
-                        new Square(new Vector2(position).add(spriteContainer.lenX * baseX.x, 0)
-                                , spriteContainer.lenX, spriteContainer.lenY, 0), false);
-                decorationData.add(a);
+                decorationData.add(new AbsorbingDecoration(new Square(new Vector2(position).add(45, 29)
+                        , spriteContainer.lenX, spriteContainer.lenY, 0), absorbingFrames.totalFrames));
             }
 
             moveA.update();
