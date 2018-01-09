@@ -1,6 +1,5 @@
 package com.jgame.elements;
 
-import com.jgame.game.GameActivity;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.game.GameActivity.Difficulty;
@@ -9,7 +8,7 @@ import com.jgame.util.Decoration;
 import com.jgame.game.GameData.Event;
 import com.jgame.util.TextureDrawer.ColorData;
 import java.util.ArrayDeque;
-import java.util.Random;
+import com.jgame.util.CollisionObject;
 
 /**
  * Objeto que representa los enemigos que apareceran en el juego
@@ -22,8 +21,9 @@ public abstract class GameCharacter extends GameObject {
     }
     
     public final ColorData color = new ColorData(1,1,1,1);
-    public CollisionObject[] activeCollisionBoxes;
-    public CollisionObject[] idleCollisionBoxes;
+    public CollisionObject[] collisionObjects;
+    //public CollisionObject[] activeCollisionBoxes;
+    //public CollisionObject[] idleCollisionBoxes;
     public final Square spriteContainer;
     public float idleSizeX;
     public Difficulty currentDifficulty;
@@ -32,21 +32,21 @@ public abstract class GameCharacter extends GameObject {
         super(spriteContainer.position, id);
         this.spriteContainer = spriteContainer;
         this.idleSizeX = spriteContainer.lenX;
-        idleCollisionBoxes = new CollisionObject[] {
-                new CollisionObject(new Vector2(), id, idleSizeX, spriteContainer.lenY, this, CollisionObject.TYPE_HITTABLE)
-        };
-        activeCollisionBoxes = idleCollisionBoxes;
+        //idleCollisionBoxes = new CollisionObject[] {
+        //        new CollisionObject(new Vector2(), id, idleSizeX, spriteContainer.lenY, this, CollisionObject.TYPE_HITTABLE)
+        //};
+        //activeCollisionBoxes = idleCollisionBoxes;
         updatePosition();
     }
 
     public GameCharacter(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, Vector2 position, int id) {
         super(position, id);
         this.idleSizeX = idleSizeX;
-        spriteContainer = new Square(new Vector2(), spriteSizeX, spriteSizeY, 0);
-        idleCollisionBoxes = new CollisionObject[]{
-                new CollisionObject(new Vector2(), id, idleSizeX, idleSizeY, this, CollisionObject.TYPE_HITTABLE)
-        };
-        activeCollisionBoxes = idleCollisionBoxes;
+        spriteContainer = new Square(new Vector2(), spriteSizeX, spriteSizeY);
+        //idleCollisionBoxes = new CollisionObject[]{
+        //        new CollisionObject(new Vector2(), id, idleSizeX, idleSizeY, this, CollisionObject.TYPE_HITTABLE)
+        //};
+        //activeCollisionBoxes = idleCollisionBoxes;
         updatePosition();
     }
 
@@ -57,25 +57,25 @@ public abstract class GameCharacter extends GameObject {
     public void updatePosition(){
         super.updatePosition();
         spriteContainer.position.set(position);
-        idleCollisionBoxes[0].updatePosition();
+        //idleCollisionBoxes[0].updatePosition();
     }
 
     /**
      * Reinicia la posicion del objeto tomando en cuenta la posicion de mainCharacter
      */
-    public void setPosition(GameCharacter other, Vector2 distanceFromCharacter){
+    /*public void setPosition(GameCharacter other, Vector2 distanceFromCharacter){
         baseX.x = other.baseX.x * -1;
         moveTo(other.position, distanceFromCharacter);
-    }
+    }*/
 
-    public void updateCollisionObjects(AttackData a){
-        if(a.currentState == AttackData.CollisionState.STARTUP)
-            activeCollisionBoxes = a.startup;
-        else if(a.currentState == AttackData.CollisionState.ACTIVE)
-            activeCollisionBoxes = a.active;
-        else if(a.currentState == AttackData.CollisionState.RECOVERY)
-            activeCollisionBoxes = a.recovery;
-    }
+    /*public void updateCollisionObjects(AttackData a){
+        //if(a.currentState == AttackData.CollisionState.STARTUP)
+            //activeCollisionBoxes = a.startup;
+        //else if(a.currentState == AttackData.CollisionState.ACTIVE)
+            //activeCollisionBoxes = a.active;
+        //else if(a.currentState == AttackData.CollisionState.RECOVERY)
+            //activeCollisionBoxes = a.recovery;
+    }*/
 
     /**
      * Verifica si el objeto actual colisiona con foe
@@ -86,7 +86,7 @@ public abstract class GameCharacter extends GameObject {
     public Event detectCollision(GameCharacter foe, CollisionObject[] collisionObjects){
         if(foe.hittable() && foe.alive()) {
             for (CollisionObject co : collisionObjects)
-                if (co.checkCollision(foe)) {
+                if (co.checkCollision(foe.collisionObjects)) {
                     foe.hit();
                     return Event.HIT;
                 }

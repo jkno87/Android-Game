@@ -4,6 +4,7 @@ import com.jgame.util.Decoration;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.FrameCounter;
 import com.jgame.util.Vector2;
+import com.jgame.util.CollisionObject;
 
 import java.util.ArrayDeque;
 
@@ -24,10 +25,10 @@ public class TeleportEnemy extends GameCharacter {
     public final static float DISTANCE_FROM_MAIN_CHARACTER = 15;
     private final static int TELEPORT_FRAMES = 15;
     private final static int IDLE_FRAMES = 3;
-    private CollisionObject[] startupBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
+    /*private CollisionObject[] startupBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
     private CollisionObject[] activeBoxes = new CollisionObject[]{idleCollisionBoxes[0],
             new CollisionObject(new Vector2(60,55),0,35,20,this, CollisionObject.TYPE_ATTACK)};
-    private CollisionObject[] recoveryBoxes = new CollisionObject[]{idleCollisionBoxes[0]};
+    private CollisionObject[] recoveryBoxes = new CollisionObject[]{idleCollisionBoxes[0]};*/
     private final FrameCounter[][] attackFrames;
     protected EnemyState currentState;
     private int currentAction;

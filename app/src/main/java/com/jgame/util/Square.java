@@ -29,11 +29,11 @@ public class Square extends GeometricElement {
         angle = 0;
     }
 
-    public Square(Vector2 position, float lenX, float lenY, float angle){
+    public Square(Vector2 position, float lenX, float lenY){
         this.position = position;
         this.lenX = lenX;
         this.lenY = lenY;
-        this.angle = angle;
+        this.angle = 0;
     }
 
     public void scaleX(float m){

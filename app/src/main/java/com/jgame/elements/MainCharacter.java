@@ -9,6 +9,7 @@ import com.jgame.util.TextureDrawer;
 import com.jgame.util.TextureDrawer.ColorData;
 import com.jgame.util.TextureDrawer.TextureData;
 import com.jgame.util.Vector2;
+import com.jgame.util.CollisionObject;
 import java.util.ArrayDeque;
 
 /**
@@ -63,6 +64,9 @@ public class MainCharacter extends GameCharacter {
             public boolean isCancellable() {
                 return false;
             }
+        }, ATTACKING {
+            @Override
+            public boolean isCancellable() {return false; }
         };
 
         public abstract boolean isCancellable();
@@ -138,7 +142,8 @@ public class MainCharacter extends GameCharacter {
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
     private final Vector2 STUN_SPEED = new Vector2(-2f,0);
     private final FrameCounter absorbingFrames = new FrameCounter(26);
-    public final AttackData moveA;
+    private final FrameCounter attackStartup = new FrameCounter(10);
+    private final FrameCounter attackFrames = new FrameCounter(10);
     public CharacterState state;
     public ColorData colorModifier;
     private int hp;
@@ -147,34 +152,21 @@ public class MainCharacter extends GameCharacter {
     private final float playingHeight;
     private final float maxX;
     private final float minX;
+    private final CollisionObject[] IDLE_COLLISION_BOXES = {new CollisionObject(new Square(position, LENGTH_MOVE_A, HEIGHT_MOVE_A), CollisionObject.TYPE_HITTABLE)};
+    private final CollisionObject[] ATTACK_COLLISION_BOXES = {new CollisionObject(new Square(position, LENGTH_MOVE_A, HEIGHT_MOVE_A), CollisionObject.TYPE_HITTABLE),
+            new CollisionObject(new Square(position, LENGTH_MOVE_A, HEIGHT_MOVE_A - 65), CollisionObject.TYPE_ATTACK)};
 
     public MainCharacter(int id, float playingHeight,float minX, float maxX){
         super(SPRITE_LENGTH_SMALL, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, new Vector2(), id);
         this.state = CharacterState.IDLE;
         this.playingHeight = playingHeight;
-        CollisionObject [] startupA = new CollisionObject[1];
-        startupA[0] = new CollisionObject(new Vector2(), id, LENGTH_MOVE_A,
-                HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
-        CollisionObject [] activeA = new CollisionObject[2];
-        activeA[0] = new CollisionObject(new Vector2(), id,
-                LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
-        activeA[1] = new CollisionObject(new Vector2(LENGTH_MOVE_A, HEIGHT_MOVE_A - 65),
-                id, 10, 15, this, CollisionObject.TYPE_ATTACK);
-        CollisionObject [] recoveryA = new CollisionObject[1];
-        recoveryA[0] = new CollisionObject(new Vector2(), id,
-                LENGTH_MOVE_A, HEIGHT_MOVE_A, this, CollisionObject.TYPE_HITTABLE);
-
-        moveA = new AttackData(startupA, activeA, recoveryA);
-        moveA.setStartupAnimation(new AnimationData(5, false, STARTUP_MOV_A));
-        moveA.setActiveAnimation(new AnimationData(13, false, ACTIVE_MOV_A));
-        moveA.setRecoveryAnimation(new AnimationData(18, false, ACTIVE_MOV_A));
-
         framesToGameOver = FRAMES_TO_GAME_OVER;
         this.color.a = 0;
         this.colorModifier = new ColorData(0.78f,1,0,1);
         this.maxX = maxX;
         this.minX = minX;
         this.hp = INITIAL_HP;
+        collisionObjects = IDLE_COLLISION_BOXES;
     }
 
     /**
@@ -194,7 +186,7 @@ public class MainCharacter extends GameCharacter {
         else if(input == ControllerManager.GameInput.LEFT)
             this.state = CharacterState.MOVING_BACKWARDS;
         else if(input == ControllerManager.GameInput.INPUT_A) {
-            moveA.reset();
+            attackStartup.reset();
             this.state = CharacterState.INPUT_A;
         }
 
@@ -206,23 +198,23 @@ public class MainCharacter extends GameCharacter {
             return WALKING_ANIMATION.getCurrentSprite();
         else if (state == CharacterState.STUNNED || state == CharacterState.DYING)
             return STUNNED_SPRITE;
-        else if(state == CharacterState.ABSORBING)
+        else if(state == CharacterState.ABSORBING || state == CharacterState.ATTACKING)
             return ACTIVE_MOV_A;
-        else if(state != CharacterState.INPUT_A)
-            return IDLE_TEXTURE;
+        else if(state == CharacterState.INPUT_A)
+            return STARTUP_MOV_A;
         else
-            return moveA.getCurrentAnimation().getCurrentSprite();
+            return IDLE_TEXTURE;
     }
 
     @Override
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
-        Event e = detectCollision(foe, activeCollisionBoxes);
+        Event e = detectCollision(foe, collisionObjects);
 
         if (state == CharacterState.IDLE) {
             WALKING_ANIMATION.reset();
-        } else if (state == CharacterState.DYING){
+        } else if (state == CharacterState.DYING) {
             spriteContainer.lenX = SPRITE_LENGTH;
-            if(framesToGameOver == 0 )
+            if (framesToGameOver == 0)
                 state = CharacterState.DEAD;
             else
                 framesToGameOver--;
@@ -232,44 +224,49 @@ public class MainCharacter extends GameCharacter {
         } else if (state == CharacterState.STUNNED) {
             spriteContainer.lenX = SPRITE_LENGTH;
             move(STUN_SPEED);
-            if(stunVal > 0)
+            if (stunVal > 0)
                 stunVal--;
             else {
                 state = CharacterState.IDLE;
                 spriteContainer.lenX = SPRITE_LENGTH_SMALL;
-                activeCollisionBoxes = idleCollisionBoxes;
+                collisionObjects = IDLE_COLLISION_BOXES;
             }
             //Se sale de la funcion para que esto no disminuya el HP
             return;
 
         } else if (state == CharacterState.MOVING_FORWARD) {
-            if(position.x + MOVING_SPEED < maxX) {
+            if (position.x + MOVING_SPEED < maxX) {
                 move(RIGHT_MOVE_SPEED);
                 WALKING_ANIMATION.updateFrame();
             }
         } else if (state == CharacterState.MOVING_BACKWARDS) {
-            if(position.x - MOVING_SPEED > minX) {
+            if (position.x - MOVING_SPEED > minX) {
                 move(LEFT_MOVE_SPEED);
                 WALKING_ANIMATION.updateFrame();
             }
-        } else if(state == CharacterState.INPUT_A){
+        } else if (state == CharacterState.INPUT_A) {
             spriteContainer.lenX = SPRITE_LENGTH;
+            if (attackStartup.completed()) {
+                state = CharacterState.ATTACKING;
+                attackFrames.reset();
+                collisionObjects = ATTACK_COLLISION_BOXES;
+            } else
+                attackStartup.updateFrame();
+        } else if (state == CharacterState.ATTACKING) {
             //Si se detecta colision con el input, significa que absorbio energia
-            if (e == Event.HIT){
+            if (e == Event.HIT) {
                 hp = INITIAL_HP;
                 state = CharacterState.ABSORBING;
                 absorbingFrames.reset();
                 decorationData.add(new AbsorbingDecoration(new Square(new Vector2(position).add(45, 29)
-                        , spriteContainer.lenX, spriteContainer.lenY, 0), absorbingFrames.totalFrames));
+                        , spriteContainer.lenX, spriteContainer.lenY), absorbingFrames.totalFrames));
             }
 
-            moveA.update();
-            updateCollisionObjects(moveA);
-
-            if(moveA.completed()){
+            attackFrames.updateFrame();
+            if(attackFrames.completed()){
                 this.state = CharacterState.IDLE;
                 spriteContainer.lenX = SPRITE_LENGTH_SMALL;
-                activeCollisionBoxes = idleCollisionBoxes;
+                collisionObjects = IDLE_COLLISION_BOXES;
             }
 
         } else if (state == CharacterState.ABSORBING){
@@ -279,7 +276,7 @@ public class MainCharacter extends GameCharacter {
                 baseX.set(1,0);
                 WALKING_ANIMATION.reset();
                 spriteContainer.lenX = SPRITE_LENGTH_SMALL;
-                activeCollisionBoxes = idleCollisionBoxes;
+                collisionObjects = IDLE_COLLISION_BOXES;
             }
         } else if (state == CharacterState.ADVANCING) {
             //Este estado no debe de provocar que el personaje pierda hp
@@ -305,7 +302,7 @@ public class MainCharacter extends GameCharacter {
         spriteContainer.lenX = SPRITE_LENGTH_SMALL;
         baseX.set(1,0);
         updatePosition();
-        idleCollisionBoxes[0].updatePosition();
+        IDLE_COLLISION_BOXES[0].bounds.position.set(position);
         state = CharacterState.IDLE;
         hp = INITIAL_HP;
         framesToGameOver = FRAMES_TO_GAME_OVER;

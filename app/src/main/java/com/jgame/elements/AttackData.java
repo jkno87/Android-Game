@@ -1,5 +1,7 @@
 package com.jgame.elements;
 
+import com.jgame.util.CollisionObject;
+
 /**
  * Objeto que sirve para representar los estados de un movimiento.
  * Created by jose on 26/04/16.
@@ -14,17 +16,17 @@ public class AttackData {
     public static final int STARTUP_TIMER = 0;
     public static final int ACTIVE_TIMER = 1;
     public static final int RECOVERY_TIMER = 2;
-    public final CollisionObject [] startup;
+    /*public final CollisionObject [] startup;
     public final CollisionObject [] active;
-    public final CollisionObject [] recovery;
+    public final CollisionObject [] recovery;*/
     public AnimationData[] animationInfo = new AnimationData[3];
     public CollisionState currentState;
 
     public AttackData(CollisionObject[] startup, CollisionObject[] active, CollisionObject [] recovery) {
         currentState = CollisionState.STARTUP;
-        this.startup = startup;
-        this.active = active;
-        this.recovery = recovery;
+        //this.startup = startup;
+        //this.active = active;
+        //this.recovery = recovery;
     }
 
     public void setStartupAnimation(AnimationData data){
@@ -54,12 +56,12 @@ public class AttackData {
         animationInfo[ACTIVE_TIMER].reset();
         animationInfo[RECOVERY_TIMER].reset();
         currentState = CollisionState.STARTUP;
-        for(CollisionObject o : startup)
+        /*for(CollisionObject o : startup)
             o.updatePosition();
         for(CollisionObject o : active)
             o.updatePosition();
         for(CollisionObject o : recovery)
-            o.updatePosition();
+            o.updatePosition();*/
     }
 
     public boolean completed(){

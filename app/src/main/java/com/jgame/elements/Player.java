@@ -29,12 +29,12 @@ public class Player implements GameElement {
 
 
     public Player(Vector2 position, float characterLength, float sightLengthX, float sightLengthY) {
-        sightArea = new Square(new Vector2(position).sub(sightLengthX / 2, sightLengthY / 2), sightLengthX, sightLengthY,0);
+        sightArea = new Square(new Vector2(position).sub(sightLengthX / 2, sightLengthY / 2), sightLengthX, sightLengthY);
         //Se modifica position para que el centro del personaje quede en position
-        bounds = new Square(position.sub(characterLength / 2, characterLength / 2), characterLength, characterLength,0);
+        bounds = new Square(position.sub(characterLength / 2, characterLength / 2), characterLength, characterLength);
         //Se crea la inputArea tomando como origen la posicion real de bounds
         inputArea = new Square(new Vector2(position).sub(characterLength, characterLength),
-                characterLength*3, characterLength*3,0);
+                characterLength*3, characterLength*3);
 
         direction = new Vector2();
         state = PlayerState.STOPPED;

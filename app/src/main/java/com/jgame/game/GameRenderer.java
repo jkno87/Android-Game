@@ -7,9 +7,9 @@ import android.opengl.GLUtils;
 import android.util.Log;
 
 import com.jgame.elements.GameCharacter;
-import com.jgame.elements.CollisionObject;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.DigitsDisplay;
+import com.jgame.util.CollisionObject;
 import com.jgame.util.GameText;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
@@ -57,11 +57,11 @@ public class GameRenderer implements Renderer {
         private final float BACKGROUND_X_POSITION_2 = BACKGROUND_TILE_WIDTH;
         private final float BACKGROUND_X_POSITION_3 = BACKGROUND_TILE_WIDTH*2;
         private final Square backgroundContainer1 = new Square(new Vector2(BACKGROUND_X_POSITION_1, GameActivity.CONTROLS_HEIGHT - 2),
-                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT + 2, 0);
+                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT + 2);
         private final Square backgroundContainer2 = new Square(new Vector2(BACKGROUND_X_POSITION_2, GameActivity.CONTROLS_HEIGHT - 2),
-                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT + 2, 0);
+                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT + 2);
         private final Square backgroundContainer3 = new Square(new Vector2(BACKGROUND_X_POSITION_3, GameActivity.CONTROLS_HEIGHT - 2),
-                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT + 2, 0);
+                BACKGROUND_TILE_WIDTH + 1, BACKGROUND_TILE_HEIGHT + 2);
         public TextureData tData1;
         public TextureData tData2;
         public TextureData tData3;
@@ -137,7 +137,7 @@ public class GameRenderer implements Renderer {
     private final static int PAUSE_Y_SIZE = 70;
     private final static int SCORE_LEDS = 5;
     private final static int TITLE_SCREEN_INTERVAL = 40;
-    private final static boolean RENDER_HITBOXES = false;
+    private final static boolean RENDER_HITBOXES = true;
     public final static ColorData DASHBOARD_COLOR = new ColorData(0.0664f,0.1367f,0.16f,1);
     public final static ColorData NON_HIGHLIGHT = new ColorData(1,1,1,0.45f);
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
@@ -409,7 +409,7 @@ public class GameRenderer implements Renderer {
         if(!c.hittable())
             return;
 
-        for(CollisionObject o : c.activeCollisionBoxes)
+        for(CollisionObject o : c.collisionObjects)
             if(o.type == CollisionObject.TYPE_ATTACK)
                 drawer.addColoredSquare(o.bounds, NO_TEXTURE_COORDS, ATTACK_COLOR);
             else if(o.type == CollisionObject.TYPE_SMASHED)

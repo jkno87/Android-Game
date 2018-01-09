@@ -39,40 +39,32 @@ public class RobotEnemy extends GameCharacter {
     public final static float ATTACK_DISTANCE = 56;
     public final static float WARNING_DISTANCE = 45;
     private EnemyState currentState;
-    private final AttackData regularAttack;
+    //private final AttackData regularAttack;
     private int[] currentFrameDataSet;
     private float distanceFromCharacter;
 
 
     public RobotEnemy(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, float positionY, int id) {
         super(spriteSizeX, spriteSizeY, idleSizeX, idleSizeY, new Vector2(0, positionY), id);
-        //EnemyAction checkAttackDistance = new EnemyAction() {
-         //   @Override
-        //    public void act() {
-
-        //    }
-        //};
-
-        //actions = new EnemyAction[]{checkAttackDistance};
         //Este personaje siempre va a ver hacia la izquierda
         this.baseX.x = -1;
         currentFrameDataSet = EASY_FRAME_DATA;
-        CollisionObject[] startupBoxes = new CollisionObject[]{};
+        /*CollisionObject[] startupBoxes = new CollisionObject[]{};
         CollisionObject[] attackBoxes = new CollisionObject[]{new CollisionObject(new Vector2(100, 50),0,58,20, this, CollisionObject.TYPE_ATTACK)};
         CollisionObject[] recoveryBoxes = new CollisionObject[]{new CollisionObject(new Vector2(0,50),0,165,55,this, CollisionObject.TYPE_HITTABLE)};
         regularAttack = new AttackData(startupBoxes, attackBoxes, recoveryBoxes);
         regularAttack.setStartupAnimation(new AnimationData(currentFrameDataSet[0], false, STARTUP_TEXTURES));
         regularAttack.setActiveAnimation(new AnimationData(currentFrameDataSet[1], false, ATTACK_TEXTURE));
-        regularAttack.setRecoveryAnimation(new AnimationData(currentFrameDataSet[2], false, RECOVERY_TEXTURES));
+        regularAttack.setRecoveryAnimation(new AnimationData(currentFrameDataSet[2], false, RECOVERY_TEXTURES));*/
     }
 
     @Override
     public void reset(Vector2 positionOffset) {
-        activeCollisionBoxes = idleCollisionBoxes;
+        //activeCollisionBoxes = idleCollisionBoxes;
         currentState = EnemyState.WAITING;
         moveTo(positionOffset, INITIAL_POSITION);
-        regularAttack.reset();
-        regularAttack.updateFrameData(currentFrameDataSet);
+        //regularAttack.reset();
+        //regularAttack.updateFrameData(currentFrameDataSet);
     }
 
     @Override
@@ -92,9 +84,9 @@ public class RobotEnemy extends GameCharacter {
 
     @Override
     public TextureData getCurrentTexture() {
-        if(currentState == EnemyState.ATTACKING)
+        /*if(currentState == EnemyState.ATTACKING)
             return regularAttack.getCurrentAnimation().getCurrentSprite();
-        else
+        else*/
             return IDLE_TEXTURE;
     }
 
@@ -116,12 +108,12 @@ public class RobotEnemy extends GameCharacter {
 
             //Se verifica que el enemigo se encuentre en rango del ataque.
             if (distanceFromCharacter < 0) {
-                decorationData.add(new Decoration.StaticDecoration(BREATH_DECORATION, new Square(new Vector2(position).add(-120,65),40,85,0),
+                decorationData.add(new Decoration.StaticDecoration(BREATH_DECORATION, new Square(new Vector2(position).add(-120,65),40,85),
                                 true, currentFrameDataSet[0],
                         currentFrameDataSet[1] + currentFrameDataSet[2], new ColorData(0,1,1,1),
                         1, currentFrameDataSet[1]));
                 currentState = EnemyState.ATTACKING;
-                regularAttack.reset();
+                //regularAttack.reset();
                 /*for(CollisionObject co : activeAttack.recovery)
                     co.updatePosition();
                 for(CollisionObject co : activeAttack.active)
@@ -140,7 +132,7 @@ public class RobotEnemy extends GameCharacter {
         }
 
         if(currentState == EnemyState.ATTACKING){
-            regularAttack.update();
+            /*regularAttack.update();
             updateCollisionObjects(regularAttack);
             if(regularAttack.completed()) {
                 regularAttack.reset();
@@ -148,7 +140,7 @@ public class RobotEnemy extends GameCharacter {
                 activeCollisionBoxes = idleCollisionBoxes;
             }
 
-            detectCollision(foe, activeCollisionBoxes);
+            detectCollision(foe, activeCollisionBoxes);*/
 
             return;
         }
