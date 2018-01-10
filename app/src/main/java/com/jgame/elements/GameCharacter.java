@@ -22,8 +22,6 @@ public abstract class GameCharacter extends GameObject {
     
     public final ColorData color = new ColorData(1,1,1,1);
     public CollisionObject[] collisionObjects;
-    //public CollisionObject[] activeCollisionBoxes;
-    //public CollisionObject[] idleCollisionBoxes;
     public final Square spriteContainer;
     public float idleSizeX;
     public Difficulty currentDifficulty;

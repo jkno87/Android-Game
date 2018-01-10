@@ -1,5 +1,7 @@
 package com.jgame.elements;
 
+import android.util.Log;
+
 import com.jgame.util.Decoration;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
@@ -15,7 +17,7 @@ import java.util.ArrayDeque;
 
 public class FireEnemy extends GameCharacter {
 
-    public static class FireDecoration extends Decoration {
+    public class FireDecoration extends Decoration {
 
         private boolean finished;
 
@@ -26,7 +28,7 @@ public class FireEnemy extends GameCharacter {
 
         @Override
         public void terminate() {
-            finished = false;
+            finished = true;
         }
 
         @Override
@@ -36,6 +38,8 @@ public class FireEnemy extends GameCharacter {
 
         @Override
         public void update(Vector2 backgroundMoveDelta) {
+            if(currentState == EnemyState.DEAD)
+                terminate();
         }
 
         @Override
@@ -50,7 +54,7 @@ public class FireEnemy extends GameCharacter {
     }
 
     private enum EnemyState {
-        PREATTACK, ATTACK
+        PREATTACK, ATTACK, DEAD
     };
 
 
@@ -66,15 +70,17 @@ public class FireEnemy extends GameCharacter {
     private final Vector2 fireballOrigin;
     private final Vector2 fireballTransformation;
     private final Vector2 fireballPosition;
+    private final Vector2 hitboxPosition;
 
     public FireEnemy(float positionY, int id){
         super(SPRITE_SIZE_X, SPRITE_SIZE_Y, IDLE_SIZE_X, IDLE_SIZE_Y, new Vector2(0, positionY), id);
         baseX.x = -1;
+        hitboxPosition = new Vector2();
         fireballPosition = new Vector2();
         fireballOrigin = new Vector2();
         fireballTransformation = new Vector2(50,0); //Posicion arbitraria
         CollisionObject fireballCollision = new CollisionObject(new Square(fireballPosition, 20, 20), CollisionObject.TYPE_ATTACK);
-        CollisionObject enemyCollision = new CollisionObject(new Square(position, 50,50), CollisionObject.TYPE_HITTABLE);
+        CollisionObject enemyCollision = new CollisionObject(new Square(hitboxPosition, 50,50), CollisionObject.TYPE_HITTABLE);
         collisionObjects = new CollisionObject[]{fireballCollision, enemyCollision};
     }
 
@@ -88,35 +94,38 @@ public class FireEnemy extends GameCharacter {
     public void reset(Vector2 positionOffset) {
         currentState = EnemyState.PREATTACK;
         moveTo(positionOffset, INITIAL_POSITION);
-        fireballOrigin.set(position).add(-20, 50);
     }
 
 
     @Override
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+        if(!completedTransition())
+            return;
+
         if(currentState == EnemyState.PREATTACK) {
+            fireballOrigin.set(position).add(-20, 50);
+            hitboxPosition.set(position).add(-IDLE_SIZE_X, 0);
             decorationData.add(new FireDecoration(new Square(20, 0, 20, 20), fireballPosition));
             currentState = EnemyState.ATTACK;
         } else {
             updateFireball();
+            detectCollision(foe, collisionObjects);
         }
-
-
     }
 
     @Override
     public boolean completedTransition() {
-        return false;
+        return position.x <= INITIAL_POSITION.x;
     }
 
     @Override
     public boolean hittable() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean alive() {
-        return true;
+        return currentState != EnemyState.DEAD;
     }
 
     @Override
@@ -131,6 +140,6 @@ public class FireEnemy extends GameCharacter {
 
     @Override
     public void hit() {
-
+        currentState = EnemyState.DEAD;
     }
 }

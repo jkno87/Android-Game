@@ -1,5 +1,7 @@
 package com.jgame.elements;
 
+import android.util.Log;
+
 import com.jgame.util.Decoration;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
@@ -39,7 +41,7 @@ public class ChargingEnemy extends GameCharacter {
 
         @Override
         public void update(Vector2 backgroundMoveDelta) {
-            size.lenX += ATTACK_SPEED.x;
+            size.lenX -= ATTACK_SPEED.x;
             if(!parent.alive() || size.position.x - size.lenX < 0)
                 terminate();
         }
@@ -61,7 +63,6 @@ public class ChargingEnemy extends GameCharacter {
 
     private final float PROJECTILE_OFFSET = 50;
     private final static Vector2 INITIAL_POSITION = new Vector2(425,0);
-    private final static Vector2 PROJECTILE_INITIAL_POSITION = new Vector2(5, 50);
     public final static TextureData PROJECTILE_TEXTURE = TextureDrawer.generarTextureData(12,0,14,2,32);
     public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(20,0,22,2,32);
     public final static TextureData ATTACK_TEXTURE = TextureDrawer.generarTextureData(26,0,28,2,32);
@@ -70,9 +71,10 @@ public class ChargingEnemy extends GameCharacter {
             IDLE_TEXTURE, TextureDrawer.generarTextureData(22,0,24,2,32),
             TextureDrawer.generarTextureData(24,0,26,2,32), ATTACK_TEXTURE
     };
-    private final static Vector2 ATTACK_SPEED = new Vector2(5f, 0);
+    private final static Vector2 ATTACK_SPEED = new Vector2(-5f, 0);
     private final static int IDLE_FRAMES = 120;
     private final static int CHARGE_FRAMES = 20;
+    private final Vector2 PROJECTILE_INITIAL_POSITION = new Vector2(-idleSizeX, 50);
     private State currentState;
     private int idleFrame;
     private Vector2 projectilePosition;
@@ -84,17 +86,13 @@ public class ChargingEnemy extends GameCharacter {
         currentState = State.IDLE;
         idleFrame = IDLE_FRAMES;
         projectilePosition = new Vector2();
-        collisionObjects = new CollisionObject[]{new CollisionObject(new Square(projectilePosition, 50,50), CollisionObject.TYPE_ATTACK),
-                new CollisionObject(new Square(projectilePosition, 60, 60), CollisionObject.TYPE_HITTABLE)};
+        collisionObjects = new CollisionObject[]{new CollisionObject(new Square(projectilePosition, 100,60), CollisionObject.TYPE_ATTACK),
+                new CollisionObject(new Square(projectilePosition, 100, 60), CollisionObject.TYPE_HITTABLE)};
         attackStartup = new AnimationData(CHARGE_FRAMES, false, STARTUP_TEXTURE);
     }
 
     private void resetAttack(){
-        projectilePosition.set(PROJECTILE_INITIAL_POSITION);
-        //attackObject[0].relativePosition.set(PROJECTILE_OFFSET,0);
-        //attackObject[0].updatePosition();
-        //attackObject[1].relativePosition.set(PROJECTILE_OFFSET,0);
-        //attackObject[1].updatePosition();
+        projectilePosition.set(position).add(PROJECTILE_INITIAL_POSITION);
     }
 
     @Override
@@ -123,7 +121,7 @@ public class ChargingEnemy extends GameCharacter {
 
     @Override
     public boolean completedTransition(){
-        return position.x < INITIAL_POSITION.x;
+        return position.x <= INITIAL_POSITION.x;
     }
 
     @Override
