@@ -101,7 +101,6 @@ public class ChargingEnemy extends GameCharacter {
         currentState = State.IDLE;
         moveTo(positionOffset, INITIAL_POSITION);
         color.b = 0;
-        resetAttack();
     }
 
     @Override
@@ -141,7 +140,7 @@ public class ChargingEnemy extends GameCharacter {
             if(attackStartup.completed()) {
                 currentState = State.ATTACKING;
                 color.b = 1;
-                //activeCollisionBoxes = attackObject;
+                resetAttack();
                 decorationData.add(new ProjectileDecoration(this,
                         new Square(new Vector2(position.x - PROJECTILE_OFFSET, position.y + 85),
                         50, 50)));

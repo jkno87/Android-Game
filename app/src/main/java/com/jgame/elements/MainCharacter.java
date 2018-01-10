@@ -208,7 +208,6 @@ public class MainCharacter extends GameCharacter {
     @Override
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         Event e = detectCollision(foe, collisionObjects);
-
         if (state == CharacterState.IDLE) {
             WALKING_ANIMATION.reset();
         } else if (state == CharacterState.DYING) {

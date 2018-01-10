@@ -20,6 +20,9 @@ public class CollisionObject {
     }
 
     public boolean checkCollision(CollisionObject[] others){
+        //Si la collision box actual es hittable no puede provocar un hit
+        if(type == TYPE_HITTABLE)
+            return false;
         for(CollisionObject c : others){
             if(c.type != TYPE_HITTABLE)
                 continue;

@@ -1,7 +1,5 @@
 package com.jgame.elements;
 
-import android.util.Log;
-
 import com.jgame.util.Decoration;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;

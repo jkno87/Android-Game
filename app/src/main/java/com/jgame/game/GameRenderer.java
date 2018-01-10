@@ -130,7 +130,7 @@ public class GameRenderer implements Renderer {
 
     }
 
-    private final static boolean RENDER_HITBOXES = true;
+    private final static boolean RENDER_HITBOXES = false;
     private final static int SCORE_SIZE_X = 15;
     private final static int SCORE_SIZE_Y = 20;
     private final static int PAUSE_X_SIZE = 100;
