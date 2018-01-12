@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
-import android.util.Log;
-
 import com.jgame.elements.GameCharacter;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.DigitsDisplay;

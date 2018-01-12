@@ -13,6 +13,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.jgame.elements.ChargingEnemy;
 import com.jgame.elements.FireEnemy;
+import com.jgame.elements.PongEnemy;
 import com.jgame.game.GameData.Event;
 import com.jgame.elements.RobotEnemy;
 import com.jgame.elements.GameCharacter;
@@ -248,7 +249,7 @@ public class GameActivity extends Activity {
 
         public GameRunnable(){
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
-            availableEnemies[0] = new FireEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
+            availableEnemies[0] = new PongEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
             //availableEnemies[0] = new RobotEnemy(175, 215,
             //        135, 215, ELEMENTS_HEIGHT, ID_GEN.getId());
             availableEnemies[1] = new ChargingEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
