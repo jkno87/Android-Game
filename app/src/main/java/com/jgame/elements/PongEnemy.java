@@ -25,6 +25,10 @@ public class PongEnemy extends GameCharacter {
             this.size.position = position;
         }
 
+        public void makeVisible(){
+            finished = false;
+        }
+
         @Override
         public void terminate() {
             finished = true;
@@ -70,6 +74,7 @@ public class PongEnemy extends GameCharacter {
     private final Vector2 fireballPosition;
     private final PongDecoration decoration;
     private boolean decorationAdded;
+    private int hits;
 
     public PongEnemy(float positionY, int id){
         super(SPRITE_SIZE_X, SPRITE_SIZE_Y, IDLE_SIZE_X, IDLE_SIZE_Y, new Vector2(0, positionY), id);
@@ -98,8 +103,13 @@ public class PongEnemy extends GameCharacter {
             if(fireballPosition.x > position.x - IDLE_SIZE_X){
                 fireballSpeed.mul(-1);
                 currentState = EnemyState.ATTACK;
+                hits--;
             } else
                 fireballPosition.add(fireballSpeed);
+
+            if(hits == 0)
+                currentState = EnemyState.DEAD;
+
         } else if(currentState == EnemyState.PREATTACK) {
             attackStartup.updateFrame();
             if(attackStartup.completed()) {
@@ -122,6 +132,10 @@ public class PongEnemy extends GameCharacter {
     public void reset(Vector2 positionOffset) {
         currentState = EnemyState.PREATTACK;
         moveTo(positionOffset, INITIAL_POSITION);
+        attackStartup.reset();
+        decoration.makeVisible();
+        decorationAdded = false;
+        hits = 2;
     }
 
     @Override

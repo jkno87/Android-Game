@@ -416,6 +416,7 @@ public class GameActivity extends Activity {
                         //Se reinicia el enemigo para que se encuentre en su estado inicial en caso de algun cambio
                         currentEnemy.setCurrentDifficulty(currentDifficulty);
                         currentEnemy.reset(positionOffset);
+                        mainCharacter.advance();
                     }
 
                     /*if(eventFrame > 0){

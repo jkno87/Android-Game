@@ -137,7 +137,7 @@ public class MainCharacter extends GameCharacter {
     private final int STUN_FRAMES = 18;
     private final int INITIAL_HP = 1000;
     private final AnimationData WALKING_ANIMATION = new AnimationData(15, true, new TextureData[]{MOVING_A, MOVING_B, MOVING_C, MOVING_D, MOVING_E});
-    private final float MOVING_SPEED = 0.75f;
+    private final float MOVING_SPEED = 1.15f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
     private final Vector2 STUN_SPEED = new Vector2(-2f,0);
@@ -146,6 +146,7 @@ public class MainCharacter extends GameCharacter {
     private final FrameCounter attackFrames = new FrameCounter(10);
     public CharacterState state;
     public ColorData colorModifier;
+    private CharacterState outsideState; //Se utiliza para cuando un evento externo cambia el estado del personaje
     private int hp;
     private int framesToGameOver;
     private int stunVal;
@@ -166,6 +167,7 @@ public class MainCharacter extends GameCharacter {
         this.minX = minX;
         this.hp = INITIAL_HP;
         collisionObjects = IDLE_COLLISION_BOXES;
+        outsideState = CharacterState.IDLE;
     }
 
     /**
@@ -254,12 +256,16 @@ public class MainCharacter extends GameCharacter {
             //Si se detecta colision con el input, significa que absorbio energia
             if(e == Event.HIT) {
                 hp = INITIAL_HP;
-                if (!foe.alive()) {
+                state = CharacterState.ABSORBING;
+                absorbingFrames.reset();
+                decorationData.add(new AbsorbingDecoration(new Square(new Vector2(position).add(45, 29)
+                        , spriteContainer.lenX, spriteContainer.lenY), absorbingFrames.totalFrames));
+                /*if (!foe.alive()) {
                     state = CharacterState.ABSORBING;
                     absorbingFrames.reset();
                     decorationData.add(new AbsorbingDecoration(new Square(new Vector2(position).add(45, 29)
                             , spriteContainer.lenX, spriteContainer.lenY), absorbingFrames.totalFrames));
-                }
+                }*/
             }
 
             attackFrames.updateFrame();
@@ -272,11 +278,12 @@ public class MainCharacter extends GameCharacter {
         } else if (state == CharacterState.ABSORBING){
             absorbingFrames.updateFrame();
             if(absorbingFrames.completed()) {
-                state = CharacterState.ADVANCING;
+                state = outsideState;
                 baseX.set(1,0);
                 WALKING_ANIMATION.reset();
                 spriteContainer.lenX = SPRITE_LENGTH_SMALL;
                 collisionObjects = IDLE_COLLISION_BOXES;
+                outsideState = CharacterState.IDLE;
             }
         } else if (state == CharacterState.ADVANCING) {
             //Este estado no debe de provocar que el personaje pierda hp
@@ -311,6 +318,16 @@ public class MainCharacter extends GameCharacter {
     @Override
     public boolean completedTransition(){
         return this.state == CharacterState.ADVANCING && this.position.x < INITIAL_POSITION_X;
+    }
+
+    /**
+     * Cambia el estado de MainCharacter a CharacterState.ADVANCING
+     */
+    public void advance(){
+        if(state == CharacterState.ABSORBING)
+            this.outsideState = CharacterState.ADVANCING;
+        else
+            this.state = CharacterState.ADVANCING;
     }
 
     /**
