@@ -108,10 +108,10 @@ public class RobotEnemy extends GameCharacter {
 
             //Se verifica que el enemigo se encuentre en rango del ataque.
             if (distanceFromCharacter < 0) {
-                decorationData.add(new Decoration.StaticDecoration(BREATH_DECORATION, new Square(new Vector2(position).add(-120,65),40,85),
+                /*decorationData.add(new Decoration.StaticDecoration(BREATH_DECORATION, new Square(new Vector2(position).add(-120,65),40,85),
                                 true, currentFrameDataSet[0],
                         currentFrameDataSet[1] + currentFrameDataSet[2], new ColorData(0,1,1,1),
-                        1, currentFrameDataSet[1]));
+                        1, currentFrameDataSet[1]));*/
                 currentState = EnemyState.ATTACKING;
                 //regularAttack.reset();
                 /*for(CollisionObject co : activeAttack.recovery)
@@ -148,8 +148,8 @@ public class RobotEnemy extends GameCharacter {
 
         if(currentState == EnemyState.DYING){
             currentState = EnemyState.DEAD;
-            decorationData.add(new Decoration.IdleDecoration(IDLE_TEXTURE,
-                    new Square(this.spriteContainer), true));
+            //decorationData.add(new Decoration.IdleDecoration(IDLE_TEXTURE,
+            //        new Square(this.spriteContainer), true));
         }
 
         return;

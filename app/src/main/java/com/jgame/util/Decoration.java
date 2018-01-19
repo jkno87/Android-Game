@@ -4,7 +4,41 @@ import com.jgame.elements.AnimationData;
 
 public abstract class Decoration {
 
-    public static class StaticDecoration extends Decoration {
+    public boolean inverted;
+    public Square size;
+    public TextureDrawer.ColorData color = TextureDrawer.DEFAULT_COLOR;
+    public abstract void terminate();
+    public abstract boolean drawable();
+    public abstract void update(Vector2 backgroundMoveDelta);
+    public abstract boolean completed();
+    public abstract TextureDrawer.TextureData getSprite();
+
+
+    public static abstract class BoundedDecoration extends Decoration {
+        private boolean finished;
+
+        public BoundedDecoration (Square size, Vector2 position){
+            this.size = size;
+            this.size.position = position;
+        }
+
+        @Override
+        public void terminate() {
+            finished = true;
+        }
+
+        @Override
+        public boolean drawable() {
+            return !finished;
+        }
+
+        @Override
+        public boolean completed() {
+            return finished;
+        }
+    }
+
+    /*public static class StaticDecoration extends Decoration {
         public final TextureDrawer.TextureData sprite;
         public int preDrawFrames;
         public int drawFrames;
@@ -52,12 +86,12 @@ public abstract class Decoration {
                     return;
                 } else
                     framesToChangeColor--;
-
+*/
                 /*if(shrinkRateX > 0.0) {
                     size.scaleX(shrinkRateX);
                 }*/
 
-            }
+/*            }
 
         }
 
@@ -65,7 +99,7 @@ public abstract class Decoration {
         public boolean drawable(){
             return preDrawFrames <= 0 && drawFrames > 0;
         }
-    }
+    }*/
 
     public static class AnimatedDecoration extends Decoration {
         public AnimationData animation;
@@ -108,16 +142,16 @@ public abstract class Decoration {
         }
     }
 
-    public static class IdleDecoration extends Decoration {
+    public static class TransitionDecoration extends Decoration {
         private TextureDrawer.TextureData sprite;
 
-        public IdleDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted){
+        public TransitionDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted){
             this.sprite = sprite;
             this.size = size;
             this.inverted = inverted;
         }
 
-        public IdleDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted, TextureDrawer.ColorData color){
+        public TransitionDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted, TextureDrawer.ColorData color){
             this.sprite = sprite;
             this.size = size;
             this.inverted = inverted;
@@ -150,13 +184,4 @@ public abstract class Decoration {
         }
 
     }
-
-    public boolean inverted;
-    public Square size;
-    public TextureDrawer.ColorData color = TextureDrawer.DEFAULT_COLOR;
-    public abstract void terminate();
-    public abstract boolean drawable();
-    public abstract void update(Vector2 backgroundMoveDelta);
-    public abstract boolean completed();
-    public abstract TextureDrawer.TextureData getSprite();
 }

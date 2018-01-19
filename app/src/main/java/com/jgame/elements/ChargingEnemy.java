@@ -160,7 +160,7 @@ public class ChargingEnemy extends GameCharacter {
         } else if(currentState == State.DYING){
             currentState = State.DEAD;
             color.b = 0;
-            decorationData.add(new Decoration.IdleDecoration(DEFEATED_TEXTURE,
+            decorationData.add(new Decoration.TransitionDecoration(DEFEATED_TEXTURE,
                     new Square(this.spriteContainer), true, color));
         }
 

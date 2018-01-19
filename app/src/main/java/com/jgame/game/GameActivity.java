@@ -13,6 +13,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.jgame.elements.ChargingEnemy;
 import com.jgame.elements.FireEnemy;
+import com.jgame.elements.FireSpaceEnemy;
 import com.jgame.elements.PongEnemy;
 import com.jgame.game.GameData.Event;
 import com.jgame.elements.RobotEnemy;
@@ -56,7 +57,7 @@ public class GameActivity extends Activity {
     private static final float BUTTONS_WIDTH = 65;
     private static final float INPUTS_HEIGHT = 5;
     public static final float CONTROLS_HEIGHT = PLAYING_HEIGHT * 0.25f;
-    private static final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 10;
+    public static final float ELEMENTS_HEIGHT = CONTROLS_HEIGHT + 10;
     private static final IdGenerator ID_GEN = new IdGenerator();
     private static final int OFFSET_ADJ = 8;
     public static final Square FULL_SCREEN_BOUNDS = new Square(-OFFSET_ADJ,0,FRUSTUM_WIDTH + OFFSET_ADJ,FRUSTUM_HEIGHT + OFFSET_ADJ);
@@ -231,7 +232,7 @@ public class GameActivity extends Activity {
 
     class GameRunnable implements Runnable {
 
-        private final int MAX_WORLD_OBJECTS = 2;
+        private final int MAX_WORLD_OBJECTS = 3;
         private final float TRANSITION_FRAMES = 20;
         private ControllerManager.GameInput lastInput;
         private int currentEnemyCounter;
@@ -249,10 +250,11 @@ public class GameActivity extends Activity {
 
         public GameRunnable(){
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
-            availableEnemies[0] = new PongEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
+            availableEnemies[0] = new FireSpaceEnemy(ID_GEN.getId());
+            availableEnemies[1] = new PongEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
             //availableEnemies[0] = new RobotEnemy(175, 215,
             //        135, 215, ELEMENTS_HEIGHT, ID_GEN.getId());
-            availableEnemies[1] = new ChargingEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
+            availableEnemies[2] = new ChargingEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
             currentEnemy = availableEnemies[0];
             initialDifficulty = Difficulty.EASY;
         }

@@ -15,34 +15,17 @@ import java.util.ArrayDeque;
 
 public class FireEnemy extends GameCharacter {
 
-    public class FireDecoration extends Decoration {
+    public class FireDecoration extends Decoration.BoundedDecoration {
 
-        private boolean finished;
 
         public FireDecoration (Square size, Vector2 position){
-            this.size = size;
-            this.size.position = position;
-        }
-
-        @Override
-        public void terminate() {
-            finished = true;
-        }
-
-        @Override
-        public boolean drawable() {
-            return !finished;
+            super(size, position);
         }
 
         @Override
         public void update(Vector2 backgroundMoveDelta) {
             if(currentState == EnemyState.DEAD)
                 terminate();
-        }
-
-        @Override
-        public boolean completed() {
-            return finished;
         }
 
         @Override
