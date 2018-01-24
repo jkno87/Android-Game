@@ -149,11 +149,6 @@ public class TeleportEnemy extends GameCharacter {
     }
 
     @Override
-    public boolean attacking(){
-        return currentState == EnemyState.ATTACKING;
-    }
-
-    @Override
     public boolean alive(){
         return currentState != EnemyState.DEAD;
     }

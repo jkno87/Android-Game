@@ -149,11 +149,6 @@ public class PongEnemy extends GameCharacter {
     }
 
     @Override
-    public boolean attacking() {
-        return currentState != EnemyState.PREATTACK;
-    }
-
-    @Override
     public TextureDrawer.TextureData getCurrentTexture() {
         if(currentState == EnemyState.PREATTACK)
             return IDLE_SPRITE;

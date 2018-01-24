@@ -104,7 +104,6 @@ public abstract class GameCharacter extends GameObject {
     public abstract void reset(Vector2 positionOffset);
     public abstract boolean hittable();
     public abstract boolean alive();
-    public abstract boolean attacking();
     public abstract TextureData getCurrentTexture();
     public abstract void hit();
 }

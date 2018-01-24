@@ -110,11 +110,6 @@ public class FireEnemy extends GameCharacter {
     }
 
     @Override
-    public boolean attacking() {
-        return false;
-    }
-
-    @Override
     public TextureData getCurrentTexture() {
         return IDLE_SPRITE;
     }

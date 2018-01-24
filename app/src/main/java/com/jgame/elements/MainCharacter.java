@@ -346,11 +346,6 @@ public class MainCharacter extends GameCharacter {
     }
 
     @Override
-    public boolean attacking(){
-        return state == CharacterState.INPUT_A;
-    }
-
-    @Override
     public boolean alive(){
         return state != CharacterState.DEAD;
     }

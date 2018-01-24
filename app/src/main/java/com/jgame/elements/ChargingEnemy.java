@@ -114,11 +114,6 @@ public class ChargingEnemy extends GameCharacter {
     }
 
     @Override
-    public boolean attacking() {
-        return currentState == State.ATTACKING;
-    }
-
-    @Override
     public boolean completedTransition(){
         return position.x <= INITIAL_POSITION.x;
     }

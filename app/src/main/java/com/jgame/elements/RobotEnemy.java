@@ -78,11 +78,6 @@ public class RobotEnemy extends GameCharacter {
     }
 
     @Override
-    public boolean attacking() {
-        return currentState != EnemyState.WAITING;
-    }
-
-    @Override
     public TextureData getCurrentTexture() {
         /*if(currentState == EnemyState.ATTACKING)
             return regularAttack.getCurrentAnimation().getCurrentSprite();
