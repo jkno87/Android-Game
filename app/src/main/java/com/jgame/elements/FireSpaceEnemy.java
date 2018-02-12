@@ -24,18 +24,21 @@ public class FireSpaceEnemy extends GameCharacter {
     private final static float SPRITE_SIZE_Y = 160;
     private final static Vector2 INITIAL_POSITION = new Vector2(350, 0);
     private final static TextureDrawer.TextureData IDLE_SPRITE = new TextureDrawer.TextureData(0.4375f, 0, 0.46875f, 0.09375f);
+    private final static TextureDrawer.TextureData FIRE_SPRITE = TextureDrawer.generarTextureData(12,0,14,2,32);
     private final TextureDrawer.ColorData ATTACK_A_COLOR = new TextureDrawer.ColorData(0,0,1,1);
     private final TextureDrawer.ColorData ATTACK_B_COLOR = new TextureDrawer.ColorData(1,0,0,1);
-    private int lastAttack = 0;
+    private boolean targetSet;
     private Vector2 fireballOrigin;
-    private Vector2 groundFirePosition;
     private Vector2 fireballSpeed;
+    private Vector2 attack2Target;
+    private Decoration.BoundedDecoration attackDecoration;
     private FrameCounter idleFrames;
     private FrameCounter preAttackFrames;
+    private FrameCounter attack2Startup;
     private State currentState;
     private Random nextMove;
     private final Vector2 hitboxPosition = new Vector2();
-    private final Square hitboxBounds = new Square(hitboxPosition, 80, 80);
+    private final Square hitboxBounds = new Square(hitboxPosition, 35, 80);
 
     private enum State {
         IDLE, STARTING_ATTACK_A, STARTING_ATTACK_B, ATTACK_A, ATTACK_B, DEAD
@@ -45,11 +48,13 @@ public class FireSpaceEnemy extends GameCharacter {
         super(SPRITE_SIZE_X, SPRITE_SIZE_Y, IDLE_SIZE_X, IDLE_SIZE_Y, new Vector2(0, GameActivity.ELEMENTS_HEIGHT), id);
         baseX.x = -1;
         fireballSpeed = new Vector2(-2,0);
-        fireballOrigin = new Vector2();
-        groundFirePosition = new Vector2();
-        idleFrames = new FrameCounter(15);
-        preAttackFrames = new FrameCounter(10);
+        fireballOrigin = new Vector2(-65,0);
+        idleFrames = new FrameCounter(30);
+        preAttackFrames = new FrameCounter(15);
+        attack2Startup = new FrameCounter(80);
+        attack2Target = new Vector2();
         nextMove = new Random();
+        attackDecoration = new Decoration.BoundedDecoration(hitboxBounds, hitboxPosition, FIRE_SPRITE);
         collisionObjects = new CollisionObject[]{new CollisionObject(hitboxBounds, CollisionObject.TYPE_HITTABLE),
                 new CollisionObject(hitboxBounds, CollisionObject.TYPE_ATTACK)};
     }
@@ -60,13 +65,20 @@ public class FireSpaceEnemy extends GameCharacter {
         color.b = nColor.b;
     }
 
+    private void resetAttackHitbox(){
+        hitboxPosition.set(position).add(fireballOrigin);
+    }
+
     @Override
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         if(currentState == State.IDLE){
+            resetAttackHitbox();
             idleFrames.updateFrame();
             if (idleFrames.completed()) {
+                attackDecoration.reset();
                 currentState = nextMove.nextInt(2) == 0 ? State.STARTING_ATTACK_A : State.STARTING_ATTACK_B;
                 preAttackFrames.reset();
+                attack2Startup.reset();
             }
         } else if(currentState == State.STARTING_ATTACK_A){
             setColor(ATTACK_A_COLOR);
@@ -74,23 +86,43 @@ public class FireSpaceEnemy extends GameCharacter {
             if(preAttackFrames.completed()) {
                 currentState = State.ATTACK_A;
                 setColor(TextureDrawer.DEFAULT_COLOR);
+                decorationData.add(attackDecoration);
             }
         } else if(currentState == State.STARTING_ATTACK_B){
             setColor(ATTACK_B_COLOR);
-            preAttackFrames.updateFrame();
-            if(preAttackFrames.completed()) {
+            attack2Startup.updateFrame();
+            if(!targetSet) {
+                attack2Target.set(foe.position);
+                targetSet = true;
+            }
+            if(attack2Startup.completed()) {
                 currentState = State.ATTACK_B;
                 setColor(TextureDrawer.DEFAULT_COLOR);
+                decorationData.add(attackDecoration);
             }
         } else if(currentState == State.ATTACK_A){
             hitboxPosition.add(fireballSpeed);
             if(detectCollision(foe, collisionObjects) == GameData.Event.HIT) {
                 currentState = State.IDLE;
                 idleFrames.reset();
+                attackDecoration.terminate();
             }
         } else if(currentState == State.ATTACK_B){
-            currentState = State.IDLE;
-            idleFrames.reset();
+            targetSet = false;
+            hitboxPosition.set(attack2Target);
+            preAttackFrames.updateFrame();
+            if(detectCollision(foe, collisionObjects) == GameData.Event.HIT) {
+                currentState = State.IDLE;
+                idleFrames.reset();
+                attackDecoration.terminate();
+            }
+
+            if(preAttackFrames.completed()){
+                currentState = State.IDLE;
+                idleFrames.reset();
+                attackDecoration.terminate();
+            }
+
         }
 
 
@@ -125,6 +157,8 @@ public class FireSpaceEnemy extends GameCharacter {
 
     @Override
     public void hit() {
-
+        currentState = State.IDLE;
+        idleFrames.reset();
+        attackDecoration.terminate();
     }
 }

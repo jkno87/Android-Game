@@ -14,12 +14,14 @@ public abstract class Decoration {
     public abstract TextureDrawer.TextureData getSprite();
 
 
-    public static abstract class BoundedDecoration extends Decoration {
+    public static class BoundedDecoration extends Decoration {
         private boolean finished;
+        private final TextureDrawer.TextureData sprite;
 
-        public BoundedDecoration (Square size, Vector2 position){
+        public BoundedDecoration (Square size, Vector2 position, TextureDrawer.TextureData sprite){
             this.size = size;
             this.size.position = position;
+            this.sprite = sprite;
         }
 
         @Override
@@ -36,6 +38,21 @@ public abstract class Decoration {
         public boolean completed() {
             return finished;
         }
+
+        @Override
+        public void update(Vector2 backgroundMoveDelta){
+
+        }
+
+        @Override
+        public TextureDrawer.TextureData getSprite(){
+            return sprite;
+        }
+
+        public void reset(){
+            finished = false;
+        }
+
     }
 
     /*public static class StaticDecoration extends Decoration {

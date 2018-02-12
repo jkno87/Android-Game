@@ -15,7 +15,7 @@ import java.util.ArrayDeque;
 
 public class FireEnemy extends GameCharacter {
 
-    public class FireDecoration extends Decoration.BoundedDecoration {
+    /*public class FireDecoration extends Decoration.BoundedDecoration {
 
 
         public FireDecoration (Square size, Vector2 position){
@@ -32,7 +32,7 @@ public class FireEnemy extends GameCharacter {
         public TextureData getSprite() {
             return FIRE_SPRITE;
         }
-    }
+    }*/
 
     private enum EnemyState {
         PREATTACK, ATTACK, DEAD
@@ -52,6 +52,7 @@ public class FireEnemy extends GameCharacter {
     private final Vector2 fireballTransformation;
     private final Vector2 fireballPosition;
     private final Vector2 hitboxPosition;
+    private final Decoration.BoundedDecoration fireDecoration;
 
     public FireEnemy(float positionY, int id){
         super(SPRITE_SIZE_X, SPRITE_SIZE_Y, IDLE_SIZE_X, IDLE_SIZE_Y, new Vector2(0, positionY), id);
@@ -63,6 +64,7 @@ public class FireEnemy extends GameCharacter {
         CollisionObject fireballCollision = new CollisionObject(new Square(fireballPosition, 20, 20), CollisionObject.TYPE_ATTACK);
         CollisionObject enemyCollision = new CollisionObject(new Square(hitboxPosition, 50,50), CollisionObject.TYPE_HITTABLE);
         collisionObjects = new CollisionObject[]{fireballCollision, enemyCollision};
+        fireDecoration = new Decoration.BoundedDecoration(new Square(20, 0, 20, 20), fireballPosition, FIRE_SPRITE);
     }
 
     private void updateFireball(){
@@ -86,7 +88,8 @@ public class FireEnemy extends GameCharacter {
         if(currentState == EnemyState.PREATTACK) {
             fireballOrigin.set(position).add(-20, 50);
             hitboxPosition.set(position).add(-IDLE_SIZE_X, 0);
-            decorationData.add(new FireDecoration(new Square(20, 0, 20, 20), fireballPosition));
+            fireDecoration.reset();
+            decorationData.add(fireDecoration);
             currentState = EnemyState.ATTACK;
         } else {
             updateFireball();
@@ -117,5 +120,6 @@ public class FireEnemy extends GameCharacter {
     @Override
     public void hit() {
         currentState = EnemyState.DEAD;
+        fireDecoration.terminate();
     }
 }

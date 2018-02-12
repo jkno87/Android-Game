@@ -223,7 +223,8 @@ public class MainCharacter extends GameCharacter {
 
         } else if (state == CharacterState.STUNNED) {
             spriteContainer.lenX = SPRITE_LENGTH;
-            move(STUN_SPEED);
+            if(position.x - STUN_SPEED.x > minX)
+                move(STUN_SPEED);
             if (stunVal > 0)
                 stunVal--;
             else {
