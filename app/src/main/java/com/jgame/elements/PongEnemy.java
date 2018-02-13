@@ -157,7 +157,7 @@ public class PongEnemy extends GameCharacter {
     }
 
     @Override
-    public void hit() {
+    public void hit(CollisionObject co) {
         fireballSpeed.mul(-1);
         currentState = EnemyState.RECEIVING;
     }

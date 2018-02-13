@@ -8,16 +8,14 @@ import com.jgame.util.Vector2;
  */
 public class GameObject {
 
-    public int id;
     protected GameObject parent;
     final Vector2 relativePosition;
     public final Vector2 baseX;
     public final Vector2 baseB;
     public final Vector2 position;
 
-    public GameObject(Vector2 position, int id){
+    public GameObject(Vector2 position){
         this.parent = null;
-        this.id = id;
         this.relativePosition = position;
         this.baseX = new Vector2(1,0);
         this.baseB = new Vector2(0,1);
@@ -40,10 +38,6 @@ public class GameObject {
     public void setParent(GameObject parent){
         this.parent = parent;
         updatePosition();
-    }
-
-    public int getId(){
-        return id;
     }
 
     /**

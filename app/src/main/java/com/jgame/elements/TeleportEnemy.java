@@ -37,8 +37,8 @@ public class TeleportEnemy extends GameCharacter {
     private int teleportFrame;
     private int idleFrame;
 
-    public TeleportEnemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition, int id, final MainCharacter mainCharacter) {
-        super(sizeX, sizeY, idleSizeX, idleSizeY, new Vector2(0, yPosition), id);
+    public TeleportEnemy(float sizeX, float sizeY, float idleSizeX, float idleSizeY, float yPosition, final MainCharacter mainCharacter) {
+        super(sizeX, sizeY, idleSizeX, idleSizeY, new Vector2(0, yPosition));
         attackFrames = new FrameCounter[][] {
                 new FrameCounter[]{new FrameCounter(0), new FrameCounter(0), new FrameCounter(0)},
                 new FrameCounter[]{new FrameCounter(0), new FrameCounter(0), new FrameCounter(0)}
@@ -130,7 +130,7 @@ public class TeleportEnemy extends GameCharacter {
     }
 
     @Override
-    public void hit(){
+    public void hit(CollisionObject o){
         currentState = EnemyState.DEAD;
     }
 

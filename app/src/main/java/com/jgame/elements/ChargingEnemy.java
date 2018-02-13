@@ -80,8 +80,8 @@ public class ChargingEnemy extends GameCharacter {
     private Vector2 projectilePosition;
     private final AnimationData attackStartup;
 
-    public ChargingEnemy(float yPosition, int id){
-        super(new Square(new Vector2(0, yPosition), 85,85), id);
+    public ChargingEnemy(float yPosition){
+        super(new Square(new Vector2(0, yPosition), 85,85));
         this.baseX.x = -1;
         currentState = State.IDLE;
         idleFrame = IDLE_FRAMES;
@@ -173,7 +173,7 @@ public class ChargingEnemy extends GameCharacter {
     }
 
     @Override
-    public void hit() {
+    public void hit(CollisionObject o) {
         currentState = State.DYING;
     }
 }

@@ -156,8 +156,8 @@ public class MainCharacter extends GameCharacter {
     private final CollisionObject[] IDLE_COLLISION_BOXES = {new CollisionObject(new Square(position, LENGTH_MOVE_A, HEIGHT_MOVE_A), CollisionObject.TYPE_HITTABLE)};
     private final CollisionObject[] ATTACK_COLLISION_BOXES = {new CollisionObject(new Square(position, LENGTH_MOVE_A + 10, HEIGHT_MOVE_A), CollisionObject.TYPE_ATTACK)};
 
-    public MainCharacter(int id, float playingHeight,float minX, float maxX){
-        super(SPRITE_LENGTH_SMALL, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, new Vector2(), id);
+    public MainCharacter(float playingHeight,float minX, float maxX){
+        super(SPRITE_LENGTH_SMALL, CHARACTER_HEIGHT, CHARACTER_LENGTH, CHARACTER_HEIGHT, new Vector2());
         this.state = CharacterState.IDLE;
         this.playingHeight = playingHeight;
         framesToGameOver = FRAMES_TO_GAME_OVER;
@@ -352,7 +352,7 @@ public class MainCharacter extends GameCharacter {
     }
 
     @Override
-    public void hit(){
+    public void hit(CollisionObject co){
         state = CharacterState.STUNNED;
         stunVal = STUN_FRAMES;
     }

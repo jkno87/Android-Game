@@ -15,25 +15,6 @@ import java.util.ArrayDeque;
 
 public class FireEnemy extends GameCharacter {
 
-    /*public class FireDecoration extends Decoration.BoundedDecoration {
-
-
-        public FireDecoration (Square size, Vector2 position){
-            super(size, position);
-        }
-
-        @Override
-        public void update(Vector2 backgroundMoveDelta) {
-            if(currentState == EnemyState.DEAD)
-                terminate();
-        }
-
-        @Override
-        public TextureData getSprite() {
-            return FIRE_SPRITE;
-        }
-    }*/
-
     private enum EnemyState {
         PREATTACK, ATTACK, DEAD
     };
@@ -54,8 +35,8 @@ public class FireEnemy extends GameCharacter {
     private final Vector2 hitboxPosition;
     private final Decoration.BoundedDecoration fireDecoration;
 
-    public FireEnemy(float positionY, int id){
-        super(SPRITE_SIZE_X, SPRITE_SIZE_Y, IDLE_SIZE_X, IDLE_SIZE_Y, new Vector2(0, positionY), id);
+    public FireEnemy(float positionY){
+        super(SPRITE_SIZE_X, SPRITE_SIZE_Y, IDLE_SIZE_X, IDLE_SIZE_Y, new Vector2(0, positionY));
         baseX.x = -1;
         hitboxPosition = new Vector2();
         fireballPosition = new Vector2();
@@ -118,7 +99,7 @@ public class FireEnemy extends GameCharacter {
     }
 
     @Override
-    public void hit() {
+    public void hit(CollisionObject o) {
         currentState = EnemyState.DEAD;
         fireDecoration.terminate();
     }

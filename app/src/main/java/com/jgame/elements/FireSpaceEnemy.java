@@ -45,8 +45,8 @@ public class FireSpaceEnemy extends GameCharacter {
         IDLE, STARTING_ATTACK_A, STARTING_ATTACK_B, ATTACK_A, ATTACK_B, DEAD
     }
 
-    public FireSpaceEnemy(int id) {
-        super(SPRITE_SIZE_X, SPRITE_SIZE_Y, IDLE_SIZE_X, IDLE_SIZE_Y, new Vector2(0, GameActivity.ELEMENTS_HEIGHT), id);
+    public FireSpaceEnemy() {
+        super(SPRITE_SIZE_X, SPRITE_SIZE_Y, IDLE_SIZE_X, IDLE_SIZE_Y, new Vector2(0, GameActivity.ELEMENTS_HEIGHT));
         baseX.x = -1;
         fireballSpeed = new Vector2(-2,0);
         fireballOrigin = new Vector2(-65,0);
@@ -167,7 +167,7 @@ public class FireSpaceEnemy extends GameCharacter {
     }
 
     @Override
-    public void hit() {
+    public void hit(CollisionObject o) {
         if(currentState == State.ATTACK_B)
             hp = 0;
         else

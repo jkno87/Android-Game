@@ -1,6 +1,7 @@
 package com.jgame.elements;
 
 import com.jgame.game.GameActivity.Difficulty;
+import com.jgame.util.CollisionObject;
 import com.jgame.util.Decoration;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
@@ -44,8 +45,8 @@ public class RobotEnemy extends GameCharacter {
     private float distanceFromCharacter;
 
 
-    public RobotEnemy(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, float positionY, int id) {
-        super(spriteSizeX, spriteSizeY, idleSizeX, idleSizeY, new Vector2(0, positionY), id);
+    public RobotEnemy(float spriteSizeX, float spriteSizeY, float idleSizeX, float idleSizeY, float positionY) {
+        super(spriteSizeX, spriteSizeY, idleSizeX, idleSizeY, new Vector2(0, positionY));
         //Este personaje siempre va a ver hacia la izquierda
         this.baseX.x = -1;
         currentFrameDataSet = EASY_FRAME_DATA;
@@ -86,7 +87,7 @@ public class RobotEnemy extends GameCharacter {
     }
 
     @Override
-    public void hit() {
+    public void hit(CollisionObject o) {
         currentState = EnemyState.DYING;
     }
 

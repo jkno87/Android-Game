@@ -107,7 +107,7 @@ public class GameActivity extends Activity {
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
         gameData.state = GameState.LOADING_SCREEN;
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
-        mainCharacter = new MainCharacter(ID_GEN.getId(), ELEMENTS_HEIGHT, MIN_X, MAX_X);
+        mainCharacter = new MainCharacter(ELEMENTS_HEIGHT, MIN_X, MAX_X);
         gameData.highScore = settings.getInt(HIGH_SCORE, 0);
         gameTask = new GameRunnable();
         new Thread(gameTask).start();
@@ -250,11 +250,11 @@ public class GameActivity extends Activity {
 
         public GameRunnable(){
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
-            availableEnemies[0] = new FireSpaceEnemy(ID_GEN.getId());
+            availableEnemies[0] = new FireSpaceEnemy();
             availableEnemies[1] = new PongEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
             //availableEnemies[0] = new RobotEnemy(175, 215,
             //        135, 215, ELEMENTS_HEIGHT, ID_GEN.getId());
-            availableEnemies[2] = new ChargingEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
+            availableEnemies[2] = new ChargingEnemy(ELEMENTS_HEIGHT);
             currentEnemy = availableEnemies[0];
             initialDifficulty = Difficulty.EASY;
         }
