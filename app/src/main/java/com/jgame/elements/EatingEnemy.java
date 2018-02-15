@@ -17,14 +17,18 @@ public class EatingEnemy extends GameCharacter {
     private final byte ID_TOOL = 0;
     private final byte ID_ENEMY = 1;
     private final byte ID_PROJECTILE = 2;
+    private final static float IDLE_SIZE = 50;
+    private final static TextureDrawer.TextureData IDLE_SPRITE = new TextureDrawer.TextureData(0.4375f, 0, 0.46875f, 0.09375f);
+    private final static Vector2 INITIAL_POSITION = new Vector2(425, 0);
 
-    public EatingEnemy(Square spriteContainer) {
-        super(spriteContainer);
+    public EatingEnemy() {
+        super(new Square(new Vector2(), IDLE_SIZE, IDLE_SIZE));
+        idleSizeX = IDLE_SIZE;
+        baseX.x = -1;
     }
 
     @Override
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
-
     }
 
     @Override
@@ -34,7 +38,7 @@ public class EatingEnemy extends GameCharacter {
 
     @Override
     public void reset(Vector2 positionOffset) {
-
+        moveTo(positionOffset, INITIAL_POSITION);
     }
 
     @Override
@@ -44,12 +48,12 @@ public class EatingEnemy extends GameCharacter {
 
     @Override
     public boolean alive() {
-        return false;
+        return true;
     }
 
     @Override
     public TextureDrawer.TextureData getCurrentTexture() {
-        return null;
+        return IDLE_SPRITE;
     }
 
     @Override

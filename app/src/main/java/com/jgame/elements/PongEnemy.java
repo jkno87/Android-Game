@@ -76,8 +76,8 @@ public class PongEnemy extends GameCharacter {
     private boolean decorationAdded;
     private int hits;
 
-    public PongEnemy(float positionY, int id){
-        super(SPRITE_SIZE_X, SPRITE_SIZE_Y, IDLE_SIZE_X, IDLE_SIZE_Y, new Vector2(0, positionY), id);
+    public PongEnemy(float positionY){
+        super(SPRITE_SIZE_X, SPRITE_SIZE_Y, IDLE_SIZE_X, IDLE_SIZE_Y, new Vector2(0, positionY));
         baseX.x = -1;
         attackStartup = new FrameCounter(15);
         fireballPosition = new Vector2();

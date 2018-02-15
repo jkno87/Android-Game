@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.jgame.elements.ChargingEnemy;
+import com.jgame.elements.EatingEnemy;
 import com.jgame.elements.FireEnemy;
 import com.jgame.elements.FireSpaceEnemy;
 import com.jgame.elements.PongEnemy;
@@ -232,7 +233,7 @@ public class GameActivity extends Activity {
 
     class GameRunnable implements Runnable {
 
-        private final int MAX_WORLD_OBJECTS = 3;
+        private final int MAX_WORLD_OBJECTS = 1;
         private final float TRANSITION_FRAMES = 20;
         private ControllerManager.GameInput lastInput;
         private int currentEnemyCounter;
@@ -250,11 +251,11 @@ public class GameActivity extends Activity {
 
         public GameRunnable(){
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
-            availableEnemies[0] = new FireSpaceEnemy();
-            availableEnemies[1] = new PongEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
+            availableEnemies[0] = new EatingEnemy();
+           // availableEnemies[1] = new PongEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
             //availableEnemies[0] = new RobotEnemy(175, 215,
             //        135, 215, ELEMENTS_HEIGHT, ID_GEN.getId());
-            availableEnemies[2] = new ChargingEnemy(ELEMENTS_HEIGHT);
+            //availableEnemies[2] = new ChargingEnemy(ELEMENTS_HEIGHT);
             currentEnemy = availableEnemies[0];
             initialDifficulty = Difficulty.EASY;
         }
