@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.game.GameData;
 import com.jgame.util.CollisionObject;
 import com.jgame.util.Decoration;
 import com.jgame.util.FrameCounter;
@@ -26,8 +27,9 @@ public class EatingEnemy extends GameCharacter {
     private final static float IDLE_SIZE = 75;
     private final static TextureDrawer.TextureData IDLE_SPRITE = new TextureDrawer.TextureData(0.4375f, 0, 0.46875f, 0.09375f);
     private final static Vector2 INITIAL_POSITION = new Vector2(425, 0);
-    private final byte PROJECTILE_INITIAL_HP = 120;
-    private final Vector2 PROJECTILE_SPEED = new Vector2(-3,0.5f);
+    private final int PROJECTILE_INITIAL_HP = 500;
+    private final Vector2 PROJECTILE_SPEED = new Vector2(-0.65f,0);
+    private final Vector2 ENEMY_PUSHBACK = new Vector2(-5,0);
     private final Vector2 artifactPosition = new Vector2();
     private final Vector2 hitboxPosition = new Vector2();
     private final Vector2 projectilePosition = new Vector2();
@@ -39,7 +41,7 @@ public class EatingEnemy extends GameCharacter {
             CollisionObject.TYPE_HITTABLE, ID_ENEMY);
     private final CollisionObject.IdCollisionObject coProjectile = new CollisionObject.IdCollisionObject(new Square(projectilePosition, 50, 50),
             CollisionObject.TYPE_MIXED, ID_PROJECTILE);
-    private byte projectileHp;
+    private int projectileHp;
     private Random nextMove;
     private State currentState;
     private FrameCounter idleTime;
@@ -51,7 +53,7 @@ public class EatingEnemy extends GameCharacter {
         idleSizeX = IDLE_SIZE;
         baseX.x = -1;
         collisionObjects = new CollisionObject[]{coArtifact, coCharacter, coProjectile};
-        idleTime = new FrameCounter(25);
+        idleTime = new FrameCounter(75);
         attackStartup = new FrameCounter(25);
         nextMove = new Random();
     }
@@ -78,37 +80,11 @@ public class EatingEnemy extends GameCharacter {
 
     @Override
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
-        if(currentState == State.IDLE){
-            idleTime.updateFrame();
-            if(idleTime.completed()) {
-                currentState = nextMove.nextInt(2) == 0 ? State.EATING : State.ATTACKING;
-                attackStartup.reset();
-                updateColor();
-            }
-        } else {
-            attackStartup.updateFrame();
-            if(!attackStartup.completed())
-                return;
-            if(currentState == State.EATING){
-                currentState = State.IDLE;
-            }
-
-            if(currentState == State.ATTACKING){
-                projectilePosition.set(position);
-                projectilePosition.add(-IDLE_SIZE,0);
-                activeProjectile = true;
-                projectileHp = PROJECTILE_INITIAL_HP;
-                currentState = State.IDLE;
-            }
-
-            updateColor();
-            idleTime.reset();
-        }
-
         if(activeProjectile){
             projectilePosition.add(PROJECTILE_SPEED);
             projectileHp--;
-            if(projectileHp <= 0) {
+
+            if(projectileHp <= 0 || detectCollision(foe, collisionObjects) == GameData.Event.HIT) {
                 activeProjectile = false;
                 projectilePosition.set(0,0);
             }
@@ -117,6 +93,35 @@ public class EatingEnemy extends GameCharacter {
                 artifactPosition.add(-3, 0);
                 activeProjectile = false;
                 projectilePosition.set(0,0);
+            }
+
+        } else {
+
+            if (currentState == State.IDLE) {
+                idleTime.updateFrame();
+                if (idleTime.completed()) {
+                    currentState = nextMove.nextInt(2) == 0 ? State.EATING : State.ATTACKING;
+                    attackStartup.reset();
+                    updateColor();
+                }
+            } else {
+                attackStartup.updateFrame();
+                if (!attackStartup.completed())
+                    return;
+                if (currentState == State.EATING) {
+                    currentState = State.IDLE;
+                }
+
+                if (currentState == State.ATTACKING) {
+                    projectilePosition.set(position);
+                    projectilePosition.add(-IDLE_SIZE, 0);
+                    activeProjectile = true;
+                    projectileHp = PROJECTILE_INITIAL_HP;
+                    currentState = State.IDLE;
+                }
+
+                updateColor();
+                idleTime.reset();
             }
         }
 
@@ -131,8 +136,9 @@ public class EatingEnemy extends GameCharacter {
     public void reset(Vector2 positionOffset) {
         moveTo(positionOffset, INITIAL_POSITION);
         hitboxPosition.set(position);
+        hitboxPosition.add(-IDLE_SIZE, 0);
         artifactPosition.set(position);
-        artifactPosition.add(-200, 0);
+        artifactPosition.add(-300, 0);
         idleTime.reset();
         attackStartup.reset();
         currentState = State.IDLE;
@@ -156,9 +162,12 @@ public class EatingEnemy extends GameCharacter {
     @Override
     public void hit(CollisionObject target) {
         if(coArtifact.equals(target)){
-            color.b = 0.5f;
+            artifactPosition.add(5,0);
         } else if(coCharacter.equals(target)){
             color.b = 1;
+        } else if(coProjectile.equals(target)){
+            activeProjectile = false;
+            projectilePosition.set(0,0);
         }
     }
 }
