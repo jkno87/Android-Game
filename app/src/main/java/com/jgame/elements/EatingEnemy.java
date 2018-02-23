@@ -7,9 +7,7 @@ import com.jgame.util.FrameCounter;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
 import com.jgame.util.Vector2;
-
 import java.util.ArrayDeque;
-import java.util.Random;
 
 /**
  * Created by Jose on 13/02/2018.
@@ -18,7 +16,7 @@ import java.util.Random;
 public class EatingEnemy extends GameCharacter {
 
     private enum State {
-        IDLE, EATING, ATTACKING
+        IDLE, ATTACKING, DEAD
     }
 
     private final byte ID_TOOL = 0;
@@ -28,21 +26,22 @@ public class EatingEnemy extends GameCharacter {
     private final static TextureDrawer.TextureData IDLE_SPRITE = new TextureDrawer.TextureData(0.4375f, 0, 0.46875f, 0.09375f);
     private final static Vector2 INITIAL_POSITION = new Vector2(425, 0);
     private final int PROJECTILE_INITIAL_HP = 500;
+    private final float ARTIFACT_SPEED_MAGNITUDE = 8;
     private final Vector2 PROJECTILE_SPEED = new Vector2(-0.65f,0);
     private final Vector2 ENEMY_PUSHBACK = new Vector2(-5,0);
     private final Vector2 artifactPosition = new Vector2();
     private final Vector2 hitboxPosition = new Vector2();
     private final Vector2 projectilePosition = new Vector2();
+    private final Vector2 artifactForceMagnitude = new Vector2();
     private final TextureDrawer.ColorData EATING_COLOR = new TextureDrawer.ColorData(1,0,1,1);
     private final TextureDrawer.ColorData ATTACKING_COLOR = new TextureDrawer.ColorData(1,1,0,1);
-    private final CollisionObject.IdCollisionObject coArtifact = new CollisionObject.IdCollisionObject(new Square(artifactPosition, 50, 50),
+    private final CollisionObject.IdCollisionObject coArtifact = new CollisionObject.IdCollisionObject(new Square(artifactPosition, 65, 50),
             CollisionObject.TYPE_HITTABLE, ID_TOOL);
     private final CollisionObject.IdCollisionObject coCharacter = new CollisionObject.IdCollisionObject(new Square(hitboxPosition, 50, 50),
             CollisionObject.TYPE_HITTABLE, ID_ENEMY);
     private final CollisionObject.IdCollisionObject coProjectile = new CollisionObject.IdCollisionObject(new Square(projectilePosition, 50, 50),
             CollisionObject.TYPE_MIXED, ID_PROJECTILE);
     private int projectileHp;
-    private Random nextMove;
     private State currentState;
     private FrameCounter idleTime;
     private FrameCounter attackStartup;
@@ -55,18 +54,13 @@ public class EatingEnemy extends GameCharacter {
         collisionObjects = new CollisionObject[]{coArtifact, coCharacter, coProjectile};
         idleTime = new FrameCounter(75);
         attackStartup = new FrameCounter(25);
-        nextMove = new Random();
     }
 
     /**
      * Actualiza el color del personaje dependiendo del estado en el que se encuentre
      */
     private void updateColor(){
-        if(currentState == State.EATING) {
-            color.r = EATING_COLOR.r;
-            color.g = EATING_COLOR.g;
-            color.b = EATING_COLOR.b;
-        } else if (currentState == State.ATTACKING){
+        if (currentState == State.ATTACKING){
             color.r = ATTACKING_COLOR.r;
             color.g = ATTACKING_COLOR.g;
             color.b = ATTACKING_COLOR.b;
@@ -80,6 +74,26 @@ public class EatingEnemy extends GameCharacter {
 
     @Override
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+        if(!completedTransition()) {
+            artifactPosition.set(position);
+            artifactPosition.add(-300, 0);
+            hitboxPosition.set(position);
+            hitboxPosition.add(-IDLE_SIZE, 0);
+            return;
+        }
+
+        if(artifactForceMagnitude.x != 0){
+            artifactForceMagnitude.x *= 0.85;
+            if(artifactForceMagnitude.x < 0.05f && artifactForceMagnitude.x > -0.05f)
+                artifactForceMagnitude.x = 0;
+            artifactPosition.add(artifactForceMagnitude);
+        }
+
+        if(coArtifact.bounds.collides(coCharacter.bounds)){
+            currentState = State.DEAD;
+            return;
+        }
+
         if(activeProjectile){
             projectilePosition.add(PROJECTILE_SPEED);
             projectileHp--;
@@ -90,7 +104,7 @@ public class EatingEnemy extends GameCharacter {
             }
 
             if(coProjectile.bounds.collides(coArtifact.bounds)) {
-                artifactPosition.add(-3, 0);
+                artifactForceMagnitude.add(-3, 0);
                 activeProjectile = false;
                 projectilePosition.set(0,0);
             }
@@ -100,7 +114,7 @@ public class EatingEnemy extends GameCharacter {
             if (currentState == State.IDLE) {
                 idleTime.updateFrame();
                 if (idleTime.completed()) {
-                    currentState = nextMove.nextInt(2) == 0 ? State.EATING : State.ATTACKING;
+                    currentState = State.ATTACKING;
                     attackStartup.reset();
                     updateColor();
                 }
@@ -108,9 +122,6 @@ public class EatingEnemy extends GameCharacter {
                 attackStartup.updateFrame();
                 if (!attackStartup.completed())
                     return;
-                if (currentState == State.EATING) {
-                    currentState = State.IDLE;
-                }
 
                 if (currentState == State.ATTACKING) {
                     projectilePosition.set(position);
@@ -124,12 +135,11 @@ public class EatingEnemy extends GameCharacter {
                 idleTime.reset();
             }
         }
-
     }
 
     @Override
     public boolean completedTransition() {
-        return false;
+        return position.x <= INITIAL_POSITION.x;
     }
 
     @Override
@@ -151,7 +161,7 @@ public class EatingEnemy extends GameCharacter {
 
     @Override
     public boolean alive() {
-        return true;
+        return currentState != State.DEAD;
     }
 
     @Override
@@ -161,8 +171,8 @@ public class EatingEnemy extends GameCharacter {
 
     @Override
     public void hit(CollisionObject target) {
-        if(coArtifact.equals(target)){
-            artifactPosition.add(5,0);
+        if(artifactForceMagnitude.x <= 0 && coArtifact.equals(target)){
+            artifactForceMagnitude.set(ARTIFACT_SPEED_MAGNITUDE, 0);
         } else if(coCharacter.equals(target)){
             color.b = 1;
         } else if(coProjectile.equals(target)){
