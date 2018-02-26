@@ -24,6 +24,8 @@ public class EatingEnemy extends GameCharacter {
     private final byte ID_PROJECTILE = 2;
     private final static float IDLE_SIZE = 75;
     private final static TextureDrawer.TextureData IDLE_SPRITE = new TextureDrawer.TextureData(0.4375f, 0, 0.46875f, 0.09375f);
+    private final static TextureDrawer.TextureData FIREBALL_SPRITE = TextureDrawer.generarTextureData(12,0,14,2,32);
+    private final static TextureDrawer.TextureData WALL_SPRITE = TextureDrawer.generarTextureData(12,2,14,4,32);
     private final static Vector2 INITIAL_POSITION = new Vector2(425, 0);
     private final int PROJECTILE_INITIAL_HP = 500;
     private final float ARTIFACT_SPEED_MAGNITUDE = 8;
@@ -46,6 +48,9 @@ public class EatingEnemy extends GameCharacter {
     private FrameCounter idleTime;
     private FrameCounter attackStartup;
     private boolean activeProjectile;
+    private final Decoration fireballDecoration;
+    private final Decoration wallDecoration;
+    private boolean addedDecorations;
 
     public EatingEnemy() {
         super(new Square(new Vector2(), IDLE_SIZE, IDLE_SIZE));
@@ -54,6 +59,8 @@ public class EatingEnemy extends GameCharacter {
         collisionObjects = new CollisionObject[]{coArtifact, coCharacter, coProjectile};
         idleTime = new FrameCounter(75);
         attackStartup = new FrameCounter(25);
+        fireballDecoration = new Decoration.BoundedDecoration(coProjectile.bounds, projectilePosition, FIREBALL_SPRITE);
+        wallDecoration = new Decoration.BoundedDecoration(coArtifact.bounds, artifactPosition, WALL_SPRITE);
     }
 
     /**
@@ -74,6 +81,12 @@ public class EatingEnemy extends GameCharacter {
 
     @Override
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
+        if(!addedDecorations){
+            addedDecorations = true;
+            decorationData.add(fireballDecoration);
+            decorationData.add(wallDecoration);
+        }
+
         if(!completedTransition()) {
             artifactPosition.set(position);
             artifactPosition.add(-300, 0);
@@ -152,6 +165,7 @@ public class EatingEnemy extends GameCharacter {
         idleTime.reset();
         attackStartup.reset();
         currentState = State.IDLE;
+        updateColor();
     }
 
     @Override

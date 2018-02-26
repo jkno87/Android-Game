@@ -259,14 +259,6 @@ public class MainCharacter extends GameCharacter {
                 hp = INITIAL_HP;
                 state = CharacterState.ABSORBING;
                 absorbingFrames.reset();
-                decorationData.add(new AbsorbingDecoration(new Square(new Vector2(position).add(45, 29)
-                        , spriteContainer.lenX, spriteContainer.lenY), absorbingFrames.totalFrames));
-                /*if (!foe.alive()) {
-                    state = CharacterState.ABSORBING;
-                    absorbingFrames.reset();
-                    decorationData.add(new AbsorbingDecoration(new Square(new Vector2(position).add(45, 29)
-                            , spriteContainer.lenX, spriteContainer.lenY), absorbingFrames.totalFrames));
-                }*/
             }
 
             attackFrames.updateFrame();
