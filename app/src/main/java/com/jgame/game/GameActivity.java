@@ -16,6 +16,7 @@ import com.jgame.elements.EatingEnemy;
 import com.jgame.elements.FireEnemy;
 import com.jgame.elements.FireSpaceEnemy;
 import com.jgame.elements.PongEnemy;
+import com.jgame.elements.ProjectileEnemy;
 import com.jgame.game.GameData.Event;
 import com.jgame.elements.RobotEnemy;
 import com.jgame.elements.GameCharacter;
@@ -251,7 +252,7 @@ public class GameActivity extends Activity {
 
         public GameRunnable(){
             availableEnemies = new GameCharacter[MAX_WORLD_OBJECTS];
-            availableEnemies[0] = new EatingEnemy();
+            availableEnemies[0] = new ProjectileEnemy();
            // availableEnemies[1] = new PongEnemy(ELEMENTS_HEIGHT, ID_GEN.getId());
             //availableEnemies[0] = new RobotEnemy(175, 215,
             //        135, 215, ELEMENTS_HEIGHT, ID_GEN.getId());
