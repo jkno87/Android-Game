@@ -26,7 +26,7 @@ public class ProjectileEnemy extends GameCharacter {
     private final Vector2 PROJECTILE_SPEED = new Vector2(-2,0);
     private final Vector2 USER_PROJECTILE_SPEED = new Vector2(2,0);
     private final Vector2 INITIAL_POSITION = new Vector2(450,0);
-    private final Vector2 ARTIFACT_INITIAL_OFFSET = new Vector2(300,0);
+    private final Vector2 ARTIFACT_INITIAL_OFFSET = new Vector2(-300,0);
     private final Vector2 artifactPosition = new Vector2();
     private final Vector2 projectilePosition = new Vector2();
     private final Vector2 userProjectilePosition = new Vector2();
@@ -38,11 +38,12 @@ public class ProjectileEnemy extends GameCharacter {
             CollisionObject.TYPE_ATTACK, ID_USER_PROJECTILE);
     private boolean projectileLaunched;
     private boolean userProjectileLaunched;
+    private boolean alive;
     private FrameCounter projectileInterval;
 
     public ProjectileEnemy(){
         super(new Square(new Vector2(), IDLE_SIZE_X, IDLE_SIZE_Y));
-        projectileInterval = new FrameCounter(500);
+        projectileInterval = new FrameCounter(75);
         collisionObjects = new CollisionObject[]{coArtifact, coProjectile, coUserProjectile};
         baseX.x = -1;
     }
@@ -57,7 +58,7 @@ public class ProjectileEnemy extends GameCharacter {
 
         if(userProjectileLaunched) {
             userProjectilePosition.add(USER_PROJECTILE_SPEED);
-            if(userProjectilePosition.x >= projectilePosition.x){
+            if(projectileLaunched && userProjectilePosition.x >= projectilePosition.x){
                 userProjectilePosition.set(HIDE_POSITION);
                 projectilePosition.set(HIDE_POSITION);
                 userProjectileLaunched = false;
@@ -69,6 +70,7 @@ public class ProjectileEnemy extends GameCharacter {
                 color.a = 0;
                 userProjectilePosition.set(HIDE_POSITION);
                 userProjectileLaunched = false;
+                alive = false;
             }
         }
         if(projectileLaunched) {
@@ -95,6 +97,8 @@ public class ProjectileEnemy extends GameCharacter {
         moveTo(positionOffset, INITIAL_POSITION);
         artifactPosition.set(position);
         artifactPosition.add(ARTIFACT_INITIAL_OFFSET);
+        userProjectilePosition.set(HIDE_POSITION);
+        alive = true;
     }
 
     @Override
@@ -104,7 +108,7 @@ public class ProjectileEnemy extends GameCharacter {
 
     @Override
     public boolean alive() {
-        return true;
+        return alive;
     }
 
     @Override
@@ -116,7 +120,7 @@ public class ProjectileEnemy extends GameCharacter {
     public void hit(CollisionObject target) {
         if(coArtifact.equals(target) && !userProjectileLaunched) {
             userProjectileLaunched = true;
-            projectilePosition.set(artifactPosition);
+            userProjectilePosition.set(artifactPosition);
         }
     }
 }
