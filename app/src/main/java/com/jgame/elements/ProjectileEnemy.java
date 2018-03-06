@@ -24,10 +24,12 @@ public class ProjectileEnemy extends GameCharacter {
     private final byte ID_ENEMY = 1;
     private final byte ID_PROJECTILE = 2;
     private final byte ID_USER_PROJECTILE = 3;
+    private final byte INITIAL_HP = 5;
     private final Vector2 HIDE_POSITION = new Vector2();
-    private final Vector2 PROJECTILE_SPEED = new Vector2(-2,0);
+    private final Vector2 PROJECTILE_SPEED = new Vector2(-4.75f,10);
     private final Vector2 USER_PROJECTILE_SPEED = new Vector2(2,0);
     private final Vector2 INITIAL_POSITION = new Vector2(450,0);
+    private final Vector2 GRAVITY_MAGNITUDE = new Vector2(0, -0.25f);
     private final Vector2 ARTIFACT_INITIAL_OFFSET = new Vector2(-300,0);
     private final Vector2 artifactPosition = new Vector2();
     private final Vector2 projectilePosition = new Vector2();
@@ -38,6 +40,8 @@ public class ProjectileEnemy extends GameCharacter {
             CollisionObject.TYPE_MIXED, ID_PROJECTILE);
     private final CollisionObject.IdCollisionObject coUserProjectile = new CollisionObject.IdCollisionObject(new Square(userProjectilePosition, 50, 50),
             CollisionObject.TYPE_ATTACK, ID_USER_PROJECTILE);
+    private final Vector2 currentProjectileSpeed = new Vector2();
+    private byte hp;
     private boolean projectileLaunched;
     private boolean userProjectileLaunched;
     private FrameCounter idleInterval;
@@ -81,6 +85,7 @@ public class ProjectileEnemy extends GameCharacter {
                 color.b = 1;
                 projectilePosition.set(position);
                 projectileLaunched = true;
+                currentProjectileSpeed.set(PROJECTILE_SPEED);
                 currentState = State.IDLE;
                 idleInterval.reset();
             }
@@ -104,15 +109,17 @@ public class ProjectileEnemy extends GameCharacter {
             }
 
             else if(userProjectilePosition.x > position.x) {
-                color.a = 0;
                 userProjectilePosition.set(HIDE_POSITION);
                 userProjectileLaunched = false;
-                currentState = State.DEAD;
+                hp--;
+                if(hp == 0)
+                    currentState = State.DEAD;
             }
         }
 
         if(projectileLaunched) {
-            projectilePosition.add(PROJECTILE_SPEED);
+            currentProjectileSpeed.add(GRAVITY_MAGNITUDE);
+            projectilePosition.add(currentProjectileSpeed);
             if(projectilePosition.x - PROJECTILE_WIDTH < foe.position.x){
                 projectilePosition.set(HIDE_POSITION);
                 projectileLaunched = false;
@@ -136,6 +143,7 @@ public class ProjectileEnemy extends GameCharacter {
         artifactPosition.add(ARTIFACT_INITIAL_OFFSET);
         userProjectilePosition.set(HIDE_POSITION);
         currentState = State.IDLE;
+        hp = INITIAL_HP;
     }
 
     @Override
