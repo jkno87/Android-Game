@@ -1,5 +1,6 @@
 package com.jgame.elements;
 
+import com.jgame.game.GameData;
 import com.jgame.util.CollisionObject;
 import com.jgame.util.Decoration;
 import com.jgame.util.FrameCounter;
@@ -62,6 +63,14 @@ public class ProjectileEnemy extends GameCharacter {
         random = new Random();
     }
 
+    /**
+     * Reinicia el projectil a su estado inicial
+     */
+    private void resetProjectile(){
+        projectilePosition.set(HIDE_POSITION);
+        projectileLaunched = false;
+    }
+
     @Override
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
 
@@ -101,14 +110,8 @@ public class ProjectileEnemy extends GameCharacter {
 
         if(userProjectileLaunched) {
             userProjectilePosition.add(USER_PROJECTILE_SPEED);
-            if(projectileLaunched && userProjectilePosition.x >= projectilePosition.x - PROJECTILE_WIDTH){
-                userProjectilePosition.set(HIDE_POSITION);
-                projectilePosition.set(HIDE_POSITION);
-                userProjectileLaunched = false;
-                projectileLaunched = false;
-            }
 
-            else if(userProjectilePosition.x > position.x) {
+            if(userProjectilePosition.x > position.x) {
                 userProjectilePosition.set(HIDE_POSITION);
                 userProjectileLaunched = false;
                 hp--;
@@ -120,11 +123,13 @@ public class ProjectileEnemy extends GameCharacter {
         if(projectileLaunched) {
             currentProjectileSpeed.add(GRAVITY_MAGNITUDE);
             projectilePosition.add(currentProjectileSpeed);
-            if(projectilePosition.x - PROJECTILE_WIDTH < foe.position.x){
-                projectilePosition.set(HIDE_POSITION);
-                projectileLaunched = false;
+            if(null != coProjectile.checkCollision(foe.collisionObjects)){
                 foe.hit(coProjectile);
+                resetProjectile();
             }
+
+            if(projectilePosition.y < 0)
+                resetProjectile();
         }
     }
 
@@ -166,6 +171,10 @@ public class ProjectileEnemy extends GameCharacter {
         if(coArtifact.equals(target) && !userProjectileLaunched) {
             userProjectileLaunched = true;
             userProjectilePosition.set(artifactPosition);
+        }
+
+        if(coProjectile.equals(target)){
+            resetProjectile();
         }
     }
 }
