@@ -10,6 +10,7 @@ public class CollisionObject {
 
     public static class IdCollisionObject extends CollisionObject {
         private final byte id;
+
         public IdCollisionObject(Square bounds, int type, byte id){
             super(bounds, type);
             this.id = id;
@@ -36,10 +37,12 @@ public class CollisionObject {
     public static final int TYPE_MIXED = 3;
     public final Square bounds;
     public int type;
+    public boolean hittable;
 
     public CollisionObject(Square bounds, int type){
         this.bounds = bounds;
         this.type = type;
+        this.hittable = true;
     }
 
     /**
@@ -54,7 +57,7 @@ public class CollisionObject {
 
         for(CollisionObject c : others) {
             //Dos objetos de ataque no provocan colision
-            if(c.type == TYPE_ATTACK)
+            if(!c.hittable || c.type == TYPE_ATTACK)
                 continue;
             if(bounds.collides(c.bounds))
                 return c;

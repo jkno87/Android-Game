@@ -46,21 +46,17 @@ public class ProjectileEnemy extends GameCharacter {
     private boolean projectileLaunched;
     private boolean userProjectileLaunched;
     private FrameCounter idleInterval;
-    private FrameCounter attackStartup;
     private State currentState;
-    private Random random;
 
     private enum State {
-        ATTACK_A, ATTACK_B, IDLE, DEAD
+        DEAD, RECEIVING, DEFENDING
     }
 
     public ProjectileEnemy(){
         super(new Square(new Vector2(), IDLE_SIZE_X, IDLE_SIZE_Y));
-        attackStartup = new FrameCounter(20);
-        idleInterval = new FrameCounter(78);
+        idleInterval = new FrameCounter(85);
         collisionObjects = new CollisionObject[]{coArtifact, coProjectile, coUserProjectile};
         baseX.x = -1;
-        random = new Random();
     }
 
     /**
@@ -74,49 +70,44 @@ public class ProjectileEnemy extends GameCharacter {
     @Override
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
 
-        if(!projectileLaunched && currentState == State.IDLE) {
+        if(!completedTransition()){
+            artifactPosition.set(position);
+            artifactPosition.add(ARTIFACT_INITIAL_OFFSET);
+        }
+
+        if(currentState == State.RECEIVING) {
             idleInterval.updateFrame();
-            if(idleInterval.completed()){
-                currentState = random.nextInt(5) > 3 ? State.ATTACK_B : State.ATTACK_A;
-                if(currentState == State.ATTACK_A){
-                    color.g = 0;
-                    color.b = 0;
-                } else {
-                    color.r = 0;
-                    color.g = 0;
-                }
-                attackStartup.reset();
+            if(idleInterval.completed()) {
+                currentState = State.DEFENDING;
+                idleInterval.reset();
+                color.g = 0;
+                color.b = 0;
             }
-        } else if(currentState == State.ATTACK_A){
-            attackStartup.updateFrame();
-            if(attackStartup.completed()){
+        } else if(currentState == State.DEFENDING) {
+            idleInterval.updateFrame();
+            if(idleInterval.completed()) {
+                currentState = State.RECEIVING;
+                idleInterval.reset();
                 color.g = 1;
                 color.b = 1;
-                projectilePosition.set(position);
-                projectileLaunched = true;
-                currentProjectileSpeed.set(PROJECTILE_SPEED);
-                currentState = State.IDLE;
-                idleInterval.reset();
-            }
-        } else if(currentState == State.ATTACK_B){
-            attackStartup.updateFrame();
-            if(attackStartup.completed()){
-                color.r = 1;
-                color.g = 1;
-                currentState = State.IDLE;
-                idleInterval.reset();
             }
         }
 
         if(userProjectileLaunched) {
             userProjectilePosition.add(USER_PROJECTILE_SPEED);
-
             if(userProjectilePosition.x > position.x) {
                 userProjectilePosition.set(HIDE_POSITION);
                 userProjectileLaunched = false;
-                hp--;
-                if(hp == 0)
-                    currentState = State.DEAD;
+                coArtifact.hittable = true;
+                if(currentState == State.RECEIVING) {
+                    hp--;
+                    if (hp == 0)
+                        currentState = State.DEAD;
+                } else if(currentState == State.DEFENDING){
+                    projectilePosition.set(position);
+                    projectileLaunched = true;
+                    currentProjectileSpeed.set(PROJECTILE_SPEED);
+                }
             }
         }
 
@@ -135,7 +126,7 @@ public class ProjectileEnemy extends GameCharacter {
 
     @Override
     public boolean completedTransition() {
-        return false;
+        return position.x <= INITIAL_POSITION.x;
     }
 
     @Override
@@ -147,7 +138,7 @@ public class ProjectileEnemy extends GameCharacter {
         artifactPosition.set(position);
         artifactPosition.add(ARTIFACT_INITIAL_OFFSET);
         userProjectilePosition.set(HIDE_POSITION);
-        currentState = State.IDLE;
+        currentState = State.RECEIVING;
         hp = INITIAL_HP;
     }
 
@@ -171,6 +162,7 @@ public class ProjectileEnemy extends GameCharacter {
         if(coArtifact.equals(target) && !userProjectileLaunched) {
             userProjectileLaunched = true;
             userProjectilePosition.set(artifactPosition);
+            coArtifact.hittable = false;
         }
 
         if(coProjectile.equals(target)){
