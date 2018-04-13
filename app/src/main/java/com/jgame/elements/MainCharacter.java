@@ -112,7 +112,7 @@ public class MainCharacter extends GameCharacter {
 
 
     public final static int FRAMES_TO_GAME_OVER = 65;
-    public final static TextureData IDLE_TEXTURE = new TextureData(0.4375f, 0, 0.46875f, 0.09375f);
+    public final static TextureData IDLE_TEXTURE = new TextureData(0.375f, 0.28125f, 0.4375f, 0.34375f);
     //Frames de animacion para caminar
     //0.03125
     public final static TextureData MOVING_A = new TextureData(0.46875f, 0, 0.5f, 0.09375f);
@@ -129,9 +129,9 @@ public class MainCharacter extends GameCharacter {
     private final static TextureData ABSORBING_SPRITES = TextureDrawer.generarTextureData(12,0,14,2,32);
     public static final float INITIAL_POSITION_X = 85;
     public static final int SPRITE_LENGTH = 75;
-    public static final int SPRITE_LENGTH_SMALL = 37;
-    public static final int CHARACTER_LENGTH = 40;
-    public static final int CHARACTER_HEIGHT = 160;
+    public static final int SPRITE_LENGTH_SMALL = 75;
+    public static final int CHARACTER_LENGTH = 75;
+    public static final int CHARACTER_HEIGHT = 75;
     public final int LENGTH_MOVE_A = CHARACTER_LENGTH + 2;
     public final int HEIGHT_MOVE_A = CHARACTER_HEIGHT;
     private final int STUN_FRAMES = 18;
