@@ -79,8 +79,10 @@ public class GameActivity extends Activity {
     public static final Square HARD_DIFF_BOUNDS = new Square(35, FRUSTUM_HEIGHT - 190, 80, 40);
     public static final Square RETURN_BUTTON_BOUNDS = new Square(FRUSTUM_WIDTH - 115, FRUSTUM_HEIGHT - 90, 80, 40);
     public static final Square RECORDS_BUTTON_BOUNDS = new Square(FRUSTUM_WIDTH - 115, FRUSTUM_HEIGHT - 90, 80, 40);
+    public static final Square HITBOXES_BUTTON_BOUNDS = new Square(FRUSTUM_WIDTH - 115, FRUSTUM_HEIGHT - 190, 80, 40);
     public static final Vector2 ADVANCE_SPEED = new Vector2(-2f, 0);
     public static final String HIGH_SCORE = "highScore";
+    public static boolean renderHitboxes = false;
     //public static int ID_PUNCH;
     private GLSurfaceView gameSurfaceView;
     public SoundManager soundManager;
@@ -304,6 +306,8 @@ public class GameActivity extends Activity {
                     } else if(currentState == GameState.MENU) {
                         if (lastInput == ControllerManager.GameInput.START_GAME)
                             startTransition(GameState.STARTING);
+                        else if(lastInput == ControllerManager.GameInput.HITBOXES_SWITCH)
+                            renderHitboxes = !renderHitboxes;
                         else if (lastInput == ControllerManager.GameInput.RECORDS_TRIGGER)
                             startTransition(GameState.RECORDS);
                         else if (lastInput == ControllerManager.GameInput.CHANGE_SOUND_STATE) {

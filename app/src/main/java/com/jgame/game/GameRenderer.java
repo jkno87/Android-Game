@@ -128,7 +128,6 @@ public class GameRenderer implements Renderer {
 
     }
 
-    private final static boolean RENDER_HITBOXES = false;
     private final static int SCORE_SIZE_X = 15;
     private final static int SCORE_SIZE_Y = 20;
     private final static int PAUSE_X_SIZE = 100;
@@ -156,6 +155,7 @@ public class GameRenderer implements Renderer {
     public final static TextureData RECORDS_BUTTON_SPRITE = new TextureData(0f, 0.5f, 0.0625f, 0.53125f);
     public final static TextureData SOUND_SWITCH_ON_TEXTURE = new TextureData(0.375f,0.375f,0.4375f,0.4375f);
     public final static TextureData SOUND_SWITCH_OFF_TEXTURE = new TextureData(0.4375f,0.4375f,0.375f,0.375f);
+    public final static TextureData HITBOXES_SWITCH = new TextureData(0f, 0.5f, 0.0625f, 0.53125f);
     //Texturas del menu de records
     public final static TextureData RETURN_BUTTON = new TextureData(0f, 0.53125f, 0.0625f, 0.5625f);
     public final static TextureData HIGHSCORE_LABEL = new TextureData(0.375f, 0.625f, 0.625f, 0.75f);
@@ -334,7 +334,7 @@ public class GameRenderer implements Renderer {
 
             synchronized (gameActivity.enemyLock) {
                 renderCharacter(gameActivity.currentEnemy, mainTextureDrawer);
-                if (RENDER_HITBOXES)
+                if (GameActivity.renderHitboxes)
                     renderHitBoxes(gameActivity.currentEnemy, mainTextureDrawer);
             }
 
@@ -367,7 +367,7 @@ public class GameRenderer implements Renderer {
             else
                 mainTextureDrawer.addTexturedSquare(JOYSTICK_BOUNDS, NEUTRAL_JOYSTICK_TEX);
 
-            if (RENDER_HITBOXES) {
+            if (GameActivity.renderHitboxes) {
                 renderHitBoxes(gameActivity.mainCharacter, mainTextureDrawer);
                 mainTextureDrawer.addColoredSquare(GameActivity.INPUT_LEFT_BOUNDS, NO_TEXTURE_COORDS, ATTACK_COLOR);
                 mainTextureDrawer.addColoredSquare(GameActivity.INPUT_RIGHT_BOUNDS, NO_TEXTURE_COORDS, ATTACK_COLOR);
@@ -544,7 +544,7 @@ public class GameRenderer implements Renderer {
         mainTextureDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
 
-        if(RENDER_HITBOXES) {
+        if(GameActivity.renderHitboxes) {
             mainTextureDrawer.addColoredSquare(GameActivity.START_BUTTON_BOUNDS, NO_TEXTURE_COORDS, HITTABLE_COLOR);
             mainTextureDrawer.addColoredSquare(GameActivity.SOUND_SWITCH, NO_TEXTURE_COORDS, HITTABLE_COLOR);
         }
@@ -577,6 +577,11 @@ public class GameRenderer implements Renderer {
         }
 
         mainTextureDrawer.addTexturedSquare(GameActivity.RECORDS_BUTTON_BOUNDS, RECORDS_BUTTON_SPRITE);
+
+        if(GameActivity.renderHitboxes)
+            mainTextureDrawer.addColoredSquare(GameActivity.HITBOXES_BUTTON_BOUNDS, HITBOXES_SWITCH, TRANSPARENCY_COLOR);
+        else
+            mainTextureDrawer.addTexturedSquare(GameActivity.HITBOXES_BUTTON_BOUNDS, HITBOXES_SWITCH);
 
         if(gameData.paused) {
             addPauseLayer(mainTextureDrawer, gameData.soundEnabled);
