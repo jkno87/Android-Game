@@ -115,11 +115,11 @@ public class MainCharacter extends GameCharacter {
     public final static TextureData IDLE_TEXTURE = new TextureData(0.375f, 0.28125f, 0.4375f, 0.34375f);
     //Frames de animacion para caminar
     //0.03125
-    public final static TextureData MOVING_A = new TextureData(0.46875f, 0, 0.5f, 0.09375f);
+    /*public final static TextureData MOVING_A = new TextureData(0.46875f, 0, 0.5f, 0.09375f);
     public final static TextureData MOVING_B = new TextureData(0.5f, 0, 0.53125f, 0.09375f);
     public final static TextureData MOVING_C = new TextureData(0.53125f, 0, 0.5625f, 0.09375f);
     public final static TextureData MOVING_D = new TextureData(0.5625f, 0, 0.59375f, 0.09375f);
-    public final static TextureData MOVING_E = new TextureData(0.59375f, 0, 0.625f, 0.09375f);
+    public final static TextureData MOVING_E = new TextureData(0.59375f, 0, 0.625f, 0.09375f);*/
     //Frames de animacion para el movimiento de absorber
     public final static TextureData STARTUP_MOV_A = new TextureData(0.625f,0.09375f, 0.6875f, 0.1875f);
     public final static TextureData ACTIVE_MOV_A = new TextureData(0.5f,0.09375f, 0.5625f,0.1875f);
@@ -136,7 +136,7 @@ public class MainCharacter extends GameCharacter {
     public final int HEIGHT_MOVE_A = CHARACTER_HEIGHT;
     private final int STUN_FRAMES = 18;
     private final int INITIAL_HP = 1000;
-    private final AnimationData WALKING_ANIMATION = new AnimationData(15, true, new TextureData[]{MOVING_A, MOVING_B, MOVING_C, MOVING_D, MOVING_E});
+    //private final AnimationData WALKING_ANIMATION = new AnimationData(15, true, new TextureData[]{MOVING_A, MOVING_B, MOVING_C, MOVING_D, MOVING_E});
     private final float MOVING_SPEED = 1.15f;
     private final Vector2 RIGHT_MOVE_SPEED = new Vector2(MOVING_SPEED, 0);
     private final Vector2 LEFT_MOVE_SPEED = new Vector2(-MOVING_SPEED, 0);
@@ -196,7 +196,7 @@ public class MainCharacter extends GameCharacter {
     @Override
     public TextureDrawer.TextureData getCurrentTexture(){
         if(state == CharacterState.MOVING_FORWARD || state == CharacterState.MOVING_BACKWARDS || state == CharacterState.ADVANCING)
-            return WALKING_ANIMATION.getCurrentSprite();
+            return IDLE_TEXTURE;
         else if (state == CharacterState.STUNNED || state == CharacterState.DYING)
             return STUNNED_SPRITE;
         else if(state == CharacterState.ABSORBING || state == CharacterState.ATTACKING)
@@ -211,7 +211,7 @@ public class MainCharacter extends GameCharacter {
     public void update(GameCharacter foe, ArrayDeque<Decoration> decorationData) {
         Event e = detectCollision(foe, collisionObjects);
         if (state == CharacterState.IDLE) {
-            WALKING_ANIMATION.reset();
+            //WALKING_ANIMATION.reset();
         } else if (state == CharacterState.DYING) {
             spriteContainer.lenX = SPRITE_LENGTH;
             if (framesToGameOver == 0)
@@ -238,12 +238,12 @@ public class MainCharacter extends GameCharacter {
         } else if (state == CharacterState.MOVING_FORWARD) {
             if (position.x + MOVING_SPEED < maxX) {
                 move(RIGHT_MOVE_SPEED);
-                WALKING_ANIMATION.updateFrame();
+                //WALKING_ANIMATION.updateFrame();
             }
         } else if (state == CharacterState.MOVING_BACKWARDS) {
             if (position.x - MOVING_SPEED > minX) {
                 move(LEFT_MOVE_SPEED);
-                WALKING_ANIMATION.updateFrame();
+                //WALKING_ANIMATION.updateFrame();
             }
         } else if (state == CharacterState.INPUT_A) {
             spriteContainer.lenX = SPRITE_LENGTH;
@@ -273,14 +273,14 @@ public class MainCharacter extends GameCharacter {
             if(absorbingFrames.completed()) {
                 state = outsideState;
                 baseX.set(1,0);
-                WALKING_ANIMATION.reset();
+                //WALKING_ANIMATION.reset();
                 spriteContainer.lenX = SPRITE_LENGTH_SMALL;
                 collisionObjects = IDLE_COLLISION_BOXES;
                 outsideState = CharacterState.IDLE;
             }
         } else if (state == CharacterState.ADVANCING) {
             //Este estado no debe de provocar que el personaje pierda hp
-            WALKING_ANIMATION.updateFrame();
+            //WALKING_ANIMATION.updateFrame();
             return;
         } else if (state == CharacterState.DEAD) {
             return;
