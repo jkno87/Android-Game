@@ -1,7 +1,7 @@
 package com.jgame.elements;
 
 import com.jgame.util.Decoration;
-import com.jgame.util.TextureDrawer.TextureData;
+import com.jgame.util.Drawer.TextureData;
 import com.jgame.util.FrameCounter;
 import com.jgame.util.Vector2;
 import com.jgame.util.CollisionObject;

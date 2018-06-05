@@ -5,10 +5,10 @@ package com.jgame.util;
  */
 public class DigitsDisplay {
 
-    private final static TextureDrawer.TextureData[] DIGITS = new TextureDrawer.TextureData[]{TextureDrawer.generarTextureData(3,26,4,28,102.4f),
-            TextureDrawer.generarTextureData(4,26,5,28,102.4f),TextureDrawer.generarTextureData(5,26,6,28,102.4f),TextureDrawer.generarTextureData(6,26,7,28,102.4f),
-            TextureDrawer.generarTextureData(7,26,8,28,102.4f),TextureDrawer.generarTextureData(8,26,9,28,102.4f),TextureDrawer.generarTextureData(9,26,10,28,102.4f),
-            TextureDrawer.generarTextureData(10,26,11,28,102.4f),TextureDrawer.generarTextureData(11,26,12,28,102.4f),TextureDrawer.generarTextureData(12,26,13,28,102.4f)};
+    private final static Drawer.TextureData[] DIGITS = new Drawer.TextureData[]{Drawer.generarTextureData(3,26,4,28,102.4f),
+            Drawer.generarTextureData(4,26,5,28,102.4f),Drawer.generarTextureData(5,26,6,28,102.4f),Drawer.generarTextureData(6,26,7,28,102.4f),
+            Drawer.generarTextureData(7,26,8,28,102.4f),Drawer.generarTextureData(8,26,9,28,102.4f),Drawer.generarTextureData(9,26,10,28,102.4f),
+            Drawer.generarTextureData(10,26,11,28,102.4f),Drawer.generarTextureData(11,26,12,28,102.4f),Drawer.generarTextureData(12,26,13,28,102.4f)};
     private final float digitSizeX;
     private final float digitSizeY;
     private final int digitsAvailable;
@@ -28,7 +28,7 @@ public class DigitsDisplay {
     /**
      * Se dibuja en pantalla el numero proporcionado a la funcion
      */
-    public void addDigitsTexture(TextureDrawer tdrawer){
+    public void addDigitsTexture(Drawer drawer){
         currentX = position.x;
         digitsDrawn = 0;
 
@@ -36,7 +36,7 @@ public class DigitsDisplay {
             int nVal = number / 10;
             int rem = number % 10;
             number = nVal;
-            tdrawer.addTexturedSquare(currentX, position.y, digitSizeX, digitSizeY, DIGITS[rem]);
+            drawer.addTexturedSquare(currentX, position.y, digitSizeX, digitSizeY, DIGITS[rem]);
             currentX -= digitSizeX;
             digitsDrawn++;
         }

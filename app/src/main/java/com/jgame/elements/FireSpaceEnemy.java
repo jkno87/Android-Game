@@ -6,7 +6,7 @@ import com.jgame.util.CollisionObject;
 import com.jgame.util.Decoration;
 import com.jgame.util.FrameCounter;
 import com.jgame.util.Square;
-import com.jgame.util.TextureDrawer;
+import com.jgame.util.Drawer;
 import com.jgame.util.Vector2;
 
 import java.util.ArrayDeque;
@@ -23,10 +23,10 @@ public class FireSpaceEnemy extends GameCharacter {
     private final static float SPRITE_SIZE_X = 37;
     private final static float SPRITE_SIZE_Y = 160;
     private final static Vector2 INITIAL_POSITION = new Vector2(375, 0);
-    private final static TextureDrawer.TextureData IDLE_SPRITE = new TextureDrawer.TextureData(0.4375f, 0, 0.46875f, 0.09375f);
-    private final static TextureDrawer.TextureData FIRE_SPRITE = TextureDrawer.generarTextureData(12,0,14,2,32);
-    private final TextureDrawer.ColorData ATTACK_A_COLOR = new TextureDrawer.ColorData(0,0,1,1);
-    private final TextureDrawer.ColorData ATTACK_B_COLOR = new TextureDrawer.ColorData(1,0,0,1);
+    private final static Drawer.TextureData IDLE_SPRITE = new Drawer.TextureData(0.4375f, 0, 0.46875f, 0.09375f);
+    private final static Drawer.TextureData FIRE_SPRITE = Drawer.generarTextureData(12,0,14,2,32);
+    private final Drawer.ColorData ATTACK_A_COLOR = new Drawer.ColorData(0,0,1,1);
+    private final Drawer.ColorData ATTACK_B_COLOR = new Drawer.ColorData(1,0,0,1);
     private boolean targetSet;
     private Vector2 fireballOrigin;
     private Vector2 fireballSpeed;
@@ -60,7 +60,7 @@ public class FireSpaceEnemy extends GameCharacter {
                 new CollisionObject(hitboxBounds, CollisionObject.TYPE_ATTACK)};
     }
 
-    private void setColor(TextureDrawer.ColorData nColor){
+    private void setColor(Drawer.ColorData nColor){
         color.r = nColor.r;
         color.g = nColor.g;
         color.b = nColor.b;
@@ -88,7 +88,7 @@ public class FireSpaceEnemy extends GameCharacter {
             preAttackFrames.updateFrame();
             if(preAttackFrames.completed()) {
                 currentState = State.ATTACK_A;
-                setColor(TextureDrawer.DEFAULT_COLOR);
+                setColor(Drawer.DEFAULT_COLOR);
                 decorationData.add(attackDecoration);
                 attackDecoration.reset();
             }
@@ -101,7 +101,7 @@ public class FireSpaceEnemy extends GameCharacter {
             }
             if(attack2Startup.completed()) {
                 currentState = State.ATTACK_B;
-                setColor(TextureDrawer.DEFAULT_COLOR);
+                setColor(Drawer.DEFAULT_COLOR);
                 decorationData.add(attackDecoration);
             }
         } else if(currentState == State.ATTACK_A){
@@ -141,7 +141,7 @@ public class FireSpaceEnemy extends GameCharacter {
     @Override
     public void reset(Vector2 positionOffset) {
         currentState = State.IDLE;
-        setColor(TextureDrawer.DEFAULT_COLOR);
+        setColor(Drawer.DEFAULT_COLOR);
         moveTo(positionOffset, INITIAL_POSITION);
         hitboxPosition.set(position);
         idleFrames.reset();
@@ -162,7 +162,7 @@ public class FireSpaceEnemy extends GameCharacter {
     }
 
     @Override
-    public TextureDrawer.TextureData getCurrentTexture() {
+    public Drawer.TextureData getCurrentTexture() {
         return IDLE_SPRITE;
     }
 

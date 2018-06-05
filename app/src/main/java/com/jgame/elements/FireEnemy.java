@@ -2,9 +2,9 @@ package com.jgame.elements;
 
 import com.jgame.util.Decoration;
 import com.jgame.util.Square;
-import com.jgame.util.TextureDrawer;
+import com.jgame.util.Drawer;
 import com.jgame.util.Vector2;
-import com.jgame.util.TextureDrawer.TextureData;
+import com.jgame.util.Drawer.TextureData;
 import com.jgame.util.CollisionObject;
 import java.util.ArrayDeque;
 
@@ -26,7 +26,7 @@ public class FireEnemy extends GameCharacter {
     private final static float SPRITE_SIZE_X = 37;
     private final static float SPRITE_SIZE_Y = 160;
     private final static Vector2 INITIAL_POSITION = new Vector2(350, 0);
-    private final static TextureData FIRE_SPRITE = TextureDrawer.generarTextureData(12,0,14,2,32);
+    private final static TextureData FIRE_SPRITE = Drawer.generarTextureData(12,0,14,2,32);
     private final static TextureData IDLE_SPRITE = new TextureData(0.4375f, 0, 0.46875f, 0.09375f);
     private EnemyState currentState;
     private final Vector2 fireballOrigin;

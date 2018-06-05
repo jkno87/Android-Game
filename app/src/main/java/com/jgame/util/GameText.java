@@ -1,7 +1,7 @@
 package com.jgame.util;
 
-import com.jgame.util.TextureDrawer.TextureData;
-import com.jgame.util.TextureDrawer.ColorData;
+import com.jgame.util.Drawer.TextureData;
+import com.jgame.util.Drawer.ColorData;
 
 /**
  * Created by ej-jose on 17/08/15.
@@ -59,7 +59,7 @@ public class GameText {
      * Agrega los vertices a letterDrawer para dibujar el GameText.
      * @param textureDrawer Drawer al que se agregaran los vertices
      */
-    public void addLetterTexture(TextureDrawer textureDrawer) {
+    public void addLetterTexture(Drawer textureDrawer) {
         currentLetter.position.x = startX;
         currentLetter.position.y = startY;
 
@@ -74,7 +74,7 @@ public class GameText {
      * @param textureDrawer drawer al que se le asignara la informacion de dibujo
      * @param colorData informacion de color
      */
-    public void addLetterTexture(TextureDrawer textureDrawer, ColorData colorData){
+    public void addLetterTexture(Drawer textureDrawer, ColorData colorData){
         currentLetter.position.x = startX;
         currentLetter.position.y = startY;
 

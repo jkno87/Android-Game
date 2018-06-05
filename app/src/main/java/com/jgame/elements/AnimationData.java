@@ -1,8 +1,6 @@
 package com.jgame.elements;
 
-import android.util.Log;
-
-import com.jgame.util.TextureDrawer.TextureData;
+import com.jgame.util.Drawer.TextureData;
 
 /**
  * Clase que sirve para representar la informacion de una animacion en el juego

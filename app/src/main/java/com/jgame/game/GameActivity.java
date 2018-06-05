@@ -23,7 +23,7 @@ import com.jgame.elements.GameCharacter;
 import com.jgame.elements.MainCharacter;
 import com.jgame.util.IdGenerator;
 import com.jgame.util.Square;
-import com.jgame.util.TextureDrawer;
+import com.jgame.util.Drawer;
 import com.jgame.util.Vector2;
 import com.jgame.game.GameData.GameState;
 import java.util.ArrayDeque;
@@ -93,7 +93,7 @@ public class GameActivity extends Activity {
     public final BlockingQueue<ControllerManager.GameInput> inputQueue = new LinkedBlockingQueue<>(5);
     public final ControllerManager controllerManager = new ControllerManager(inputQueue, gameData);
     public final ArrayDeque<Decoration> decorationsBuffer = new ArrayDeque<>();
-    public final TextureDrawer.ColorData transitionOverlay = new TextureDrawer.ColorData(0,0,0,0);
+    public final Drawer.ColorData transitionOverlay = new Drawer.ColorData(0,0,0,0);
     public GameRunnable gameTask;
     private FirebaseAnalytics mFirebaseAnalytics;
     private InterstitialAd mInterstitialAd;

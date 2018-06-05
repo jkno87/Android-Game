@@ -6,8 +6,9 @@ import com.jgame.util.Decoration;
 import com.jgame.util.FrameCounter;
 import com.jgame.util.Square;
 import com.jgame.util.TextureDrawer;
-import com.jgame.util.TextureDrawer.ColorData;
-import com.jgame.util.TextureDrawer.TextureData;
+import com.jgame.util.Drawer.ColorData;
+import com.jgame.util.Drawer.TextureData;
+import com.jgame.util.Drawer;
 import com.jgame.util.Vector2;
 import com.jgame.util.CollisionObject;
 import java.util.ArrayDeque;
@@ -124,9 +125,9 @@ public class MainCharacter extends GameCharacter {
     public final static TextureData STARTUP_MOV_A = new TextureData(0.625f,0.09375f, 0.6875f, 0.1875f);
     public final static TextureData ACTIVE_MOV_A = new TextureData(0.5f,0.09375f, 0.5625f,0.1875f);
     //Frames para el personaje cuando se encuentra stunned
-    public final static TextureData STUNNED_SPRITE = TextureDrawer.generarTextureData(14,6,16,9,32);
+    public final static TextureData STUNNED_SPRITE = Drawer.generarTextureData(14,6,16,9,32);
 
-    private final static TextureData ABSORBING_SPRITES = TextureDrawer.generarTextureData(12,0,14,2,32);
+    private final static TextureData ABSORBING_SPRITES = Drawer.generarTextureData(12,0,14,2,32);
     public static final float INITIAL_POSITION_X = 85;
     public static final int SPRITE_LENGTH = 75;
     public static final int SPRITE_LENGTH_SMALL = 75;
@@ -194,7 +195,7 @@ public class MainCharacter extends GameCharacter {
     }
 
     @Override
-    public TextureDrawer.TextureData getCurrentTexture(){
+    public Drawer.TextureData getCurrentTexture(){
         if(state == CharacterState.MOVING_FORWARD || state == CharacterState.MOVING_BACKWARDS || state == CharacterState.ADVANCING)
             return IDLE_TEXTURE;
         else if (state == CharacterState.STUNNED || state == CharacterState.DYING)

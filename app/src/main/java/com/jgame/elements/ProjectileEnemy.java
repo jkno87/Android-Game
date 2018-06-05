@@ -5,7 +5,7 @@ import com.jgame.util.CollisionObject;
 import com.jgame.util.Decoration;
 import com.jgame.util.FrameCounter;
 import com.jgame.util.Square;
-import com.jgame.util.TextureDrawer;
+import com.jgame.util.Drawer;
 import com.jgame.util.Vector2;
 
 import java.util.ArrayDeque;
@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class ProjectileEnemy extends GameCharacter {
 
-    private final static TextureDrawer.TextureData IDLE_SPRITE = new TextureDrawer.TextureData(0.4375f, 0, 0.46875f, 0.09375f);
+    private final static Drawer.TextureData IDLE_SPRITE = new Drawer.TextureData(0.4375f, 0, 0.46875f, 0.09375f);
     private final static float IDLE_SIZE_X = 50;
     private final static float IDLE_SIZE_Y = 100;
     private final float PROJECTILE_WIDTH = 50;
@@ -153,7 +153,7 @@ public class ProjectileEnemy extends GameCharacter {
     }
 
     @Override
-    public TextureDrawer.TextureData getCurrentTexture() {
+    public Drawer.TextureData getCurrentTexture() {
         return IDLE_SPRITE;
     }
 

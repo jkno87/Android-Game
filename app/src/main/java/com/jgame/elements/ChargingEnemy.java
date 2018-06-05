@@ -4,8 +4,8 @@ import android.util.Log;
 
 import com.jgame.util.Decoration;
 import com.jgame.util.Square;
-import com.jgame.util.TextureDrawer;
-import com.jgame.util.TextureDrawer.TextureData;
+import com.jgame.util.Drawer;
+import com.jgame.util.Drawer.TextureData;
 import com.jgame.util.CollisionObject;
 import com.jgame.game.GameData.Event;
 import com.jgame.util.Vector2;
@@ -63,13 +63,13 @@ public class ChargingEnemy extends GameCharacter {
 
     private final float PROJECTILE_OFFSET = 50;
     private final static Vector2 INITIAL_POSITION = new Vector2(425,0);
-    public final static TextureData PROJECTILE_TEXTURE = TextureDrawer.generarTextureData(12,0,14,2,32);
-    public final static TextureData IDLE_TEXTURE = TextureDrawer.generarTextureData(20,0,22,2,32);
-    public final static TextureData ATTACK_TEXTURE = TextureDrawer.generarTextureData(26,0,28,2,32);
-    public final static TextureData DEFEATED_TEXTURE = TextureDrawer.generarTextureData(22,2,24,4,32);
+    public final static TextureData PROJECTILE_TEXTURE = Drawer.generarTextureData(12,0,14,2,32);
+    public final static TextureData IDLE_TEXTURE = Drawer.generarTextureData(20,0,22,2,32);
+    public final static TextureData ATTACK_TEXTURE = Drawer.generarTextureData(26,0,28,2,32);
+    public final static TextureData DEFEATED_TEXTURE = Drawer.generarTextureData(22,2,24,4,32);
     public final static TextureData[] STARTUP_TEXTURE = new TextureData[]{
-            IDLE_TEXTURE, TextureDrawer.generarTextureData(22,0,24,2,32),
-            TextureDrawer.generarTextureData(24,0,26,2,32), ATTACK_TEXTURE
+            IDLE_TEXTURE, Drawer.generarTextureData(22,0,24,2,32),
+            Drawer.generarTextureData(24,0,26,2,32), ATTACK_TEXTURE
     };
     private final static Vector2 ATTACK_SPEED = new Vector2(-5f, 0);
     private final static int IDLE_FRAMES = 120;

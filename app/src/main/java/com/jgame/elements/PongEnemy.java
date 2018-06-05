@@ -5,7 +5,7 @@ import com.jgame.util.CollisionObject;
 import com.jgame.util.Decoration;
 import com.jgame.util.FrameCounter;
 import com.jgame.util.Square;
-import com.jgame.util.TextureDrawer;
+import com.jgame.util.Drawer;
 import com.jgame.util.Vector2;
 
 import java.util.ArrayDeque;
@@ -51,7 +51,7 @@ public class PongEnemy extends GameCharacter {
         }
 
         @Override
-        public TextureDrawer.TextureData getSprite() {
+        public Drawer.TextureData getSprite() {
             return FIRE_SPRITE;
         }
     }
@@ -65,10 +65,10 @@ public class PongEnemy extends GameCharacter {
     private final static float SPRITE_SIZE_X = 37;
     private final static float SPRITE_SIZE_Y = 160;
     private final static Vector2 INITIAL_POSITION = new Vector2(400, 0);
-    private final static TextureDrawer.TextureData ATTACK_SPRITE =  new TextureDrawer.TextureData(0.5f,0.09375f, 0.5625f,0.1875f);
-    private final static TextureDrawer.TextureData IDLE_SPRITE = new TextureDrawer.TextureData(0.4375f, 0, 0.46875f, 0.09375f);
+    private final static Drawer.TextureData ATTACK_SPRITE =  new Drawer.TextureData(0.5f,0.09375f, 0.5625f,0.1875f);
+    private final static Drawer.TextureData IDLE_SPRITE = new Drawer.TextureData(0.4375f, 0, 0.46875f, 0.09375f);
     private EnemyState currentState;
-    private final static TextureDrawer.TextureData FIRE_SPRITE = TextureDrawer.generarTextureData(12,0,14,2,32);
+    private final static Drawer.TextureData FIRE_SPRITE = Drawer.generarTextureData(12,0,14,2,32);
     private final FrameCounter attackStartup;
     private final Vector2 fireballSpeed;
     private final Vector2 fireballPosition;
@@ -149,7 +149,7 @@ public class PongEnemy extends GameCharacter {
     }
 
     @Override
-    public TextureDrawer.TextureData getCurrentTexture() {
+    public Drawer.TextureData getCurrentTexture() {
         if(currentState == EnemyState.PREATTACK)
             return IDLE_SPRITE;
         else

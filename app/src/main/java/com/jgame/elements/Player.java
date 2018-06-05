@@ -3,7 +3,7 @@ package com.jgame.elements;
 import com.jgame.util.GeometricElement;
 import com.jgame.util.Square;
 import com.jgame.util.Vector2;
-import com.jgame.util.TextureDrawer.ColorData;
+import com.jgame.util.Drawer.ColorData;
 import java.util.List;
 
 /**

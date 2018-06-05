@@ -6,19 +6,19 @@ public abstract class Decoration {
 
     public boolean inverted;
     public Square size;
-    public TextureDrawer.ColorData color = TextureDrawer.DEFAULT_COLOR;
+    public Drawer.ColorData color = Drawer.DEFAULT_COLOR;
     public abstract void terminate();
     public abstract boolean drawable();
     public abstract void update(Vector2 backgroundMoveDelta);
     public abstract boolean completed();
-    public abstract TextureDrawer.TextureData getSprite();
+    public abstract Drawer.TextureData getSprite();
 
 
     public static class BoundedDecoration extends Decoration {
         private boolean finished;
-        private final TextureDrawer.TextureData sprite;
+        private final Drawer.TextureData sprite;
 
-        public BoundedDecoration (Square size, Vector2 position, TextureDrawer.TextureData sprite){
+        public BoundedDecoration (Square size, Vector2 position, Drawer.TextureData sprite){
             this.size = size;
             this.size.position = position;
             this.sprite = sprite;
@@ -45,7 +45,7 @@ public abstract class Decoration {
         }
 
         @Override
-        public TextureDrawer.TextureData getSprite(){
+        public Drawer.TextureData getSprite(){
             return sprite;
         }
 
@@ -122,7 +122,7 @@ public abstract class Decoration {
         public AnimationData animation;
         public int preDrawFrames;
 
-        public AnimatedDecoration(AnimationData animation, Square size, TextureDrawer.ColorData color, boolean inverted){
+        public AnimatedDecoration(AnimationData animation, Square size, Drawer.ColorData color, boolean inverted){
             this.animation = animation;
             this.size = size;
             this.color = color;
@@ -143,7 +143,7 @@ public abstract class Decoration {
             return animation.completed();
         }
 
-        public synchronized TextureDrawer.TextureData getSprite(){
+        public synchronized Drawer.TextureData getSprite(){
             return animation.getCurrentSprite();
         }
 
@@ -160,15 +160,15 @@ public abstract class Decoration {
     }
 
     public static class TransitionDecoration extends Decoration {
-        private TextureDrawer.TextureData sprite;
+        private Drawer.TextureData sprite;
 
-        public TransitionDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted){
+        public TransitionDecoration(Drawer.TextureData sprite, Square size, boolean inverted){
             this.sprite = sprite;
             this.size = size;
             this.inverted = inverted;
         }
 
-        public TransitionDecoration(TextureDrawer.TextureData sprite, Square size, boolean inverted, TextureDrawer.ColorData color){
+        public TransitionDecoration(Drawer.TextureData sprite, Square size, boolean inverted, Drawer.ColorData color){
             this.sprite = sprite;
             this.size = size;
             this.inverted = inverted;
@@ -191,7 +191,7 @@ public abstract class Decoration {
         }
 
         @Override
-        public TextureDrawer.TextureData getSprite(){
+        public Drawer.TextureData getSprite(){
             return sprite;
         }
 

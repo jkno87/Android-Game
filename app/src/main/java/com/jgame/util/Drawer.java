@@ -41,36 +41,44 @@ public class Drawer {
         }
     }
 
+    public final static ColorData DEFAULT_COLOR = new ColorData(1,1,1,1);
+
+    public static TextureData genTextureData(float x, float y, float total){
+        return new TextureData((x - 1) / total, (y - 1) / total, x / total, y / total);
+    }
+
+    public static TextureData generarTextureData(float x1, float y1, float x2, float y2, float scale){
+        return new TextureData(x1/scale, y1/scale, x2/scale, y2/scale);
+    }
+
     private final static int COORD_ELEMS = 2;
     private final static int TEX_ELEMS = 6; //Se utilizan 6 porque todas las texturas incluyen los elementos de color
-    private final static int COLOR_ELEMS = 4;
     private final static int VERTEX_PER_RECTANGLE = 4;
     private final static int VERTEX_PER_TRIANGLE = 3;
     private final static int INDICES_PER_RECTANGLE = 6;
     private final static int INDICES_PER_TRIANGLE = 3;
     private final int texRectElements;
-    private final int colRectElements;
     private final int triangleElements;
-    private final int elementSize;
-    private final boolean withColor;
-    private final boolean withTexture;
     private final FloatBuffer vertices;
     private final ShortBuffer indices;
-    float[] rectVerticesBuffer;
     float[] verticesBuffer;
-    int elementsAdded;
+    int rectanglesAdded;
+    int trianglesAdded;
     int currentIndex;
+    int rectangleIndex;
+    int triangleIndex;
 
-    public Drawer(int maxColoredRectangles, int maxTexRectangles, int maxTriangles){
+    public Drawer(int maxTexRectangles, int maxTriangles){
         texRectElements = (COORD_ELEMS + TEX_ELEMS) * VERTEX_PER_RECTANGLE;
-        colRectElements = (COORD_ELEMS + COLOR_ELEMS) * VERTEX_PER_RECTANGLE;
-        triangleElements = (COORD_ELEMS + COLOR_ELEMS) * VERTEX_PER_TRIANGLE;
-        verticesBuffer = new float[maxColoredRectangles*colRectElements + maxTexRectangles*texRectElements + triangleElements*maxTriangles];
-        short[] indicesBuffer = new short[(maxColoredRectangles + maxTexRectangles) * INDICES_PER_RECTANGLE + maxTriangles * INDICES_PER_TRIANGLE];
+        triangleElements = (COORD_ELEMS + TEX_ELEMS) * VERTEX_PER_TRIANGLE;
+        verticesBuffer = new float[maxTexRectangles*texRectElements + triangleElements*maxTriangles];
+        short[] indicesBuffer = new short[maxTexRectangles * INDICES_PER_RECTANGLE + maxTriangles * INDICES_PER_TRIANGLE];
 
+        rectangleIndex = 0;
+        triangleIndex = maxTexRectangles * INDICES_PER_RECTANGLE;
         short j = 0;
         int i = 0;
-        for(; i < (maxColoredRectangles + maxTexRectangles) * INDICES_PER_RECTANGLE; i+= INDICES_PER_RECTANGLE, j+= VERTEX_PER_RECTANGLE){
+        for(; i < triangleIndex; i+= INDICES_PER_RECTANGLE, j+= VERTEX_PER_RECTANGLE){
             indicesBuffer[i + 0] = (short)(j + 0);
             indicesBuffer[i + 1] = (short)(j + 1);
             indicesBuffer[i + 2] = (short)(j + 2);
@@ -102,43 +110,260 @@ public class Drawer {
 
 
     public void reset(){
-        elementsAdded = 0;
+        rectanglesAdded = 0;
+        trianglesAdded = 0;
         currentIndex = 0;
     }
 
     public void draw(GL10 gl){
-        if(elementsAdded == 0)
-            return;
-
         vertices.clear();
-        vertices.put(verticesBuffer, 0, currentIndex);
+        vertices.put(verticesBuffer, 0, verticesBuffer.length);
         vertices.flip();
 
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         vertices.position(0);
-        gl.glVertexPointer(2, GL10.GL_FLOAT, elementSize, vertices);
+        gl.glVertexPointer(2, GL10.GL_FLOAT, texRectElements, vertices);
 
-        if(withTexture) {
-            gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-            vertices.position(2);
-            gl.glTexCoordPointer(2, GL10.GL_FLOAT, elementSize, vertices);
-        }
+        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        vertices.position(2);
+        gl.glTexCoordPointer(2, GL10.GL_FLOAT, texRectElements, vertices);
 
-        if(withColor){
-            gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
-            vertices.position(withTexture?4:2);
-            gl.glColorPointer(4, GL10.GL_FLOAT, elementSize, vertices);
-        }
+        gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
+        vertices.position(4);
+        gl.glColorPointer(4, GL10.GL_FLOAT, texRectElements, vertices);
 
         indices.position(0);
-        gl.glDrawElements(GL10.GL_TRIANGLES, elementsAdded * INDICES_PER_ELEMENT, GL10.GL_UNSIGNED_SHORT, indices);
+        gl.glDrawElements(GL10.GL_TRIANGLES, rectanglesAdded * INDICES_PER_RECTANGLE, GL10.GL_UNSIGNED_SHORT, indices);
 
-        if(withTexture)
-            gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        if(trianglesAdded > 0) {
+            indices.position(texRectElements);
+            gl.glDrawElements(GL10.GL_TRIANGLES, trianglesAdded * INDICES_PER_TRIANGLE, GL10.GL_UNSIGNED_SHORT, indices);
+        }
 
-        if(withColor)
-            gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
+
+        gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
 
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+    }
+
+
+    public void addColoredSquare(Square s, TextureData tData, ColorData cData){
+        rectanglesAdded++;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u2;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position.x + s.lenX;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u2;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position.x + s.lenX;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u1;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u1;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+    }
+
+    public void addTexturedSquare(Square s, TextureData tData){
+        rectanglesAdded++;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u2;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+
+        verticesBuffer[currentIndex++] = s.position.x + s.lenX;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u2;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+
+        verticesBuffer[currentIndex++] = s.position.x + s.lenX;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+    }
+
+    /**
+     * Agrega los vertices de un cuadrado con textura y color
+     * @param tData Informacion de textura que se utilizara
+     * @return Drawer que contiene los vertices del cuadrado
+     */
+    public void addInvertedColoredSquare(Square s, TextureData tData, ColorData cData){
+        rectanglesAdded++;
+
+        verticesBuffer[currentIndex++] = s.position.x - s.lenX;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u2;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u2;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u1;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+
+        verticesBuffer[currentIndex++] = s.position.x - s.lenX;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u1;
+        verticesBuffer[currentIndex++] = cData.r;
+        verticesBuffer[currentIndex++] = cData.g;
+        verticesBuffer[currentIndex++] = cData.b;
+        verticesBuffer[currentIndex++] = cData.a;
+    }
+
+    public void addInvertedTexturedSquare(Square s, TextureData tData){
+        rectanglesAdded++;
+
+        verticesBuffer[currentIndex++] = s.position.x - s.lenX;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u2;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position.y;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u2;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+
+        verticesBuffer[currentIndex++] = s.position.x;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
+        verticesBuffer[currentIndex++] = tData.v1;
+        verticesBuffer[currentIndex++] = tData.u1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+
+        verticesBuffer[currentIndex++] = s.position.x - s.lenX;
+        verticesBuffer[currentIndex++] = s.position.y + s.lenY;
+        verticesBuffer[currentIndex++] = tData.v2;
+        verticesBuffer[currentIndex++] = tData.u1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+    }
+
+
+/**
+ * Agrega los vertices de un cuadrado con textura y color
+ * @param x coordenada X del centro del cuadrado
+ * @param y coordenada Y del centro de cuadrado
+ * @param lenX longitud X del rectangulo
+ * @param lenY longitud Y del rectangulo
+ * @param tdata Informacion de la textura que se utilizara
+ * @return Drawer que contiene los vertices del cuadrado
+ */
+    public void addTexturedSquare(float x, float y, float lenX, float lenY, TextureData tdata){
+        rectanglesAdded++;
+
+        float x2 = x + lenX;
+        float y2 = y + lenY;
+
+        verticesBuffer[currentIndex++] = x;
+        verticesBuffer[currentIndex++] = y;
+        verticesBuffer[currentIndex++] = tdata.v1;
+        verticesBuffer[currentIndex++] = tdata.u2;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+
+        verticesBuffer[currentIndex++] = x2;
+        verticesBuffer[currentIndex++] = y;
+        verticesBuffer[currentIndex++] = tdata.v2;
+        verticesBuffer[currentIndex++] = tdata.u2;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+
+        verticesBuffer[currentIndex++] = x2;
+        verticesBuffer[currentIndex++] = y2;
+        verticesBuffer[currentIndex++] = tdata.v2;
+        verticesBuffer[currentIndex++] = tdata.u1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+
+        verticesBuffer[currentIndex++] = x;
+        verticesBuffer[currentIndex++] = y2;
+        verticesBuffer[currentIndex++] = tdata.v1;
+        verticesBuffer[currentIndex++] = tdata.u1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+        verticesBuffer[currentIndex++] = 1;
+
     }
 }

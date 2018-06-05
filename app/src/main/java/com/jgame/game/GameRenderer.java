@@ -10,9 +10,9 @@ import com.jgame.util.DigitsDisplay;
 import com.jgame.util.CollisionObject;
 import com.jgame.util.GameText;
 import com.jgame.util.Square;
-import com.jgame.util.TextureDrawer;
-import com.jgame.util.TextureDrawer.TextureData;
-import com.jgame.util.TextureDrawer.ColorData;
+import com.jgame.util.Drawer;
+import com.jgame.util.Drawer.TextureData;
+import com.jgame.util.Drawer.ColorData;
 import com.jgame.game.GameData.GameState;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -139,12 +139,12 @@ public class GameRenderer implements Renderer {
     public final static ColorData BACKGROUND_OVERLAY = new ColorData(1,1,1,0.6f);
     //Texturas varias
     public final static TextureData NO_TEXTURE_COORDS = new TextureData(0.4375f,0.4375f,0.46875f,0.46875f);
-    public final static TextureData GAME_OVER_LABEL = TextureDrawer.generarTextureData(11,4,13,5,32);
-    public final static TextureData CLOSING_MESSAGE = TextureDrawer.generarTextureData(11,5,13,6,32);
-    public final static TextureData LOADING_MESSAGE = TextureDrawer.generarTextureData(5,4,8,5,32);
+    public final static TextureData GAME_OVER_LABEL = Drawer.generarTextureData(11,4,13,5,32);
+    public final static TextureData CLOSING_MESSAGE = Drawer.generarTextureData(11,5,13,6,32);
+    public final static TextureData LOADING_MESSAGE = Drawer.generarTextureData(5,4,8,5,32);
     //Texturas de la pantalla inicial
     public final static TextureData TITLE_BACKGROUND = new TextureData(0,0.25f,0.125f,0.5f);
-    public final static TextureData TITLE_MESSAGE = TextureDrawer.generarTextureData(5,5,8,6,32);
+    public final static TextureData TITLE_MESSAGE = Drawer.generarTextureData(5,5,8,6,32);
     public final static TextureData TITLE_LOGO = new TextureData(0, 0.125f, 0.125f, 0.1875f);
     //Texturas del menu principal
     public final static TextureData START_BUTTON_TEXTURE = new TextureData(0f,0.28125f,0.0625f,0.3125f);
@@ -167,8 +167,8 @@ public class GameRenderer implements Renderer {
     public final static TextureData NEUTRAL_JOYSTICK_TEX = new TextureData(0.25f,0.1875f,0.28125f,0.21875f);
     public final static TextureData LEFT_JOYSTICK_TEX = new TextureData(0.28125f,0.1875f,0.3125f,0.21875f);
     public final static TextureData RIGHT_JOYSTICK_TEX = new TextureData(0.3125f,0.1875f,0.34375f,0.21875f);
-    public final static TextureData ATTACK_LABEL_TEX = TextureDrawer.generarTextureData(2,10,4,11,32);
-    public final static TextureData SCORE_LABEL_TEX = TextureDrawer.generarTextureData(2,11,4,12,32);
+    public final static TextureData ATTACK_LABEL_TEX = Drawer.generarTextureData(2,10,4,11,32);
+    public final static TextureData SCORE_LABEL_TEX = Drawer.generarTextureData(2,11,4,12,32);
     public final static TextureData BUTTON_TEXTURE = new TextureData(0.125f, 0.28125f, 0.1875f, 0.34375f);
     public final static TextureData ARROW_TEXTURE = new TextureData(0,0.21875f,0.03125f,0.25f);
     public final static TextureData LEFT_ARROW_TEXTURE = new TextureData(0.03125f,0.25f,0,0.21875f);
@@ -198,7 +198,7 @@ public class GameRenderer implements Renderer {
     private GL10 gl10;
     int personajesId;
     int backgroundId;
-    private TextureDrawer mainTextureDrawer;
+    private Drawer mainTextureDrawer;
     ColorData menuBase;
     private final GameData gameData;
     private final Decoration[] decorations = new Decoration[5];
@@ -208,8 +208,8 @@ public class GameRenderer implements Renderer {
 
     public GameRenderer(GameActivity gameActivity){
         this.gameActivity = gameActivity;
-        mainTextureDrawer = new TextureDrawer(true);
-        menuBase = new TextureDrawer.ColorData(0,0.75f,0.5f,1);
+        mainTextureDrawer = new Drawer(30, 0);
+        menuBase = new Drawer.ColorData(0,0.75f,0.5f,1);
         gameData = new GameData();
     }
 
@@ -234,7 +234,7 @@ public class GameRenderer implements Renderer {
      * Agrega el dibujo del menu de pausa a tDrawer
      * @param tDrawer
      */
-    private void addPauseLayer(TextureDrawer tDrawer, boolean soundEnabled){
+    private void addPauseLayer(Drawer tDrawer, boolean soundEnabled){
         tDrawer.addColoredSquare(GameActivity.FULL_SCREEN_BOUNDS, NO_TEXTURE_COORDS, PAUSE_OVERLAY_COLOR);
         tDrawer.addColoredSquare(PAUSE_RECTANGLE, NO_TEXTURE_COORDS, PAUSE_MENU_COLOR);
 
@@ -252,7 +252,7 @@ public class GameRenderer implements Renderer {
      * @param c GameCharacter que se va a dibujar
      * @param drawer TextureDrawer al que se le agregara la informacion del personaje.
      */
-    private void renderMainCharacter(MainCharacter c, TextureDrawer drawer){
+    private void renderMainCharacter(MainCharacter c, Drawer drawer){
         if(!c.alive())
             return;
 
@@ -402,7 +402,7 @@ public class GameRenderer implements Renderer {
      * @param c
      * @param drawer
      */
-    private void renderHitBoxes(GameCharacter c, TextureDrawer drawer){
+    private void renderHitBoxes(GameCharacter c, Drawer drawer){
         if(!c.hittable())
             return;
 
@@ -421,7 +421,7 @@ public class GameRenderer implements Renderer {
      * @param c GameCharacter que se va a dibujar
      * @param drawer TextureDrawer al que se le agregara la informacion del personaje.
      */
-    private void renderCharacter(GameCharacter c, TextureDrawer drawer){
+    private void renderCharacter(GameCharacter c, Drawer drawer){
         if(!c.alive())
             return;
 
