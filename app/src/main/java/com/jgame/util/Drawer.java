@@ -57,27 +57,29 @@ public class Drawer {
     private final static int VERTEX_PER_TRIANGLE = 3;
     private final static int INDICES_PER_RECTANGLE = 6;
     private final static int INDICES_PER_TRIANGLE = 3;
-    private final int texRectElements;
-    private final int triangleElements;
+    private final static int TOTAL_VERTICES_PER_TRIANGLE = (COORD_ELEMS + TEX_ELEMS) * VERTEX_PER_TRIANGLE;
+    private final int rectElemSize;
+    private final int triangleElemSize;
     private final FloatBuffer vertices;
     private final ShortBuffer indices;
     float[] verticesBuffer;
     int rectanglesAdded;
     int trianglesAdded;
     int currentIndex;
-    int rectangleIndex;
-    int triangleIndex;
+    final int triangleIndex;
+    final int initialTriangleVertex;
 
     public Drawer(int maxTexRectangles, int maxTriangles){
-        texRectElements = (COORD_ELEMS + TEX_ELEMS) * VERTEX_PER_RECTANGLE;
-        triangleElements = (COORD_ELEMS + TEX_ELEMS) * VERTEX_PER_TRIANGLE;
-        verticesBuffer = new float[maxTexRectangles*texRectElements + triangleElements*maxTriangles];
-        short[] indicesBuffer = new short[maxTexRectangles * INDICES_PER_RECTANGLE + maxTriangles * INDICES_PER_TRIANGLE];
+        rectElemSize = (COORD_ELEMS + TEX_ELEMS) * VERTEX_PER_RECTANGLE;
+        triangleElemSize = (COORD_ELEMS + TEX_ELEMS) * VERTEX_PER_TRIANGLE;
+        verticesBuffer = new float[maxTexRectangles*rectElemSize + triangleElemSize * maxTriangles];
+        initialTriangleVertex = maxTexRectangles * rectElemSize;
+        short[] indicesBuffer = new short[initialTriangleVertex + maxTriangles * INDICES_PER_TRIANGLE];
 
-        rectangleIndex = 0;
         triangleIndex = maxTexRectangles * INDICES_PER_RECTANGLE;
         short j = 0;
         int i = 0;
+
         for(; i < triangleIndex; i+= INDICES_PER_RECTANGLE, j+= VERTEX_PER_RECTANGLE){
             indicesBuffer[i + 0] = (short)(j + 0);
             indicesBuffer[i + 1] = (short)(j + 1);
@@ -122,21 +124,21 @@ public class Drawer {
 
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         vertices.position(0);
-        gl.glVertexPointer(2, GL10.GL_FLOAT, texRectElements, vertices);
+        gl.glVertexPointer(2, GL10.GL_FLOAT, rectElemSize, vertices);
 
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         vertices.position(2);
-        gl.glTexCoordPointer(2, GL10.GL_FLOAT, texRectElements, vertices);
+        gl.glTexCoordPointer(2, GL10.GL_FLOAT, rectElemSize, vertices);
 
         gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
         vertices.position(4);
-        gl.glColorPointer(4, GL10.GL_FLOAT, texRectElements, vertices);
+        gl.glColorPointer(4, GL10.GL_FLOAT, rectElemSize, vertices);
 
         indices.position(0);
         gl.glDrawElements(GL10.GL_TRIANGLES, rectanglesAdded * INDICES_PER_RECTANGLE, GL10.GL_UNSIGNED_SHORT, indices);
 
         if(trianglesAdded > 0) {
-            indices.position(texRectElements);
+            indices.position(triangleIndex);
             gl.glDrawElements(GL10.GL_TRIANGLES, trianglesAdded * INDICES_PER_TRIANGLE, GL10.GL_UNSIGNED_SHORT, indices);
         }
 
@@ -364,6 +366,39 @@ public class Drawer {
         verticesBuffer[currentIndex++] = 1;
         verticesBuffer[currentIndex++] = 1;
         verticesBuffer[currentIndex++] = 1;
+    }
+
+    public void addTriangle(float x, float y, TextureData tdata){
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 0] = x;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 1] = y;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 2] = tdata.v1;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 3] = tdata.u2;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 4] = 1;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 5] = 1;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 6] = 1;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 7] = 1;
+
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 8] = x + 20;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 9] = y;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 10] = tdata.v2;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 11] = tdata.u2;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 12] = 1;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 13] = 1;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 14] = 1;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 15] = 1;
+
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 16] = x + 20;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 17] = y + 20;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 18] = tdata.v2;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 19] = tdata.u1;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 20] = 1;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 21] = 1;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 22] = 1;
+        verticesBuffer[initialTriangleVertex + trianglesAdded * TOTAL_VERTICES_PER_TRIANGLE + 23] = 1;
+
+        trianglesAdded++;
 
     }
+
+
 }

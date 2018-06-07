@@ -208,7 +208,7 @@ public class GameRenderer implements Renderer {
 
     public GameRenderer(GameActivity gameActivity){
         this.gameActivity = gameActivity;
-        mainTextureDrawer = new Drawer(30, 0);
+        mainTextureDrawer = new Drawer(30, 10);
         menuBase = new Drawer.ColorData(0,0.75f,0.5f,1);
         gameData = new GameData();
     }
@@ -516,6 +516,7 @@ public class GameRenderer implements Renderer {
         mainTextureDrawer.reset();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, personajesId);
         mainTextureDrawer.addTexturedSquare(120, 120, 150, 150, TITLE_LOGO);
+
         if(titleScreenCounter > 0) {
             if(showTitleMessage)
                 mainTextureDrawer.addTexturedSquare(120, 10, 240, 80, TITLE_MESSAGE);
@@ -526,6 +527,7 @@ public class GameRenderer implements Renderer {
             }
         }
 
+        mainTextureDrawer.addTriangle(50, 50, NO_TEXTURE_COORDS);
         mainTextureDrawer.addColoredSquare(GameActivity.FULL_SCREEN_BOUNDS, NO_TEXTURE_COORDS, gameActivity.transitionOverlay);
         mainTextureDrawer.draw(gl10);
     }
